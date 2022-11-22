@@ -8,6 +8,15 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@pinia/nuxt": "^0.4.4",
     "nuxt": "3.0.0"
+  },
+  "dependencies": {
+    "@tabler/core": "^1.0.0-beta16",
+    "localforage": "^1.10.0",
+    "pinia": "^2.0.24",
+    "sass": "^1.56.1",
+    "sass-loader": "^13.2.0",
+    "uuid": "^9.0.0"
   }
 }

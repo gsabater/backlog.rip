@@ -1,0 +1,11 @@
+# https://gist.github.com/mariojankovic/e39cce4fed0db39e21e29a1585fd2155
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+  # RewriteRule (.*) index.html$ [L]
+</IfModule>

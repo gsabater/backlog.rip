@@ -1,3 +1,27 @@
 {
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+
+    "vetur.validation.template": false,
+    "vetur.format.defaultFormatterOptions": {
+        "js-beautify-html": {
+            "wrap_attributes": "force-expand-multiline"
+          },
+        "prettier": {
+            "trailingComma": "es5",
+            "bracketSpacing": true,
+            "bracketSameLine": true,
+            "semi": false,
+            "singleQuote": true,
+            "quoteProps": "consistent",
+            "tabWidth": 2,
+            "printWidth": 100,
+            "eslintIntegration": true,
+            "arrowParens": "always",
+            "endOfLine": "lf",
+            "disableLanguages": [
+                "json",
+                "jsonc"
+            ]
+          }
+      },
 }

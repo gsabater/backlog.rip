@@ -62,6 +62,15 @@ export const useUserStore = defineStore('user', {
         // this.meta.time = new Date().getTime()
       }
 
+      let me = { ...this.user }
+      delete me.providers
+      delete me.settings
+      me.username = 'pepito'
+      app.$db.config.put({
+        key: 'me',
+        value: me,
+      })
+
       return this.user
     },
 

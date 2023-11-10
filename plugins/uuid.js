@@ -7,12 +7,12 @@
  * Last Modified: Mon Mar 27 2023
  **/
 
-import * as uuid from 'uuid'
+import { v4 } from 'uuid'
 
 export default defineNuxtPlugin((nuxtApp) => {
   return {
     provide: {
-      uuid: uuid,
+      uuid: v4,
     },
   }
 })

@@ -16,7 +16,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   let current = false
 
   if (userStore?.isChecked === false) {
-    current = await userStore.authenticate()
+    await userStore.authenticate()
   }
 
   if (userStore.isLogged) {

@@ -1,27 +1,29 @@
 {
+  "[js]": {
     "editor.tabSize": 2,
+  },
 
-    "vetur.validation.template": false,
-    "vetur.format.defaultFormatterOptions": {
-        "js-beautify-html": {
-            "wrap_attributes": "force-expand-multiline"
-          },
-        "prettier": {
-            "trailingComma": "es5",
-            "bracketSpacing": true,
-            "bracketSameLine": true,
-            "semi": false,
-            "singleQuote": true,
-            "quoteProps": "consistent",
-            "tabWidth": 2,
-            "printWidth": 100,
-            "eslintIntegration": true,
-            "arrowParens": "always",
-            "endOfLine": "lf",
-            "disableLanguages": [
-                "json",
-                "jsonc"
-            ]
-          }
-      },
+  "[vue]": {
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "octref.vetur",
+  },
+
+    "vetur.format.defaultFormatter.html": "none",
+    "vetur.format.defaultFormatter.js": "prettier",
+    "vetur.format.defaultFormatter.ts": "prettier",
+    "vetur.format.defaultFormatter.css": "prettier",
+
+    "actionButtons": {
+      "loadNpmCommands":false,
+      // "reloadButton":"♻️",
+
+      "commands": [
+        {
+          "name": "⚡ dev",
+          // "color": "green",
+          "command": "npm run dev",
+        },
+      ]
+    }
 }

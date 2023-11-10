@@ -1,0 +1,16 @@
+@charset "utf-8";
+
+// Import libs
+@import '../../node_modules/@tabler/core/dist/css/tabler.css';
+@import '../../node_modules/@tabler/core/dist/css/tabler-flags.css';
+@import '../../node_modules/@tabler/core/dist/css/tabler-payments.css';
+@import '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
+@import '../../node_modules/@tabler/core/dist/css/demo.css';
+@import 'extend.scss';
+
+// Import layout
+@import 'partials/home';
+@import 'partials/base/menus';
+@import 'partials/base/sidebar';
+
+@import 'dev';

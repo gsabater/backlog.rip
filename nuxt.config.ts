@@ -51,23 +51,8 @@ export default defineNuxtConfig({
   ],
 
   build: {
+    transpile: ['vue-sonner']
     // transpile: ['element-plus/es'],
-  },
-
-  nuxtSanctumAuth: {
-    baseUrl: 'https://apicatas.nubeka.es',
-
-    endpoints: {
-      csrf: '/api/csrf',
-      login: '/auth',
-      logout: '/api/logout',
-      user: '/api/current',
-    },
-    redirects: {
-      home: '/dashboard',
-      login: '/login',
-      logout: '/logout',
-    },
   },
 
   content: {

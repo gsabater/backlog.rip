@@ -1,4 +1,5 @@
 {
+  "useTabs": false,
   "trailingComma": "es5",
   "bracketSpacing": true,
   "bracketSameLine": true,
@@ -9,11 +10,12 @@
   "printWidth": 100,
   "eslintIntegration": true,
   "arrowParens": "always",
-  "endOfLine": "lf",
+  // "endOfLine": "lf",
   "disableLanguages": [
       "json",
       "jsonc"
   ],
+
   "vueIndentScriptAndStyle": false,
   "singleAttributePerLine": false
 }

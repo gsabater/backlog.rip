@@ -1,29 +1,45 @@
 {
+  "files.eol": "\n",
+
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+  },
+
+  "[javascript]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
   "[js]": {
     "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 
   "[vue]": {
     "editor.tabSize": 2,
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "octref.vetur",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    // "editor.defaultFormatter": "octref.vetur",
   },
 
-    "vetur.format.defaultFormatter.html": "none",
-    "vetur.format.defaultFormatter.js": "prettier",
-    "vetur.format.defaultFormatter.ts": "prettier",
-    "vetur.format.defaultFormatter.css": "prettier",
+  "eslint.validate": [
+    "vue",
+    "javascript",
+    "typescript",
+  ],
 
-    "actionButtons": {
-      "loadNpmCommands":false,
-      // "reloadButton":"♻️",
+  "actionButtons": {
+    "loadNpmCommands":false,
+    // "reloadButton":"♻️",
 
-      "commands": [
-        {
-          "name": "⚡ dev",
-          // "color": "green",
-          "command": "npm run dev",
-        },
-      ]
-    }
+    "commands": [
+      {
+        "name": "⚡ dev",
+        // "color": "green",
+        "command": "npm run dev",
+      },
+    ]
+  }
 }

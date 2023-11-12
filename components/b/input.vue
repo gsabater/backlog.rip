@@ -1,29 +1,29 @@
 <template>
-  <div class="form-floating" v-if="variant == 'floating'">
-    <input
-      type="text"
-      class="form-control"
-      v-bind="$attrs"
-      v-model="inputValue"
-      @input="$emit('input', $event.target.value)">
+  <!-- <template v-if="variant == 'floating'">
+    <div class="form-floating" >
+  </template> -->
 
-    <label class="form-label"
-      :class="{'required': required}"
-      v-if="variant == 'floating'">{{ label }}</label>
+  <label v-if="label" class="form-label" :class="{ required: required }">
+    {{ label }}
+  </label>
+
+  <input
+    type="text"
+    :class="colorAndVariant"
+    v-bind="$attrs"
+    v-model="inputValue"
+    @input="$emit('input', $event.target.value)" />
+
+  <div v-if="hint" class="small text-secondary">
+    {{ hint }}
   </div>
 
-  <template v-else>
-    <label class="form-label"
-      :class="{'required': required}"
-      v-if="variant !== 'floating'">{{ label }}</label>
-
-    <input
-      type="text"
-      class="form-control"
-      v-bind="$attrs"
-      v-model="inputValue"
-      @input="$emit('input', $event.target.value)">
-  </template>
+  <!-- <template v-if="variant == 'floating'">
+      <label class="form-label"
+        :class="{'required': required}"
+        v-if="variant == 'floating'">{{ label }}</label>
+      </div>
+    </template> -->
 </template>
 
 <script>
@@ -33,16 +33,17 @@
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Sun Nov 05 2023
+ * Modified: Sun Nov 12 2023
  **/
 
 export default {
-  name: 'Input',
+  name: 'TablerInput',
   props: {
     id: {
       type: String,
       default:
-        Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15),
     },
 
     label: {
@@ -50,9 +51,20 @@ export default {
       default: '',
     },
 
+    hint: {
+      type: String,
+      default: '',
+    },
+
     required: {
       type: Boolean,
       default: false,
+    },
+
+    size: {
+      type: String,
+      default: 'regular',
+      options: ['regular', 'sm', 'lg'],
     },
 
     variant: {
@@ -86,12 +98,12 @@ export default {
 
   computed: {
     colorAndVariant() {
-      if (this.variant == 'icon') return `btn-icon btn-${this.color}`
-      return `btn-${this.variant}-${this.color}`
+      let className = 'form-control'
+      if (this.size !== 'regular') className += ` form-control-${this.size}`
+      return className
     },
   },
 }
 </script>
 
-<style>
-</style>
+<style></style>

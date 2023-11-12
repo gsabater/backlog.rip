@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Thu Nov 09 2023
+ * Modified: Fri Nov 10 2023
  */
 
 import Dexie from 'dexie'
@@ -76,6 +76,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   init()
 
   // extend dexie
+  db.get = getValue
   db.value = getValue
 
   return {

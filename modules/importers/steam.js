@@ -19,23 +19,11 @@ export default {
     author: 'Gaspar S.',
 
     description:
-      'A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code.',
-    icon: 'https://steamstore-a.akamaihd.net/public/images/v6/logo.png',
+      'This tool will import all your games and playtime for every game on your library, including free games.',
 
-    // steps: [
-    //   {
-    //     name: 'Get your public profile',
-    //     description: '--',
-    //   },
-    //   {
-    //     name: 'Load your library',
-    //     description: '--',
-    //   },
-    //   {
-    //     name: 'Import your games',
-    //     description: '--',
-    //   },
-    // ],
+    games: true,
+    account: true,
+    wishlist: false,
 
     does: ['Your Steam library'],
     doesnot: [],

@@ -14,12 +14,48 @@ export const useUserStore = defineStore('user', {
     user: {},
     bearer: null,
 
+    api: {},
+    local: {},
+
     isLogged: false,
     isChecked: false,
     redirectTo: null,
   }),
 
   actions: {
+    //+-------------------------------------------------
+    // authenticate()
+    // Try to authenticate the current user
+    // Retrieves the user from the api
+    // Gets the local data from the browser
+    // And sets this.user
+    // -----
+    // Created on Wed Mar 22 2023
+    // Updated on Fri Nov 03 2023
+    //+-------------------------------------------------
+    async authenticate() {
+      if (this.user?.id) return this.user
+
+      await this.getApiData()
+      await this.getLocalData()
+
+      let me = { ...this.api, ...this.local }
+      me.updated_at = dates.now()
+      delete me.providers
+      delete me.settings
+
+      app.$db.config.put({
+        key: 'me',
+        value: me,
+      })
+
+      this.user = { ...me }
+      this.isLogged = true
+      this.isChecked = true
+
+      return this.user
+    },
+
     setToken(bearer = false) {
       if (!app) app = useNuxtApp()
 
@@ -30,48 +66,27 @@ export const useUserStore = defineStore('user', {
       app.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + bearer
     },
 
-    //+-------------------------------------------------
-    // authenticate()
-    // Try to authenticate the current user
-    // Returns the user from the API
-    // -----
-    // Created on Wed Mar 22 2023
-    // Updated on Fri Nov 03 2023
-    //+-------------------------------------------------
-    async authenticate() {
-      // this.initAxios()
-
+    async getApiData() {
       if (!this.bearer) this.setToken()
-      if (this.user?.id) return this.user
 
-      // let auth = useState('auth')
       const jxr = await app.$axios.get('me').catch((e) => {
         console.warn(e)
         return e.response
       })
 
       if (jxr?.status === 200) {
-        log('Response from authentication', jxr)
+        log('Userdata from API', jxr)
 
-        this.user = jxr.data
-        this.isLogged = true
-        this.isChecked = true
+        this.api = jxr.data
 
         // auth.value.user = jxr.data
         // auth.value.loggedIn = true
         // this.meta.time = new Date().getTime()
       }
+    },
 
-      let me = { ...this.user }
-      delete me.providers
-      delete me.settings
-      me.username = 'pepito'
-      app.$db.config.put({
-        key: 'me',
-        value: me,
-      })
-
-      return this.user
+    async getLocalData() {
+      this.local = await app.$db.value('config', 'me')
     },
 
     logout() {

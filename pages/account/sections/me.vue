@@ -1,7 +1,8 @@
 <template>
   <div class="card">
     <div class="card-body">
-      <h2 class="mb-4">My Account</h2>
+      <h2 class="mb-4">Profile</h2>
+      <p>This is how others will see  you</p>
       <!-- <h3 class="card-title">Profile Details</h3> -->
       <!-- <div class="row align-items-center">
         <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url(./static/avatars/000m.jpg)"></span>
@@ -15,20 +16,18 @@
       </div> -->
       <h3 class="card-title mt-4">Business Profile</h3>
       <div class="row g-3">
-        <div class="col-md">
-          <b-btn @click="ins">Doit</b-btn>
+        <div class="col-md nope-col-lg-8">
           <div class="form-label">Username</div>
-          <input type="text" class="form-control"
-            v-model="item.username">
+          <b-input
+            v-model="user.username"
+            hint="Lorem" />
         </div>
-        <div class="col-md">
-          <div class="form-label">Business ID</div>
-          <input type="text" class="form-control" value="560afc32">
+
+        <div class="col-12">
+          <b-btn @click="ins">Update profile</b-btn>
         </div>
-        <div class="col-md">
-          <div class="form-label">Location</div>
-          <input type="text" class="form-control" value="Peimei, China">
-        </div>
+
+
       </div>
       <h3 class="card-title mt-4">Email</h3>
       <p class="card-subtitle">This contact will be shown to others publicly, so choose it carefully.</p>
@@ -44,7 +43,7 @@
       </div>
       <h3 class="card-title mt-4">Password</h3>
       <p class="card-subtitle">You can set a permanent password if you don't want to use temporary login codes.</p>
-      <div>
+13956300      <div>
         <a href="#" class="btn">
           Set new password
         </a>
@@ -81,7 +80,11 @@
 export default {
   data() {
     return {
-      item: {},
+      user: {},
+
+      db: {
+        user: {},
+      },
     }
   },
   methods: {
@@ -106,12 +109,20 @@ export default {
       )
       log('hey')
     },
+
+    async getData() {
+      this.db.user = await this.$db.get('config', 'me')
+      this.user = { ...this.db.user }
+    },
+
+    async init() {
+      await this.getData()
+      // this.ui.loading = false
+    },
   },
 
   mounted() {
-    this.$db.config.get('me').then((res) => {
-      this.item = res
-    })
+    this.init()
   },
 }
 </script>

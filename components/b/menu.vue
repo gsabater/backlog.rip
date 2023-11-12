@@ -1,15 +1,25 @@
 <template>
-  <div ref="dropdown" class="dropdown-menu" :class="{'show': show}">
-    <a class="dropdown-item active" href="#">Last 7 days</a>
+  <div
+    ref="dropdown"
+    class="b-menu dropdown-menu"
+    :class="{ show: ui.show }"
+    @click="hide">
     <slot />
-    <a class="dropdown-item" href="#">Last 30 days</a>
-    <a class="dropdown-item" href="#">Last 3 months</a>
-  </div>
+    <!-- <a class="dropdown-item" href="#">Last 3 months</a> -->
+    <!-- <div
+      class="menu-area"
 
-  <pre>
-    show: {{ show }}
-    element: {{ element }}
-  </pre>
+      style="
+        background-color: rgba(255, 0, 0, 0.351);
+        width: 200%;
+        height: 300px;
+        position: absolute;
+        top: -30px;
+        left: -50%;
+        z-index: -1;
+      ">
+      </div> -->
+  </div>
 </template>
 
 <script>
@@ -18,12 +28,12 @@
  * @desc:    https://preview.tabler.io/dropdowns.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Wed Nov 08 2023
+ * Modified: Sun Nov 12 2023
  **/
 
 export default {
+  name: 'TablerMenu',
   props: {
-    name: 'dropdown-menu',
     activator: {
       type: String,
       default: 'parent',
@@ -43,9 +53,13 @@ export default {
   },
 
   data: () => ({
-    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-    show: false,
-    element: null,
+    parent: null,
+
+    ui: {
+      show: false,
+      active: false,
+      isReady: false,
+    },
   }),
 
   computed: {
@@ -67,29 +81,43 @@ export default {
 
   methods: {
     toggle(e) {
-      this.show = !this.show
+      this.ui.show = !this.ui.show
 
       e.preventDefault()
       e.stopPropagation()
     },
 
-    hide() {
-      this.show = false
+    async hide() {
+      this.ui.show = false
+      this.ui.active = false
     },
 
-    // async enableMenu() {
-    //   // if (this.activator == 'parent') this.element = this.$refs.dropdown.previousElementSibling
+    async smartHide() {
+      console.warn('out', this.ui.active, this.ui.show)
+      await delay(3000)
+      console.warn('hiding?', this.ui.active)
+      if (this.ui.active) this.hide()
+    },
 
-    //   // await delay(300)
+    async enableMenu() {
+      if (this.activator == 'parent')
+        this.parent = this.$refs.dropdown.previousElementSibling
 
-    //   // if (this.element && !this.element.dropdownId) {
-    //   //   // this.element.addEventListener('click', this.toggle)
-    //   //   this.element.dropdownId = this.id
-    //   //   console.error('added event listener', this.element, this.id)
-    //   // }
-    // },
+      if (this.parent) {
+        log('parent', this.parent)
+        this.parent.addEventListener('click', this.toggle)
+      }
+      // await delay(300)
+      // if (this.element && !this.element.dropdownId) {
+      //   // this.element.addEventListener('click', this.toggle)
+      //   this.element.dropdownId = this.id
+      //   console.error('added event listener', this.element, this.id)
+      // }
+    },
 
-    init() {
+    async init() {
+      await delay(300)
+      this.ui.isReady = true
       this.enableMenu()
       // window.addEventListener('click', this.hide)
     },
@@ -101,5 +129,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>

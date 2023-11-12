@@ -7,15 +7,15 @@
   "singleQuote": true,
   "quoteProps": "consistent",
   "tabWidth": 2,
-  "printWidth": 100,
+  "printWidth": 90,
   "eslintIntegration": true,
   "arrowParens": "always",
-  // "endOfLine": "lf",
   "disableLanguages": [
-      "json",
-      "jsonc"
+    "json",
+    "jsonc"
   ],
 
+  "htmlWhitespaceSensitivity": "ignore",
   "vueIndentScriptAndStyle": false,
   "singleAttributePerLine": false
 }

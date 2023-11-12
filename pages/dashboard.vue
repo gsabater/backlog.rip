@@ -81,6 +81,9 @@
   </fieldset>
                 <div class="card card-sm">
                   <div class="card-body">
+                    <pre>
+                      {{ $auth.user }}
+                    </pre>
                     <div class="row align-items-center">
                       <div class="col-auto">
                         <span class="bg-primary text-white avatar"><!-- Download SVG icon from http://tabler-icons.io/i/currency-dollar -->

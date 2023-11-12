@@ -94,14 +94,6 @@
             </li>
 
             <li class="nav-item">
-              <NuxtLink to="/dev/localforage" class="nav-link">
-                <span class="nav-link-title">
-                  Localforage
-                </span>
-              </NuxtLink>
-            </li>
-
-            <li class="nav-item">
               <NuxtLink to="/account" class="nav-link">
                 <span class="nav-link-title">
                   account

@@ -17,16 +17,17 @@ module.exports = {
     // "plugin:vue/vue3-essential" ... base, plus rules to prevent errors or unintended behavior.
     // "plugin:vue/vue3-strongly-recommended" ... Above, plus rules to considerably improve code readability and/or dev experience.
     // "plugin:vue/vue3-recommended" ... Above, plus rules to enforce subjective community defaults to ensure consistency.
-    "plugin:vue/vue3-essential",
-    "prettier"
+    'plugin:vue/vue3-strongly-recommended',
+    'prettier',
   ],
 
-  "ignorePatterns": [
-    "node_modules",
-    "build",
-    "dist",
-    "public"
-  ],
+  globals: {
+    useNuxtApp: true,
+    log: true,
+    delay: true,
+  },
+
+  ignorePatterns: ['node_modules', 'build', 'dist', 'public'],
 
   rules: {
     'vue/first-attribute-linebreak': 'off',
@@ -34,5 +35,5 @@ module.exports = {
     // override/add rules settings here, such as:
     // 'vue/no-unused-vars': 'error'
     // "vue/require-default-prop": "off",
-  }
+  },
 }

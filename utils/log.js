@@ -1,3 +1,11 @@
+/*
+ * @file:    \utils\log.js
+ * @desc:    ...
+ * -------------------------------------------
+ * Created Date: 26th October 2023
+ * Modified: Sun Nov 12 2023
+ */
+
 function info(...args) {
   console.log('INFO:', ...args)
 }

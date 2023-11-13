@@ -1,7 +1,8 @@
 <template>
-  <div v-if="display"
-     class="offcanvas-backdrop fade"
-    :class="{'show': show}"
+  <div
+    v-if="display"
+    class="offcanvas-backdrop fade"
+    :class="{ show: show }"
     @click="hide">
     <pre>
       <!-- {{ ID({id:123}) }} -->
@@ -15,14 +16,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th November 2023
- * Modified: Sat Nov 04 2023
+ * Modified: Mon Nov 13 2023
  **/
 
 export default {
-  props: {
-    name: 'Backdrop',
-  },
-
+  name: 'TablerBackdrop',
   data: () => ({
     show: false,
     display: false,
@@ -61,5 +59,6 @@ export default {
 <style>
 .offcanvas-backdrop.show {
   opacity: 0.54;
+  backdrop-filter: blur(4px);
 }
 </style>

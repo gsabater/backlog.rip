@@ -10,8 +10,9 @@
 
 // Import layout
 @import 'partials/home';
-@import 'partials/base/menus';
-@import 'partials/base/sidebar';
+@import 'partials/base/_menus';
+@import 'partials/base/_sidebar';
+@import 'partials/base/_lists';
 
 // Import components
 @import 'components/b-poster';

@@ -3,8 +3,10 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 12th November 2023
- * Modified: Sun Nov 12 2023
+ * Modified: Mon Nov 13 2023
  */
+
+let app = useNuxtApp()
 
 export default {
   //+-------------------------------------------------

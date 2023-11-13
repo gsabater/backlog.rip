@@ -252,7 +252,13 @@
                     <path d="M9 12h6"></path>
                     <path d="M12 9v6"></path>
                   </svg>
-                  <div class="pe-2 me-2 border-end">Status</div>
+                  <div
+                    :class="{
+                      'pe-2 me-2 border-end':
+                        !table.filters.played || !table.filters.unplayed,
+                    }">
+                    Status
+                  </div>
                   <span
                     v-if="table.filters.played && !table.filters.unplayed"
                     class="badge bg-indigo-lt">
@@ -283,7 +289,15 @@
                     <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
                   </label>
                 </b-menu>
-                <b-btn variant="ghost" color="secondary">
+                <b-btn
+                  variant="ghost"
+                  color="secondary"
+                  v-if="
+                    !table.filters.played ||
+                    !table.filters.unplayed ||
+                    table.filters.search.length > 0
+                  "
+                  @click="resetFilters">
                   Reset
                   <svg
                     style="margin-right: 0; margin-left: 5px"
@@ -305,18 +319,34 @@
                 </b-btn>
               </div>
               <div class="col text-end">
-                {{ toReview.length }} of {{ data.games.length }} games
+                <button type="button" class="btn">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="icon icon-tabler icon-tabler-checkbox"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M9 11l3 3l8 -8"></path>
+                    <path
+                      d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"></path>
+                  </svg>
+                  Toggle all
+                </button>
               </div>
             </div>
-            <pre>
-              {{ table }}
-            </pre>
             <div class="card">
-              <div class="list-group card-list-group">
+              <div class="list-group card-list-group list-group-hoverable">
                 <div
                   class="list-group-item"
                   v-for="(app, i) in toReview"
-                  :key="'game' + i">
+                  :key="'game' + i"
+                  @click="controlApp(app, i)">
                   <div class="row g-4 align-items-center">
                     <!-- <div class="col-auto fs-3">
                         <label class="form-check form-switch">
@@ -347,7 +377,8 @@
                           stroke="currentColor"
                           fill="none"
                           stroke-linecap="round"
-                          stroke-linejoin="round">
+                          stroke-linejoin="round"
+                          style="zoom: 0.9">
                           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
                           <path d="M12 12h3.5"></path>
@@ -371,7 +402,7 @@
                           <path d="M12 7v5l2 2"></path>
                           <path d="M19 19m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
                         </svg>
-                        last played {{ app.rtime_last_played }}
+                        last played {{ dates.unixToDiff(app.rtime_last_played) }}
                       </div>
                     </div>
                     <!-- <div class="col-auto text-secondary">
@@ -380,7 +411,7 @@
                     <div class="col-auto">
                       <input
                         type="checkbox"
-                        class="form-check-input"
+                        class="form-check-input disabled"
                         v-model="app.will_import" />
                     </div>
                     <!-- <div class="col-auto lh-1">
@@ -396,6 +427,24 @@
                           {{ app }}
                         </pre> -->
                 </div>
+              </div>
+            </div>
+
+            <div class="row align-items-center p-2">
+              <div class="col">
+                <small class="text-muted">
+                  {{ data.games.filter((item) => item.will_import).length }} of
+                  {{ data.games.length }} games selected
+                </small>
+              </div>
+              <div class="col col-4 text-end">
+                <b-btn variant="outline" color="secondary" @click="table.perPage += 50">
+                  View 50 more
+                </b-btn>
+
+                <b-btn variant="outline" color="secondary" @click="table.perPage = 50000">
+                  View all
+                </b-btn>
               </div>
             </div>
           </div>
@@ -568,7 +617,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Sun Nov 12 2023
+ * Modified: Mon Nov 13 2023
  **/
 
 import steam from '~/modules/importers/steam'
@@ -785,6 +834,7 @@ export default {
             has_workshop: true,
             has_market: true,
             has_dlc: true,
+            will_import: true,
             content_descriptorids: [2, 5],
             playtime_disconnected: 0,
           },
@@ -1027,6 +1077,7 @@ export default {
             playtime_mac_forever: 0,
             playtime_linux_forever: 0,
             rtime_last_played: 1558783496,
+            will_import: true,
             has_workshop: true,
             has_market: true,
             has_dlc: true,
@@ -1263,6 +1314,8 @@ export default {
       let items = []
 
       this.data.games.forEach((el, i) => {
+        if (items.length > this.table.perPage) return false
+
         if (
           this.table.filters.search !== '' &&
           el.name.toLowerCase().indexOf(this.table.filters.search.toLowerCase()) === -1
@@ -1306,6 +1359,16 @@ export default {
         message,
         data,
       })
+    },
+
+    resetFilters() {
+      this.table.filters.played = true
+      this.table.filters.unplayed = true
+      this.table.filters.search = ''
+    },
+
+    controlApp(item) {
+      this.data.games[item.index].will_import = !item.will_import
     },
 
     //+-------------------------------------------------

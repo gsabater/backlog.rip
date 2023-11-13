@@ -23,6 +23,7 @@ dayjs.extend(localizedFormat)
 export default defineNuxtPlugin((nuxtApp) => {
   return {
     provide: {
+      now: dayjs,
       day: dayjs,
       dayjs: dayjs,
       moment: dayjs,

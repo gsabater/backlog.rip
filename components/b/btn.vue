@@ -10,11 +10,11 @@
  * @desc:    https://preview.tabler.io/buttons.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Sun Nov 12 2023
+ * Modified: Mon Nov 13 2023
  **/
 
 export default {
-  name: 'tabler-btn',
+  name: 'TablerBtn',
   props: {
     variant: {
       type: String,

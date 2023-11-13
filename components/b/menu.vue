@@ -1,25 +1,22 @@
 <template>
-  <div
-    ref="dropdown"
-    class="b-menu dropdown-menu"
-    :class="{ show: ui.show }"
-    @click="hide">
+  <div ref="dropdown" class="b-menu dropdown-menu" :class="{ show: ui.show }">
     <slot />
     <!-- <a class="dropdown-item" href="#">Last 3 months</a> -->
-    <!-- <div
-      class="menu-area"
-
-      style="
-        background-color: rgba(255, 0, 0, 0.351);
-        width: 200%;
-        height: 300px;
-        position: absolute;
-        top: -30px;
-        left: -50%;
-        z-index: -1;
-      ">
-      </div> -->
   </div>
+  <div
+    v-if="ui.show"
+    @click="hide"
+    class="dropdown-control"
+    style="
+      background-color: rgba(0, 0, 0, 0.1);
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0px;
+      left: 0px;
+      z-index: 10;
+      backdrop-filter: blur(0.5px);
+    "></div>
 </template>
 
 <script>
@@ -28,7 +25,7 @@
  * @desc:    https://preview.tabler.io/dropdowns.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Sun Nov 12 2023
+ * Modified: Mon Nov 13 2023
  **/
 
 export default {
@@ -72,8 +69,10 @@ export default {
       if (this.variant) className += `-${this.variant}`
       if (this.color) className += `-${this.color}`
 
-      if (this.$attrs.hasOwnProperty('block')) className += ` w-100`
-      if (this.$attrs.hasOwnProperty('disabled')) className += ` disabled`
+      if (Object.prototype.hasOwnProperty.call(this.$attrs, 'block'))
+        className += ` w-100`
+      if (Object.prototype.hasOwnProperty.call(this.$attrs, 'disabled'))
+        className += ` disabled`
 
       return className
     },
@@ -92,34 +91,19 @@ export default {
       this.ui.active = false
     },
 
-    async smartHide() {
-      console.warn('out', this.ui.active, this.ui.show)
-      await delay(3000)
-      console.warn('hiding?', this.ui.active)
-      if (this.ui.active) this.hide()
-    },
-
     async enableMenu() {
       if (this.activator == 'parent')
         this.parent = this.$refs.dropdown.previousElementSibling
 
       if (this.parent) {
-        log('parent', this.parent)
         this.parent.addEventListener('click', this.toggle)
       }
-      // await delay(300)
-      // if (this.element && !this.element.dropdownId) {
-      //   // this.element.addEventListener('click', this.toggle)
-      //   this.element.dropdownId = this.id
-      //   console.error('added event listener', this.element, this.id)
-      // }
     },
 
     async init() {
       await delay(300)
       this.ui.isReady = true
       this.enableMenu()
-      // window.addEventListener('click', this.hide)
     },
   },
 

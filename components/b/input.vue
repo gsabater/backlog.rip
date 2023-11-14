@@ -1,29 +1,74 @@
 <template>
-  <!-- <template v-if="variant == 'floating'">
-    <div class="form-floating" >
-  </template> -->
+  <pre>
+layout: {{ layout }}
+Attrs: {{ $attrs }}
 
-  <label v-if="label" class="form-label" :class="{ required: required }">
-    {{ label }}
-  </label>
+  </pre>
 
-  <input
-    type="text"
-    :class="colorAndVariant"
-    v-bind="$attrs"
-    v-model="inputValue"
-    @input="$emit('input', $event.target.value)" />
+  <!--
+    Default layout
+  -->
+  <template v-if="layout == 'default'">
+    <label v-if="label" class="form-label" :class="{ required: required }">
+      {{ label }}
+    </label>
 
-  <div v-if="hint" class="small text-secondary">
-    {{ hint }}
+    <input
+      v-bind="$attrs"
+      v-model="inputValue"
+      :type="type"
+      :class="colorAndVariant"
+      @input="$emit('input', $event.target.value)" />
+
+    <div v-if="hint" class="small text-secondary">
+      {{ hint }}
+    </div>
+  </template>
+
+  <!--
+    Layout with icon
+  -->
+  <template v-if="layout == 'with-icon'">
+    <label v-if="label" class="form-label" :class="{ required: required }">
+      {{ label }}
+    </label>
+
+    <div class="input-icon mb-3">
+      <span class="input-icon-addon">
+        <svgs>search</svgs>
+      </span>
+      <input type="text" value="" class="form-control" placeholder="Username" />
+    </div>
+
+    <input
+      v-bind="$attrs"
+      v-model="inputValue"
+      :type="type"
+      :class="colorAndVariant"
+      @input="$emit('input', $event.target.value)" />
+
+    <div v-if="hint" class="small text-secondary">
+      {{ hint }}
+    </div>
+  </template>
+
+  <!--
+    Variant Floating input
+  -->
+  <div v-if="layout == 'floating'" class="form-floating">
+    <input
+      v-bind="$attrs"
+      v-model="inputValue"
+      :class="colorAndVariant"
+      @input="$emit('input', $event.target.value)" />
+
+    <label
+      v-if="variant == 'floating'"
+      class="form-label"
+      :class="{ required: required }">
+      {{ label }}
+    </label>
   </div>
-
-  <!-- <template v-if="variant == 'floating'">
-      <label class="form-label"
-        :class="{'required': required}"
-        v-if="variant == 'floating'">{{ label }}</label>
-      </div>
-    </template> -->
 </template>
 
 <script>
@@ -33,7 +78,7 @@
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Sun Nov 12 2023
+ * Modified: Tue Nov 14 2023
  **/
 
 export default {
@@ -44,6 +89,12 @@ export default {
       default:
         Math.random().toString(36).substring(2, 15) +
         Math.random().toString(36).substring(2, 15),
+    },
+
+    type: {
+      type: String,
+      default: 'text',
+      options: ['text', 'password', 'email', 'number'],
     },
 
     label: {
@@ -97,6 +148,11 @@ export default {
   },
 
   computed: {
+    layout() {
+      if (this.variant == 'floating') return 'floating'
+      return 'default'
+    },
+
     colorAndVariant() {
       let className = 'form-control'
       if (this.size !== 'regular') className += ` form-control-${this.size}`

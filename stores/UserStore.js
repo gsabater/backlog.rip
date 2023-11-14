@@ -102,7 +102,7 @@ export const useUserStore = defineStore('user', {
 
   getters: {
     doubleCount() {
-      return this.count * 3 || 0
+      return this.redirectTo + 'xxx' || 0
     },
 
     // upper() {

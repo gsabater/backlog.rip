@@ -1,9 +1,8 @@
 <template>
-  <pre>
+  <!-- <pre>
 layout: {{ layout }}
 Attrs: {{ $attrs }}
-
-  </pre>
+  </pre> -->
 
   <!--
     Default layout
@@ -34,18 +33,33 @@ Attrs: {{ $attrs }}
     </label>
 
     <div class="input-icon mb-3">
-      <span class="input-icon-addon">
-        <svgs>search</svgs>
+      <span class="input-icon-addon" v-if="$attrs['prepend-icon']">
+        <svgs>{{ $attrs['prepend-icon'] }}</svgs>
       </span>
-      <input type="text" value="" class="form-control" placeholder="Username" />
-    </div>
 
-    <input
-      v-bind="$attrs"
-      v-model="inputValue"
-      :type="type"
-      :class="colorAndVariant"
-      @input="$emit('input', $event.target.value)" />
+      <input
+        v-bind="$attrs"
+        v-model="inputValue"
+        :type="type"
+        :class="colorAndVariant"
+        @input="$emit('input', $event.target.value)" />
+
+      <span class="input-icon-addon" v-if="$attrs['append-icon']">
+        <svgs>{{ $attrs['append-icon'] }}</svgs>
+      </span>
+
+      <span
+        class="input-icon-addon cursor-pointer action-icon"
+        :class="{ active: inputValue !== '' }"
+        v-if="clearable"
+        @click="clear">
+        <svgs>clearable</svgs>
+      </span>
+
+      <span class="input-icon-addon" v-if="loading">
+        <div class="spinner-border spinner-border-sm text-secondary"></div>
+      </span>
+    </div>
 
     <div v-if="hint" class="small text-secondary">
       {{ hint }}
@@ -112,6 +126,16 @@ export default {
       default: false,
     },
 
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
+
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+
     size: {
       type: String,
       default: 'regular',
@@ -150,6 +174,14 @@ export default {
   computed: {
     layout() {
       if (this.variant == 'floating') return 'floating'
+      if (
+        this.$attrs['prepend-icon'] ||
+        this.$attrs['append-icon'] ||
+        this.clearable ||
+        this.loading
+      )
+        return 'with-icon'
+
       return 'default'
     },
 
@@ -159,7 +191,24 @@ export default {
       return className
     },
   },
+
+  methods: {
+    clear() {
+      this.inputValue = ''
+    },
+  },
 }
 </script>
 
-<style></style>
+<style>
+.action-icon {
+  z-index: 1000;
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+.action-icon.active {
+  opacity: 1;
+}
+</style>

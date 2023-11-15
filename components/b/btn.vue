@@ -1,7 +1,7 @@
 <template>
-  <div :class="`btn ${colorAndVariant}`">
+  <button :class="colorAndVariant">
     <slot />
-  </div>
+  </button>
 </template>
 
 <script>
@@ -10,7 +10,7 @@
  * @desc:    https://preview.tabler.io/buttons.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Mon Nov 13 2023
+ * Modified: Wed Nov 15 2023
  **/
 
 export default {
@@ -24,7 +24,7 @@ export default {
 
     color: {
       type: String,
-      default: 'primary',
+      default: '',
     },
   },
 

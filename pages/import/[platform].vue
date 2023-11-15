@@ -32,7 +32,7 @@
     <div class="container-xl">
       <div class="row row-cards">
         <div class="col-lg-8">
-          <div class="card" style="border: 2px solid #d63939" v-if="ui.showlogs">
+          <div v-if="ui.showlogs" class="card" style="border: 2px solid #d63939">
             <div class="card-body">
               <h3 class="card-title">There has been an error</h3>
               <p class="text-muted">
@@ -62,7 +62,7 @@
               <span href="#" class="step-item" data-bs-toggle="tooltip" title="Step 4 description"></span>
             </div> -->
 
-          <div class="card" style="border: 2px solid #d63939" v-if="ui.error">
+          <div v-if="ui.error" class="card" style="border: 2px solid #d63939">
             <div class="card-body">
               <h3 class="card-title">There has been an error</h3>
               <p class="text-muted">{{ ui.error }}</p>
@@ -77,7 +77,7 @@
             </div>
           </div>
 
-          <div class="col-lg-8 mx-auto mt-4" v-if="ui.loading">
+          <div v-if="ui.loading" class="col-lg-8 mx-auto mt-4">
             <div class="card">
               <div class="card-body">
                 <div class="row align-items-center">
@@ -181,8 +181,8 @@
               Waiting to start the process
             -->
           <div
-            class="container container-tight py-4"
-            v-if="process.ready && ui.step == 'prep'">
+            v-if="process.ready && ui.step == 'prep'"
+            class="container container-tight py-4">
             <div class="card card-md">
               <div class="card-body text-center">
                 <div class="mb-4">
@@ -273,30 +273,30 @@
                 <b-menu>
                   <label class="dropdown-item">
                     <input
+                      v-model="table.filters.played"
                       class="form-check-input m-0 me-2"
-                      type="checkbox"
-                      v-model="table.filters.played" />
+                      type="checkbox" />
                     Played
                     <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
                   </label>
 
                   <label class="dropdown-item">
                     <input
+                      v-model="table.filters.unplayed"
                       class="form-check-input m-0 me-2"
-                      type="checkbox"
-                      v-model="table.filters.unplayed" />
+                      type="checkbox" />
                     Not played
                     <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
                   </label>
                 </b-menu>
                 <b-btn
-                  variant="ghost"
-                  color="secondary"
                   v-if="
                     !table.filters.played ||
                     !table.filters.unplayed ||
                     table.filters.search.length > 0
                   "
+                  variant="ghost"
+                  color="secondary"
                   @click="resetFilters">
                   Reset
                   <svg
@@ -338,14 +338,15 @@
                   </svg>
                   Toggle all
                 </button>
+                <b-btn @click="doit">doit</b-btn>
               </div>
             </div>
             <div class="card">
               <div class="list-group card-list-group list-group-hoverable">
                 <div
-                  class="list-group-item"
                   v-for="(app, i) in toReview"
                   :key="'game' + i"
+                  class="list-group-item"
                   @click="controlApp(app, i)">
                   <div class="row g-4 align-items-center">
                     <!-- <div class="col-auto fs-3">
@@ -355,7 +356,7 @@
                         </label>
                       </div> -->
 
-                    <div class="col-auto" v-if="app.will_import">
+                    <div v-if="app.will_import" class="col-auto">
                       <img
                         loading="lazy"
                         :src="`https://cdn.akamai.steamstatic.com/steam/apps/${app.appid}/capsule_184x69.jpg?t=1699291031`"
@@ -410,9 +411,9 @@
                       </div> -->
                     <div class="col-auto">
                       <input
+                        v-model="app.will_import"
                         type="checkbox"
-                        class="form-check-input disabled"
-                        v-model="app.will_import" />
+                        class="form-check-input disabled" />
                     </div>
                     <!-- <div class="col-auto lh-1">
                         <div class="dropdown">
@@ -573,12 +574,12 @@
             <div class="card-body">
               <ul class="steps steps-vertical">
                 <li
-                  class="step-item"
                   v-for="(step, key) in steps"
                   :key="key"
+                  class="step-item"
                   :class="{ active: key == ui.step }">
                   <div class="h4 m-0">{{ step.action }}</div>
-                  <div class="text-muted" v-if="ui.step == key">{{ step.desc }}</div>
+                  <div v-if="ui.step == key" class="text-muted">{{ step.desc }}</div>
                 </li>
               </ul>
               <!-- <ul class="list-unstyled space-y-1">
@@ -617,7 +618,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Mon Nov 13 2023
+ * Modified: Wed Nov 15 2023
  **/
 
 import steam from '~/modules/importers/steam'
@@ -1227,6 +1228,7 @@ export default {
           },
         ], // result of the games import
         wishlist: [], // result of the wishlist import
+        library: [], // content of user library
       },
 
       // helper object to control ui
@@ -1274,7 +1276,7 @@ export default {
     },
 
     steps() {
-      let steps = {
+      const steps = {
         prep: {
           action: 'Preparation',
           desc: 'Verifying requeriments',
@@ -1311,7 +1313,7 @@ export default {
     toReview() {
       if (this.data.games.length === 0) return []
 
-      let items = []
+      const items = []
 
       this.data.games.forEach((el, i) => {
         if (items.length > this.table.perPage) return false
@@ -1331,6 +1333,52 @@ export default {
 
       return items
     },
+
+    /**
+     * {
+            appid: 211420,
+            name: 'DARK SOULS™: Prepare To Die Edition',
+            playtime_forever: 1286,
+            img_icon_url: 'a24804c6c8412c8cd9d50efd06bf03fa58ff80a9',
+            has_community_visible_stats: true,
+            playtime_windows_forever: 0,
+            playtime_mac_forever: 0,
+            playtime_linux_forever: 0,
+            rtime_last_played: 1418686838,
+            sort_as: 'Dark Souls',
+            has_workshop: false,
+            has_market: false,
+            will_import: true,
+            has_dlc: true,
+            playtime_disconnected: 0,
+          },
+     */
+    toImport() {
+      const items = []
+
+      this.data.games.forEach((el, i) => {
+        if (!el.will_import) return false
+
+        if (i % 3 === 0) el.appid = null
+
+        items.push({
+          uuid: this.$uuid(),
+          steam_id: el.appid,
+          name: el.name,
+        })
+      })
+
+      return items
+    },
+  },
+
+  mounted() {
+    this.init()
+  },
+
+  unmounted() {
+    log('importer', 'unmounted()')
+    clearInterval(this.ui.watch)
   },
 
   methods: {
@@ -1345,7 +1393,7 @@ export default {
     // Created on Fri Dec 02 2022
     //+-------------------------------------------------
     _log(message, type = 'info', data) {
-      let now = new Date().getTime()
+      const now = new Date().getTime()
       log(`${message}`)
 
       if (type === 'error') {
@@ -1384,6 +1432,9 @@ export default {
       this.ui.step = 'games'
 
       try {
+        this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
+        this._log(`📚 Library loaded`)
+
         this.data.user = await steam.getUserdata()
         this._log(`👩‍🚀 Account store userdata received`)
 
@@ -1408,6 +1459,50 @@ export default {
       this.ui.step = 'review'
     },
 
+    async doit() {
+      // const toimport = this.data.games.filter((el) => el.will_import === true)
+      console.warn('doit', this.toImport[0])
+      console.warn('we have', this.toImport.length)
+      debugger
+
+      this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
+      this._log(`📚 Library loaded`, this.data.library)
+
+      debugger
+
+      const xhr = await this.$db.games.bulkPut(this.toImport)
+      console.warn('xhr', xhr)
+    },
+
+    //+-------------------------------------------------
+    // connect()
+    // Receives the module manifest, and gives the module
+    // some data and methods to work with
+    // -----
+    // Created on Sat Oct 28 2023
+    //+-------------------------------------------------
+    async connect() {
+      log('importer', 'connect()')
+
+      let connected = false
+      this.importer = steam.manifest
+      importer = steam
+
+      log('Manifest loaded', steam.manifest)
+
+      try {
+        connected = importer.connect(this.account, _axios, this._log)
+      } catch (e) {
+        this._log('Error connecting to the importer', 'error', e)
+        return false
+      }
+
+      if (connected) {
+        this._log('🆗 Importer ready to use')
+        this.process.ready = true
+      }
+    },
+
     //+-------------------------------------------------
     // detect()
     // First contact with the importer, called automatically on mount.
@@ -1422,7 +1517,7 @@ export default {
     detect() {
       log('importer', 'detect()')
 
-      let { platform } = this.$route.params
+      const { platform } = this.$route.params
       this._log(`🎨 Platform ID: ${platform}`)
 
       if (this.$auth.user.isLogged || this.$auth.user.id == undefined) {
@@ -1459,35 +1554,6 @@ export default {
       return true
     },
 
-    //+-------------------------------------------------
-    // connect()
-    // Receives the module manifest, and gives the module
-    // some data and methods to work with
-    // -----
-    // Created on Sat Oct 28 2023
-    //+-------------------------------------------------
-    async connect() {
-      log('importer', 'connect()')
-
-      let connected = false
-      this.importer = steam.manifest
-      importer = steam
-
-      log('Manifest loaded', steam.manifest)
-
-      try {
-        connected = importer.connect(this.account, _axios, this._log)
-      } catch (e) {
-        this._log('Error connecting to the importer', 'error', e)
-        return false
-      }
-
-      if (connected) {
-        this._log('🆗 Importer ready to use')
-        this.process.ready = true
-      }
-    },
-
     async init() {
       log('importer', 'init()')
       this._log('✨ Initializing the importer')
@@ -1500,31 +1566,11 @@ export default {
       }, 1000)
     },
   },
-
-  mounted() {
-    this.init()
-  },
-
-  unmounted() {
-    log('importer', 'unmounted()')
-    clearInterval(this.ui.watch)
-  },
 }
 
 // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // // Data
 // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// let watch = null
-
-// let importer = reactive({})
-// let logs = reactive([])
-// let ui = reactive({
-//   step: null,
-
-//   loading: false,
-//   progress: 0,
-//   time: 0,
-// })
 
 // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // // Computed
@@ -1535,30 +1581,6 @@ export default {
 // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // //+-------------------------------------------------
-// // complete()
-// // Method called from the importer when
-// // the import process is complete
-// // -----
-// // Created on Thu Dec 08 2022
-// //+-------------------------------------------------
-// let complete = async () => {
-//   log(`🎉 Import process completed!`)
-
-//   ui.step = 'complete'
-// }
-
-// //+-------------------------------------------------
-// // setStep()
-// // UI utilty method
-// // -----
-// // Created on Thu Dec 08 2022
-// //+-------------------------------------------------
-// let setStep = (step) => {
-//   ui.step = step
-//   ui.time = 0
-// }
-
-// //+-------------------------------------------------
 // // init()
 // // Loads and registers the route importer
 // // And calls first register method in it
@@ -1566,14 +1588,6 @@ export default {
 // // Created on Fri Dec 02 2022
 // //+-------------------------------------------------
 // let init = () => {
-
-//   steam.register({
-//     $axios: app.$axios,
-//     log,
-//     setStep,
-//     onError,
-//     complete,
-//   })
 
 //   importer = {
 //     name: steam.name,

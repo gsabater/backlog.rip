@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Fri Nov 10 2023
+ * Modified: Wed Nov 15 2023
  */
 
 import Dexie from 'dexie'
@@ -14,8 +14,9 @@ import Dexie from 'dexie'
 //+-------------------------------------------------
 const db = new Dexie('backlog.rip')
 
-db.version(1).stores({
+db.version(2).stores({
   config: '&key,value',
+  games: '&uuid,steam_id,name',
 })
 
 function check() {

@@ -230,6 +230,10 @@
           </div>
 
           <div v-if="ui.step == 'review'">
+            <div class="row">
+              Estado de la importación revisa las aplicaciones Juegos nuevos: 0 Juegos
+              actualizados: 0 Juegos ignorados: 0
+            </div>
             <div class="row mb-3 align-items-center" style="zoom: 0.9">
               <div class="col col-4">
                 <b-input v-model="table.filters.search" placeholder="Filter..."></b-input>
@@ -618,7 +622,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Wed Nov 15 2023
+ * Modified: Thu Nov 16 2023
  **/
 
 import steam from '~/modules/importers/steam'
@@ -641,7 +645,7 @@ export default {
       logs: [], // log array for the whole process
 
       data: {
-        user: {}, // result of the user import
+        user: {}, // Raw of the imported userdata
         games: [
           {
             appid: 211420,
@@ -1226,9 +1230,12 @@ export default {
             has_dlc: true,
             playtime_disconnected: 0,
           },
-        ], // result of the games import
-        wishlist: [], // result of the wishlist import
-        library: [], // content of user library
+        ], // Raw library games from the importer
+        wishlist: [], // Raw wishlist games from the importer
+
+        library: [], // Preloaded content of user library
+        appsToReview: [], // Array of apps to review, only new apps not in library
+        appsToUpdate: [], // Array of apps already in store, that have different values in playtime or last_played
       },
 
       // helper object to control ui
@@ -1308,6 +1315,23 @@ export default {
       }
 
       return steps
+    },
+
+    /**
+     * appsToReview:
+     *  Array of apps to review, only new apps not in library
+     *  Review means the user will check the will_import or will_ignore
+     *  Also have 'exists' and 'is_updated'
+
+     * appsToImport:
+     *  Array of apps to import, only the ones with will_import or will_ignore
+
+     * appsToUpdate:
+     *  Array of apps already in store, that have different dates in playtime or last_played
+     */
+
+    appsToImport() {
+      return ['wip']
     },
 
     toReview() {
@@ -1460,13 +1484,44 @@ export default {
     },
 
     async doit() {
+      this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
+      const libraryKeys = this.data.library.reduce((acc, el) => {
+        acc[el.steam_id] = el
+        return acc
+      }, {})
+
+      this.data.appsToReview = this.data.games.filter(
+        (game) => !(game.appid in libraryKeys)
+      )
+
+      // This will be done in the future
+      // this.data.appsToUpdate = this.data.games.filter((game) => {
+      //   if (!(game.appid in libraryKeys)) return false
+
+      //   const lib = libraryKeys[game.appid]
+      //   if (lib.playtime_forever !== game.playtime_forever) return true
+      //   if (lib.rtime_last_played !== game.rtime_last_played) return true
+
+      //   return false
+      // })
+
+      // // const toimport = this.data.games.filter((el) => el.will_import === true)
+      // console.warn('doit', this.toImport[0])
+      // console.warn('we have', this.toImport.length)
+
+      // this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
+      // console.warn(`📚 Library loaded`, this.data.library, this.data.library.length)
+
+      // debugger
+
+      // const xhr = await this.$db.games.bulkPut(this.toImport)
+      // console.warn('xhr', xhr)
+    },
+
+    async import() {
       // const toimport = this.data.games.filter((el) => el.will_import === true)
       console.warn('doit', this.toImport[0])
       console.warn('we have', this.toImport.length)
-      debugger
-
-      this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
-      this._log(`📚 Library loaded`, this.data.library)
 
       debugger
 
@@ -1555,6 +1610,8 @@ export default {
     },
 
     async init() {
+      window.dev = this
+
       log('importer', 'init()')
       this._log('✨ Initializing the importer')
 

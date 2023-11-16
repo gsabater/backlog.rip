@@ -1,0 +1,17 @@
+li.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: rgba(108, 122, 145, 0.08);
+}
+
+.b-menu {
+  padding: 5px;
+}
+
+.b-menu .dropdown-item {
+  border-radius: 5px;
+  cursor: pointer;
+}

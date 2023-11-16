@@ -1,0 +1,11 @@
+.list-group-item:active,
+.list-group-item:focus,
+.list-group-item:hover {
+  background-color: rgba(var(--tblr-secondary-rgb), 0.04);
+}
+
+.list-group-item.disabled,
+.list-group-item:disabled {
+  color: #929dab;
+  background-color: rgba(var(--tblr-secondary-rgb), 0.04);
+}

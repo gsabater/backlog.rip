@@ -5,41 +5,58 @@
  *           https://codybontecou.com/how-to-use-vuetify-with-nuxt-3.html
  * -------------------------------------------
  * Created Date: 16th November 2022
- * Last Modified: Fri Feb 24 2023
- **/
-
- import ElementPlus from 'unplugin-element-plus/vite'
+ * Modified:
+ */
 
 export default defineNuxtConfig({
   ssr: false,
 
+  experimental: {
+    payloadExtraction: false,
+  },
+
   typescript: {
-    shim: false
+    shim: false,
   },
-
-  modules: [
-    ['@pinia/nuxt', { autoImports: ['defineStore', 'acceptHMRUpdate'] }],
-  ],
-
-  // Auto import pinia stores
-  imports: {
-    dirs: ['./stores']
-  },
-
-  plugins: [
-    // { src: "~/node_modules/@tabler/core/dist/js/tabler.js", mode: "client" }
-  ],
 
   // auto import components
   components: true,
 
+  modules: [
+    // '@nuxt/image',
+    '@nuxt/content',
+    '@nuxt/devtools',
+
+    '@pinia/nuxt',
+    // 'nuxt-sanctum-auth',
+    // ['@pinia/nuxt', {
+    //   autoImports: ['defineStore', 'mapStores', 'acceptHMRUpdate']
+    // }],
+  ],
+
+  // Auto import pinia stores
+  imports: {
+    dirs: ['./stores'],
+    presets: [
+      {
+        from: 'pinia',
+        imports: ['mapStores'], // ['defineStore', 'mapStores', 'acceptHMRUpdate'],
+      },
+    ],
+  },
+
   css: [
     // '@tabler/core/dist/css/tabler.css', <-- imported via scss
-    '@/assets/scss/main.scss'
+    '@/assets/scss/main.scss',
   ],
 
   build: {
-    transpile: ['element-plus/es'],
+    transpile: ['vue-sonner']
+    // transpile: ['element-plus/es'],
+  },
+
+  content: {
+    // ... options
   },
 
   webpack: {
@@ -48,10 +65,21 @@ export default defineNuxtConfig({
 
   vite: {
     define: {
-      // 'process.env.DEBUG': false,
+      'process.env.DEBUG': false,
     },
-    css: {
+
+    css: {},
+
+    plugins: [],
+  },
+
+  devtools: {
+    enabled: false,
+    // VS Code Server options
+    vscode: {},
+
+    timeline: {
+      enabled: true,
     },
-    plugins: [ElementPlus()],
   },
 })

@@ -1,27 +1,40 @@
 {
-    "editor.tabSize": 2,
+  "files.eol": "\n",
 
-    "vetur.validation.template": false,
-    "vetur.format.defaultFormatterOptions": {
-        "js-beautify-html": {
-            "wrap_attributes": "force-expand-multiline"
-          },
-        "prettier": {
-            "trailingComma": "es5",
-            "bracketSpacing": true,
-            "bracketSameLine": true,
-            "semi": false,
-            "singleQuote": true,
-            "quoteProps": "consistent",
-            "tabWidth": 2,
-            "printWidth": 100,
-            "eslintIntegration": true,
-            "arrowParens": "always",
-            "endOfLine": "lf",
-            "disableLanguages": [
-                "json",
-                "jsonc"
-            ]
-          }
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+  },
+
+  "eslint.validate": [
+    "vue",
+    "javascript",
+    "typescript",
+  ],
+
+  "[javascript]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "[vue]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    // "editor.defaultFormatter": "octref.vetur",
+  },
+
+  "actionButtons": {
+    "loadNpmCommands":false,
+    // "reloadButton":"♻️",
+
+    "commands": [
+      {
+        "name": "⚡ dev",
+        // "color": "green",
+        "command": "npm run dev",
       },
+    ]
+  }
 }

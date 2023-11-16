@@ -1,5 +1,6 @@
-# Nuxt 3 Minimal Starter
+# Backlog.rip
 
+Based on a Nuxt 3 project.
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
 ## Setup
@@ -19,7 +20,7 @@ pnpm install
 
 ## Development Server
 
-Start the development server on http://localhost:3000
+Start the development server on http://localhost:1337
 
 ```bash
 npm run dev
@@ -32,11 +33,3 @@ Build the application for production:
 ```bash
 npm run build
 ```
-
-Locally preview production build:
-
-```bash
-npm run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.

@@ -230,10 +230,114 @@
           </div>
 
           <div v-if="ui.step == 'review'">
-            <div class="row">
-              Estado de la importación revisa las aplicaciones Juegos nuevos: 0 Juegos
-              actualizados: 0 Juegos ignorados: 0
+            <div class="row row-deck row-cards mb-3">
+              <div class="col-sm-6 col-lg-4">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center">
+                      <div class="subheader">
+                        Found in your account
+                        <!-- Adding to your library -->
+                      </div>
+                    </div>
+                    <!-- <div class="h1 mb-3">
+                      {{ data.games.length }} / {{ data.library.length }}
+                      + 44% (todo)
+                    </div> -->
+                    <div class="d-flex align-items-baseline">
+                      <div class="h2 mb-0 me-2 d-flex align-items-center">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="icon icon-tabler icon-tabler-cards mr-2"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          stroke-width="2"
+                          stroke="currentColor"
+                          fill="none"
+                          stroke-linecap="round"
+                          stroke-linejoin="round">
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path
+                            d="M3.604 7.197l7.138 -3.109a.96 .96 0 0 1 1.27 .527l4.924 11.902a1 1 0 0 1 -.514 1.304l-7.137 3.109a.96 .96 0 0 1 -1.271 -.527l-4.924 -11.903a1 1 0 0 1 .514 -1.304z" />
+                          <path d="M15 4h1a1 1 0 0 1 1 1v3.5" />
+                          <path
+                            d="M20 6c.264 .112 .52 .217 .768 .315a1 1 0 0 1 .53 1.311l-2.298 5.374" />
+                        </svg>
+                        {{ data.games.length }} games
+                      </div>
+                      <!-- <div class="me-auto">
+                        <span class="text-green d-inline-flex align-items-center lh-1">
+                          8%
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="icon ms-1"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M3 17l6 -6l4 4l8 -8"></path>
+                            <path d="M14 7l7 0l0 7"></path>
+                          </svg>
+                        </span>
+                      </div> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-4">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center">
+                      <div class="subheader">New games found</div>
+                    </div>
+                    <div class="h2 mb-3 d-flex align-items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="icon icon-tabler icon-tabler-new-section mr-2"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M9 12l6 0" />
+                        <path d="M12 9l0 6" />
+                        <path
+                          d="M4 6v-1a1 1 0 0 1 1 -1h1m5 0h2m5 0h1a1 1 0 0 1 1 1v1m0 5v2m0 5v1a1 1 0 0 1 -1 1h-1m-5 0h-2m-5 0h-1a1 1 0 0 1 -1 -1v-1m0 -5v-2m0 -5" />
+                      </svg>
+                      {{ data.appsToReview.length }}
+                    </div>
+                    <b-btn block>Review</b-btn>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-4">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col">
+                        <div class="subheader">Review</div>
+                        <div class="h1 mb-3">{{ data.appsToUpdate.length }} updating</div>
+                      </div>
+                      <div class="col">
+                        <div class="subheader">Review</div>
+                        <div class="h1 mb-3">{{ appsToImport.length }} importing</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+
             <div class="row mb-3 align-items-center" style="zoom: 0.9">
               <div class="col col-4">
                 <b-input v-model="table.filters.search" placeholder="Filter..."></b-input>

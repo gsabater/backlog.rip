@@ -16,7 +16,7 @@ const db = new Dexie('backlog.rip')
 
 db.version(3).stores({
   // User stores
-  account: '&uuid,steam,epic',
+  account: 'uuid,steam',
   config: '&key,value',
 
   // Database stores

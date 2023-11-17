@@ -16,6 +16,7 @@ export const useUserStore = defineStore('user', {
 
     api: {},
     local: {},
+    config: {},
 
     isLogged: false,
     isChecked: false,
@@ -35,37 +36,28 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     async authenticate() {
       if (this.user?.id) return this.user
+      if (!app) app = useNuxtApp()
 
       await this.getLocalData()
       await this.getApiData()
 
       let me = { ...this.api, ...this.local }
-      delete me.providers
       delete me.settings
+      delete me.providers
+      this.storeAccount(me)
 
-      // me.updated_at = dates.now()
-      // if(this.local.updated_at !== this.api.updated_at) {
-      //   this.syncLocal()
-      // }
-      // debugger
-
-      // app.$db.config.put({
-      //   key: 'me',
-      //   value: me,
-      // })
-
+      me.config = this.config
       this.user = { ...me }
+
       console.warn('👤 User is authenticated', this.user)
-      debugger
+
       this.isLogged = true
       this.isChecked = true
 
-      return this.user
+      return true
     },
 
     setToken(bearer = false) {
-      if (!app) app = useNuxtApp()
-
       if (!bearer) bearer = useCookie('auth._token.local').value
       else useCookie('auth._token.local').value = bearer
 
@@ -81,14 +73,14 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     async getLocalData() {
       let config = await app.$db.config.toArray()
-      this.local = await app.$db.account.toArray()
+      this.local = await app.$db.account.get('me')
 
       let _config = config.reduce((acc, row) => {
         acc[row.key] = row.value
         return acc
       }, {})
 
-      this.local.config = _config
+      this.config = _config
     },
 
     //+-------------------------------------------------
@@ -106,10 +98,29 @@ export const useUserStore = defineStore('user', {
       })
 
       if (jxr?.status === 200) {
-        this.api = jxr.data.steam_data = t
+        this.api = jxr.data
 
-        this.local.log('🌐 Userdata from API', jxr)
+        let provider = jxr.data.providers.find((p) => p.provider === 'steam')
+        this.local.steam_data = provider?.data || {}
+
+        log('🧭 Userdata from API', jxr.data)
       }
+    },
+
+    //+-------------------------------------------------
+    // storeAccount()
+    // Store the resulting userdata in the local database
+    // -----
+    // Created on Fri Nov 17 2023
+    //+-------------------------------------------------
+    async storeAccount(me) {
+      let json = JSON.parse(JSON.stringify(me))
+      await app.$db.account.put({
+        ...json,
+        uuid: 'me',
+      })
+
+      // me.updated_at = dates.now()
     },
 
     logout() {

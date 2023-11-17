@@ -252,7 +252,7 @@
                   <div class="card-body">
                     <div class="d-flex align-items-center">
                       <div class="subheader">
-                        Found in your account
+                        In your account
                         <!-- Adding to your library -->
                       </div>
                     </div>
@@ -312,7 +312,7 @@
                       </svg>
                       {{ data.appsToReview.length }}
                     </div>
-                    <b-btn block>Review</b-btn>
+                    <!-- <b-btn block>Review</b-btn> -->
                   </div>
                 </div>
               </div>
@@ -321,12 +321,52 @@
                   <div class="card-body">
                     <div class="row">
                       <div class="col">
-                        <div class="subheader">Review</div>
-                        <div class="h1 mb-3">{{ data.appsToUpdate.length }} updating</div>
+                        <div class="d-flex align-items-center">
+                          <div class="subheader">updating</div>
+                        </div>
+                        <div class="h2 mb-3 d-flex align-items-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-refresh mr-2"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
+                            <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
+                          </svg>
+                          {{ data.appsToUpdate.length }}
+                        </div>
                       </div>
                       <div class="col">
-                        <div class="subheader">Review</div>
-                        <div class="h1 mb-3">{{ appsToImport.length }} importing</div>
+                        <div class="d-flex align-items-center">
+                          <div class="subheader">importing</div>
+                        </div>
+                        <div class="h2 mb-3 d-flex align-items-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-step-into mr-2"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M12 3l0 12" />
+                            <path d="M16 11l-4 4" />
+                            <path d="M8 11l4 4" />
+                            <path d="M12 20m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                          </svg>
+                          {{ appsToImport.length }}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -423,7 +463,7 @@
                 </b-btn>
               </div>
               <div class="col text-end">
-                <button type="button" class="btn">
+                <!-- <button type="button" class="btn">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="icon icon-tabler icon-tabler-checkbox"
@@ -442,7 +482,8 @@
                   </svg>
                   Toggle all
                 </button>
-                <b-btn @click="doit">doit</b-btn>
+                <b-btn @click="doit">doit</b-btn> -->
+                <b-btn color="success">Finish and save</b-btn>
               </div>
             </div>
             <div class="card">
@@ -518,6 +559,27 @@
                         v-model="app.will_import"
                         type="checkbox"
                         class="form-check-input disabled" />
+                    </div>
+                    <div class="col-auto text-muted">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="icon icon-tabler icon-tabler-box-off"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path
+                          d="M17.765 17.757l-5.765 3.243l-8 -4.5v-9l2.236 -1.258m2.57 -1.445l3.194 -1.797l8 4.5v8.5" />
+                        <path d="M14.561 10.559l5.439 -3.059" />
+                        <path d="M12 12v9" />
+                        <path d="M12 12l-8 -4.5" />
+                        <path d="M3 3l18 18" />
+                      </svg>
                     </div>
                     <!-- <div class="col-auto lh-1">
                         <div class="dropdown">
@@ -675,6 +737,7 @@
                 </li>
               </ul>
             </div>
+
             <div class="card-body">
               <ul class="steps steps-vertical">
                 <li
@@ -697,6 +760,9 @@
                     {{ el }}
                   </li>
                 </ul> -->
+            </div>
+            <div class="card-body">
+              <b-btn block color="success">Finish</b-btn>
             </div>
             <div class="card-footer text-muted">
               This importer is open source. If you want to know more or are concerned

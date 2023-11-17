@@ -10,7 +10,7 @@
  * @desc:    https://preview.tabler.io/buttons.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Wed Nov 15 2023
+ * Modified: Fri Nov 17 2023
  **/
 
 export default {
@@ -35,8 +35,8 @@ export default {
 
       let className = 'btn'
 
-      if (this.variant) className += `-${this.variant}`
-      if (this.color) className += `-${this.color}`
+      if (this.variant) className += ` btn-${this.variant}`
+      if (this.color) className += ` btn-${this.color}`
 
       if (this.$attrs.hasOwnProperty('block')) className += ` w-100`
       if (this.$attrs.hasOwnProperty('disabled')) className += ` disabled`

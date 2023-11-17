@@ -12,14 +12,25 @@ import { useState, useRuntimeConfig, useCookie } from '#app'
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const nuxtApp = useNuxtApp()
   const userStore = useUserStore()
+  const dataStore = useDataStore()
+
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Authenticate the user
+  // Tries to determinate if the user has an account
+  // either locally or online
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   let current = false
-
   if (userStore?.isChecked === false) {
     await userStore.authenticate()
   }
 
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Preload
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   if (userStore.isLogged) {
+    dataStore.init()
     // nuxtApp.$db.init()
   }
 

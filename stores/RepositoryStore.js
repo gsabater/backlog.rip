@@ -3,10 +3,10 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Fri Nov 03 2023
+ * Modified: Fri Nov 17 2023
  */
 
-const app = useNuxtApp()
+let app = null
 
 export const useRepositoryStore = defineStore('productos', {
   state: () => ({

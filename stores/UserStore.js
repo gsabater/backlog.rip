@@ -36,20 +36,27 @@ export const useUserStore = defineStore('user', {
     async authenticate() {
       if (this.user?.id) return this.user
 
-      await this.getApiData()
       await this.getLocalData()
+      await this.getApiData()
 
       let me = { ...this.api, ...this.local }
-      me.updated_at = dates.now()
       delete me.providers
       delete me.settings
 
-      app.$db.config.put({
-        key: 'me',
-        value: me,
-      })
+      // me.updated_at = dates.now()
+      // if(this.local.updated_at !== this.api.updated_at) {
+      //   this.syncLocal()
+      // }
+      // debugger
+
+      // app.$db.config.put({
+      //   key: 'me',
+      //   value: me,
+      // })
 
       this.user = { ...me }
+      console.warn('👤 User is authenticated', this.user)
+      debugger
       this.isLogged = true
       this.isChecked = true
 
@@ -66,6 +73,30 @@ export const useUserStore = defineStore('user', {
       app.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + bearer
     },
 
+    //+-------------------------------------------------
+    // getLocalData()
+    // Gets the local "account" database
+    // -----
+    // Created on Fri Nov 17 2023
+    //+-------------------------------------------------
+    async getLocalData() {
+      let config = await app.$db.config.toArray()
+      this.local = await app.$db.account.toArray()
+
+      let _config = config.reduce((acc, row) => {
+        acc[row.key] = row.value
+        return acc
+      }, {})
+
+      this.local.config = _config
+    },
+
+    //+-------------------------------------------------
+    // getApiData()
+    // Gets the userdata from the API
+    // -----
+    // Created on Fri Nov 17 2023
+    //+-------------------------------------------------
     async getApiData() {
       if (!this.bearer) this.setToken()
 
@@ -75,18 +106,10 @@ export const useUserStore = defineStore('user', {
       })
 
       if (jxr?.status === 200) {
-        log('Userdata from API', jxr)
+        this.api = jxr.data.steam_data = t
 
-        this.api = jxr.data
-
-        // auth.value.user = jxr.data
-        // auth.value.loggedIn = true
-        // this.meta.time = new Date().getTime()
+        this.local.log('🌐 Userdata from API', jxr)
       }
-    },
-
-    async getLocalData() {
-      this.local = await app.$db.value('config', 'me')
     },
 
     logout() {

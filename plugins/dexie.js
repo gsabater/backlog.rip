@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Wed Nov 15 2023
+ * Modified: Fri Nov 17 2023
  */
 
 import Dexie from 'dexie'
@@ -14,8 +14,12 @@ import Dexie from 'dexie'
 //+-------------------------------------------------
 const db = new Dexie('backlog.rip')
 
-db.version(2).stores({
+db.version(3).stores({
+  // User stores
+  account: '&uuid,steam,epic',
   config: '&key,value',
+
+  // Database stores
   games: '&uuid,steam_id,name',
 })
 

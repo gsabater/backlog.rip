@@ -3,16 +3,21 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue Nov 14 2023
+ * Modified: Fri Nov 17 2023
  */
 
 import { useRepositoryStore } from './RepositoryStore'
 
 let data = []
-const app = useNuxtApp()
+let library = []
+let wishlist = []
+
+// const app = useNuxtApp()
 
 export const useDataStore = defineStore('data', {
   state: () => ({
+    isLoaded: false,
+
     meta: {
       time: 0,
       timeout: 5 * 60 * 1000,
@@ -21,6 +26,20 @@ export const useDataStore = defineStore('data', {
   }),
 
   actions: {
+    //+-------------------------------------------------
+    // loadLibrary()
+    // Loads the entire library of indexedDB into memory
+    // Should be called again after an import process
+    // -----
+    // Created on Fri Nov 17 2023
+    //+-------------------------------------------------
+    async loadLibrary() {
+      let $nuxt = useNuxtApp()
+
+      library = await $nuxt.$db.games.toArray()
+      log('🎴 User library is ready', library[0], library.length)
+    },
+
     //+-------------------------------------------------
     // function()
     //
@@ -48,8 +67,15 @@ export const useDataStore = defineStore('data', {
     // Created on Wed Apr 26 2023
     //+-------------------------------------------------
     async topGames(params) {
-      const jxr = await app.$axios.get(`repository/top-games`)
-      if (jxr.status) return jxr.data
+      // const jxr = await app.$axios.get(`repository/top-games`)
+      // if (jxr.status) return jxr.data
+    },
+
+    async init() {
+      if (this.isLoaded) return
+
+      await this.loadLibrary()
+      log('💽 Repositories loaded')
     },
   },
 })

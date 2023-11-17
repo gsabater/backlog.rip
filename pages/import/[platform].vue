@@ -13,7 +13,23 @@
   <!-- <li>store each in every category</li>
   <li>get game data from api</li>
   <li>end</li>
-</ul> -->
+</ul>
+
+
+    /**
+     * appsToReview:
+     *  Array of apps to review, only new apps not in library
+     *  Review means the user will check the will_import or will_ignore
+     *  Also have 'exists' and 'is_updated'
+
+     * appsToImport:
+     *  Array of apps to import, only the ones with will_import or will_ignore
+
+     * appsToUpdate:
+     *  Array of apps already in store, that have different dates in playtime or last_played
+     */
+
+-->
 
   <!-- Page header -->
   <!-- <div class="page-header d-print-none">
@@ -187,7 +203,7 @@
               <div class="card-body text-center">
                 <div class="mb-4">
                   <h2 class="card-title mb-0">Steam library</h2>
-                  <p class="text-muted">Click to begin the import</p>
+                  <p class="text-muted">Click to begin the scan</p>
                 </div>
                 <div class="mb-4">
                   <span
@@ -202,7 +218,7 @@
                   </p>
                 </div>
                 <div>
-                  <div class="btn btn-primary w-100" @click="doImport">
+                  <div class="btn btn-primary w-100" @click="scan">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="icon icon-tabler icon-tabler-arrows-transfer-down"
@@ -222,7 +238,7 @@
                       <path d="M17 21v-2"></path>
                       <path d="M17 15v-2"></path>
                     </svg>
-                    Update your {{ importer.store }} library
+                    Update your {{ module.store }} library
                   </div>
                 </div>
               </div>
@@ -266,26 +282,6 @@
                         </svg>
                         {{ data.games.length }} games
                       </div>
-                      <!-- <div class="me-auto">
-                        <span class="text-green d-inline-flex align-items-center lh-1">
-                          8%
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="icon ms-1"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            stroke-width="2"
-                            stroke="currentColor"
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M3 17l6 -6l4 4l8 -8"></path>
-                            <path d="M14 7l7 0l0 7"></path>
-                          </svg>
-                        </span>
-                      </div> -->
                     </div>
                   </div>
                 </div>
@@ -583,19 +579,19 @@
                 </div>
                 <div>
                   <small class="text-muted">
-                    v.{{ importer.version }} by {{ importer.author }}
+                    v.{{ module.version }} by {{ module.author }}
                   </small>
-                  <h3 class="lh-1">{{ importer.name }}</h3>
+                  <h3 class="lh-1">{{ module.name }}</h3>
                 </div>
               </div>
               <div class="text-muted mb-1">
-                {{ importer.description }}
+                {{ module.description }}
               </div>
             </div>
             <div class="card-body d-none">
               <h4 class="mb-1">What will be loaded</h4>
               <ul class="list-unstyled space-y-1">
-                <li v-for="(el, i) in importer.does" :key="i">
+                <li v-for="(el, i) in module.does" :key="i">
                   <!-- Download SVG icon from http://tabler-icons.io/i/check -->
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -616,7 +612,7 @@
               </ul>
               <h4 class="mb-1">What cannot be imported</h4>
               <ul class="list-unstyled space-y-1">
-                <li v-for="(el, i) in importer.doesnot" :key="i">
+                <li v-for="(el, i) in module.doesnot" :key="i">
                   <!-- Download SVG icon from http://tabler-icons.io/i/x -->
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -691,7 +687,7 @@
                 </li>
               </ul>
               <!-- <ul class="list-unstyled space-y-1">
-                  <li v-for="(el, i) in importer.steps" :key="i">
+                  <li v-for="(el, i) in module.steps" :key="i">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green" width="24" height="24"
                       viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                       stroke-linejoin="round">
@@ -712,7 +708,7 @@
           </div>
 
           <!-- <pre>
-            {{ importer.manifest }}
+            {{ module.manifest }}
             </pre> -->
         </div>
       </div>
@@ -726,7 +722,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Thu Nov 16 2023
+ * Modified: Fri Nov 17 2023
  **/
 
 import steam from '~/modules/importers/steam'
@@ -745,7 +741,7 @@ export default {
   data() {
     return {
       account: {}, // The user account -> store to import
-      importer: {}, // the importer instance, plugin or module
+      module: {}, // the plugin / module instance
       logs: [], // log array for the whole process
 
       data: {
@@ -1334,8 +1330,8 @@ export default {
             has_dlc: true,
             playtime_disconnected: 0,
           },
-        ], // Raw library games from the importer
-        wishlist: [], // Raw wishlist games from the importer
+        ], // Raw library games from the scan process
+        wishlist: [], // Raw wishlist games from the scan
 
         library: [], // Preloaded content of user library
         appsToReview: [], // Array of apps to review, only new apps not in library
@@ -1410,29 +1406,16 @@ export default {
         },
       }
 
-      if (this.importer?.games !== true) {
+      if (this.module?.games !== true) {
         delete steps.games
       }
 
-      if (this.importer?.wishlist !== true) {
+      if (this.module?.wishlist !== true) {
         delete steps.wishlist
       }
 
       return steps
     },
-
-    /**
-     * appsToReview:
-     *  Array of apps to review, only new apps not in library
-     *  Review means the user will check the will_import or will_ignore
-     *  Also have 'exists' and 'is_updated'
-
-     * appsToImport:
-     *  Array of apps to import, only the ones with will_import or will_ignore
-
-     * appsToUpdate:
-     *  Array of apps already in store, that have different dates in playtime or last_played
-     */
 
     appsToImport() {
       return ['wip']
@@ -1548,13 +1531,13 @@ export default {
     },
 
     //+-------------------------------------------------
-    // doImport()
+    // import()
     // Main call that will execute the importing methods
     // available on the module
     // -----
     // Created on Thu Dec 01 2022
     //+-------------------------------------------------
-    async doImport() {
+    async scan() {
       log(`🧶 Starting data import...`)
       this.ui.loading = true
       this.ui.step = 'games'
@@ -1583,53 +1566,70 @@ export default {
     },
 
     review() {
-      this.data.games = this.data.games.slice(0, 30)
       this.ui.step = 'review'
-    },
 
-    async doit() {
-      this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
       const libraryKeys = this.data.library.reduce((acc, el) => {
         acc[el.steam_id] = el
         return acc
       }, {})
 
+      console.warn('reviewing libraryKeys', libraryKeys)
+
       this.data.appsToReview = this.data.games.filter(
         (game) => !(game.appid in libraryKeys)
       )
 
+      console.warn('reviewing appsToReview', this.data.appsToReview)
+    },
+
+    async doit() {
       // This will be done in the future
       // this.data.appsToUpdate = this.data.games.filter((game) => {
       //   if (!(game.appid in libraryKeys)) return false
-
       //   const lib = libraryKeys[game.appid]
       //   if (lib.playtime_forever !== game.playtime_forever) return true
       //   if (lib.rtime_last_played !== game.rtime_last_played) return true
-
       //   return false
       // })
-
       // // const toimport = this.data.games.filter((el) => el.will_import === true)
       // console.warn('doit', this.toImport[0])
       // console.warn('we have', this.toImport.length)
-
       // this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
       // console.warn(`📚 Library loaded`, this.data.library, this.data.library.length)
-
       // debugger
-
       // const xhr = await this.$db.games.bulkPut(this.toImport)
       // console.warn('xhr', xhr)
     },
 
-    async import() {
+    async store() {
+      // const randomGames = []
+      // for (let i = 0; i < 3; i++) {
+      //   const randomIndex = Math.floor(Math.random() * this.data.appsToReview.length)
+      //   const pick = this.data.appsToReview[randomIndex]
+      //   randomGames.push({
+      //     uuid: this.$uuid(),
+      //     steam_id: pick.appid,
+      //     name: pick.name,
+      //   })
+      //   // this.data.appsToReview.splice(randomIndex, 1)
+      // }
+
+      const formattedGames = []
+      this.data.appsToReview.forEach((el) => {
+        formattedGames.push({
+          uuid: this.$uuid(),
+          steam_id: el.appid,
+          name: el.name,
+        })
+      })
+
       // const toimport = this.data.games.filter((el) => el.will_import === true)
-      console.warn('doit', this.toImport[0])
-      console.warn('we have', this.toImport.length)
+      console.warn('doit', formattedGames[0])
+      console.warn('we have', formattedGames.length)
 
       debugger
 
-      const xhr = await this.$db.games.bulkPut(this.toImport)
+      const xhr = await this.$db.games.bulkPut(formattedGames)
       console.warn('xhr', xhr)
     },
 
@@ -1716,6 +1716,14 @@ export default {
     async init() {
       window.dev = this
 
+      /**  */
+      console.warn('1. detect -> connect')
+      console.warn('2. scan')
+      console.warn('3. review')
+      console.warn('4. doit / store')
+
+      /**  */
+
       log('importer', 'init()')
       this._log('✨ Initializing the importer')
 
@@ -1740,35 +1748,4 @@ export default {
 // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // // Methods
 // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// //+-------------------------------------------------
-// // init()
-// // Loads and registers the route importer
-// // And calls first register method in it
-// // -----
-// // Created on Fri Dec 02 2022
-// //+-------------------------------------------------
-// let init = () => {
-
-//   importer = {
-//     name: steam.name,
-//     icon: steam.icon,
-//     author: steam.author,
-//     version: steam.version,
-//     description: steam.description,
-
-//     steps: steam.steps,
-//     imports: steam.imports,
-//     not_imports: steam.not_imports,
-//   }
-
-//   ui.step = 0
-//   log('🆗 Importer ready to use')
-//   console.warn(importer)
-
-//   watch = setInterval(() => {
-//     ui.time++
-//     if (ui.time <= 3) console.warn(ui.time)
-//   }, 1000)
-// }
 </script>

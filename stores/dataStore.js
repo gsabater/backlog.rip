@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Fri Nov 17 2023
+ * Modified: Sat Nov 18 2023
  */
 
 import { useRepositoryStore } from './RepositoryStore'
@@ -74,7 +74,7 @@ export const useDataStore = defineStore('data', {
     async init() {
       if (this.isLoaded) return
 
-      await this.loadLibrary()
+      // await this.loadLibrary()
       log('💽 Repositories loaded')
     },
   },

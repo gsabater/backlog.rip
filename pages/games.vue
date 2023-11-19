@@ -1,18 +1,9 @@
 <template>
   <div class="page-body">
     <div class="container-xl">
+      <search-interface></search-interface>
       <div class="row justify-content-center">
         <div class="col-8">
-          <!-- <h3>Account History bby</h3>
-          <games-browser
-            :items="games"
-            layout="list"
-            layouts="list/grid/sheety"></games-browser> -->
-
-          <hr />
-          <h2>Filters interface</h2>
-          <search-interface></search-interface>
-
           <h2>Data store</h2>
           <b-btn @click="test">test</b-btn>
           <b-btn @click="list">list</b-btn>

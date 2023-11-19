@@ -39,7 +39,7 @@ export const useUserStore = defineStore('user', {
       if (!app) app = useNuxtApp()
 
       await this.getLocalData()
-      await this.getApiData()
+      // await this.getApiData()
 
       let me = { ...this.api, ...this.local }
       delete me.settings

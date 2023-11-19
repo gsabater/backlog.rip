@@ -32,8 +32,8 @@ Attrs: {{ $attrs }}
       {{ label }}
     </label>
 
-    <div class="input-icon mb-3">
-      <span class="input-icon-addon" v-if="$attrs['prepend-icon']">
+    <div class="input-icon">
+      <span v-if="$attrs['prepend-icon']" class="input-icon-addon">
         <svgs>{{ $attrs['prepend-icon'] }}</svgs>
       </span>
 
@@ -44,19 +44,19 @@ Attrs: {{ $attrs }}
         :class="colorAndVariant"
         @input="$emit('input', $event.target.value)" />
 
-      <span class="input-icon-addon" v-if="$attrs['append-icon']">
+      <span v-if="$attrs['append-icon']" class="input-icon-addon">
         <svgs>{{ $attrs['append-icon'] }}</svgs>
       </span>
 
       <span
+        v-if="clearable"
         class="input-icon-addon cursor-pointer action-icon"
         :class="{ active: inputValue !== '' }"
-        v-if="clearable"
         @click="clear">
         <svgs>clearable</svgs>
       </span>
 
-      <span class="input-icon-addon" v-if="loading">
+      <span v-if="loading" class="input-icon-addon">
         <div class="spinner-border spinner-border-sm text-secondary"></div>
       </span>
     </div>
@@ -92,7 +92,7 @@ Attrs: {{ $attrs }}
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Tue Nov 14 2023
+ * Modified: Sun Nov 19 2023
  **/
 
 export default {

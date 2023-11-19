@@ -202,14 +202,14 @@
             <div class="card card-md">
               <div class="card-body text-center">
                 <div class="mb-4">
-                  <h2 class="card-title mb-0">Steam library</h2>
-                  <p class="text-muted">Click to begin the scan</p>
+                  <h2 class="card-title mb-0">Your Steam library</h2>
+                  <p class="text-muted">Click to begin to scan your games</p>
                 </div>
                 <div class="mb-4">
                   <span
                     class="avatar avatar-xl mb-3"
                     :style="`background-image: url('${
-                      account.provider?.data?.avatarfull || ''
+                      account.steam_data?.avatarfull || ''
                     }')`"></span>
                   <h3 class="mb-0">{{ account.username }}</h3>
                   <p class="text-muted">
@@ -219,25 +219,7 @@
                 </div>
                 <div>
                   <div class="btn btn-primary w-100" @click="scan">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="icon icon-tabler icon-tabler-arrows-transfer-down"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                      stroke="currentColor"
-                      fill="none"
-                      stroke-linecap="round"
-                      stroke-linejoin="round">
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                      <path d="M17 3v6"></path>
-                      <path d="M10 18l-3 3l-3 -3"></path>
-                      <path d="M7 21v-18"></path>
-                      <path d="M20 6l-3 -3l-3 3"></path>
-                      <path d="M17 21v-2"></path>
-                      <path d="M17 15v-2"></path>
-                    </svg>
+                    <Icon class="me-2">ArrowsTransferDown</Icon>
                     Update your {{ module.store }} library
                   </div>
                 </div>
@@ -247,6 +229,14 @@
 
           <div v-if="ui.step == 'review'">
             <div class="row row-deck row-cards mb-3">
+              <div class="col-12">
+                <pre>
+                  {{ data.library }}
+                  {{ data.appsToReview }}
+
+                  {{ appsToIgnore }}
+                </pre>
+              </div>
               <div class="col-sm-6 col-lg-4">
                 <div class="card">
                   <div class="card-body">
@@ -264,7 +254,7 @@
                       <div class="h2 mb-0 me-2 d-flex align-items-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          class="icon icon-tabler icon-tabler-cards mr-2"
+                          class="icon icon-tabler icon-tabler-cards mr-2 text-muted mt-1"
                           width="24"
                           height="24"
                           viewBox="0 0 24 24"
@@ -280,7 +270,7 @@
                           <path
                             d="M20 6c.264 .112 .52 .217 .768 .315a1 1 0 0 1 .53 1.311l-2.298 5.374" />
                         </svg>
-                        {{ data.games.length }} games
+                        {{ data.library.length }} games
                       </div>
                     </div>
                   </div>
@@ -295,7 +285,7 @@
                     <div class="h2 mb-3 d-flex align-items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="icon icon-tabler icon-tabler-new-section mr-2"
+                        class="icon icon-tabler icon-tabler-new-section mr-2 text-muted mt-1"
                         width="24"
                         height="24"
                         viewBox="0 0 24 24"
@@ -310,7 +300,7 @@
                         <path
                           d="M4 6v-1a1 1 0 0 1 1 -1h1m5 0h2m5 0h1a1 1 0 0 1 1 1v1m0 5v2m0 5v1a1 1 0 0 1 -1 1h-1m-5 0h-2m-5 0h-1a1 1 0 0 1 -1 -1v-1m0 -5v-2m0 -5" />
                       </svg>
-                      {{ data.appsToReview.length }}
+                      {{ data.appsToReview.length }} new
                     </div>
                     <!-- <b-btn block>Review</b-btn> -->
                   </div>
@@ -327,7 +317,7 @@
                         <div class="h2 mb-3 d-flex align-items-center">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            class="icon icon-tabler icon-tabler-refresh mr-2"
+                            class="icon icon-tabler icon-tabler-refresh mr-2 text-muted mt-1"
                             width="24"
                             height="24"
                             viewBox="0 0 24 24"
@@ -350,7 +340,7 @@
                         <div class="h2 mb-3 d-flex align-items-center">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            class="icon icon-tabler icon-tabler-step-into mr-2"
+                            class="icon icon-tabler icon-tabler-step-into mr-2 text-muted mt-1"
                             width="24"
                             height="24"
                             viewBox="0 0 24 24"
@@ -368,6 +358,33 @@
                           {{ appsToImport.length }}
                         </div>
                       </div>
+                      <div class="col">
+                        <div class="d-flex align-items-center">
+                          <div class="subheader">Ignoring</div>
+                        </div>
+                        <div class="h2 mb-3 d-flex align-items-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-box-off mr-2 text-muted mt-1"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path
+                              d="M17.765 17.757l-5.765 3.243l-8 -4.5v-9l2.236 -1.258m2.57 -1.445l3.194 -1.797l8 4.5v8.5" />
+                            <path d="M14.561 10.559l5.439 -3.059" />
+                            <path d="M12 12v9" />
+                            <path d="M12 12l-8 -4.5" />
+                            <path d="M3 3l18 18" />
+                          </svg>
+                          {{ appsToIgnore.length }}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -376,10 +393,13 @@
 
             <div class="row mb-3 align-items-center" style="zoom: 0.9">
               <div class="col col-4">
-                <b-input v-model="table.filters.search" placeholder="Filter..."></b-input>
+                <b-input
+                  v-model="table.filters.search"
+                  placeholder="Filter..."
+                  clearable></b-input>
               </div>
               <div class="col col-4">
-                <button type="button" class="btn">
+                <button type="button" class="btn mr-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="icon icon-tabler icon-tabler-circle-plus"
@@ -483,7 +503,6 @@
                   Toggle all
                 </button>
                 <b-btn @click="doit">doit</b-btn> -->
-                <b-btn color="success">Finish and save</b-btn>
               </div>
             </div>
             <div class="card">
@@ -512,7 +531,10 @@
                       <span class="d-block mb-1">
                         {{ app.name }}
                       </span>
-                      <div class="text-secondary">
+                      <span v-if="app.will_ignore" class="badge bg-yellow-lt">
+                        Will be ignored
+                      </span>
+                      <small class="text-muted">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="icon icon-tabler icon-tabler-clock-hour-3"
@@ -532,6 +554,7 @@
                         </svg>
 
                         Played {{ format.minToHours(app.playtime_forever) }}
+                        <span class="px-1">&nbsp;</span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="icon icon-tabler icon-tabler-clock-record"
@@ -542,14 +565,15 @@
                           stroke="currentColor"
                           fill="none"
                           stroke-linecap="round"
-                          stroke-linejoin="round">
+                          stroke-linejoin="round"
+                          style="zoom: 0.9">
                           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                           <path d="M21 12.3a9 9 0 1 0 -8.683 8.694"></path>
                           <path d="M12 7v5l2 2"></path>
                           <path d="M19 19m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
                         </svg>
                         last played {{ dates.unixToDiff(app.rtime_last_played) }}
-                      </div>
+                      </small>
                     </div>
                     <!-- <div class="col-auto text-secondary">
                         03:41
@@ -558,12 +582,14 @@
                       <input
                         v-model="app.will_import"
                         type="checkbox"
-                        class="form-check-input disabled" />
+                        class="form-check-input" />
                     </div>
-                    <div class="col-auto text-muted">
+                    <div
+                      class="col-auto text-muted cursor-pointer"
+                      @click="flagAs('ignore', app)">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="icon icon-tabler icon-tabler-box-off"
+                        class="icon icon-tabler icon-tabler-box-off cursor-pointer"
                         width="24"
                         height="24"
                         viewBox="0 0 24 24"
@@ -600,16 +626,26 @@
             <div class="row align-items-center p-2">
               <div class="col">
                 <small class="text-muted">
-                  {{ data.games.filter((item) => item.will_import).length }} of
-                  {{ data.games.length }} games selected
+                  {{
+                    table.perPage < data.games.length ? table.perPage : data.games.length
+                  }}
+                  of {{ data.games.length }}
                 </small>
               </div>
               <div class="col col-4 text-end">
-                <b-btn variant="outline" color="secondary" @click="table.perPage += 50">
+                <b-btn
+                  v-if="table.perPage < data.games.length"
+                  variant="outline"
+                  color="secondary"
+                  @click="table.perPage += 50">
                   View 50 more
                 </b-btn>
 
-                <b-btn variant="outline" color="secondary" @click="table.perPage = 50000">
+                <b-btn
+                  v-if="table.perPage < data.games.length"
+                  variant="outline"
+                  color="secondary"
+                  @click="table.perPage = 50000">
                   View all
                 </b-btn>
               </div>
@@ -617,31 +653,15 @@
           </div>
         </div>
         <div class="col-lg-4">
-          <div class="card">
+          <div class="card" style="position: sticky; top: 20px">
             <div class="card-body">
               <div class="d-flex align-items-center mb-0">
                 <div class="me-3">
-                  <!-- Download SVG icon from http://tabler-icons.io/i/scale -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="icon icon-tabler icon-tabler-brand-steam"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path
-                      d="M16.5 5a4.5 4.5 0 1 1 -.653 8.953l-4.347 3.009l0 .038a3 3 0 0 1 -2.824 3l-.176 0a3 3 0 0 1 -2.94 -2.402l-2.56 -1.098v-3.5l3.51 1.755a2.989 2.989 0 0 1 2.834 -.635l2.727 -3.818a4.5 4.5 0 0 1 4.429 -5.302z"></path>
-                    <circle cx="16.5" cy="9.5" r="1" fill="currentColor"></circle>
-                  </svg>
+                  <Icon size="26">BrandSteam</Icon>
                 </div>
                 <div>
                   <small class="text-muted">
-                    v.{{ module.version }} by {{ module.author }}
+                    Version {{ module.version }} by {{ module.author }}
                   </small>
                   <h3 class="lh-1">{{ module.name }}</h3>
                 </div>
@@ -762,7 +782,12 @@
                 </ul> -->
             </div>
             <div class="card-body">
-              <b-btn block color="success">Finish</b-btn>
+              <b-btn
+                block
+                :color="ui.step !== 'review' ? 'secondary' : 'success'"
+                :disabled="ui.step !== 'review'">
+                Save library
+              </b-btn>
             </div>
             <div class="card-footer text-muted">
               This importer is open source. If you want to know more or are concerned
@@ -788,8 +813,27 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Fri Nov 17 2023
+ * Modified: Sun Nov 19 2023
  **/
+
+// {
+//   appid: 211420,
+//   name: 'DARK SOULS™: Prepare To Die Edition',
+//   playtime_forever: 1286,
+//   img_icon_url: 'a24804c6c8412c8cd9d50efd06bf03fa58ff80a9',
+//   has_community_visible_stats: true,
+//   playtime_windows_forever: 0,
+//   playtime_mac_forever: 0,
+//   playtime_linux_forever: 0,
+//   rtime_last_played: 1418686838,
+//   sort_as: 'Dark Souls',
+//   has_workshop: false,
+//   has_market: false,
+//   will_import: true,
+//   will_ignore: false,
+//   has_dlc: true,
+//   playtime_disconnected: 0,
+// }
 
 import steam from '~/modules/importers/steam'
 import axios from 'axios'
@@ -812,591 +856,7 @@ export default {
 
       data: {
         user: {}, // Raw of the imported userdata
-        games: [
-          {
-            appid: 211420,
-            name: 'DARK SOULS™: Prepare To Die Edition',
-            playtime_forever: 1286,
-            img_icon_url: 'a24804c6c8412c8cd9d50efd06bf03fa58ff80a9',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1418686838,
-            sort_as: 'Dark Souls',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 204300,
-            name: 'Awesomenauts',
-            playtime_forever: 536,
-            img_icon_url: '4996933171d0804bd0ceb7b9a0e224b3139d18ba',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1374511517,
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 217200,
-            name: 'Worms Armageddon',
-            playtime_forever: 1,
-            img_icon_url: '68c6d17bde9c578d91dd1e207b58eb4d8308ce40',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1417637852,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 98800,
-            name: 'Dungeons of Dredmor',
-            playtime_forever: 195,
-            img_icon_url: '4924fdf2a9c2cf45bd7d1dcfaa4c039c60b9d410',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1439730943,
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            has_leaderboards: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 214150,
-            name: 'Galactic Civilizations I: Ultimate Edition',
-            playtime_forever: 0,
-            img_icon_url: '66df956909f51af564f8d6086c201004ab81aa51',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 214340,
-            name: 'Deponia',
-            playtime_forever: 113,
-            img_icon_url: '48a94d33cae6065b0bedf7eefd01bd5321c7c729',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1392246823,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 209080,
-            name: 'Guns of Icarus Online',
-            playtime_forever: 305,
-            img_icon_url: '968e8c0b7a55f0229392278123dfd486140c9421',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1440031829,
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 204220,
-            name: 'Snapshot',
-            playtime_forever: 0,
-            img_icon_url: '322122b6f0560b73c5c36ff5009907d8087fd146',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            capsule_filename: 'portrait.png',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 204630,
-            name: 'Retro City Rampage™ DX',
-            playtime_forever: 336,
-            img_icon_url: '423b87d4a5a00ff6e807558e565b0b515fadf61b',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1456354383,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            has_leaderboards: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 49520,
-            name: 'Borderlands 2',
-            playtime_forever: 13968,
-            img_icon_url: 'a3f4945226e69b6196074df4c776e342d3e5a3be',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1561586642,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 205100,
-            name: 'Dishonored',
-            playtime_forever: 311,
-            img_icon_url: '74f8ee1ba536e0759e64a9bf801fc013e16c8dd1',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1427991765,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            has_leaderboards: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 730,
-            name: 'Counter-Strike 2',
-            playtime_forever: 1409,
-            img_icon_url: '8dbc71957312bbd3baea65848b545be9eae2a355',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1466447415,
-            has_workshop: true,
-            has_market: true,
-            has_dlc: true,
-            will_import: true,
-            content_descriptorids: [2, 5],
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 204120,
-            name: 'LEGO® Harry Potter: Years 5-7',
-            playtime_forever: 0,
-            img_icon_url: 'eb9617f00259ad2dee791ec91b4862447080f0cb',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 213330,
-            name: 'LEGO® Batman™ 2: DC Super Heroes',
-            playtime_forever: 0,
-            img_icon_url: '92446ccf0abc6ab3e716251c0004acda5c3b13fd',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 33600,
-            name: 'Broken Sword 2 - the Smoking Mirror: Remastered',
-            playtime_forever: 0,
-            img_icon_url: 'a136ba9e8ed89c49c23a55293f591a474cb6cdb1',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 214790,
-            name: 'The Basement Collection',
-            playtime_forever: 0,
-            img_icon_url: '0bd402578e431f679c9709f34b4ecfe334914600',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            capsule_filename: 'portrait.png',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 72000,
-            name: 'Closure',
-            playtime_forever: 179,
-            img_icon_url: '7da11a2030451f15450452b6c5f0aeb45b39fbd3',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1439571914,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 215510,
-            name: 'Rocketbirds: Hardboiled Chicken',
-            playtime_forever: 115,
-            img_icon_url: 'be9c980e8243b58aad6b568aa47dc1418be79fd4',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1485462780,
-            capsule_filename: 'portrait.png',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 200510,
-            name: 'XCOM: Enemy Unknown',
-            playtime_forever: 1606,
-            img_icon_url: '48be2fee1d0d511b5c7313e1359beafd36ea92ed',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1389694287,
-            sort_as: 'XCOM 1: Enemy Unknown',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 211260,
-            name: 'They Bleed Pixels',
-            playtime_forever: 248,
-            img_icon_url: '902560daa6a68b17e443a96652dfef1066b0eb34',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1372951339,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            has_leaderboards: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 216290,
-            name: 'Gateways',
-            playtime_forever: 0,
-            img_icon_url: '3cc65892ba65ac6eb9201ad77db3d11327e222e6',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            capsule_filename: 'portrait.png',
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 65300,
-            name: 'Dustforce',
-            playtime_forever: 340,
-            img_icon_url: '7823652dcb6b11c024003ec590c17f461637c66f',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1439743076,
-            capsule_filename: 'portrait.png',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 209540,
-            name: 'Strike Suit Zero',
-            playtime_forever: 77,
-            img_icon_url: 'b30877270af7d5775ce626ef9bacab727ff979f3',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1392161616,
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            has_leaderboards: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 214970,
-            name: 'Intrusion 2',
-            playtime_forever: 16,
-            img_icon_url: 'e63fe503a18fc70c3c759e96341a406dc1c8cbe5',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1370407835,
-            capsule_filename: 'portrait.png',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 206440,
-            name: 'To the Moon',
-            playtime_forever: 184,
-            img_icon_url: '6e29eb4076a6253fdbccb987a2a21746d2df54d7',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1441203112,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 219740,
-            name: "Don't Starve",
-            playtime_forever: 2481,
-            img_icon_url: '03fe647df40dccc4d19bf42a0185cd3e6b9f2953',
-            playtime_windows_forever: 16,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1573407589,
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 322330,
-            name: "Don't Starve Together",
-            playtime_forever: 2151,
-            img_icon_url: 'a80aa6cff8eebc1cbc18c367d9ab063e1553b0ee',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1558783496,
-            will_import: true,
-            has_workshop: true,
-            has_market: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 220780,
-            name: 'Thomas Was Alone',
-            playtime_forever: 63,
-            img_icon_url: '14a9056a76a256fbcfe833dd1420d01eeba14abc',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1405961995,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 7830,
-            name: 'Men of War',
-            playtime_forever: 0,
-            img_icon_url: 'bbaf5e7ea25bdd0235311558d95570dbd7e90348',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 220860,
-            name: 'McPixel',
-            playtime_forever: 263,
-            img_icon_url: '236a6f77afff3814552ae2a6ccadbf84d992a252',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1373900053,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 221260,
-            name: 'Little Inferno',
-            playtime_forever: 113,
-            img_icon_url: '478d0b4bbe94d5d6c5248e07f0da75cbe9f6ba95',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 113,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1587062081,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 219910,
-            name: "Edna & Harvey: Harvey's New Eyes",
-            playtime_forever: 94,
-            img_icon_url: 'df160221c5be01797610ac2e452404c01e968b59',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1392591596,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 204360,
-            name: 'Castle Crashers',
-            playtime_forever: 534,
-            img_icon_url: '9b7625f9b70f103397fd0416fd92abb583db8659',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1527498497,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 213610,
-            name: 'Sonic Adventure™ 2 ',
-            playtime_forever: 0,
-            img_icon_url: '0ff2b133493b0bf7f1c16a38a83e7053f0b90f2d',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 7510,
-            name: 'X-Blades',
-            playtime_forever: 179,
-            img_icon_url: '311b4363fd29a55fbdd23f515e409785b520b6e8',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1446487625,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 203140,
-            name: 'Hitman: Absolution',
-            playtime_forever: 226,
-            img_icon_url: 'fe5e36ac1548793eb48b6b25b701b37d86fb94a3',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1439322140,
-            sort_as: 'Hitman 5: Absolution',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-        ], // Raw library games from the scan process
+        games: [], // Raw library games from the scan process
         wishlist: [], // Raw wishlist games from the scan
 
         library: [], // Preloaded content of user library
@@ -1426,7 +886,7 @@ export default {
       ui: {
         error: null,
 
-        step: 'review', //'prep',
+        step: 'prep',
         watch: null,
         loading: false,
         showlogs: false,
@@ -1450,9 +910,14 @@ export default {
 
     steps() {
       const steps = {
-        prep: {
-          action: 'Preparation',
+        check: {
+          action: 'Prepare modules',
           desc: 'Verifying requeriments',
+        },
+
+        prep: {
+          action: 'Prepared',
+          desc: 'Account connected',
         },
         games: {
           action: 'Import games',
@@ -1467,7 +932,7 @@ export default {
           desc: 'Review the imported data',
         },
         complete: {
-          action: 'Completion',
+          action: 'Library updated 🎉',
           desc: 'Import process completed',
         },
       }
@@ -1484,6 +949,10 @@ export default {
     },
 
     appsToImport() {
+      return ['wip']
+    },
+
+    appsToIgnore() {
       return ['wip']
     },
 
@@ -1526,6 +995,7 @@ export default {
             has_workshop: false,
             has_market: false,
             will_import: true,
+            will_ignore: false,
             has_dlc: true,
             playtime_disconnected: 0,
           },
@@ -1547,15 +1017,6 @@ export default {
 
       return items
     },
-  },
-
-  mounted() {
-    this.init()
-  },
-
-  unmounted() {
-    log('importer', 'unmounted()')
-    clearInterval(this.ui.watch)
   },
 
   methods: {
@@ -1590,6 +1051,18 @@ export default {
       this.table.filters.played = true
       this.table.filters.unplayed = true
       this.table.filters.search = ''
+    },
+
+    flagAs(flag, app) {
+      if (flag === 'ignore') {
+        app.will_import = false
+        app.will_ignore = true
+      }
+
+      if (flag === 'import') {
+        app.will_import = true
+        app.will_ignore = false
+      }
     },
 
     controlApp(item) {
@@ -1710,7 +1183,7 @@ export default {
       log('importer', 'connect()')
 
       let connected = false
-      this.importer = steam.manifest
+      this.module = steam.manifest
       importer = steam
 
       log('Manifest loaded', steam.manifest)
@@ -1750,10 +1223,8 @@ export default {
         return false
       }
 
-      this.account = { ...this.$auth.api }
-      this.account.provider = this.account.providers.find(
-        (el) => el.provider === platform
-      )
+      this.account = { ...this.$auth.user }
+      this.account.provider = this.account.steam_data
       this.account.bearer = this.$auth.bearer
 
       if (this.$route.params.platform !== 'steam') return false
@@ -1800,6 +1271,15 @@ export default {
         if (this.process.time <= 3) log(this.process.time)
       }, 1000)
     },
+  },
+
+  mounted() {
+    this.init()
+  },
+
+  unmounted() {
+    log('importer', 'unmounted()')
+    clearInterval(this.ui.watch)
   },
 }
 

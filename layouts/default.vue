@@ -510,6 +510,6 @@ async function getDB() {
 }
 
 onMounted(() => {
-  getDB('top-games')
+  // getDB('top-games')
 })
 </script>

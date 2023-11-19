@@ -13,7 +13,7 @@ let $account = null
 
 export default {
   manifest: {
-    version: '0.1',
+    version: '1.0',
     store: 'Steam',
     name: 'Steam public profiles',
     author: 'Gaspar S.',

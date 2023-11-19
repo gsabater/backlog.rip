@@ -4,12 +4,12 @@
 			"path": "pages/import/[platform].vue",
 			"bookmarks": [
 				{
-					"line": 1297,
+					"line": 858,
 					"column": 0,
 					"label": "Quizas tener un punto ya precargado en una store o global, que permita acceder a esta info"
 				},
 				{
-					"line": 1545,
+					"line": 1015,
 					"column": 0,
 					"label": "FUTURE"
 				}

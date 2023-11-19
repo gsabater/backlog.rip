@@ -3,7 +3,7 @@
  * @desc:    https://vueschool.io/articles/vuejs-tutorials/eslint-and-prettier-with-vite-and-vue-js-3/
  * -------------------------------------------
  * Created Date: 11th November 2023
- * Modified: Tue Nov 14 2023
+ * Modified: Sun Nov 19 2023
  */
 
 module.exports = {
@@ -46,7 +46,46 @@ module.exports = {
 
   rules: {
     'vue/first-attribute-linebreak': 'off',
-
+    'vue/order-in-components': [
+      'error',
+      {
+        order: [
+          'el',
+          'name',
+          'key',
+          'parent',
+          'functional',
+          ['delimiters', 'comments'],
+          ['components', 'directives', 'filters'],
+          'extends',
+          'mixins',
+          ['provide', 'inject'],
+          'ROUTER_GUARDS',
+          'layout',
+          'middleware',
+          'validate',
+          'scrollToTop',
+          'transition',
+          'loading',
+          'inheritAttrs',
+          'model',
+          ['props', 'propsData'],
+          'emits',
+          'setup',
+          'asyncData',
+          'data',
+          'fetch',
+          'head',
+          'computed',
+          'watch',
+          'watchQuery',
+          'methods',
+          'LIFECYCLE_HOOKS',
+          ['template', 'render'],
+          'renderError',
+        ],
+      },
+    ],
     // override/add rules settings here, such as:
     // 'vue/no-unused-vars': 'error'
     // "vue/require-default-prop": "off",

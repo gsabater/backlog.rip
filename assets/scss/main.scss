@@ -5,8 +5,11 @@
 @import '../../node_modules/@tabler/core/dist/css/tabler-flags.css';
 @import '../../node_modules/@tabler/core/dist/css/tabler-payments.css';
 @import '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
+@import '../../node_modules/@tabler/icons-webfont/tabler-icons.css';
 @import '../../node_modules/@tabler/core/dist/css/demo.css';
 @import 'extend.scss';
+
+@import 'base';
 
 // Import layout
 @import 'partials/home';

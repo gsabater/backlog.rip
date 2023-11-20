@@ -29,7 +29,7 @@
     "@pinia/nuxt": "^0.5",
     "@tabler/core": "^1.0.0-beta20",
     "@tabler/icons-vue": "^2.41.0",
-    "@tabler/icons-webfont": "^2.41.0",
+    "@vercel/analytics": "^1.1.1",
     "axios": "^1.6.2",
     "dayjs": "^1.11.7",
     "dexie": "^3.2.4",

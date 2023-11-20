@@ -1,11 +1,10 @@
-/**
- * @project: backlog
+/*
  * @file:    \stores\UserStore.js
  * @desc:    ...
  * -------------------------------------------
- * Created Date: 8th December 2022
- * Last Modified: Thu Dec 08 2022
- **/
+ * Created Date: 18th November 2023
+ * Modified: Mon Nov 20 2023
+ */
 
 let app = null
 
@@ -36,7 +35,9 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     async authenticate() {
       if (this.user?.id) return this.user
+
       if (!app) app = useNuxtApp()
+      if (!this.bearer) this.setToken()
 
       await this.getLocalData()
       // await this.getApiData()
@@ -57,6 +58,12 @@ export const useUserStore = defineStore('user', {
       return true
     },
 
+    //+-------------------------------------------------
+    // setToken()
+    // Loads the bearer token and adds it to pinia and axios
+    // -----
+    // Created on Mon Nov 20 2023
+    //+-------------------------------------------------
     setToken(bearer = false) {
       if (!bearer) bearer = useCookie('auth._token.local').value
       else useCookie('auth._token.local').value = bearer
@@ -90,8 +97,6 @@ export const useUserStore = defineStore('user', {
     // Created on Fri Nov 17 2023
     //+-------------------------------------------------
     async getApiData() {
-      if (!this.bearer) this.setToken()
-
       const jxr = await app.$axios.get('me').catch((e) => {
         console.warn(e)
         return e.response

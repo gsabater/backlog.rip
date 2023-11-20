@@ -8,7 +8,7 @@
   >
   <div class="card">
     <div class="list-group card-list-group">
-      <div class="list-group-item" v-for="(app, i) in elements" :key="'game' + i">
+      <div v-for="(app, i) in elements" :key="'game' + i" class="list-group-item">
         <div class="row g-2 align-items-center">
           <!-- <div class="col-auto fs-3">
             <label class="form-check form-switch">
@@ -130,6 +130,8 @@ export default {
   },
 
   computed: {
+    ...mapStores(useDataStore),
+
     elements() {
       return this.items
         .sort((a, b) => b.playtime_forever - a.playtime_forever)
@@ -141,7 +143,15 @@ export default {
     },
   },
 
-  methods: {},
+  methods: {
+    init() {
+      log('Loading repositories')
+      this.dataStore.init()
+    },
+  },
+  mounted() {
+    this.init()
+  },
 }
 </script>
 

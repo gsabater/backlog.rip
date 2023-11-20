@@ -220,7 +220,7 @@
                 <div>
                   <div class="btn btn-primary w-100" @click="scan">
                     <Icon class="me-2">ArrowsTransferDown</Icon>
-                    Update your {{ module.store }} library
+                    Scan your {{ module.store }} library
                   </div>
                 </div>
               </div>
@@ -231,9 +231,8 @@
             <div class="row row-deck row-cards mb-3">
               <div class="col-12">
                 <pre>
-                  {{ data.library }}
-                  {{ data.appsToReview }}
-
+                  {{ appsToImport }}
+                  --
                   {{ appsToIgnore }}
                 </pre>
               </div>
@@ -511,7 +510,7 @@
                   v-for="(app, i) in toReview"
                   :key="'game' + i"
                   class="list-group-item"
-                  @click="controlApp(app, i)">
+                  @click="flagAs('import', app)">
                   <div class="row g-4 align-items-center">
                     <!-- <div class="col-auto fs-3">
                         <label class="form-check form-switch">
@@ -554,7 +553,7 @@
                         </svg>
 
                         Played {{ format.minToHours(app.playtime_forever) }}
-                        <span class="px-1">&nbsp;</span>
+                        <!-- <span class="px-1">&nbsp;</span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="icon icon-tabler icon-tabler-clock-record"
@@ -572,7 +571,7 @@
                           <path d="M12 7v5l2 2"></path>
                           <path d="M19 19m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
                         </svg>
-                        last played {{ dates.unixToDiff(app.rtime_last_played) }}
+                        last played {{ dates.unixToDiff(app.rtime_last_played) }} -->
                       </small>
                     </div>
                     <!-- <div class="col-auto text-secondary">
@@ -785,7 +784,8 @@
               <b-btn
                 block
                 :color="ui.step !== 'review' ? 'secondary' : 'success'"
-                :disabled="ui.step !== 'review'">
+                :disabled="ui.step !== 'review'"
+                @click="store">
                 Save library
               </b-btn>
             </div>
@@ -813,7 +813,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Sun Nov 19 2023
+ * Modified: Mon Nov 20 2023
  **/
 
 // {
@@ -948,10 +948,6 @@ export default {
       return steps
     },
 
-    appsToImport() {
-      return ['wip']
-    },
-
     appsToIgnore() {
       return ['wip']
     },
@@ -961,7 +957,7 @@ export default {
 
       const items = []
 
-      this.data.games.forEach((el, i) => {
+      this.data.appsToReview.forEach((el, i) => {
         if (items.length > this.table.perPage) return false
 
         if (
@@ -973,47 +969,23 @@ export default {
         items.push({
           ...el,
           index: i,
-          will_import: el.will_import,
         })
       })
 
       return items
     },
 
-    /**
-     * {
-            appid: 211420,
-            name: 'DARK SOULS™: Prepare To Die Edition',
-            playtime_forever: 1286,
-            img_icon_url: 'a24804c6c8412c8cd9d50efd06bf03fa58ff80a9',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1418686838,
-            sort_as: 'Dark Souls',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            will_ignore: false,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-     */
-    toImport() {
+    appsToImport() {
       const items = []
-
-      this.data.games.forEach((el, i) => {
-        if (!el.will_import) return false
-
-        if (i % 3 === 0) el.appid = null
-
-        items.push({
-          uuid: this.$uuid(),
-          steam_id: el.appid,
-          name: el.name,
+      this.data.appsToReview
+        .filter((el) => el.will_import === true)
+        .forEach((el) => {
+          items.push({
+            uuid: this.$uuid(),
+            steam_id: el.appid,
+            name: el.name,
+          })
         })
-      })
 
       return items
     },
@@ -1054,20 +1026,20 @@ export default {
     },
 
     flagAs(flag, app) {
+      const source = this.data.appsToReview.find((el) => el.appid === app.appid)
+
       if (flag === 'ignore') {
-        app.will_import = false
-        app.will_ignore = true
+        source.will_ignore = !source.will_ignore
       }
 
       if (flag === 'import') {
-        app.will_import = true
-        app.will_ignore = false
+        source.will_import = !source.will_import
       }
     },
 
-    controlApp(item) {
-      this.data.games[item.index].will_import = !item.will_import
-    },
+    // controlApp(item) {
+    //   this.data.games[item.index].will_import = !item.will_import
+    // },
 
     //+-------------------------------------------------
     // import()
@@ -1099,11 +1071,17 @@ export default {
       }
 
       console.warn(this.data)
-      this.ui.loading = true
+      this.ui.loading = false
 
       this.review()
     },
 
+    //+-------------------------------------------------
+    // review()
+    // Generate helper arrays with prepared data
+    // -----
+    // Created on Mon Nov 20 2023
+    //+-------------------------------------------------
     review() {
       this.ui.step = 'review'
 
@@ -1114,9 +1092,23 @@ export default {
 
       console.warn('reviewing libraryKeys', libraryKeys)
 
-      this.data.appsToReview = this.data.games.filter(
-        (game) => !(game.appid in libraryKeys)
-      )
+      this.data.appsToReview = this.data.games
+        .filter((game) => !(game.appid in libraryKeys))
+        .map((el) => {
+          el.will_import = false
+          el.will_ignore = false
+          return el
+        })
+        .sort((a, b) => {
+          // Primary sort by 'playtime_forever'
+          const diff = b.playtime_forever - a.playtime_forever
+          if (diff !== 0) return diff
+
+          // Secondary sort by 'name' (alphabetically)
+          if (a.name < b.name) return -1
+          if (a.name > b.name) return 1
+          return 0
+        })
 
       console.warn('reviewing appsToReview', this.data.appsToReview)
     },
@@ -1154,13 +1146,20 @@ export default {
       // }
 
       const formattedGames = []
-      this.data.appsToReview.forEach((el) => {
-        formattedGames.push({
-          uuid: this.$uuid(),
-          steam_id: el.appid,
-          name: el.name,
+      this.data.appsToReview
+        .filter((el) => el.will_import === true)
+        .forEach((el) => {
+          const app = {
+            uuid: this.$uuid(),
+            steam_id: el.appid,
+            name: el.name,
+          }
+
+          if (app.will_ignore) {
+            app.ignored = true
+          }
+          formattedGames.push(app)
         })
-      })
 
       // const toimport = this.data.games.filter((el) => el.will_import === true)
       console.warn('doit', formattedGames[0])
@@ -1224,8 +1223,8 @@ export default {
       }
 
       this.account = { ...this.$auth.user }
-      this.account.provider = this.account.steam_data
       this.account.bearer = this.$auth.bearer
+      this.account.provider = this.account.steam_data
 
       if (this.$route.params.platform !== 'steam') return false
 

@@ -23,7 +23,7 @@
           </NuxtLink>
         </h1>
         <div class="navbar-nav flex-row order-md-last">
-          <div class="nav-item d-none d-md-flex me-3" v-if="!$auth.isLogged">
+          <div v-if="!$auth.isLogged" class="nav-item d-none d-md-flex me-3">
             <div class="btn-list">
               <NuxtLink to="/login" class="btn btn-purple">
                 <svg
@@ -49,12 +49,12 @@
 
           <div class="d-none d-md-flex">
             <div
-              @click="changeTheme('dark')"
               class="nav-link px-0 hide-theme-dark"
               data-bs-toggle="tooltip"
               data-bs-placement="bottom"
               aria-label="Enable dark mode"
-              data-bs-original-title="Enable dark mode">
+              data-bs-original-title="Enable dark mode"
+              @click="changeTheme('dark')">
               <!-- Download SVG icon from http://tabler-icons.io/i/moon -->
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -74,12 +74,12 @@
             </div>
 
             <div
-              @click="changeTheme('light')"
               class="nav-link px-0 hide-theme-light"
               data-bs-toggle="tooltip"
               data-bs-placement="bottom"
               aria-label="Enable light mode"
-              data-bs-original-title="Enable light mode">
+              data-bs-original-title="Enable light mode"
+              @click="changeTheme('light')">
               <!-- Download SVG icon from http://tabler-icons.io/i/sun -->
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -470,7 +470,7 @@ const app = useNuxtApp()
 const $auth = useUserStore()
 const repository = useRepositoryStore()
 
-let ui = reactive({
+const ui = reactive({
   theme: 'light',
   menu: false,
 })
@@ -506,7 +506,7 @@ function changeTheme(theme) {
 }
 
 async function getDB() {
-  let xx = await repository.topGames()
+  const xx = await repository.topGames()
 }
 
 onMounted(() => {

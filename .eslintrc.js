@@ -3,7 +3,7 @@
  * @desc:    https://vueschool.io/articles/vuejs-tutorials/eslint-and-prettier-with-vite-and-vue-js-3/
  * -------------------------------------------
  * Created Date: 11th November 2023
- * Modified: Sun Nov 19 2023
+ * Modified: Mon Nov 20 2023
  */
 
 module.exports = {
@@ -36,6 +36,7 @@ module.exports = {
     mapStores: true,
     defineStore: true,
     acceptHMRUpdate: true,
+    defineNuxtPlugin: true,
 
     log: true,
     delay: true,

@@ -10,7 +10,7 @@
  * @desc:    https://preview.tabler.io/buttons.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Sun Nov 19 2023
+ * Modified: Mon Nov 20 2023
  **/
 
 export default {
@@ -20,6 +20,11 @@ export default {
       type: String,
       default: '',
       options: ['outline', 'ghost', 'square', 'pill'],
+    },
+
+    disabled: {
+      type: Boolean,
+      default: false,
     },
 
     color: {
@@ -38,8 +43,9 @@ export default {
       if (this.variant) className += ` btn-${this.variant}-${this.color}`
       if (this.color) className += ` btn-${this.color}`
 
-      if (this.$attrs.hasOwnProperty('block')) className += ` w-100`
-      if (this.$attrs.hasOwnProperty('disabled')) className += ` disabled`
+      if (this.disabled === true) className += ` disabled`
+      if (Object.prototype.hasOwnProperty.call(this.$attrs, 'block'))
+        className += ` w-100`
 
       return className
     },

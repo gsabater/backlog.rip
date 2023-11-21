@@ -52,10 +52,11 @@ export const useDataStore = defineStore('data', {
 
   actions: {
     status() {
-      console.log('Data satus')
-      console.log('Loaded', this.loaded)
-
+      console.warn('Data satus')
+      console.log('data', library)
       console.table({
+        'Loaded': this.loaded,
+        '--': '--',
         'Data': Object.keys(data).length,
         'Library': Object.keys(library).length,
         'Wishlist': Object.keys(wishlist).length,
@@ -89,23 +90,14 @@ export const useDataStore = defineStore('data', {
 
     //+-------------------------------------------------
     // addData()
-    // Just adds the data to the data array
+    // Just adds items from sources to the data array
     // -----
     // Created on Tue Nov 21 2023
     //+-------------------------------------------------
     addData(source) {
       source.forEach((item) => {
-        if (index.steam[item.steam_id] == undefined) {
-          index.steam[item.steam_id] = item.uuid
-        }
-
-        if (index.epic[item.epic_id] == undefined) {
-          index.epic[item.epic_id] = item.uuid
-        }
-
-        if (!data.find((i) => i.steam_id == item.steam_id)) {
-          data[item.uuid] = item
-        }
+        index.api[item.api_id] = index.api[item.api_id] || item.uuid
+        index.steam[item.steam_id] = index.steam[item.steam_id] || item.uuid
       })
     },
 
@@ -151,16 +143,15 @@ export const useDataStore = defineStore('data', {
     },
 
     async init() {
-      if (this.isReady) return
-
       await this.loadLibrary()
-      console.log(data, library)
+      // console.log(data, library)
+
       log('💽 Data is ready to use', {
         data: data.length,
         library: library.length,
       })
 
-      this.isReady = true
+      // this.isReady = true
     },
   },
 })

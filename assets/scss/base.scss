@@ -1,9 +1,12 @@
-@import url('https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic');
+// @import url('https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
 
 h1,h2,h3,h4,h5,h6 {
-  font-family: 'Lora', serif;
+  // font-family: 'Lora', serif;
+  font-family: 'DM Serif Display', serif;
 }
 
-.font-lora {
-  font-family: 'Lora', serif;
+.font-lora, .font-serif {
+  // font-family: 'Lora', serif;
+  font-family: 'DM Serif Display', serif;
 }

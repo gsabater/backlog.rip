@@ -14,7 +14,7 @@
     "vue": "latest"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.0",
+    "@nuxt/devtools": "^1.0.3",
     "@nuxt/eslint-config": "^0.2.0",
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
@@ -34,7 +34,7 @@
     "dayjs": "^1.11.7",
     "dexie": "^3.2.4",
     "mitt": "^3.0.0",
-    "nuxt": "^3.8",
+    "nuxt": "^3.8.2",
     "pinia": "^2.1",
     "tom-select": "^2.3.1",
     "uuid": "^9.0.0",

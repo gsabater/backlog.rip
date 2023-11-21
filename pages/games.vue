@@ -6,8 +6,8 @@
         <div class="col-8">
           <h2>Data store</h2>
           <b-btn @click="test">test</b-btn>
-          <b-btn @click="list">list</b-btn>
           <b-btn @click="giveme(440)">pepa</b-btn>
+          <b-btn @click="status">Status</b-btn>
           <pre>
             {{ dataStore }}
           </pre>
@@ -28,10 +28,6 @@ export default {
   },
 
   methods: {
-    list() {
-      console.log(this.dataStore)
-    },
-
     test() {
       // this.dataStore.pepa.a = 'pepa'
       // this.dataStore.pepe.b = 'pepe'
@@ -43,6 +39,14 @@ export default {
       const pp = await this.dataStore.get(appid)
       debugger
     },
+
+    async status() {
+      this.dataStore.status()
+    },
+  },
+
+  mounted() {
+    window.dev = this
   },
 }
 </script>

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Mon Nov 20 2023
+ * Modified: Tue Nov 21 2023
  */
 
 let app = null
@@ -50,7 +50,7 @@ export const useUserStore = defineStore('user', {
       me.config = this.config
       this.user = { ...me }
 
-      console.warn('👤 User is authenticated', this.user)
+      log('👤 User is authenticated', this.user)
 
       this.isLogged = true
       this.isChecked = true

@@ -1,22 +1,47 @@
+/* eslint-disable no-unused-vars */
+
 /*
  * @file:    \stores\DataStore.js
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Mon Nov 20 2023
+ * Modified: Tue Nov 21 2023
  */
+
+//+-------------------------------------------------
+// Data repositories
+// Hold objects of games from multiple sources
+// Data is the complete list of games, also containing
+// games loaded from API requests
+// ---
+// Data is updated every time a repository is loaded or a game is added
+// Library is loaded on init and updated when a game is added
+// Index are updated on init and when a repository is loaded
+// ---
+// All elements are indexed by uuid
+//+-------------------------------------------------
+
+let data = {}
+
+let library = {}
+let wishlist = {}
+
+//+-------------------------------------------------
+// index
+// Hold indexed values for each of the stores
+//+-------------------------------------------------
+
+let index = {
+  api: {},
+  steam: {},
+  epic: {},
+}
 
 import { useRepositoryStore } from './RepositoryStore'
 
-let data = []
-let library = []
-let wishlist = []
-
-// const app = useNuxtApp()
-
 export const useDataStore = defineStore('data', {
   state: () => ({
-    isLoaded: false,
+    loaded: [],
 
     meta: {
       time: 0,
@@ -26,6 +51,21 @@ export const useDataStore = defineStore('data', {
   }),
 
   actions: {
+    status() {
+      console.log('Data satus')
+      console.log('Loaded', this.loaded)
+
+      console.table({
+        'Data': Object.keys(data).length,
+        'Library': Object.keys(library).length,
+        'Wishlist': Object.keys(wishlist).length,
+        '---': '---',
+        'API': Object.keys(index.api).length,
+        'Epic': Object.keys(index.epic).length,
+        'Steam': Object.keys(index.steam).length,
+      })
+    },
+
     //+-------------------------------------------------
     // loadLibrary()
     // Loads the entire library of indexedDB into memory
@@ -37,7 +77,46 @@ export const useDataStore = defineStore('data', {
       let $nuxt = useNuxtApp()
 
       library = await $nuxt.$db.games.toArray()
-      log('🎴 User library is ready', library[0], library.length)
+
+      this.addData(library)
+
+      log(
+        '🎴 User library is ready',
+        library[Math.floor(Math.random() * library.length)],
+        library.length
+      )
+    },
+
+    //+-------------------------------------------------
+    // addData()
+    // Just adds the data to the data array
+    // -----
+    // Created on Tue Nov 21 2023
+    //+-------------------------------------------------
+    addData(source) {
+      source.forEach((item) => {
+        if (index.steam[item.steam_id] == undefined) {
+          index.steam[item.steam_id] = item.uuid
+        }
+
+        if (index.epic[item.epic_id] == undefined) {
+          index.epic[item.epic_id] = item.uuid
+        }
+
+        if (!data.find((i) => i.steam_id == item.steam_id)) {
+          data[item.uuid] = item
+        }
+      })
+    },
+
+    //+-------------------------------------------------
+    // list()
+    // Returns the whole data array
+    // -----
+    // Created on Tue Nov 21 2023
+    //+-------------------------------------------------
+    async list() {
+      return data
     },
 
     //+-------------------------------------------------
@@ -72,12 +151,16 @@ export const useDataStore = defineStore('data', {
     },
 
     async init() {
-      if (this.isLoaded) return
+      if (this.isReady) return
 
       await this.loadLibrary()
-      log('💽 Repositories loaded')
+      console.log(data, library)
+      log('💽 Data is ready to use', {
+        data: data.length,
+        library: library.length,
+      })
 
-      this.isLoaded = true
+      this.isReady = true
     },
   },
 })

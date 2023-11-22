@@ -34,7 +34,8 @@ Attrs: {{ $attrs }}
 
     <div class="input-icon">
       <span v-if="$attrs['prepend-icon']" class="input-icon-addon">
-        <svgs>{{ $attrs['prepend-icon'] }}</svgs>
+        <!-- <svgs>{{  }}</svgs> -->
+        <Icon :icon="$attrs['prepend-icon']"></Icon>
       </span>
 
       <input
@@ -45,7 +46,8 @@ Attrs: {{ $attrs }}
         @input="$emit('input', $event.target.value)" />
 
       <span v-if="$attrs['append-icon']" class="input-icon-addon">
-        <svgs>{{ $attrs['append-icon'] }}</svgs>
+        <!-- <svgs>{{ $attrs['append-icon'] }}</svgs> -->
+        <Icon :icon="$attrs['append-icon']"></Icon>
       </span>
 
       <span
@@ -53,7 +55,8 @@ Attrs: {{ $attrs }}
         class="input-icon-addon cursor-pointer action-icon"
         :class="{ active: inputValue !== '' }"
         @click="clear">
-        <svgs>clearable</svgs>
+        <!-- <svgs>clearable</svgs> -->
+        <Icon>SquareX</Icon>
       </span>
 
       <span v-if="loading" class="input-icon-addon">
@@ -92,7 +95,7 @@ Attrs: {{ $attrs }}
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Sun Nov 19 2023
+ * Modified: Wed Nov 22 2023
  **/
 
 export default {
@@ -158,6 +161,8 @@ export default {
       default: '',
     },
   },
+
+  emits: ['input'],
 
   setup(props, { attrs }) {
     return {

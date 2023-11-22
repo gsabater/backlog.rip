@@ -813,7 +813,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Mon Nov 20 2023
+ * Modified: Wed Nov 22 2023
  **/
 
 // {
@@ -886,7 +886,8 @@ export default {
       ui: {
         error: null,
 
-        step: 'prep',
+        // step: 'prep',
+        step: 'review',
         watch: null,
         loading: false,
         showlogs: false,

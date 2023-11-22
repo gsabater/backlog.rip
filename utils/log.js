@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Sun Nov 12 2023
+ * Modified: Wed Nov 22 2023
  */
 
 function info(...args) {
@@ -36,10 +36,10 @@ async function logDefault(...args) {
 
   console.debug(
     `⚡ %c Backlog %c ${args[0]}`,
-    'color: #ccc; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 2px; background: #43565f; margin-bottom: 7px;',
+    'color: #ccc; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 2px; background: #43565f; margin-bottom: 3px;', // margin-bottom: 7px;
     'color: #ccc; border-radius: 0 3px 3px 0; padding: 2px 8px 1px 2px; background: #00DC8220',
-    ...args.slice(1),
-    `\n🪢 ${stack[0]}`
+    ...args.slice(1)
+    // `\n🪢 ${stack[0]}`
   )
 }
 

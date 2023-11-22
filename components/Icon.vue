@@ -4,25 +4,34 @@
 
 <script>
 // eslint-disable vue/no-unused-components
+/* @vite-ignore */
 
 /**
  * @file:    \components\Icon.vue
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sun Nov 19 2023
+ * Modified: Wed Nov 22 2023
  **/
 
-import { IconHome, IconBrandSteam, IconArrowsTransferDown } from '@tabler/icons-vue'
+// import {
+//   IconHome,
+//   IconBrandSteam,
+//   IconArrowsTransferDown,
+//   IconCirclePlus,
+// } from '@tabler/icons-vue'
+
+import * as TablerIcons from '@tabler/icons-vue'
 
 export default {
   name: 'TablerIcon',
 
-  components: {
-    IconHome,
-    IconBrandSteam,
-    IconArrowsTransferDown,
-  },
+  // components: {
+  //   IconHome,
+  //   IconBrandSteam,
+  //   IconArrowsTransferDown,
+  //   IconCirclePlus,
+  // },
 
   props: {
     icon: {
@@ -58,7 +67,9 @@ export default {
 
   computed: {
     theIcon() {
-      return 'Icon' + (this.icon || this.slotIcon)
+      return TablerIcons[`Icon${this.icon || this.slotIcon}`]
+      // return () => import(`@tabler/icons-vue/Icon${this.icon || this.slotIcon}`)
+      // return 'Icon' + (this.icon || this.slotIcon)
     },
   },
 

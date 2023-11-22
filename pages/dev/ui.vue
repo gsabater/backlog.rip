@@ -31,8 +31,12 @@
 
       <hr />
 
-      <svgs icon="search"></svgs>
-      <svgs>search</svgs>
+      <icon icon="Search"></icon>
+      <icon>Circle-x</icon>
+      <icon>Ad</icon>
+      <icon>Circlex</icon>
+      <icon>CircleX</icon>
+      <icon>Search</icon>
 
       <h1>Inputs</h1>
       <div class="row">
@@ -60,7 +64,7 @@
         </div>
 
         <div class="col-3">
-          <b-input label="Prepend icon: search" prepend-icon="search"></b-input>
+          <b-input label="Prepend icon: search" prepend-icon="Search"></b-input>
         </div>
 
         <div class="col-3">

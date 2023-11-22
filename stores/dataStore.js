@@ -5,16 +5,16 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue Nov 21 2023
+ * Modified: Wed Nov 22 2023
  */
 
 //+-------------------------------------------------
 // Data repositories
-// Hold objects of games from multiple sources
-// Data is the complete list of games, also containing
-// games loaded from API requests
-// ---
+// Those arrays hold objects of games from multiple sources
+// Data is the complete list of games available to search
+// Is the complete list of Local and API data
 // Data is updated every time a repository is loaded or a game is added
+// ---
 // Library is loaded on init and updated when a game is added
 // Index are updated on init and when a repository is loaded
 // ---
@@ -53,7 +53,8 @@ export const useDataStore = defineStore('data', {
   actions: {
     status() {
       console.warn('Data satus')
-      console.log('data', library)
+      console.log('Data', data)
+
       console.table({
         'Loaded': this.loaded,
         '--': '--',

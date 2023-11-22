@@ -9,9 +9,6 @@
         ease.
       </p>
 
-      <pre>
-        {{ $auth.user }}
-      </pre>
       <!-- <div class="my-7">
         <div class="text-muted h5">Available modules: </div>
         <div class="row justify-center g-3 md:g-4">
@@ -56,12 +53,12 @@
           </div>
         </div>
       </div> -->
-      <div class="mt-7">
+      <div class="my-5">
         <div class="row g-3 justify-center">
           <div class="col-auto">
-            <b-btn variant="ghost" color="secondary">Browse games</b-btn>
+            <b-btn variant="outline" color="secondary">Browse games</b-btn>
           </div>
-          <div class="col-auto">
+          <!-- <div class="col-auto">
             <a
               href="https://github.com/tabler/tabler-icons/releases/download/v2.7.0/tabler-icons-2.7.0.zip"
               class="btn btn-primary">
@@ -83,10 +80,10 @@
               </svg>
               Login with Steam
             </a>
-          </div>
-          <div class="col-auto">
+          </div> -->
+          <!-- <div class="col-auto">
             <b-btn variant="ghost" color="secondary">Learn more</b-btn>
-          </div>
+          </div> -->
         </div>
 
         <p class="text-muted my-3">
@@ -120,7 +117,7 @@
     </div>
   </header>
 
-  <div class="page-body">
+  <!-- <div class="page-body">
     <div class="container-xl">
       <div class="row row-deck row-cards">
         <div class="col">
@@ -140,9 +137,9 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
-  <div class="section">
+  <!-- <div class="section">
     <div class="row row-cards">CARDS supabase, estilo masonry con algunas features</div>
   </div>
 
@@ -157,7 +154,7 @@
       CARDS tipo supabase, with links to: (grid col-4) - import steam games - browse games
       from all stores - create a collection - Track your game status
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script></script>

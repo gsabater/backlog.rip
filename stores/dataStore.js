@@ -68,6 +68,23 @@ export const useDataStore = defineStore('data', {
       })
     },
 
+    faker() {
+      let $nuxt = useNuxtApp()
+      let uuid = null
+      // create 20 fake elements to data
+      for (let i = 0; i < 20; i++) {
+        uuid = $nuxt.$uuid()
+
+        data[uuid] = {
+          uuid: uuid,
+          name: `Faker game ${i}`,
+          api_id: Math.floor(Math.random() * 1000),
+          steam_id: Math.floor(Math.random() * 1000),
+          epic_id: Math.floor(Math.random() * 1000),
+        }
+      }
+    },
+
     //+-------------------------------------------------
     // loadLibrary()
     // Loads the entire library of indexedDB into memory
@@ -79,8 +96,7 @@ export const useDataStore = defineStore('data', {
       let $nuxt = useNuxtApp()
 
       library = await $nuxt.$db.games.toArray()
-
-      this.addData(library)
+      this.addToData(library)
 
       log(
         '🎴 User library is ready',
@@ -90,15 +106,17 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
-    // addData()
+    // addToData()
     // Just adds items from sources to the data array
     // -----
     // Created on Tue Nov 21 2023
     //+-------------------------------------------------
-    addData(source) {
+    addToData(source) {
       source.forEach((item) => {
         index.api[item.api_id] = index.api[item.api_id] || item.uuid
         index.steam[item.steam_id] = index.steam[item.steam_id] || item.uuid
+
+        data[item.uuid] = item
       })
     },
 
@@ -108,7 +126,7 @@ export const useDataStore = defineStore('data', {
     // -----
     // Created on Tue Nov 21 2023
     //+-------------------------------------------------
-    async list() {
+    list() {
       return data
     },
 
@@ -145,11 +163,19 @@ export const useDataStore = defineStore('data', {
 
     async init() {
       await this.loadLibrary()
+      this.faker()
       // console.log(data, library)
 
+      window.db = {
+        data,
+        library,
+        index,
+        status: this.status,
+      }
+
       log('💽 Data is ready to use', {
-        data: data.length,
-        library: library.length,
+        data: Object.keys(data).length,
+        library: Object.keys(library).length,
       })
 
       // this.isReady = true

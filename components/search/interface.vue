@@ -1,26 +1,10 @@
 <template>
   <div class="row">
     <div class="col-9">
-      <div class="row">
+      <div class="row mb-2">
         <div class="col-6">
           <button type="button" class="btn">
             <Icon size="18" class="text-muted me-1">CirclePlus</Icon>
-            <!-- <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon icon-tabler icon-tabler-circle-plus"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-              <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
-              <path d="M9 12h6"></path>
-              <path d="M12 9v6"></path>
-            </svg> -->
             <div
               :class="{
                 'pe-2 me-2 border-end': !f.played || !f.unplayed,
@@ -44,22 +28,10 @@
         </div>
         <div class="col-6"></div>
       </div>
-      <search-results></search-results>
+      <search-results :filters="f"></search-results>
     </div>
     <div class="col-3">
       <b-input v-model="f.string" placeholder="Filter..."></b-input>
-      <hr />
-      <pre>
-      Filtersz
-      {{ f }}
-    </pre
-      >
-
-      <pre>
-      ui
-      {{ ui }}
-    </pre
-      >
     </div>
   </div>
 </template>
@@ -74,7 +46,7 @@
  **/
 
 export default {
-  name: 'Search Interface',
+  name: 'SearchInterface',
   props: {
     filters: {
       type: Object,

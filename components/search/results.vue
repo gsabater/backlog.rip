@@ -1,14 +1,15 @@
 <template>
-  <pre>
-    {{ items }}
-  </pre>
-  <pre>
-  {{ elements }}
-</pre
-  >
+  <div class="row row-deck row-cards">
+    <template v-for="(app, i) in items" :key="'game' + i">
+      <div class="col col-3">
+        <b-game :app="440"></b-game>
+      </div>
+    </template>
+  </div>
+
   <div class="card">
     <div class="list-group card-list-group">
-      <div v-for="(app, i) in elements" :key="'game' + i" class="list-group-item">
+      <div v-for="(app, i) in items" :key="'game' + i" class="list-group-item">
         <div class="row g-2 align-items-center">
           <!-- <div class="col-auto fs-3">
             <label class="form-check form-switch">
@@ -114,25 +115,89 @@
 </template>
 
 <script>
+/**
+ * @file:    \components\search\results.vue
+ * @desc:    ...
+ * -------------------------------------------
+ * Created Date: 16th November 2023
+ * Modified: Wed Nov 22 2023
+ **/
+
 export default {
-  name: 'Search Results',
+  name: 'SearchResults',
   components: {},
 
   props: {
-    items: {
+    source: {
       type: Array,
       default: () => [],
+    },
+
+    filters: {
+      type: Object,
+      default: () => ({}),
     },
   },
 
   data() {
-    return {}
+    return {
+      base: {
+        string: '',
+        ready: true,
+      },
+
+      ui: {},
+    }
   },
 
   computed: {
     ...mapStores(useDataStore),
 
-    elements() {
+    f() {
+      return { ...this.base, ...this.filters }
+    },
+
+    items() {
+      log('⚡ Filter')
+      if (!this.f.ready) return []
+
+      log('⚡ Filtering')
+      console.time('Filter')
+
+      const source = this.dataStore.list()
+
+      const items = []
+
+      for (const uuid in source) {
+        const app = source[uuid]
+        console.log(app)
+
+        // Filter: Name
+        // Match with on app.name and steam_id
+        //+---------------------------------------
+        if (this.f?.string?.length > 0) {
+          let appName = app.name ? app.name : ''
+          appName = appName.toString().toLowerCase()
+
+          if (
+            appName.indexOf(this.f.string) === -1 &&
+            app.steam_id.toString() !== this.f.string
+          ) {
+            // counters.skip++
+            // data.hidden.string.push(steam_id)
+            continue
+          }
+        }
+
+        // Finally, add the app to items
+        //+---------------------------------------
+        items.push(uuid)
+      }
+
+      console.timeEnd('Filter')
+
+      return items
+
       return this.items
         .sort((a, b) => b.playtime_forever - a.playtime_forever)
         .map((item) => ({
@@ -144,7 +209,23 @@ export default {
   },
 
   methods: {
+    //+-------------------------------------------------
+    // setFilters()
+    // Initializes this.f
+    // With values from props and presets
+    // -----
+    // Created on Tue Nov 14 2023
+    //+-------------------------------------------------
+    setFilters() {
+      this.f = {
+        ...this.base,
+        ...this.filters,
+      }
+    },
+
     init() {
+      this.setFilters()
+
       log('Loading repositories')
       this.dataStore.init()
     },

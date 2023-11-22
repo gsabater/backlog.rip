@@ -515,6 +515,43 @@
       </div>
 
       <hr />
+
+      <button @click="$toast('My first toast')">Render a toast</button>
+      <button
+        @click="
+          $toast('Event has been created', {
+            description: 'Monday, January 3rd at 6:00pm',
+          })
+        ">
+        Render a toast
+      </button>
+      <button
+        @click="
+          $toast.success('Event has been created', {
+            description: 'Monday, January 3rd at 6:00pm',
+          })
+        ">
+        Render a toast
+      </button>
+      <button
+        @click="
+          $toast.error('Event has been created', {
+            description: 'Monday, January 3rd at 6:00pm',
+          })
+        ">
+        Render a toast
+      </button>
+      <button
+        @click="
+          $toast('Event has been created', {
+            action: {
+              label: 'Undo',
+              onClick: () => console.log('Undo'),
+            },
+          })
+        ">
+        Render a toast
+      </button>
     </div>
   </div>
 </template>

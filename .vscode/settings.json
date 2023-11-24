@@ -36,5 +36,26 @@
         "command": "npm run dev",
       },
     ]
-  }
+  },
+
+  "commentAnchors.tags.anchors": {
+    "TODO": {
+      "iconColor": "blue",
+      "highlightColor": "#3ea8ff",
+      "backgroundColor": "#3ea8ff33",
+      "scope": "workspace"
+    },
+
+    "NOTE": {
+      "iconColor": "orange",
+      "highlightColor": "#FFB300",
+      "scope": "workspace"
+    },
+
+    "WIP": {
+      "iconColor": "blurple",
+      "highlightColor": "#896afc",
+      "scope": "workspace",
+    },
+  },
 }

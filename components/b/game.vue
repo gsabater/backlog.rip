@@ -1,9 +1,17 @@
 <template>
   <div class="card card-game">
-    <div class="background">
-      <img :src="'https://steamcdn-a.akamaihd.net/steam/apps/'+app+'/library_600x900.jpg'" alt="">
+    <div class="poster">
+      <img :src="poster" :alt="app.steam_id" />
     </div>
-                  <div class="card-body">
+    <div class="card-body">
+      <div class="h5">
+        {{ app.name }}
+      </div>
+      <div class="text-muted">
+        {{ app.steam_id }}
+      </div>
+    </div>
+    <!-- <div class="card-body">
                     <div class="d-flex align-items-center">
                       <div class="subheader">Sales</div>
                       <div class="ms-auto lh-1">
@@ -22,7 +30,7 @@
                       <div>Conversion rate</div>
                       <div class="ms-auto">
                         <span class="text-green d-inline-flex align-items-center lh-1">
-                          7% <!-- Download SVG icon from http://tabler-icons.io/i/trending-up -->
+                          7%
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 17l6 -6l4 4l8 -8"></path><path d="M14 7l7 0l0 7"></path></svg>
                         </span>
                       </div>
@@ -32,14 +40,27 @@
                         <span class="visually-hidden">75% Complete</span>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </div> -->
+  </div>
 </template>
 
 <script>
+/**
+ * @file:    \components\b\game.vue
+ * @desc:    ...
+ * -------------------------------------------
+ * Created Date: 16th November 2023
+ * Modified: Thu Nov 23 2023
+ **/
+
 export default {
   name: 'Game',
-  props: ['app'],
+  props: {
+    appid: {
+      type: String,
+      default: null,
+    },
+  },
   //  {
   //   app: {
   //     type: Object,
@@ -48,24 +69,42 @@ export default {
   // },
   data() {
     return {
-      //
+      app: {},
     }
   },
+
+  computed: {
+    ...mapStores(useDataStore),
+
+    poster() {
+      const ID = this.app.steam_id
+      return `https://steamcdn-a.akamaihd.net/steam/apps/${ID}/library_600x900.jpg`
+    },
+  },
+
   methods: {
-    //
+    async get() {
+      this.app = await this.dataStore.get(this.appid)
+    },
+  },
+
+  mounted() {
+    this.get()
   },
 }
 </script>
 
 <style>
 .card.card-game {
-  aspect-ratio: 2 / 3;
-  border: 1px solid red;
-  /* background: url(https://steamcdn-a.akamaihd.net/steam/apps/2114740/library_600x900.jpg) 0% 0% /
-    cover; */
+  /* border: 1px solid red; */
+}
+
+.card-game .poster {
 }
 
 .card-game img {
+  /* object-fit: cover; */
+  aspect-ratio: 2 / 3;
   outline: 1px solid rgba(255, 255, 255, 0.15);
   outline-offset: -1px;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
@@ -78,6 +117,6 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgb(120 120 120 / 50%); adjust opacity as needed
+  poster-color: rgb(120 120 120 / 50%); adjust opacity as needed
 } */
 </style>

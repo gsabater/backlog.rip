@@ -1,11 +1,10 @@
-/**
- * @project: KAAM
+/*
  * @file:    \plugins\mitt.js
  * @desc:    ...
  * -------------------------------------------
- * Created Date: 9th March 2023
- * Last Modified: Mon Mar 13 2023
- **/
+ * Created Date: 13th March 2023
+ * Modified: Fri Nov 24 2023
+ */
 
 import mitt from 'mitt'
 
@@ -20,9 +19,9 @@ export default defineNuxtPlugin((nuxtApp) => {
   return {
     provide: {
       mitt: emitter,
-      on: emitter.on, // Will register a listener for an event
-      emit: emitter.emit, // Will emit an event
-      all: emitter.all,
+      // on: emitter.on, // Will register a listener for an event
+      // emit: emitter.emit, // Will emit an event
+      // all: emitter.all,
 
       // event: emitter.emit, // Will emit an event
       // listen: emitter.on, // Will register a listener for an event

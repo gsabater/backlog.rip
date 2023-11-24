@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Wed Nov 22 2023
+ * Modified: Fri Nov 24 2023
  */
 
 //+-------------------------------------------------
@@ -27,6 +27,15 @@ let library = {}
 let wishlist = {}
 
 //+-------------------------------------------------
+// repos
+// Repositories are searches and preset filters
+// They are stored in the database and can be updated
+//+-------------------------------------------------
+
+let repos = {}
+let search = {}
+
+//+-------------------------------------------------
 // index
 // Hold indexed values for each of the stores
 //+-------------------------------------------------
@@ -37,11 +46,10 @@ let index = {
   epic: {},
 }
 
-import { useRepositoryStore } from './RepositoryStore'
-
 export const useDataStore = defineStore('data', {
   state: () => ({
     loaded: [],
+    indexes: [],
 
     meta: {
       time: 0,
@@ -50,26 +58,36 @@ export const useDataStore = defineStore('data', {
     },
   }),
 
+  //+-------------------------------------------------
+  // 🛞 Actions
+  //+-------------------------------------------------
+
   actions: {
     status() {
       console.warn('Data satus')
       console.log('Data', data)
 
       console.table({
-        'Loaded': this.loaded,
-        '--': '--',
+        'Loaded': this.loaded.join(', '),
+        '-- Data --': '----',
         'Data': Object.keys(data).length,
         'Library': Object.keys(library).length,
         'Wishlist': Object.keys(wishlist).length,
-        '---': '---',
+        '-- Repos --': '----',
+        'Repos': Object.keys(repos).join(', '),
+        'Search': Object.keys(search).join(', '),
+        '-- Index --': '----',
         'API': Object.keys(index.api).length,
         'Epic': Object.keys(index.epic).length,
         'Steam': Object.keys(index.steam).length,
       })
+
+      console.warn(data[index['steam'][440]])
     },
 
     faker() {
       let $nuxt = useNuxtApp()
+      $nuxt.$mitt.emit('data:updated', 'yep')
       let uuid = null
       // create 20 fake elements to data
       for (let i = 0; i < 20; i++) {
@@ -78,9 +96,9 @@ export const useDataStore = defineStore('data', {
         data[uuid] = {
           uuid: uuid,
           name: `Faker game ${i}`,
-          api_id: Math.floor(Math.random() * 1000),
-          steam_id: Math.floor(Math.random() * 1000),
-          epic_id: Math.floor(Math.random() * 1000),
+          api_id: Math.floor(Math.random() * 10000) * 100,
+          steam_id: Math.floor(Math.random() * 10000),
+          epic_id: Math.floor(Math.random() * 10000),
         }
       }
     },
@@ -93,16 +111,26 @@ export const useDataStore = defineStore('data', {
     // Created on Fri Nov 17 2023
     //+-------------------------------------------------
     async loadLibrary() {
+      if (this.loaded.includes('library')) return
       let $nuxt = useNuxtApp()
 
       library = await $nuxt.$db.games.toArray()
-      this.addToData(library)
+      this.addToData(library, 'library')
+      this.loaded.push('library')
 
+      this.faker()
+      console.log(123)
       log(
         '🎴 User library is ready',
         library[Math.floor(Math.random() * library.length)],
         library.length
       )
+    },
+
+    loadRepository(repo) {
+      // if (this.loaded.includes(repo)) return
+      // // this.addToData(repo)
+      // this.loaded.push(repo)
     },
 
     //+-------------------------------------------------
@@ -111,13 +139,34 @@ export const useDataStore = defineStore('data', {
     // -----
     // Created on Tue Nov 21 2023
     //+-------------------------------------------------
-    addToData(source) {
-      source.forEach((item) => {
+    async addToData(items, source) {
+      let $nuxt = useNuxtApp()
+
+      items.forEach((item) => {
+        let insert = true
+
+        if (source == 'api') {
+          this.indexes.forEach((store) => {
+            if (item[store + '_id']) {
+              // If the item is already in the data array
+              // we need to delete the old one and replace it
+              // also fix the indexes
+              if (index[store][item[store + '_id']]) {
+                this.updateLibrary(item, index[store][item[store + '_id']])
+                insert = false
+                console.log('Update', item, insert)
+              }
+            }
+          })
+        }
+
         index.api[item.api_id] = index.api[item.api_id] || item.uuid
         index.steam[item.steam_id] = index.steam[item.steam_id] || item.uuid
 
-        data[item.uuid] = item
+        if (insert) data[item.uuid] = item
+        console.log('inserting', item, insert)
       })
+      $nuxt.$emit('repository', 'loaded')
     },
 
     //+-------------------------------------------------
@@ -131,25 +180,31 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // get()
+    // Get an element by uuid
     // -----
     // Created on Tue Nov 14 2023
     //+-------------------------------------------------
-    async get(appID) {
-      console.warn(app)
-      console.warn(app.$axios)
-      console.warn(app.$db)
-      let value = await app.$db.value('config', 'me')
-      return [data[appID], value]
+    async get(uuid) {
+      return data[uuid]
     },
 
-    test() {
-      data.c = 'pepc'
-      data[440] = {
-        appid: 440,
+    //+-------------------------------------------------
+    // search(hash)
+    // -----
+    // Created on Fri Nov 24 2023
+    //+-------------------------------------------------
+    async search(hash) {
+      if (search[hash]) return
+      let $nuxt = useNuxtApp()
+
+      const jxr = await $nuxt.$axios.get(`repository/${hash}.json`)
+      if (jxr.status) {
+        console.warn('Search', hash, jxr.data)
+        this.addToData(jxr.data, 'api')
       }
-      console.log(data)
+
+      search[hash] = true
     },
 
     //+-------------------------------------------------
@@ -161,14 +216,35 @@ export const useDataStore = defineStore('data', {
       // if (jxr.status) return jxr.data
     },
 
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Fri Nov 24 2023
+    //+-------------------------------------------------
+    updateLibrary(item, uuid) {
+      let $nuxt = useNuxtApp()
+
+      let local = data[uuid]
+
+      this.indexes.forEach((store) => {
+        delete index[store][local[store + '_id']]
+      })
+
+      data[uuid] = { ...local, ...item, api_id: item.uuid, uuid: uuid }
+    },
+
     async init() {
+      if (this.loaded.includes('store')) return
+
+      this.indexes = Object.keys(index)
       await this.loadLibrary()
-      this.faker()
-      // console.log(data, library)
 
       window.db = {
         data,
         library,
+        repos,
+        search,
         index,
         status: this.status,
       }
@@ -178,7 +254,7 @@ export const useDataStore = defineStore('data', {
         library: Object.keys(library).length,
       })
 
-      // this.isReady = true
+      this.loaded.push('store')
     },
   },
 })

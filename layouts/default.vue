@@ -460,17 +460,13 @@ useHead({
 })
 
 app.$on('*', (e, payload) => {
-  console.warn('🎆 Fired event', e, payload)
-  console.warn(app.$mitt.all)
+  log('🎆 Fired event', e, payload)
+  console.info(app.$mitt.all)
 })
 
 function changeTheme(theme) {
   ui.theme = theme
   document.body.setAttribute('data-bs-theme', theme)
-}
-
-async function getDB() {
-  const xx = await repository.topGames()
 }
 
 onMounted(() => {

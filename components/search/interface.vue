@@ -28,10 +28,16 @@
         </div>
         <div class="col-6"></div>
       </div>
-      <search-results :filters="f"></search-results>
+
+      <search-results ref="results" :filters="f"></search-results>
     </div>
     <div class="col-3">
-      <b-input v-model="f.string" placeholder="Filter..."></b-input>
+      <b-input
+        v-model="f.string"
+        placeholder="Filter..."
+        clearable
+        @input="search"
+        @clear="search"></b-input>
     </div>
   </div>
 </template>
@@ -42,7 +48,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Nov 22 2023
+ * Modified: Fri Nov 24 2023
  **/
 
 export default {
@@ -58,32 +64,41 @@ export default {
       default: null,
     },
   },
-  data: () => ({
-    f: {},
-    base: {
-      string: '',
-    },
 
-    presets: {
-      'my-preset': {
-        string: 'my preset',
+  data() {
+    return {
+      f: {},
+
+      base: {
+        string: '',
       },
-    },
 
-    ui: {},
-  }),
+      presets: {
+        'my-preset': {
+          string: 'my preset',
+        },
+      },
+
+      ui: {},
+    }
+  },
 
   computed: {},
 
   methods: {
+    search() {
+      log('📋 Searching from interface')
+      this.$refs.results.search()
+    },
+
     //+-------------------------------------------------
-    // setFilters()
+    // mergeFilters()
     // Initializes this.f
     // With values from props and presets
     // -----
     // Created on Tue Nov 14 2023
     //+-------------------------------------------------
-    setFilters() {
+    mergeFilters() {
       this.f = {
         ...this.base,
         ...(this.preset ? this.presets[this.preset] : {}),
@@ -95,14 +110,9 @@ export default {
   },
 
   mounted() {
-    this.setFilters()
+    window.devi = this
+
+    this.mergeFilters()
   },
 }
 </script>
-
-<style>
-.offcanvas-backdrop.show {
-  opacity: 0.54;
-  backdrop-filter: blur(4px);
-}
-</style>

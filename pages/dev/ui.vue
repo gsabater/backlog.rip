@@ -565,6 +565,8 @@ export default {
       three: false,
     }
   },
+
+  methods: {},
 }
 </script>
 

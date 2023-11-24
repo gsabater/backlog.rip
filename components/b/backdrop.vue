@@ -16,15 +16,17 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th November 2023
- * Modified: Mon Nov 13 2023
+ * Modified: Thu Nov 23 2023
  **/
 
 export default {
   name: 'TablerBackdrop',
-  data: () => ({
-    show: false,
-    display: false,
-  }),
+  data() {
+    return {
+      show: false,
+      display: false,
+    }
+  },
 
   computed: {},
 

@@ -5,7 +5,6 @@
   </div>
   <div
     v-if="ui.show"
-    @click="hide"
     class="dropdown-control"
     style="
       background-color: rgba(0, 0, 0, 0.1);
@@ -16,7 +15,8 @@
       left: 0px;
       z-index: 10;
       backdrop-filter: blur(0.5px);
-    "></div>
+    "
+    @click="hide"></div>
 </template>
 
 <script>
@@ -25,7 +25,7 @@
  * @desc:    https://preview.tabler.io/dropdowns.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Mon Nov 13 2023
+ * Modified: Thu Nov 23 2023
  **/
 
 export default {
@@ -49,15 +49,17 @@ export default {
     },
   },
 
-  data: () => ({
-    parent: null,
+  data() {
+    return {
+      parent: null,
 
-    ui: {
-      show: false,
-      active: false,
-      isReady: false,
-    },
-  }),
+      ui: {
+        show: false,
+        active: false,
+        isReady: false,
+      },
+    }
+  },
 
   computed: {
     colorAndVariant() {

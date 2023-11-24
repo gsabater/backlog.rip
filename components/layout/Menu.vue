@@ -1,14 +1,16 @@
 <template>
   <h1 class="pt-4 mb-4 text-center text-white">
     <!-- Catas -->
-    <img src="/img/ayc-logo.png" alt="">
+    <img src="/img/ayc-logo.png" alt="" />
     <span
-      style="font-size: 0.8rem; display: block; transform: translateY(-8px);"
-      class="text-center text-disabled">Gestión de catas</span>
+      style="font-size: 0.8rem; display: block; transform: translateY(-8px)"
+      class="text-center text-disabled">
+      Gestión de catas
+    </span>
   </h1>
   <v-list>
     <v-list-item v-for="[icon, text, link] in links" :key="icon" link :to="link || ''">
-      <template v-slot:prepend>
+      <template #prepend>
         <v-icon>{{ icon }}</v-icon>
       </template>
 
@@ -19,44 +21,47 @@
 
 <script>
 /**
- * @project: KAAM
  * @file:    \components\layout\Menu.vue
  * @desc:    ...
  * -------------------------------------------
- * Created Date: 23rd February 2023
- * Last Modified: Thu Jun 29 2023
+ * Created Date: 25th October 2023
+ * Modified: Thu Nov 23 2023
  **/
 
 export default {
-  data: () => ({
-    drawer: null,
-    thelinks: [
-      ['mdi-monitor-dashboard', 'Inicio', '/dashboard'],
-      ['mdi-account-box-outline', 'Empresas', '/clientes'],
-      ['mdi-account-box', 'Usuarios', '/usuarios'],
-      ['mdi-account-tie', 'Evaluadores', '/evaluadores'],
-      // ['mdi-message-text-outline', 'Mensajes'],
-      // ['mdi-folder-network-outline', 'Gestor documental', '/documentos'],
-      // ['mdi-calendar-month-outline', '❌ Planificador', '/planificador'],
+  data() {
+    return {
+      drawer: null,
+      thelinks: [
+        ['mdi-monitor-dashboard', 'Inicio', '/dashboard'],
+        ['mdi-account-box-outline', 'Empresas', '/clientes'],
+        ['mdi-account-box', 'Usuarios', '/usuarios'],
+        ['mdi-account-tie', 'Evaluadores', '/evaluadores'],
+        // ['mdi-message-text-outline', 'Mensajes'],
+        // ['mdi-folder-network-outline', 'Gestor documental', '/documentos'],
+        // ['mdi-calendar-month-outline', '❌ Planificador', '/planificador'],
 
-      ['mdi-code-braces', 'Parámetros', '/configuracion/parametros'],
-      ['mdi-gradient-vertical', 'Fases', '/fases'],
-      ['mdi-food-takeout-box-outline', 'Productos', '/productos'],
-      ['mdi-palette-swatch-outline', 'Muestras', '/muestras'],
-      ['mdi-square-circle', 'Sesiones de catas', '/sesiones'],
-      // ['mdi-square-circle', 'Cálculos y resultados', '/calculos'],
-      // ['', '---'],
-      // ['mdi-inbox-arrow-down', 'Login', '/login'],
-      // ['mdi-inbox-arrow-down', 'User', '/about'],
-      // ['mdi-inbox-arrow-down', 'Tabla simple', '/solicitudes'],
-      // ['mdi-inbox-arrow-down', 'Tabla aggrid', '/aggrid'],
-    ],
-  }),
+        ['mdi-code-braces', 'Parámetros', '/configuracion/parametros'],
+        ['mdi-gradient-vertical', 'Fases', '/fases'],
+        ['mdi-food-takeout-box-outline', 'Productos', '/productos'],
+        ['mdi-palette-swatch-outline', 'Muestras', '/muestras'],
+        ['mdi-square-circle', 'Sesiones de catas', '/sesiones'],
+        // ['mdi-square-circle', 'Cálculos y resultados', '/calculos'],
+        // ['', '---'],
+        // ['mdi-inbox-arrow-down', 'Login', '/login'],
+        // ['mdi-inbox-arrow-down', 'User', '/about'],
+        // ['mdi-inbox-arrow-down', 'Tabla simple', '/solicitudes'],
+        // ['mdi-inbox-arrow-down', 'Tabla aggrid', '/aggrid'],
+      ],
+    }
+  },
 
   computed: {
     links() {
-      if (this.$auth.isEvaluador) return [['mdi-monitor-dashboard', 'Inicio', '/dashboard']]
-      if (!this.$auth.isAdmin) return this.thelinks.filter((link) => link[1] !== 'Empresas')
+      if (this.$auth.isEvaluador)
+        return [['mdi-monitor-dashboard', 'Inicio', '/dashboard']]
+      if (!this.$auth.isAdmin)
+        return this.thelinks.filter((link) => link[1] !== 'Empresas')
 
       return this.thelinks
     },

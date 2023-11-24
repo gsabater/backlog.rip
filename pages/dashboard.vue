@@ -76,6 +76,7 @@
           <b-btn @click="check">check</b-btn>
           <b-btn @click="anadir">anadir</b-btn>
           <b-btn @click="leer">leer</b-btn>
+          <b-btn @click="testemit">test emit</b-btn>
           <hr />
           <fieldset>
             <legend>Add new friend</legend>
@@ -345,6 +346,11 @@ export default {
 
     async leer() {
       console.warn(await this.$db.config.getItem('xxdd'))
+    },
+
+    testemit() {
+      console.log('testemit')
+      this.$mitt.emit('repository', 'loaded')
     },
   },
 

@@ -3,13 +3,14 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Fri Nov 24 2023
+ * Modified: Sat Nov 25 2023
  */
 
 import mitt from 'mitt'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const emitter = mitt()
+  window.$mitt = emitter
 
   emitter.on('event', (e) => {
     console.log('event', e)

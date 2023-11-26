@@ -17,7 +17,8 @@ Attrs: {{ $attrs }}
       v-model="inputValue"
       :type="type"
       :class="colorAndVariant"
-      @input="$emit('input', $event.target.value)" />
+      @change="notify"
+      @update:model-value="notify" />
 
     <div v-if="hint" class="small text-secondary">
       {{ hint }}
@@ -26,6 +27,7 @@ Attrs: {{ $attrs }}
 
   <!--
     Layout with icon
+    and clearable
   -->
   <template v-if="layout == 'with-icon'">
     <label v-if="label" class="form-label" :class="{ required: required }">
@@ -37,16 +39,15 @@ Attrs: {{ $attrs }}
         <!-- <svgs>{{  }}</svgs> -->
         <Icon :icon="$attrs['prepend-icon']"></Icon>
       </span>
-
       <input
         v-bind="$attrs"
         v-model="inputValue"
         :type="type"
         :class="colorAndVariant"
-        @input="$emit('input', $event.target.value)" />
+        @change="notify"
+        @update:model-value="notify" />
 
       <span v-if="$attrs['append-icon']" class="input-icon-addon">
-        <!-- <svgs>{{ $attrs['append-icon'] }}</svgs> -->
         <Icon :icon="$attrs['append-icon']"></Icon>
       </span>
 
@@ -55,7 +56,6 @@ Attrs: {{ $attrs }}
         class="input-icon-addon cursor-pointer action-icon"
         :class="{ active: inputValue !== '' }"
         @click="clear">
-        <!-- <svgs>clearable</svgs> -->
         <Icon>SquareX</Icon>
       </span>
 
@@ -77,7 +77,8 @@ Attrs: {{ $attrs }}
       v-bind="$attrs"
       v-model="inputValue"
       :class="colorAndVariant"
-      @input="$emit('input', $event.target.value)" />
+      @change="notify"
+      @update:model-value="notify" />
 
     <label
       v-if="variant == 'floating'"
@@ -95,12 +96,17 @@ Attrs: {{ $attrs }}
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Thu Nov 23 2023
+ * Modified: Sun Nov 26 2023
  **/
 
 export default {
   name: 'TablerInput',
   props: {
+    value: {
+      type: String,
+      default: '',
+    },
+
     id: {
       type: String,
       default:
@@ -155,14 +161,9 @@ export default {
       type: String,
       default: 'primary',
     },
-
-    value: {
-      type: String,
-      default: '',
-    },
   },
 
-  emits: ['input', 'clear'],
+  emits: ['input', 'clear', 'update:model-value'],
 
   setup(props, { attrs }) {
     return {
@@ -170,11 +171,9 @@ export default {
     }
   },
 
-  data() {
-    return {
-      inputValue: this.value,
-    }
-  },
+  data: (ctx) => ({
+    inputValue: ctx.value,
+  }),
 
   computed: {
     layout() {
@@ -197,12 +196,27 @@ export default {
     },
   },
 
+  watch: {
+    inputValue() {
+      this.notify()
+    },
+  },
+
   methods: {
+    notify() {
+      this.$emit('input', this.inputValue)
+      this.$emit('update:model-value', this.inputValue)
+    },
+
     clear() {
       this.inputValue = ''
+      this.notify()
       this.$emit('clear')
-      this.$emit('input', '')
     },
+  },
+
+  mounted() {
+    this.inputValue = this.$attrs.modelValue
   },
 }
 </script>

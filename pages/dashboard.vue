@@ -350,7 +350,7 @@ export default {
 
     testemit() {
       console.log('testemit')
-      this.$mitt.emit('repository', 'loaded')
+      this.$mitt.emit('data:updated', 'loaded')
     },
   },
 

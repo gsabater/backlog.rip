@@ -16,7 +16,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th November 2023
- * Modified: Thu Nov 23 2023
+ * Modified: Sat Nov 25 2023
  **/
 
 export default {
@@ -50,7 +50,7 @@ export default {
   },
 
   mounted() {
-    this.$on('backdrop:open', (payload) => {
+    this.$mitt.on('backdrop:open', (payload) => {
       console.warn('backdrop:open', payload)
       this.open(payload)
     })

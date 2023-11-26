@@ -459,7 +459,7 @@ useHead({
   link: [],
 })
 
-app.$on('*', (e, payload) => {
+app.$mitt.on('*', (e, payload) => {
   log('🎆 Fired event', e, payload)
   console.info(app.$mitt.all)
 })

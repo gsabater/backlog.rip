@@ -1,7 +1,7 @@
 <template>
   <div class="card card-game">
     <div class="poster">
-      <img :src="poster" :alt="app.steam_id" />
+      <img :src="poster" :alt="app.steam_id" @error="iPoster++" />
     </div>
     <div class="card-body">
       <div class="h5">
@@ -50,7 +50,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Nov 23 2023
+ * Modified: Sun Nov 26 2023
  **/
 
 export default {
@@ -70,6 +70,7 @@ export default {
   data() {
     return {
       app: {},
+      iPoster: 0,
     }
   },
 
@@ -78,7 +79,12 @@ export default {
 
     poster() {
       const ID = this.app.steam_id
-      return `https://steamcdn-a.akamaihd.net/steam/apps/${ID}/library_600x900.jpg`
+      const posters = [
+        `https://steamcdn-a.akamaihd.net/steam/apps/${ID}/library_600x900.jpg`,
+        `https://cdn.akamai.steamstatic.com/steam/apps/${ID}/header.jpg`,
+      ]
+
+      return posters[this.iPoster]
     },
   },
 

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Fri Nov 24 2023
+ * Modified: Sun Nov 26 2023
  */
 
 //+-------------------------------------------------
@@ -41,13 +41,16 @@ let search = {}
 //+-------------------------------------------------
 
 let index = {
-  api: {},
+  // api: {},
   steam: {},
   epic: {},
 }
 
+let $nuxt = null
+
 export const useDataStore = defineStore('data', {
   state: () => ({
+    queue: [],
     loaded: [],
     indexes: [],
 
@@ -77,96 +80,11 @@ export const useDataStore = defineStore('data', {
         'Repos': Object.keys(repos).join(', '),
         'Search': Object.keys(search).join(', '),
         '-- Index --': '----',
-        'API': Object.keys(index.api).length,
         'Epic': Object.keys(index.epic).length,
         'Steam': Object.keys(index.steam).length,
       })
 
       console.warn(data[index['steam'][440]])
-    },
-
-    faker() {
-      let $nuxt = useNuxtApp()
-      $nuxt.$mitt.emit('data:updated', 'yep')
-      let uuid = null
-      // create 20 fake elements to data
-      for (let i = 0; i < 20; i++) {
-        uuid = $nuxt.$uuid()
-
-        data[uuid] = {
-          uuid: uuid,
-          name: `Faker game ${i}`,
-          api_id: Math.floor(Math.random() * 10000) * 100,
-          steam_id: Math.floor(Math.random() * 10000),
-          epic_id: Math.floor(Math.random() * 10000),
-        }
-      }
-    },
-
-    //+-------------------------------------------------
-    // loadLibrary()
-    // Loads the entire library of indexedDB into memory
-    // Should be called again after an import process
-    // -----
-    // Created on Fri Nov 17 2023
-    //+-------------------------------------------------
-    async loadLibrary() {
-      if (this.loaded.includes('library')) return
-      let $nuxt = useNuxtApp()
-
-      library = await $nuxt.$db.games.toArray()
-      this.addToData(library, 'library')
-      this.loaded.push('library')
-
-      this.faker()
-      console.log(123)
-      log(
-        '🎴 User library is ready',
-        library[Math.floor(Math.random() * library.length)],
-        library.length
-      )
-    },
-
-    loadRepository(repo) {
-      // if (this.loaded.includes(repo)) return
-      // // this.addToData(repo)
-      // this.loaded.push(repo)
-    },
-
-    //+-------------------------------------------------
-    // addToData()
-    // Just adds items from sources to the data array
-    // -----
-    // Created on Tue Nov 21 2023
-    //+-------------------------------------------------
-    async addToData(items, source) {
-      let $nuxt = useNuxtApp()
-
-      items.forEach((item) => {
-        let insert = true
-
-        if (source == 'api') {
-          this.indexes.forEach((store) => {
-            if (item[store + '_id']) {
-              // If the item is already in the data array
-              // we need to delete the old one and replace it
-              // also fix the indexes
-              if (index[store][item[store + '_id']]) {
-                this.updateLibrary(item, index[store][item[store + '_id']])
-                insert = false
-                console.log('Update', item, insert)
-              }
-            }
-          })
-        }
-
-        index.api[item.api_id] = index.api[item.api_id] || item.uuid
-        index.steam[item.steam_id] = index.steam[item.steam_id] || item.uuid
-
-        if (insert) data[item.uuid] = item
-        console.log('inserting', item, insert)
-      })
-      $nuxt.$emit('repository', 'loaded')
     },
 
     //+-------------------------------------------------
@@ -196,7 +114,7 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     async search(hash) {
       if (search[hash]) return
-      let $nuxt = useNuxtApp()
+      // let $nuxt = useNuxtApp()
 
       const jxr = await $nuxt.$axios.get(`repository/${hash}.json`)
       if (jxr.status) {
@@ -205,6 +123,118 @@ export const useDataStore = defineStore('data', {
       }
 
       search[hash] = true
+    },
+
+    // faker() {
+    //   let $nuxt = useNuxtApp()
+    //   $nuxt.$mitt.emit('data:updated', 'yep')
+    //   let uuid = null
+    //   // create 20 fake elements to data
+    //   for (let i = 0; i < 20; i++) {
+    //     uuid = $nuxt.$uuid()
+
+    //     data[uuid] = {
+    //       uuid: uuid,
+    //       name: `Faker game ${i}`,
+    //       api_id: Math.floor(Math.random() * 10000) * 100,
+    //       steam_id: Math.floor(Math.random() * 10000),
+    //       epic_id: Math.floor(Math.random() * 10000),
+    //     }
+    //   }
+    // },
+
+    //+-------------------------------------------------
+    // loadLibrary()
+    // Loads the entire library of indexedDB into memory
+    // Should be called again after an import process
+    // -----
+    // Created on Fri Nov 17 2023
+    //+-------------------------------------------------
+    async loadLibrary() {
+      if (this.loaded.includes('library')) return
+      // let $nuxt = useNuxtApp()
+
+      library = await $nuxt.$db.games.toArray()
+      this.addToData(library, 'library')
+      this.loaded.push('library')
+
+      log(
+        '🎴 User library is ready',
+        `found ${library.length} apps`,
+        library[Math.floor(Math.random() * library.length)]
+      )
+    },
+
+    //+-------------------------------------------------
+    // addToData()
+    // Adds an array of items to data
+    // -----
+    // Created on Tue Nov 21 2023
+    //+-------------------------------------------------
+    async addToData(items, source) {
+      // let $nuxt = useNuxtApp()
+
+      items.forEach((item) => {
+        let exists = false
+        this.indexes.forEach((store) => {
+          if (item[store + '_id']) {
+            // If there is already an item indexed for that store
+            // Update the item with new data (shouldnt happen only on api calls)
+            if (index[store][item[store + '_id']]) {
+              console.warn(
+                'Element is already indexed',
+                store,
+                item,
+                index[store][item[store + '_id']]
+              )
+              this.updateApp(item, index[store][item[store + '_id']])
+              exists = true
+            }
+          }
+        })
+
+        if (exists == false) {
+          // index.api[item.api_id] = index.api[item.api_id] || item.uuid
+          index.steam[item.steam_id] = index.steam[item.steam_id] || item.uuid
+          data[item.uuid] = item
+        }
+      })
+
+      $nuxt.$mitt.emit('data:updated', 'loaded')
+    },
+
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Fri Nov 24 2023
+    //+-------------------------------------------------
+    updateApp(item, uuid) {
+      let update = false
+
+      this.indexes.forEach((store) => {
+        if (index[store][item[store + '_id']]) {
+          update = index[store][item[store + '_id']]
+        }
+      })
+
+      if (!update) return
+      let local = data[update]
+
+      // Append the uuid to a queue to save updated items
+      if (!local.updated_at || local.updated_at < item.updated_at) {
+        this.queue.push(update)
+      }
+
+      // Update the app in memory
+      data[update] = {
+        ...local,
+        ...item,
+        api_id: item.uuid,
+        uuid: local.uuid,
+      }
+
+      console.warn('Updated', data[update])
     },
 
     //+-------------------------------------------------
@@ -217,28 +247,44 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // updateMissing()
+    // Search for apps without api_id and call the api
+    // to get the data and update the $db
     // -----
-    // Created on Fri Nov 24 2023
+    // Created on Sat Nov 25 2023
     //+-------------------------------------------------
-    updateLibrary(item, uuid) {
-      let $nuxt = useNuxtApp()
+    async updateMissing() {
+      // let $nuxt = useNuxtApp()
 
-      let local = data[uuid]
+      let missing = {}
+      let items = await $nuxt.$db.games
+        .filter((game) => game.api_id === undefined)
+        .toArray()
 
-      this.indexes.forEach((store) => {
-        delete index[store][local[store + '_id']]
+      items.forEach((item) => {
+        this.indexes.forEach((store) => {
+          if (item[store + '_id']) {
+            if (missing[store] === undefined) missing[store] = []
+            missing[store].push(item[store + '_id'])
+          }
+        })
       })
 
-      data[uuid] = { ...local, ...item, api_id: item.uuid, uuid: uuid }
+      if (Object.keys(missing).length > 0) {
+        const jxr = await $nuxt.$axios.post(`get/batch`, missing)
+        if (jxr.status) return jxr.data.forEach((item) => this.updateApp(item))
+      }
     },
 
     async init() {
-      if (this.loaded.includes('store')) return
+      if (this.loaded.includes('init')) return
 
+      $nuxt = useNuxtApp()
+      this.loaded.push('init')
       this.indexes = Object.keys(index)
+
       await this.loadLibrary()
+      await this.updateMissing()
 
       window.db = {
         data,
@@ -253,8 +299,6 @@ export const useDataStore = defineStore('data', {
         data: Object.keys(data).length,
         library: Object.keys(library).length,
       })
-
-      this.loaded.push('store')
     },
   },
 })

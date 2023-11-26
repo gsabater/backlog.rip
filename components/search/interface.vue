@@ -36,8 +36,7 @@
         v-model="f.string"
         placeholder="Filter..."
         clearable
-        @input="search"
-        @clear="search"></b-input>
+        @input="search"></b-input>
     </div>
   </div>
 </template>
@@ -48,7 +47,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Nov 24 2023
+ * Modified: Sun Nov 26 2023
  **/
 
 export default {
@@ -87,7 +86,7 @@ export default {
 
   methods: {
     search() {
-      log('📋 Searching from interface')
+      log('📋 Searching from interface', JSON.stringify(this.f))
       this.$refs.results.search()
     },
 

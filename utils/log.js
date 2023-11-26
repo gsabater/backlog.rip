@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Wed Nov 22 2023
+ * Modified: Sun Nov 26 2023
  */
 
 function info(...args) {
@@ -41,6 +41,7 @@ async function logDefault(...args) {
     ...args.slice(1)
     // `\n🪢 ${stack[0]}`
   )
+  // console.log('%cTrace 🪢', 'color: blue; text-decoration: underline;', stack[0])
 }
 
 export { logd, info, error, warn }

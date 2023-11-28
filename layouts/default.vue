@@ -17,9 +17,12 @@
         <h1
           class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
           <NuxtLink to="/">
-            Home
-            <!-- <img src="./static/logo.svg" width="110" height="32"
-                alt="Backlog.rip" class="navbar-brand-image" /> -->
+            <img
+              src="/img/logo.png"
+              width="110"
+              height="32"
+              alt="Backlog.rip"
+              class="navbar-brand-image" />
           </NuxtLink>
         </h1>
         <div class="navbar-nav flex-row order-md-last">

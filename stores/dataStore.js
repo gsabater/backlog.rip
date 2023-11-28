@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Sun Nov 26 2023
+ * Modified: Tue Nov 28 2023
  */
 
 //+-------------------------------------------------
@@ -23,6 +23,7 @@
 
 let data = {}
 
+let states = {}
 let library = {}
 let wishlist = {}
 
@@ -74,6 +75,7 @@ export const useDataStore = defineStore('data', {
         'Loaded': this.loaded.join(', '),
         '-- Data --': '----',
         'Data': Object.keys(data).length,
+        'States': Object.keys(states).length,
         'Library': Object.keys(library).length,
         'Wishlist': Object.keys(wishlist).length,
         '-- Repos --': '----',
@@ -142,6 +144,26 @@ export const useDataStore = defineStore('data', {
     //     }
     //   }
     // },
+
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Mon Nov 27 2023
+    //+-------------------------------------------------
+    async loadStates() {
+      if (this.loaded.includes('states')) return
+
+      states = await $nuxt.$db.states.toArray()
+
+      this.loaded.push('states')
+
+      log(
+        '❇️ User states are ready',
+        `found ${states.length} states`,
+        states[Math.floor(Math.random() * states.length)]
+      )
+    },
 
     //+-------------------------------------------------
     // loadLibrary()
@@ -283,6 +305,7 @@ export const useDataStore = defineStore('data', {
       this.loaded.push('init')
       this.indexes = Object.keys(index)
 
+      await this.loadStates()
       await this.loadLibrary()
       await this.updateMissing()
 

@@ -21,7 +21,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Nov 24 2023
+ * Modified: Wed Nov 29 2023
  **/
 
 export default {
@@ -132,7 +132,7 @@ export default {
     // Created on Fri Nov 24 2023
     //+-------------------------------------------------
     search() {
-      log('⚡ Search')
+      log('⚡ Searching')
 
       this.filter()
 
@@ -150,7 +150,9 @@ export default {
     // Created on Thu Nov 23 2023
     //+-------------------------------------------------
     filter() {
-      log('⚡ Filter')
+      log('⚡ Filtering')
+      if (!this.dataStore.isReady) return
+
       console.time('Filter')
 
       const items = []
@@ -210,9 +212,14 @@ export default {
   mounted() {
     this.init()
 
-    this.$mitt.on('data:updated', (payload) => {
-      console.warn('data:updated', payload)
-      this.filter()
+    this.$mitt.on('data:updated', () => {
+      log('⭕ Starting a search from an event -> data:updated')
+      this.search()
+    })
+
+    this.$mitt.on('data:ready', () => {
+      log('⭕ Starting a search from an event -> data:ready')
+      this.search()
     })
   },
 

@@ -9,6 +9,13 @@
       </div>
       <div class="text-muted">
         {{ app.steam_id }}
+        <pre>{{ app.state || 'N' }}</pre>
+
+        <b-state :app="app.uuid" @set="setState">
+          <button type="button" class="btn">
+            <Icon size="18" class="text-muted me-1">Dots</Icon>
+          </button>
+        </b-state>
       </div>
     </div>
     <!-- <div class="card-body">
@@ -50,7 +57,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sun Nov 26 2023
+ * Modified: Wed Nov 29 2023
  **/
 
 export default {
@@ -89,6 +96,10 @@ export default {
   },
 
   methods: {
+    setState(state) {
+      // this.app.state = state.id
+    },
+
     async get() {
       this.app = await this.dataStore.get(this.appid)
     },

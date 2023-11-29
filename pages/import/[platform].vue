@@ -813,7 +813,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Wed Nov 22 2023
+ * Modified: Wed Nov 29 2023
  **/
 
 // {
@@ -1251,7 +1251,7 @@ export default {
     },
 
     async init() {
-      window.dev = this
+      // window.dev = this
 
       /**  */
       console.warn('1. detect -> connect')

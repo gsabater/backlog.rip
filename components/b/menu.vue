@@ -1,5 +1,10 @@
 <template>
-  <div ref="dropdown" class="b-menu dropdown-menu" :class="{ show: ui.show }">
+  <div
+    v-if="!ui.isReady || (ui.isReady && ui.show)"
+    ref="dropdown"
+    class="b-menu dropdown-menu"
+    :class="{ show: ui.show }"
+    @click="hide">
     <slot />
     <!-- <a class="dropdown-item" href="#">Last 3 months</a> -->
   </div>
@@ -25,7 +30,7 @@
  * @desc:    https://preview.tabler.io/dropdowns.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Thu Nov 23 2023
+ * Modified: Wed Nov 29 2023
  **/
 
 export default {
@@ -46,6 +51,12 @@ export default {
     color: {
       type: String,
       default: 'primary',
+    },
+
+    // WIP: revisar como es en vuetify para autohide
+    persistent: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -99,12 +110,12 @@ export default {
 
       if (this.parent) {
         this.parent.addEventListener('click', this.toggle)
+        this.ui.isReady = true
       }
     },
 
     async init() {
       await delay(300)
-      this.ui.isReady = true
       this.enableMenu()
     },
   },

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue Nov 28 2023
+ * Modified: Wed Nov 29 2023
  */
 
 //+-------------------------------------------------
@@ -42,9 +42,9 @@ let search = {}
 //+-------------------------------------------------
 
 let index = {
-  // api: {},
-  steam: {},
+  api: {},
   epic: {},
+  steam: {},
 }
 
 let $nuxt = null
@@ -54,6 +54,8 @@ export const useDataStore = defineStore('data', {
     queue: [],
     loaded: [],
     indexes: [],
+
+    isReady: false,
 
     meta: {
       time: 0,
@@ -82,6 +84,7 @@ export const useDataStore = defineStore('data', {
         'Repos': Object.keys(repos).join(', '),
         'Search': Object.keys(search).join(', '),
         '-- Index --': '----',
+        'API': Object.keys(index.api).length,
         'Epic': Object.keys(index.epic).length,
         'Steam': Object.keys(index.steam).length,
       })
@@ -107,6 +110,16 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     async get(uuid) {
       return data[uuid]
+    },
+
+    //+-------------------------------------------------
+    // states()
+    // Returns the states array
+    // -----
+    // Created on Wed Nov 29 2023
+    //+-------------------------------------------------
+    states() {
+      return states
     },
 
     //+-------------------------------------------------
@@ -189,7 +202,7 @@ export const useDataStore = defineStore('data', {
 
     //+-------------------------------------------------
     // addToData()
-    // Adds an array of items to data
+    // Runs over an array and adds elements to data and index
     // -----
     // Created on Tue Nov 21 2023
     //+-------------------------------------------------
@@ -201,62 +214,111 @@ export const useDataStore = defineStore('data', {
         this.indexes.forEach((store) => {
           if (item[store + '_id']) {
             // If there is already an item indexed for that store
-            // Update the item with new data (shouldnt happen only on api calls)
+            // Update the item with new data
+            // (shouldnt happen often,  only on api calls)
             if (index[store][item[store + '_id']]) {
-              console.warn(
-                'Element is already indexed',
-                store,
-                item,
-                index[store][item[store + '_id']]
-              )
-              this.updateApp(item, index[store][item[store + '_id']])
+              if (item.uuid == index[store][item[store + '_id']]) return
+
+              console.warn('Element is already indexed on', store, item)
+              console.warn(item.uuid, '(API) -> (L)', index[store][item[store + '_id']])
+              this.update(item, index[store][item[store + '_id']])
               exists = true
             }
           }
         })
 
         if (exists == false) {
-          // index.api[item.api_id] = index.api[item.api_id] || item.uuid
-          index.steam[item.steam_id] = index.steam[item.steam_id] || item.uuid
           data[item.uuid] = item
+          if (item.api_id) index.api[item.api_id] = item.uuid
+          if (item.steam_id) index.steam[item.steam_id] = item.uuid
         }
+        // index.api[item.api_id] = index.api[item.api_id] || item.uuid
+        // index.steam[item.steam_id] = index.steam[item.steam_id] || item.uuid
       })
 
       $nuxt.$mitt.emit('data:updated', 'loaded')
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // addToQueue()
+    // Thanks copilot
+    // -----
+    // Created on Wed Nov 29 2023
+    //+-------------------------------------------------
+    addToQueue(uuid) {
+      if (this.queue.includes(uuid)) return
+
+      if (this.queue.length == 0) {
+        setTimeout(() => {
+          console.log('📦 Saving queue', this.queue.length)
+          this.queue.forEach((uuid) => {
+            console.log('📀 Saving', uuid, data[uuid].name || 'NN')
+            // $nuxt.$db.games.update(uuid, data[uuid])
+          })
+          this.queue = []
+        }, 2000)
+      }
+
+      this.queue.push(uuid)
+    },
+
+    //+-------------------------------------------------
+    // update()
+    // Updates an app in memory and adds it to the queue
     // -----
     // Created on Fri Nov 24 2023
+    // Created on Wed Nov 29 2023
     //+-------------------------------------------------
-    updateApp(item, uuid) {
+    update(item, uuid) {
       let update = false
 
-      this.indexes.forEach((store) => {
-        if (index[store][item[store + '_id']]) {
-          update = index[store][item[store + '_id']]
-        }
-      })
+      if (uuid) update = data[uuid]
+      else {
+        this.indexes.forEach((store) => {
+          if (index[store][item[store + '_id']]) {
+            update = index[store][item[store + '_id']]
+          }
+        })
+      }
+
+      // WIP aleays will call for updating
+      // first search in api index,
+      // then do the store dance
+      // update only when updated_at is newer || !api_id
+      // second param should be force save and when true just save
+      // extract index and call it manually after the item is updated
+
+      console.warn(
+        'Updating app (from -> to)',
+        JSON.stringify(item),
+        JSON.stringify(update)
+      )
 
       if (!update) return
-      let local = data[update]
 
-      // Append the uuid to a queue to save updated items
-      if (!local.updated_at || local.updated_at < item.updated_at) {
-        this.queue.push(update)
+      let element = {
+        ...update,
+        ...item,
       }
+
+      if (!element.api_id) element.api_id = item.uuid
+
+      data[update.uuid] = element
 
       // Update the app in memory
-      data[update] = {
-        ...local,
-        ...item,
-        api_id: item.uuid,
-        uuid: local.uuid,
-      }
+      // data[update] = {
+      //   ...local,
+      //   ...item,
+      //   api_id: item.uuid,
+      //   uuid: local.uuid,
+      // }
 
-      console.warn('Updated', data[update])
+      console.warn('Updated', JSON.stringify(element))
+
+      // Append the uuid to a queue to save updated items
+      // if (!local.updated_at || local.updated_at < item.updated_at) {
+      this.addToQueue(update.uuid)
+      // }
     },
 
     //+-------------------------------------------------
@@ -277,7 +339,7 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     async updateMissing() {
       // let $nuxt = useNuxtApp()
-
+      return
       let missing = {}
       let items = await $nuxt.$db.games
         .filter((game) => game.api_id === undefined)
@@ -294,10 +356,16 @@ export const useDataStore = defineStore('data', {
 
       if (Object.keys(missing).length > 0) {
         const jxr = await $nuxt.$axios.post(`get/batch`, missing)
-        if (jxr.status) return jxr.data.forEach((item) => this.updateApp(item))
+        if (jxr.status) return jxr.data.forEach((item) => this.update(item))
       }
     },
 
+    //+-------------------------------------------------
+    // init()
+    // Initialize the data store
+    // -----
+    // Created on Wed Nov 29 2023
+    //+-------------------------------------------------
     async init() {
       if (this.loaded.includes('init')) return
 
@@ -305,18 +373,33 @@ export const useDataStore = defineStore('data', {
       this.loaded.push('init')
       this.indexes = Object.keys(index)
 
+      // Load and index data
       await this.loadStates()
       await this.loadLibrary()
       await this.updateMissing()
 
+      // Expose data to the window
       window.db = {
-        data,
-        library,
-        repos,
-        search,
-        index,
+        d: {
+          data,
+          library,
+          wishlist,
+          states,
+          repos,
+          search,
+          index,
+        },
+        // data,
+        // library,
+        // repos,
+        // search,
+        // index,
         status: this.status,
       }
+
+      // Finally, data is ready
+      this.isReady = true
+      $nuxt.$mitt.emit('data:ready')
 
       log('💽 Data is ready to use', {
         data: Object.keys(data).length,

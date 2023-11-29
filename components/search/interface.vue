@@ -47,7 +47,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sun Nov 26 2023
+ * Modified: Wed Nov 29 2023
  **/
 
 export default {
@@ -86,7 +86,7 @@ export default {
 
   methods: {
     search() {
-      log('📋 Searching from interface', JSON.stringify(this.f))
+      log('⭕ Starting a search from the interface', JSON.stringify(this.f))
       this.$refs.results.search()
     },
 
@@ -109,7 +109,7 @@ export default {
   },
 
   mounted() {
-    window.devi = this
+    // window.devi = this
 
     this.mergeFilters()
   },

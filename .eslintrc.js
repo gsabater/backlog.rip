@@ -3,7 +3,7 @@
  * @desc:    https://vueschool.io/articles/vuejs-tutorials/eslint-and-prettier-with-vite-and-vue-js-3/
  * -------------------------------------------
  * Created Date: 11th November 2023
- * Modified: Mon Nov 27 2023
+ * Modified: Wed Nov 29 2023
  */
 
 module.exports = {

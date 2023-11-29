@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Sun Nov 26 2023
+ * Modified: Wed Nov 29 2023
  */
 
 let app = null
@@ -51,6 +51,7 @@ export const useUserStore = defineStore('user', {
       this.user = { ...me }
 
       log('🥸 User is authenticated', this.user)
+      log('⭕ Should check for providers', this.user.providers)
 
       this.isLogged = true
       this.isChecked = true

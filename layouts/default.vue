@@ -398,6 +398,10 @@
     </div>
   </div>
 
+  <b-btn @click="ui.dialog = true">dialog</b-btn>
+  <b-dialog v-model="ui.dialog">
+    <h1>Dialog</h1>
+  </b-dialog>
   <b-backdrop></b-backdrop>
   <Toaster position="top-right" />
 
@@ -440,6 +444,7 @@ const repository = useRepositoryStore()
 const ui = reactive({
   theme: 'light',
   menu: false,
+  dialog: false,
 })
 
 useHead({

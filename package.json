@@ -14,18 +14,18 @@
     "vue": "latest"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.0.3",
+    "@nuxt/devtools": "^1.0.4",
     "@nuxt/eslint-config": "^0.2.0",
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-vue": "^9.18.1",
+    "eslint-plugin-vue": "^9.19.2",
     "prettier": "^3.1.0",
     "sass": "^1.62",
     "sass-loader": "^13.2.0"
   },
   "dependencies": {
     "@nuxt/content": "^2.8.5",
-    "@nuxt/image": "^1.0.0",
+    "@nuxt/image": "^1.1.0",
     "@pinia/nuxt": "^0.5",
     "@tabler/core": "^1.0.0-beta20",
     "@tabler/icons-vue": "^2.42.0",

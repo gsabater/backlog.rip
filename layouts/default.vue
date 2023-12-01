@@ -2,7 +2,9 @@
   <div class="page">
     <!-- Navbar -->
     <!-- <div class="sticky-top"> -->
-    <header class="navbar navbar-expand-md navbar-light none-sticky-top d-print-none">
+    <header
+      class="navbar navbar-expand-md navbar-light none-sticky-top d-print-none"
+      style="max-height: 56px">
       <div class="container-xl">
         <button
           class="navbar-toggler"
@@ -14,16 +16,17 @@
           aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <h1
-          class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+        <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pa-0">
           <NuxtLink to="/">
             <img
               src="/img/logo.png"
               width="110"
               height="32"
               alt="Backlog.rip"
-              class="navbar-brand-image" />
+              class="navbar-brand-image"
+              style="height: auto; width: 100px; transform: translateY(15px)" />
           </NuxtLink>
+          Backlog.rip
         </h1>
         <div class="navbar-nav flex-row order-md-last">
           <div v-if="!$auth.isLogged" class="nav-item d-none d-md-flex me-3">
@@ -398,10 +401,8 @@
     </div>
   </div>
 
-  <b-btn @click="ui.dialog = true">dialog</b-btn>
-  <b-dialog v-model="ui.dialog">
-    <h1>Dialog</h1>
-  </b-dialog>
+  <game-details></game-details>
+  <search-holder></search-holder>
   <b-backdrop></b-backdrop>
   <Toaster position="top-right" />
 

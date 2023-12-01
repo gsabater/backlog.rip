@@ -96,7 +96,7 @@ Attrs: {{ $attrs }}
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Sun Nov 26 2023
+ * Modified: Fri Dec 01 2023
  **/
 
 export default {
@@ -204,7 +204,7 @@ export default {
 
   methods: {
     notify() {
-      this.$emit('input', this.inputValue)
+      // this.$emit('input', this.inputValue)
       this.$emit('update:model-value', this.inputValue)
     },
 

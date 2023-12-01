@@ -1,10 +1,10 @@
 <template>
   <div class="row">
-    <div class="col">
+    <!-- <div class="col">
       <pre>
         {{ repository }}
       </pre>
-    </div>
+    </div> -->
   </div>
   <div class="row row-deck row-cards">
     <template v-for="(app, i) in items" :key="'card' + i">
@@ -21,7 +21,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Nov 29 2023
+ * Modified: Fri Dec 01 2023
  **/
 
 export default {
@@ -150,7 +150,7 @@ export default {
     // Created on Thu Nov 23 2023
     //+-------------------------------------------------
     filter() {
-      log('⚡ Filtering')
+      // log('⚡ Filtering')
       if (!this.dataStore.isReady) return
 
       console.time('Filter')

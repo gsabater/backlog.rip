@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu Nov 30 2023
+ * Modified: Fri Dec 01 2023
  */
 
 let $nuxt = null
@@ -206,10 +206,11 @@ export const useDataStore = defineStore('data', {
 
       console.warn('Updated', local)
 
-      // Index resulting element
+      // Save and index the app
+      // Maybe $mitt.emit('data:updated', 'updated', local)
+      data[ref] = { ...local }
       this.toIndex(local)
       if (toQueue) this.toQueue(local.uuid)
-      return
     },
 
     //+-------------------------------------------------

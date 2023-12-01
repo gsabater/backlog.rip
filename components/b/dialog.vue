@@ -1,54 +1,101 @@
 <template>
-  <button :class="colorAndVariant">
-    <slot />
-  </button>
+  <!-- <pre>
+    {{ $attrs }}
+    {{ value }}
+    {{ show }}
+    {{ display }}
+  </pre> -->
+  <div
+    v-if="show"
+    class="modal modal-blur fade d-block"
+    :class="{ show: display }"
+    @click.self="hide">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div v-if="title" class="modal-header">
+          <h5 class="modal-title">{{ title }}</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            @click="hide"></button>
+        </div>
+        <div class="modal-body">
+          <slot />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn me-auto" data-bs-dismiss="modal" @click="hide">
+            Close
+          </button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 /**
- * @file:    \components\b\btn.vue
- * @desc:    https://preview.tabler.io/buttons.html
+ * @file:    \components\b\dialog.vue
+ * @desc:    ...
  * -------------------------------------------
- * Created Date: 25th October 2023
- * Modified: Thu Nov 30 2023
+ * Created Date: 30th November 2023
+ * Modified: Fri Dec 01 2023
  **/
 
 export default {
-  name: 'TablerBtn',
+  name: 'TablerDialog',
   props: {
-    variant: {
+    title: {
       type: String,
-      default: '',
-      options: ['outline', 'ghost', 'square', 'pill'],
+      default: null,
     },
 
-    disabled: {
+    persistent: {
       type: Boolean,
       default: false,
     },
+  },
+  emits: ['update:model-value'],
 
-    color: {
-      type: String,
-      default: '',
+  data() {
+    return {
+      show: false,
+      display: false,
+    }
+  },
+
+  watch: {
+    // 'show'() {
+
+    // },
+    '$attrs.modelValue'(val) {
+      if (val !== false) this._show()
     },
   },
 
-  computed: {
-    colorAndVariant() {
-      if (this.variant == 'icon') return `btn-${this.color} btn-icon`
-      if (this.variant == 'pill') return `btn-pill btn-${this.color}`
-
-      let className = 'btn'
-
-      if (this.variant) className += ` btn-${this.variant}-${this.color}`
-      if (this.color) className += ` btn-${this.color}`
-
-      if (this.disabled === true) className += ` disabled`
-      if (Object.prototype.hasOwnProperty.call(this.$attrs, 'block'))
-        className += ` w-100`
-
-      return className
+  methods: {
+    _show() {
+      this.show = true
+      window.setTimeout(() => {
+        this.display = true
+      }, 50)
     },
+
+    hide() {
+      this.display = false
+      window.setTimeout(() => {
+        this.show = false
+        this.$emit('update:model-value', this.show)
+      }, 50)
+    },
+  },
+
+  mounted() {
+    this.show = this.$attrs.modelValue
   },
 }
 </script>

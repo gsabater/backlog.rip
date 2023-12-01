@@ -36,7 +36,8 @@
         v-model="f.string"
         placeholder="Filter..."
         clearable
-        @input="search"></b-input>
+        @keyup="search"
+        @clear="search"></b-input>
     </div>
   </div>
 </template>
@@ -47,7 +48,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Nov 29 2023
+ * Modified: Fri Dec 01 2023
  **/
 
 export default {

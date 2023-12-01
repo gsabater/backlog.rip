@@ -1,6 +1,6 @@
 <template>
   <div class="card card-game">
-    <div class="poster">
+    <div class="poster" @click="showGameModal">
       <img :src="poster" :alt="app.steam_id" @error="iPoster++" />
     </div>
     <div class="card-body">
@@ -57,7 +57,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Nov 29 2023
+ * Modified: Fri Dec 01 2023
  **/
 
 export default {
@@ -86,16 +86,24 @@ export default {
 
     poster() {
       const ID = this.app.steam_id
+      if (!ID) return
+
       const posters = [
         `https://steamcdn-a.akamaihd.net/steam/apps/${ID}/library_600x900.jpg`,
         `https://cdn.akamai.steamstatic.com/steam/apps/${ID}/header.jpg`,
       ]
 
-      return posters[this.iPoster]
+      const poster = posters[this.iPoster]
+      this.$mitt.emit('poster:hold', poster)
+      return poster
     },
   },
 
   methods: {
+    showGameModal() {
+      this.$mitt.emit('game:modal', this.app)
+    },
+
     setState(state) {
       // this.app.state = state.id
     },

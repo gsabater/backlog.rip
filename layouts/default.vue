@@ -26,7 +26,7 @@
               class="navbar-brand-image"
               style="height: auto; width: 100px; transform: translateY(15px)" />
           </NuxtLink>
-          Backlog.rip
+          <span style="transform: translate(-10px, 7px)">Backlog.rip</span>
         </h1>
         <div class="navbar-nav flex-row order-md-last">
           <div v-if="!$auth.isLogged" class="nav-item d-none d-md-flex me-3">
@@ -53,7 +53,7 @@
             </div>
           </div>
 
-          <div class="d-none d-md-flex">
+          <div class="d-none d-md-flex mx-3">
             <div
               class="nav-link px-0 hide-theme-dark"
               data-bs-toggle="tooltip"
@@ -105,7 +105,7 @@
               </svg>
             </div>
 
-            <div class="nav-item dropdown d-md-flex me-3">
+            <div class="nav-item dropdown me-3 d-none noped-md-flex">
               <a
                 href="#"
                 class="nav-link px-0"
@@ -279,7 +279,7 @@
               </div>
             </div>
 
-            <div
+            <!-- <div
               class="nav-link px-0 hide-theme-dark"
               data-bs-toggle="tooltip"
               data-bs-placement="bottom"
@@ -302,14 +302,11 @@
                   stroke-width="0"
                   fill="currentColor"></path>
               </svg>
-            </div>
+            </div> -->
           </div>
-          <div class="nav-item dropdown">
-            <a
-              href="#"
-              class="nav-link d-flex lh-1 text-reset p-0"
-              data-bs-toggle="dropdown"
-              aria-label="Open user menu">
+
+          <div class="nav-item dropdown d-none">
+            <div class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
               <span
                 class="avatar avatar-sm"
                 :style="`background-image: url(${$auth.user.avatar})`"></span>
@@ -317,7 +314,7 @@
                 <div>{{ $auth.user.username }}</div>
                 <div class="mt-1 small text-muted">UI Designer</div>
               </div>
-            </a>
+            </div>
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
               <a href="#" class="dropdown-item">Status</a>
               <a href="#" class="dropdown-item">Profile</a>
@@ -326,6 +323,33 @@
               <a href="./settings.html" class="dropdown-item">Settings</a>
               <a href="./sign-in.html" class="dropdown-item">Logout</a>
             </div>
+          </div>
+
+          <div class="nav-item dropdown d-block align-self-center">
+            <div class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
+              <span
+                class="avatar avatar-sm"
+                :style="`background-image: url(${$auth.user.avatar})`"></span>
+              <div class="d-none d-xl-block ps-2">
+                <div>{{ $auth.user.username }}</div>
+                <!-- <div class="mt-1 small text-muted">UI Designer</div> -->
+              </div>
+            </div>
+            <b-menu ref="menu">
+              <div class="dropdown-item">
+                Library
+                <span class="badge bg-primary text-primary-fg ms-auto">12</span>
+              </div>
+              <div class="dropdown-item">Journal</div>
+              <div class="dropdown-divider"></div>
+              <a href="./settings.html" class="dropdown-item">Settings</a>
+              <a href="./sign-in.html" class="dropdown-item">Logout</a>
+              <!-- <div class="dropdown-divider"></div>
+              <div class="dropdown-item">Upgrade to Pro</div> -->
+            </b-menu>
+            <!-- <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+
+            </div> -->
           </div>
         </div>
       </div>
@@ -386,7 +410,14 @@
                 <li class="list-inline-item">
                   Copyright &copy; 2022
                   <a href="." class="link-secondary">Tabler</a>
-                  . All rights reserved.
+                  Made with 💟 in
+                  <a
+                    href="https://www.google.com/maps/@39.4758462,2.304438,8z"
+                    class="link-secondary"
+                    target="_blank"
+                    rel="noopener">
+                    Mallorca
+                  </a>
                 </li>
                 <li class="list-inline-item">
                   <a href="./changelog.html" class="link-secondary" rel="noopener">

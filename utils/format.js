@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 12th November 2023
- * Modified: Mon Nov 13 2023
+ * Modified: Mon Dec 04 2023
  */
 
 let app = useNuxtApp()
@@ -57,32 +57,32 @@ export default {
     return str
   },
 
-  toDayJS(theDate, format = 'L') {
-    const app = useNuxtApp()
-    if (!theDate) return ''
+  // toDayJS(theDate, format = 'L') {
+  //   const app = useNuxtApp()
+  //   if (!theDate) return ''
 
-    let date = theDate.replace(/\//g, '-')
-    let moment = null
+  //   let date = theDate.replace(/\//g, '-')
+  //   let moment = null
 
-    if (typeof date === 'string' && date.indexOf('-') > -1) {
-      moment = app.$dayjs(date) // ['DD-MM-YYYY', 'YYYY-MM-DD', 'MM-DD-YYYY']
-    }
+  //   if (typeof date === 'string' && date.indexOf('-') > -1) {
+  //     moment = app.$dayjs(date) // ['DD-MM-YYYY', 'YYYY-MM-DD', 'MM-DD-YYYY']
+  //   }
 
-    if (format == 'nice') format = 'D [de] MMMM, YYYY'
-    if (format == 'nice time') format = 'DD [de] MMMM, YYYY [-] HH:mm:ss'
-    if (format) return moment.format(format)
+  //   if (format == 'nice') format = 'D [de] MMMM, YYYY'
+  //   if (format == 'nice time') format = 'DD [de] MMMM, YYYY [-] HH:mm:ss'
+  //   if (format) return moment.format(format)
 
-    return moment
-  },
+  //   return moment
+  // },
 
-  minToHours(min) {
-    if (!min) return ''
+  // minToHours(min) {
+  //   if (!min) return ''
 
-    let hours = Math.floor(min / 60)
-    let minutes = min % 60
+  //   let hours = Math.floor(min / 60)
+  //   let minutes = min % 60
 
-    if (hours == 0) return `${minutes}m`
-    if (minutes == 0) return `${hours}h`
-    return `${hours}h ${minutes}m`
-  },
+  //   if (hours == 0) return `${minutes}m`
+  //   if (minutes == 0) return `${hours}h`
+  //   return `${hours}h ${minutes}m`
+  // },
 }

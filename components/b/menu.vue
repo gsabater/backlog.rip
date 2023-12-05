@@ -2,8 +2,14 @@
   <div
     v-if="!ui.isReady || (ui.isReady && ui.show)"
     ref="dropdown"
-    class="b-menu dropdown-menu"
+    class="b-menu dropdown-menu nope-dropdown-menu-end nope-dropdown-menu-arrow"
     :class="{ show: ui.show }"
+    nopestyle="`
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      transform: translate3d(${posX}px, ${posY}px, 0px);
+      will-change: transform;`"
     @click="hide">
     <slot />
     <!-- <a class="dropdown-item" href="#">Last 3 months</a> -->
@@ -30,7 +36,7 @@
  * @desc:    https://preview.tabler.io/dropdowns.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Wed Nov 29 2023
+ * Modified: Sun Dec 03 2023
  **/
 
 export default {
@@ -63,6 +69,8 @@ export default {
   data() {
     return {
       parent: null,
+      posX: 0,
+      posY: 0,
 
       ui: {
         show: false,
@@ -94,6 +102,11 @@ export default {
   methods: {
     toggle(e) {
       this.ui.show = !this.ui.show
+
+      const position = this.parent.getBoundingClientRect()
+      console.warn('🔥', position)
+      this.posX = position.x
+      this.posY = position.y
 
       e.preventDefault()
       e.stopPropagation()

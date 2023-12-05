@@ -4,93 +4,40 @@
       <div class="navbar navbar-light">
         <div class="container-xl">
           <ul class="navbar-nav">
-            <li class="nav-item">
-              <NuxtLink to="/dashboard" class="nav-link">
-                <!-- <a class="nav-link" href="./"> -->
-                <span
-                  v-if="false"
-                  class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="icon"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <polyline points="5 12 3 12 12 3 21 12 19 12" />
-                    <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                    <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-                  </svg>
-                </span>
-                <span class="nav-link-title">Dashboard</span>
-              </NuxtLink>
-              <!-- </a> -->
-            </li>
-
-            <li class="nav-item">
-              <NuxtLink to="/dashboard" class="nav-link">
-                <!-- <a class="nav-link" href="./"> -->
-                <span
-                  v-if="false"
-                  class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="icon"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <polyline points="5 12 3 12 12 3 21 12 19 12" />
-                    <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                    <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-                  </svg>
+            <li class="nav-item border-end">
+              <NuxtLink to="/games" class="nav-link">
+                <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                  <Icon>Cards</Icon>
                 </span>
                 <span class="nav-link-title">
-                  Games (drop> add a game, connect accounts)
+                  Browse games
+                  <!-- (drop> add a game, connect accounts) -->
                 </span>
               </NuxtLink>
-              <!-- </a> -->
             </li>
 
             <li class="nav-item">
               <NuxtLink to="/dashboard" class="nav-link">
-                <!-- <a class="nav-link" href="./"> -->
-                <span
-                  v-if="false"
-                  class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="icon"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <polyline points="5 12 3 12 12 3 21 12 19 12" />
-                    <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                    <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-                  </svg>
-                </span>
-                <span class="nav-link-title">My Library (350)</span>
+                <span class="nav-link-title">Dashboard</span>
               </NuxtLink>
-              <!-- </a> -->
+            </li>
+
+            <li class="nav-item">
+              <NuxtLink to="/library" class="nav-link">
+                <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                  <Icon>Apps</Icon>
+                </span>
+                <span class="nav-link-title">My Library and backlog</span>
+              </NuxtLink>
+            </li>
+
+            <li class="nav-item">
+              <NuxtLink to="/journal" class="nav-link">
+                <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                  <Icon>Notebook</Icon>
+                </span>
+                <span class="nav-link-title">My gaming journal</span>
+              </NuxtLink>
             </li>
 
             <!-- <li class="nav-item">
@@ -110,11 +57,11 @@
               </NuxtLink>
             </li> -->
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <NuxtLink to="/games" class="nav-link">
                 <span class="nav-link-title">Browse games</span>
               </NuxtLink>
-            </li>
+            </li> -->
 
             <!-- <li class="nav-item">
               <NuxtLink to="/account" class="nav-link">
@@ -124,13 +71,16 @@
               </NuxtLink>
             </li>
 
+             -->
+
             <li class="nav-item">
               <NuxtLink to="/import/steam" class="nav-link">
-                <span class="nav-link-title">
-                  import steam
+                <span class="nav-link-title text-orange">
+                  <Icon>StepInto</Icon>
+                  Import games
                 </span>
               </NuxtLink>
-            </li> -->
+            </li>
           </ul>
           <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
             <!-- <form action="./" method="get" autocomplete="off" novalidate>

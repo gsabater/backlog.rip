@@ -8,7 +8,11 @@ li.nav-item.dropdown:hover .dropdown-menu {
 }
 
 .b-menu {
+  margin-top: 5px;
   padding: 5px;
+  position: absolute;
+
+  --tblr-dropdown-divider-margin-y: 0.4rem;
 }
 
 .b-menu .dropdown-item {

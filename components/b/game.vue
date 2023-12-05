@@ -1,13 +1,19 @@
 <template>
   <div class="card card-game">
     <div class="poster" @click="showGameModal">
-      <img :src="poster" :alt="app.steam_id" @error="iPoster++" />
+      <img
+        loading="lazy"
+        class="b-poster"
+        :src="poster"
+        :alt="app.steam_id"
+        @error="iPoster++" />
     </div>
     <div class="card-body">
       <div class="h5">
         {{ app.name }}
       </div>
       <div class="text-muted">
+        {{ appid }}
         {{ app.steam_id }}
         <pre>{{ app.state || 'N' }}</pre>
 
@@ -57,7 +63,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Dec 01 2023
+ * Modified: Tue Dec 05 2023
  **/
 
 export default {
@@ -94,54 +100,28 @@ export default {
       ]
 
       const poster = posters[this.iPoster]
-      this.$mitt.emit('poster:hold', poster)
+      // this.$mitt.emit('poster:hold', poster)
       return poster
     },
   },
 
   methods: {
     showGameModal() {
-      this.$mitt.emit('game:modal', this.app)
+      this.$mitt.emit('game:modal', this.app.uuid)
     },
 
     setState(state) {
       // this.app.state = state.id
     },
 
-    async get() {
+    async getData() {
       this.app = await this.dataStore.get(this.appid)
     },
   },
 
   mounted() {
-    this.get()
+    this.getData()
+    // console.warn('⚓', this.appid)
   },
 }
 </script>
-
-<style>
-.card.card-game {
-  /* border: 1px solid red; */
-}
-
-.card-game .poster {
-}
-
-.card-game img {
-  /* object-fit: cover; */
-  aspect-ratio: 2 / 3;
-  outline: 1px solid rgba(255, 255, 255, 0.15);
-  outline-offset: -1px;
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
-}
-/*
-.card.card-game::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  poster-color: rgb(120 120 120 / 50%); adjust opacity as needed
-} */
-</style>

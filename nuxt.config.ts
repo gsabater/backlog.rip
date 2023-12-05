@@ -50,6 +50,7 @@ export default defineNuxtConfig({
     '@/assets/scss/main.scss',
   ],
 
+
   build: {
     transpile: ['vue-sonner']
     // transpile: ['element-plus/es'],
@@ -72,6 +73,8 @@ export default defineNuxtConfig({
 
     plugins: [],
   },
+
+  sourcemap: { server: false, client: false },
 
   devtools: {
     enabled: false,

@@ -21,7 +21,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Dec 01 2023
+ * Modified: Tue Dec 05 2023
  **/
 
 export default {
@@ -44,14 +44,19 @@ export default {
     return {
       items: [],
 
-      repository: {
-        timer: null,
-        delay: 500,
-      },
+      // repository: {
+      //   timer: null,
+      //   delay: 500,
+      // },
 
       base: {
         string: '',
         ready: true,
+      },
+
+      control: {
+        event: null,
+        search: null,
       },
 
       ui: {},
@@ -131,15 +136,20 @@ export default {
     // -----
     // Created on Fri Nov 24 2023
     //+-------------------------------------------------
-    search() {
-      log('⚡ Searching')
+    search(source = null) {
+      log('⚡ Searching from', source)
+
+      const json = JSON.stringify(this.filters)
+      const hash = btoa(json)
+
+      if (source == 'event' && this.control.search === hash) {
+        log('🛑 Search already done')
+        return
+      }
 
       this.filter()
 
       if (!this.filters?.string || this.filters?.string?.length < 3) return
-
-      const json = JSON.stringify(this.filters)
-      const hash = btoa(json)
       this.dataStore.search(hash)
     },
 
@@ -214,12 +224,14 @@ export default {
 
     this.$mitt.on('data:updated', () => {
       log('⭕ Starting a search from an event -> data:updated')
-      this.search()
+      // this.control.event('data:updated')
+      this.search('event')
     })
 
     this.$mitt.on('data:ready', () => {
       log('⭕ Starting a search from an event -> data:ready')
-      this.search()
+      // this.control.event('data:ready')
+      this.search('event')
     })
   },
 

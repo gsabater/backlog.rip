@@ -23,7 +23,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Wed Nov 29 2023
+ * Modified: Mon Dec 04 2023
  **/
 
 export default {
@@ -62,7 +62,7 @@ export default {
     setState(state) {
       this.$emit('set', state)
       this.$parent.app.state = state.id
-      this.dataStore.update(this.$parent.app)
+      this.dataStore.update(this.$parent.app, 'state')
 
       this.$toast.success('Added to ' + state.name, {
         description: 'Monday, January 3rd at 6:00pm',

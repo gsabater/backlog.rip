@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Wed Nov 29 2023
+ * Modified: Tue Dec 05 2023
  */
 
 import Dexie from 'dexie'
@@ -15,14 +15,17 @@ import { DexieInstaller } from '~/utils/dexieInstaller'
 //+-------------------------------------------------
 const db = new Dexie('backlog.rip')
 
-db.version(5).stores({
+db.version(9).stores({
   // User stores
   account: 'uuid,steam',
   config: '&key,value',
 
   // Database stores
   games: '&uuid,api_id,steam_id,name',
+
+  // Userdata related stores
   states: '&id,order,name',
+  journal: '++id,event,ref,created_at',
 })
 
 function check() {
@@ -46,14 +49,13 @@ function check() {
 
 function initialize() {
   if (check() === false) return
-
-  window.$db = db
-  log('Using Dexie v' + Dexie.semVer)
+  // log('Using Dexie v' + Dexie.semVer)
 
   const install = new DexieInstaller(db)
 
   install.states()
   install.checkin()
+  install.journal()
 }
 
 //+-------------------------------------------------
@@ -75,6 +77,7 @@ async function getValue(store, key) {
 // Created on Tue Nov 28 2023
 //+-------------------------------------------------
 export default defineNuxtPlugin((nuxtApp) => {
+  window.$db = db
   initialize()
 
   // extend dexie

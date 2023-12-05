@@ -104,4 +104,26 @@ export class DexieInstaller {
 
     await this.$db.states.bulkAdd(states)
   }
+
+  //+-------------------------------------------------
+  // journal()
+  // Install the journal inserting a first entry
+  // -----
+  // Created on Tue Dec 05 2023
+  //+-------------------------------------------------
+  async journal() {
+    let count = await this.$db.journal.count()
+    if (count > 0) return
+
+    await this.$db.journal.add({
+      // id: ,
+      event: 'log',
+      ref: null,
+
+      data: {
+        message: 'This is your first entry in the journal. Welcome!',
+      },
+      created_at: dates.now(),
+    })
+  }
 }

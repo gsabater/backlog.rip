@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Fri Dec 01 2023
+ * Modified: Tue Dec 05 2023
  */
 
 let $nuxt = null
@@ -134,21 +134,24 @@ export const useDataStore = defineStore('data', {
     // Created on Fri Nov 24 2023
     //+-------------------------------------------------
     async search(hash) {
-      if (search[hash]) return
+      if (search[hash]) {
+        console.warn('Search', hash, 'already done')
+        return
+      }
 
+      search[hash] = true
       const jxr = await $nuxt.$axios.get(`repository/${hash}.json`)
       if (jxr.status) {
         console.warn('Search', hash, jxr.data)
         this.toData(jxr.data, 'api')
       }
-
-      search[hash] = true
     },
 
     //+-------------------------------------------------
     // update()
     // Updates an app in memory and adds it to the queue
     // Tries to find the app in the api index
+    // TODO: split this in two methods, search and update
     // -----
     // Created on Fri Nov 24 2023
     // Created on Wed Nov 29 2023
@@ -159,29 +162,56 @@ export const useDataStore = defineStore('data', {
 
       if (index.ed.includes(item.uuid)) return
 
-      // Tries to find the app in the api index
+      // Tries to find the app in the library by IDs
+      // If the app is found, update the library, data and store
+      // Otherwise, add the app to the data
       //+-------------------------------------------------
-      if (!ref && index.api[item.uuid]) {
-        ref = index.api[item.uuid]
-      }
+      console.warn('🔎 Searching in Library for', item.name)
+      library.forEach((lib) => {
+        // console.warn('Checking', JSON.stringify(lib), 'against', JSON.stringify(item))
+        // console.warn(`Is ${lib.name} - ${item.name} ?` , lib.uuid,  item.uuid)
 
-      // tries to find the app in other indexes
-      // This is friendly called 'store dancing'
-      //+-------------------------------------------------
-      if (!ref) {
-        this.indexes.forEach((store) => {
-          if (store == 'api') return
-          if (index[store][item[store + '_id']]) {
-            ref = index[store][item[store + '_id']]
+        // tries to find the app by store references
+        // This is friendly called 'store dancing'
+        // 🤞 Trust coaerced values
+        //+-------------------------------------------------
+        // this.indexes.forEach((store) => {
+        //   if (lib[store + '_id'] && lib[store + '_id'] == item[store + '_id']) {
+        //     ref = lib.uuid
+        //     console.warn('🔎🔎 Found by', store + '_id', ref)
+        //     console.warn(store, lib[store + '_id'], item[store + '_id'])
+        //     return
+        //   }
+        // })
+
+        for (const store of this.indexes) {
+          if (lib[store + '_id'] && lib[store + '_id'] == item[store + '_id']) {
+            ref = lib.uuid
+            console.warn('🔎🔎 Found by', store + '_id', ref)
+            // console.warn(store, lib[store + '_id'], item[store + '_id'])
+            break
           }
-        })
+        }
+      })
+
+      // If the app is not found, just add it to data
+      // There is no need to update
+      //+-------------------------------------------------
+      if (uuid == 'add' && ref == 'add') {
+        console.warn('⬅️ Adding to data and exit: ', item.name)
+        let add = { ...item }
+        add.api_id = item.uuid
+
+        data[item.uuid] = add
+        this.toIndex(add)
+        return
       }
 
       // The local reference is not found
       if (!data[ref] || !ref) return
 
       console.warn(
-        'Updating app (from -> to)',
+        'Processing app (from -> to)',
         JSON.stringify(item),
         ref,
         JSON.stringify(data[ref])
@@ -191,11 +221,15 @@ export const useDataStore = defineStore('data', {
       // 🌿 Updating data
       //+-------------------------------------------------
 
-      let toQueue = uuid ? true : false
+      let toQueue = uuid && uuid.length > 5 ? true : false
 
-      // Determine if the updates should be saved
+      // Determine if the updates should be
+      // Added to the queue and saved in $db
       if (!data[ref].api_id) toQueue = true
       if (data[ref].updated_at < item.updated_at) toQueue = true
+      if (uuid == 'state') {
+        toQueue = true
+      }
 
       local = { ...data[ref], ...item }
       local.uuid = data[ref].uuid
@@ -204,13 +238,15 @@ export const useDataStore = defineStore('data', {
         local.api_id = item.uuid
       }
 
-      console.warn('Updated', local)
+      console.warn('Result: ', local)
+      console.warn('Adding to queue?', toQueue)
 
       // Save and index the app
       // Maybe $mitt.emit('data:updated', 'updated', local)
       data[ref] = { ...local }
+
       this.toIndex(local)
-      if (toQueue) this.toQueue(local.uuid)
+      if (toQueue) this.toQueue(local)
     },
 
     //+-------------------------------------------------
@@ -233,38 +269,14 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
-    // toQueue()
-    // Thanks copilot
-    // -----
-    // Created on Wed Nov 29 2023
-    //+-------------------------------------------------
-    toQueue(uuid) {
-      if (this.queue.includes(uuid)) return
-
-      if (this.queue.length == 0) {
-        setTimeout(() => {
-          console.log('📦 Saving queue', this.queue.length)
-          this.queue.forEach((uuid) => {
-            console.log('📀 Saving', uuid, data[uuid].name || 'NN')
-            console.log(
-              'gonna copy data[uid] into library[uid] and save that into indexed '
-            )
-            // $nuxt.$db.games.update(uuid, data[uuid])
-          })
-          this.queue = []
-        }, 2000)
-      }
-
-      this.queue.push(uuid)
-    },
-
-    //+-------------------------------------------------
     // toData()
     // Adds elements to window.data
     // -----
     // Created on Tue Nov 21 2023
     //+-------------------------------------------------
     async toData(items, source) {
+      let event = ''
+
       items.forEach((item) => {
         if (source == 'library') {
           data[item.uuid] = item
@@ -272,7 +284,7 @@ export const useDataStore = defineStore('data', {
         }
 
         if (source == 'api') {
-          this.update(item)
+          this.update(item, 'add')
         }
         // let exists = false
 
@@ -301,12 +313,54 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
+    // toQueue()
+    // Thanks copilot
+    // -----
+    // Created on Wed Nov 29 2023
+    //+-------------------------------------------------
+    toQueue(app, run = true) {
+      if (this.queue.includes(app.uuid)) return
+
+      this.queue.push(app.uuid)
+
+      if (run) this.runQueue()
+    },
+
+    async runQueue() {
+      // Calls api to get the apps in queue
+      if (this.queue.length == 0) return
+
+      setTimeout(async () => {
+        console.log('📦 Saving queue', this.queue.length)
+
+        let toSave = []
+        this.queue.forEach((uuid) => {
+          toSave.push(data[uuid])
+        })
+
+        await $nuxt.$db.games.bulkPut(toSave)
+        $nuxt.$toast.success('Saved queue of ' + this.queue.length, {
+          // description: 'Monday, January 3rd at 6:00pm',
+        })
+
+        this.queue = []
+      }, 5000)
+    },
+
+    //+-------------------------------------------------
     // topGames()
     // Created on Wed Apr 26 2023
     //+-------------------------------------------------
     async topGames(params) {
       // const jxr = await app.$axios.get(`repository/top-games`)
       // if (jxr.status) return jxr.data
+    },
+
+    async updateStale() {
+      console.warn('WIP')
+      return
+
+      // timeout 5 minutos
     },
 
     //+-------------------------------------------------
@@ -396,12 +450,13 @@ export const useDataStore = defineStore('data', {
       // Load and index data
       await this.loadStates()
       await this.loadLibrary()
+      await this.updateStale()
       await this.updateMissing()
 
       // Expose data to the window
       window.db = {
-        d: {
-          data,
+        d: data,
+        i: {
           library,
           wishlist,
           states,

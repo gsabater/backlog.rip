@@ -18,12 +18,14 @@
   </b-menu>
 </template>
 <script>
+import { useJournalStore } from '../../stores/journalStore'
+
 /**
  * @file:    \components\b\set-state.vue
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Mon Dec 04 2023
+ * Modified: Thu Dec 07 2023
  **/
 
 export default {
@@ -50,7 +52,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useDataStore),
+    ...mapStores(useDataStore, useJournalStore),
   },
 
   methods: {
@@ -66,6 +68,15 @@ export default {
 
       this.$toast.success('Added to ' + state.name, {
         description: 'Monday, January 3rd at 6:00pm',
+      })
+
+      this.journalStore.add({
+        event: 'state',
+        ref: this.$parent.app.uuid,
+        data: {
+          state: state.id,
+          old: state.id,
+        },
       })
     },
 

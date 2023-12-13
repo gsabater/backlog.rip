@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th December 2023
- * Modified: Tue Dec 05 2023
+ * Modified: Tue Dec 12 2023
  */
 
 let $nuxt = null
@@ -15,10 +15,17 @@ let $nuxt = null
 // - log (general message)
 // > ref: null, data: { message: 'string' }
 //
+// - state (Change in a state)
+// > ref: games.uuid, data: { state: 'states.id', 'old': 'states.id / null' }
+//
 // - added (game added)
+// > ref: null, data: { store: 'steam', games: [uuid, uuid2] }
+//
 // - note (note added to ref)
-// - status (started playing)
+// > ref: uuid, data: { note: 'string' }
+//
 // - milestone (100h played)
+//
 //+-------------------------------------------------
 
 export const useJournalStore = defineStore('journal', {
@@ -52,12 +59,108 @@ export const useJournalStore = defineStore('journal', {
 
     //+-------------------------------------------------
     // get()
-    // Get an element by uuid
+    // Get an element by id
     // -----
     // Created
     //+-------------------------------------------------
-    async get(uuid) {
-      return data[uuid]
+    async get(uuid) {},
+
+    //+-------------------------------------------------
+    // getForRef()
+    // Gets all updates for a ref uuid
+    // -----
+    // Created on Thu Dec 07 2023
+    //+-------------------------------------------------
+    async getForRef(ref) {
+      $nuxt = useNuxtApp()
+      let items = await $nuxt.$db.journal.where('ref').equals(ref).toArray()
+
+      return items
+    },
+
+    //+-------------------------------------------------
+    // getNoteForRef()
+    // Returns the note for a ref
+    // -----
+    // Created on Tue Dec 12 2023
+    //+-------------------------------------------------
+    async getNoteForRef(ref) {
+      $nuxt = useNuxtApp()
+      let item = await $nuxt.$db.journal
+        .where('ref')
+        .equals(ref)
+        .and((item) => item.event == 'note')
+        .first()
+
+      return item
+    },
+
+    //+-------------------------------------------------
+    // add()
+    // Stores a new record in the journal
+    // -----
+    // Created on Thu Dec 07 2023
+    //+-------------------------------------------------
+    async add(data) {
+      $nuxt = useNuxtApp()
+      let item = await $nuxt.$db.journal.add({
+        ...{
+          event: 'log',
+          ref: null,
+          data: null,
+          created_at: dates.now(),
+        },
+        ...data,
+      })
+
+      return item
+    },
+
+    //+-------------------------------------------------
+    // updateOrCreateNote()
+    //
+    // -----
+    // Created on Thu Dec 07 2023
+    //+-------------------------------------------------
+    async updateOrCreateNote(ref, note) {
+      $nuxt = useNuxtApp()
+      let db = await this.getNoteForRef(ref)
+
+      let item = {
+        ...{
+          event: 'note',
+          ref: ref,
+          data: { note: note },
+          created_at: dates.now(),
+        },
+        ...db,
+      }
+
+      if (db) {
+        item.updated_at = dates.now()
+        return await this.update(item)
+      }
+
+      return await this.add(item)
+    },
+
+    //+-------------------------------------------------
+    // update()
+    // Replaces a record in the journal
+    // -----
+    // Created on Tue Dec 12 2023
+    //+-------------------------------------------------
+    async update(data) {
+      $nuxt = useNuxtApp()
+
+      let item = await $nuxt.$db.journal.put(data)
+      return item
+    },
+
+    async delete(uuid) {
+      // $nuxt = useNuxtApp()
+      // let item = await $nuxt.$db.journal.delete(uuid)
+      // return item
     },
 
     //+-------------------------------------------------

@@ -3,7 +3,7 @@
  * @desc:    https://vueschool.io/articles/vuejs-tutorials/eslint-and-prettier-with-vite-and-vue-js-3/
  * -------------------------------------------
  * Created Date: 11th November 2023
- * Modified: Wed Nov 29 2023
+ * Modified: Thu Dec 07 2023
  */
 
 module.exports = {
@@ -49,6 +49,7 @@ module.exports = {
   rules: {
     'vue/first-attribute-linebreak': 'off',
     'vue/no-multiple-template-root': 'off',
+    'vue/no-v-html': 'off',
     'vue/order-in-components': [
       'error',
       {

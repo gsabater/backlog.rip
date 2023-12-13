@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Mon Dec 04 2023
+ * Modified: Wed Dec 13 2023
  */
 
 export default {
@@ -25,6 +25,17 @@ export default {
     // return date.toLocaleDateString('es-ES')
     let date = $nuxt.$dayjs.unix(unix)
     return date.format('D MMM YYYY, HH:mm')
+  },
+
+  minToHours(min) {
+    if (!min) return ''
+
+    let hours = Math.floor(min / 60)
+    let minutes = min % 60
+
+    if (hours == 0) return `${minutes}m`
+    if (minutes == 0) return `${hours}h`
+    return `${hours}h ${minutes}m`
   },
 
   // mnow() {

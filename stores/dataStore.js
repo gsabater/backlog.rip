@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue Dec 05 2023
+ * Modified: Wed Dec 13 2023
  */
 
 let $nuxt = null
@@ -113,7 +113,7 @@ export const useDataStore = defineStore('data', {
     // -----
     // Created on Tue Nov 14 2023
     //+-------------------------------------------------
-    async get(uuid) {
+    get(uuid) {
       return data[uuid]
     },
 
@@ -442,8 +442,8 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     async init() {
       if (this.loaded.includes('init')) return
+      if (!$nuxt) $nuxt = useNuxtApp()
 
-      $nuxt = useNuxtApp()
       this.loaded.push('init')
       this.indexes = Object.keys(index)
 

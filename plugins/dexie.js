@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Tue Dec 05 2023
+ * Modified: Wed Dec 13 2023
  */
 
 import Dexie from 'dexie'
@@ -53,8 +53,10 @@ function initialize() {
 
   const install = new DexieInstaller(db)
 
-  install.states()
+  install.account()
   install.checkin()
+
+  install.states()
   install.journal()
 }
 

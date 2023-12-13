@@ -2,56 +2,33 @@
   <div class="page-body">
     <div class="container-xl">
       <div class="row justify-content-center">
-        <div class="col-4">
-          <h2>Set state</h2>
-          <div class="card">
-            <pre>
-              {{ db }}
-            </pre>
-            <div class="card-body">
-              <h3 class="card-title">Steps vertical</h3>
-              <ul class="steps steps-vertical">
-                <li class="step-item">
-                  <div class="h4 m-0">Order received</div>
-                  <div class="text-secondary">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus
-                    culpa cum expedita ipsam laborum nam ratione reprehenderit sed sint
-                    tenetur!
-                  </div>
-                </li>
-                <li class="step-item">
-                  <div class="h4 m-0">Order received</div>
-                  <div class="text-secondary">Lorem ipsum dolor sit amet.</div>
-                </li>
-                <li class="step-item active">
-                  <div class="h4 m-0">Out for delivery</div>
-                  <div class="text-secondary">Lorem ipsum dolor sit amet.</div>
-                </li>
-                <li class="step-item">
-                  <div class="h4 m-0">Finalized</div>
-                  <div class="text-secondary">Lorem ipsum dolor sit amet.</div>
-                </li>
-              </ul>
+        <div class="col-6">
+          <h1>Journal</h1>
+          <template v-for="(events, day) in journal" :key="'journal' + day">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h3 class="card-title">{{ $moment(day).format('LL') }}</h3>
+                <ul class="steps steps-vertical">
+                  <template v-for="(item, i) in events" :key="'event' + i">
+                    <li class="step-item">
+                      <!-- <pre>{{ item }}</pre> -->
+                      <div class="h4 m-0">{{ eventTitle(item) }}</div>
+                      <div class="text-secondary" v-html="eventMessage(item)"></div>
+                      <div v-if="item.data?.note" class="text-secondary">
+                        {{ item.data.note }}
+                      </div>
+                      <small class="text-secondary d-inline-block border-top pt-2 mt-2">
+                        {{ item.created_at }}
+                      </small>
+                      <div class="pull-right">
+                        <Icon>Trash</Icon>
+                      </div>
+                    </li>
+                  </template>
+                </ul>
+              </div>
             </div>
-            <div class="card-body">
-              <ul class="steps steps-counter steps-vertical">
-                <li class="step-item">Step one</li>
-                <li class="step-item">Step two</li>
-                <li class="step-item active">Step three</li>
-                <li class="step-item">Step four</li>
-                <li class="step-item">Step five</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="col-8">
-          <h2>Data store</h2>
-          <b-btn @click="test">test</b-btn>
-          <b-btn @click="giveme(440)">pepa</b-btn>
-          <b-btn @click="status">Status</b-btn>
-          <pre>
-            {{ journalStore }}
-          </pre>
+          </template>
         </div>
       </div>
     </div>
@@ -64,38 +41,94 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Tue Dec 05 2023
+ * Modified: Tue Dec 12 2023
  **/
 
 export default {
   name: 'Journal',
   data() {
     return {
+      journal: {},
+
       db: {
         data: [],
+        states: [],
       },
     }
   },
 
   computed: {
-    ...mapStores(useJournalStore),
+    ...mapStores(useDataStore, useJournalStore),
+
+    items() {
+      if (!this.db?.data?.length) return []
+      const items = []
+
+      this.db.data.forEach((item) => {
+        const mom = this.$moment(item?.created_at)
+        items.push({
+          ...item,
+          created_at: mom.format('LLL'),
+          diff: mom.fromNow(),
+        })
+      })
+
+      return items
+    },
   },
 
   methods: {
-    test() {
-      // this.journalStore.pepa.a = 'pepa'
-      // this.journalStore.pepe.b = 'pepe'
-      // this.journalStore.db.c = 'pepc'
-      this.journalStore.test()
+    eventTitle(item) {
+      if (item.event == 'log') {
+        return 'Event recorded'
+      }
+
+      if (item.event == 'note') {
+        // const app = this.dataStore.get(item.ref)
+        return `Note added`
+      }
+
+      if (item.event == 'state') {
+        return 'State changed'
+      }
     },
 
-    async giveme(appid) {
-      const pp = await this.journalStore.get(appid)
-      debugger
+    eventMessage(item) {
+      if (item.data.message) return item.data.message
+
+      if (item.event == 'note') {
+        const app = this.dataStore.get(item.ref)
+        return `Note added for ${app.name}`
+      }
+
+      if (item.event == 'state') {
+        const app = this.dataStore.get(item.ref)
+        const old = this.db.states.find((s) => s.id == item.data.old)
+        const state = this.db.states.find((s) => s.id == item.data.state)
+        return `State for ${app.name}, changed from ${old.name} to <strong>${state.name}</strong>`
+      }
     },
 
-    async status() {
-      this.journalStore.status()
+    groupByDay() {
+      const grouped = {}
+
+      this.db.data.reverse().forEach((entry) => {
+        // Extract the date part from the 'created_at' field
+        const day = entry.created_at.split(' ')[0]
+
+        // Initialize the array if this is the first entry for the day
+        if (!grouped[day]) {
+          grouped[day] = []
+        }
+
+        // TODO - Instead of using eventMessage, set here the message
+        // and render based on conditions
+
+        // Add the entry to the appropriate day
+        grouped[day].push(entry)
+      })
+
+      this.journal = grouped
     },
 
     async getData() {
@@ -103,8 +136,15 @@ export default {
       this.db.data = jxr
     },
 
+    async getStates() {
+      this.db.states = this.dataStore.states()
+    },
+
     async init() {
-      this.getData()
+      await this.getData()
+      await this.getStates()
+
+      this.groupByDay()
     },
   },
 

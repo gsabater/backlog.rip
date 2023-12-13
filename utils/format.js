@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 12th November 2023
- * Modified: Mon Dec 04 2023
+ * Modified: Wed Dec 13 2023
  */
 
 let app = useNuxtApp()
@@ -73,16 +73,5 @@ export default {
   //   if (format) return moment.format(format)
 
   //   return moment
-  // },
-
-  // minToHours(min) {
-  //   if (!min) return ''
-
-  //   let hours = Math.floor(min / 60)
-  //   let minutes = min % 60
-
-  //   if (hours == 0) return `${minutes}m`
-  //   if (minutes == 0) return `${hours}h`
-  //   return `${hours}h ${minutes}m`
   // },
 }

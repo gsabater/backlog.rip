@@ -1,36 +1,4 @@
 <template>
-  <!-- <ul>
-  <li><h4>Steps:</h4></li> -->
-  <!-- <li>detect: detect if plugin is present.</li> -->
-  <!-- <li>Check: getUserdata, getGames, getWishlist...</li> -->
-  <!-- <li>Connect: Read manifest and give methods to the module.</li> -->
-  <!-- <li>Receive plugin manifest: name, description, author, repository url , steps (things is going to do), requeriments, what it does, what it does not</li> -->
-  <!-- <li>Give: vue instance?, axios instance, log(info, warning, error), error event, success event</li> -->
-  <!-- <li>----</li> -->
-  <!-- <li>initialize: get userdata</li>
-  <li>onclick: getgames</li> -->
-
-  <!-- <li>store each in every category</li>
-  <li>get game data from api</li>
-  <li>end</li>
-</ul>
-
-
-    /**
-     * appsToReview:
-     *  Array of apps to review, only new apps not in library
-     *  Review means the user will check the will_import or will_ignore
-     *  Also have 'exists' and 'is_updated'
-
-     * appsToImport:
-     *  Array of apps to import, only the ones with will_import or will_ignore
-
-     * appsToUpdate:
-     *  Array of apps already in store, that have different dates in playtime or last_played
-     */
-
--->
-
   <!-- Page header -->
   <!-- <div class="page-header d-print-none">
       <div class="container-xl">
@@ -552,7 +520,7 @@
                           <path d="M12 7v5"></path>
                         </svg>
 
-                        Played {{ format.minToHours(app.playtime_forever) }}
+                        Played {{ dates.minToHours(app.playtime_forever) }}
                         <!-- <span class="px-1">&nbsp;</span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -813,8 +781,21 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Wed Nov 29 2023
+ * Modified: Wed Dec 13 2023
  **/
+
+/**
+ * appsToReview:
+ *  Array of apps to review, only new apps not in library
+ *  Review means the user will check the will_import or will_ignore
+ *  Also have 'exists' and 'is_updated'
+ *
+ * appsToImport:
+ *  Array of apps to import, only the ones with will_import or will_ignore
+ *
+ * appsToUpdate:
+ *  Array of apps already in store, that have different dates in playtime or last_played
+ */
 
 // {
 //   appid: 211420,
@@ -885,9 +866,13 @@ export default {
 
       ui: {
         error: null,
+        knownErrors: [
+          // Account provider ID or provider object is missing from $auth
+          'account:provider',
+        ],
 
-        // step: 'prep',
-        step: 'review',
+        step: 'prep',
+        // step: 'review',
         watch: null,
         loading: false,
         showlogs: false,
@@ -911,14 +896,14 @@ export default {
 
     steps() {
       const steps = {
-        check: {
-          action: 'Prepare modules',
-          desc: 'Verifying requeriments',
-        },
+        // check: {
+        //   action: 'Prepare modules',
+        //   desc: 'Verifying requeriments',
+        // },
 
         prep: {
-          action: 'Prepared',
-          desc: 'Account connected',
+          action: 'Preparing modules',
+          desc: 'Verifying requeriments and account',
         },
         games: {
           action: 'Import games',
@@ -1007,17 +992,20 @@ export default {
       const now = new Date().getTime()
       log(`${message}`)
 
-      if (type === 'error') {
-        this.ui.error = message
-        this.ui.showlogs = true
-      }
-
       this.logs.unshift({
         type,
         time: now,
         message,
         data,
       })
+
+      if (type == 'error') {
+        this.ui.error = message
+
+        if (!this.ui.knownErrors.includes(data)) {
+          this.ui.showlogs = true
+        }
+      }
     },
 
     resetFilters() {
@@ -1180,13 +1168,14 @@ export default {
     // Created on Sat Oct 28 2023
     //+-------------------------------------------------
     async connect() {
-      log('importer', 'connect()')
+      log('⬇️ importer', 'connect()')
 
       let connected = false
       this.module = steam.manifest
       importer = steam
 
       log('Manifest loaded', steam.manifest)
+      log('Steps of the importing process', Object.keys(this.steps).join(', '))
 
       try {
         connected = importer.connect(this.account, _axios, this._log)
@@ -1211,28 +1200,33 @@ export default {
     // - And finally detects that the importer has the required methods
     // -----
     // Created on Sat Oct 28 2023
+    // Updated on Wed Dec 13 2023
     //+-------------------------------------------------
     detect() {
-      log('importer', 'detect()')
+      log('⬇️ importer', 'detect()')
 
       const { platform } = this.$route.params
       this._log(`🎨 Platform ID: ${platform}`)
 
-      if (this.$auth.user.isLogged || this.$auth.user.id == undefined) {
-        this._log('You need to login first', 'error')
+      if (this.$route.params.platform !== 'steam') return false
+
+      if (steam == undefined) {
+        this._log('The Steam importer plugin is not available', 'error')
+        return false
+      }
+
+      if (
+        !this.$auth.bearer ||
+        !this.$auth.user[platform] ||
+        !this.$auth.user[platform + '_data']
+      ) {
+        this._log('User needs to login with provider', 'error', 'account:provider')
         return false
       }
 
       this.account = { ...this.$auth.user }
       this.account.bearer = this.$auth.bearer
       this.account.provider = this.account.steam_data
-
-      if (this.$route.params.platform !== 'steam') return false
-
-      if (steam == undefined) {
-        this._log('The Steam instance is not available', 'error')
-        return false
-      }
 
       if (
         steam.getUserdata === undefined ||
@@ -1251,25 +1245,17 @@ export default {
     },
 
     async init() {
-      // window.dev = this
+      window.dev = this
 
-      /**  */
-      console.warn('1. detect -> connect')
-      console.warn('2. scan')
-      console.warn('3. review')
-      console.warn('4. doit / store')
-
-      /**  */
-
-      log('importer', 'init()')
+      log('⬇️ importer', 'init()')
       this._log('✨ Initializing the importer')
 
       if (this.detect()) await this.connect()
 
-      this.ui.watch = setInterval(() => {
-        this.process.time++
-        if (this.process.time <= 3) log(this.process.time)
-      }, 1000)
+      // this.ui.watch = setInterval(() => {
+      //   this.process.time++
+      //   if (this.process.time <= 3) log(this.process.time)
+      // }, 1000)
     },
   },
 
@@ -1278,20 +1264,8 @@ export default {
   },
 
   unmounted() {
-    log('importer', 'unmounted()')
-    clearInterval(this.ui.watch)
+    log('⬇️ importer', 'unmounted()')
+    // clearInterval(this.ui.watch)
   },
 }
-
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// // Data
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// // Computed
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// // Methods
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 </script>

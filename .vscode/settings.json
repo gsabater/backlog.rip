@@ -5,7 +5,7 @@
   "editor.formatOnType": false,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
+    "source.fixAll.eslint": "explicit"
   },
 
   "eslint.validate": [
@@ -34,6 +34,12 @@
         "name": "⚡ dev",
         // "color": "green",
         "command": "npm run dev",
+      },
+
+      {
+        "name": "🛑 Commits en casa",
+        "color": "orange",
+        // "command": "npm run dev",
       },
     ]
   },

@@ -2,48 +2,29 @@
   <div class="page-body">
     <div class="container-xl">
       <search-interface></search-interface>
-      <div class="row justify-content-center">
-        <div class="col-8">
-          <h2>Data store</h2>
-          <b-btn @click="test">test</b-btn>
-          <b-btn @click="giveme(440)">pepa</b-btn>
-          <b-btn @click="status">Status</b-btn>
-          <pre>
-            {{ dataStore }}
-          </pre>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
+/**
+ * @file:    \pages\games.vue
+ * @desc:    ...
+ * -------------------------------------------
+ * Created Date: 21st November 2022
+ * Modified: Tue Dec 12 2023
+ **/
+
 export default {
   data() {
     return {}
   },
 
   computed: {
-    ...mapStores(useDataStore),
+    // ...mapStores(useDataStore),
   },
 
-  methods: {
-    test() {
-      // this.dataStore.pepa.a = 'pepa'
-      // this.dataStore.pepe.b = 'pepe'
-      // this.dataStore.db.c = 'pepc'
-      this.dataStore.test()
-    },
-
-    async giveme(appid) {
-      const pp = await this.dataStore.get(appid)
-      debugger
-    },
-
-    async status() {
-      this.dataStore.status()
-    },
-  },
+  methods: {},
 
   mounted() {
     window.dev = this

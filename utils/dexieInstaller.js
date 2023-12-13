@@ -69,18 +69,43 @@ export class DexieInstaller {
     this.$db = $db
   }
 
+  //+-------------------------------------------------
+  // account()
+  // Account initialization
+  // Adds default fields to use the site
+  // -----
+  // Created on Wed Dec 13 2023
+  //+-------------------------------------------------
+  async account() {
+    let count = await this.$db.account.get('me')
+    if (count !== undefined) return
+
+    await this.$db.account.add({
+      uuid: 'me',
+      api_uuid: null,
+      username: 'Anonymous',
+
+      steam: null,
+      steam_data: null,
+      steam_updated_at: null,
+
+      created_at: dates.now(),
+      updated_at: dates.now(),
+    })
+  }
+
   async checkin() {
     let count = await this.$db.config.count()
     if (count === 0) {
       this.$db.config.put({
         key: 'created_at',
-        value: new Date().toISOString().replace('T', ' ').substring(0, 19),
+        value: dates.now(),
       })
     }
 
     this.$db.config.put({
       key: 'updated_at',
-      value: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      value: dates.now(),
     })
   }
 
@@ -97,8 +122,8 @@ export class DexieInstaller {
     let states = this.defaultStates.map((state) => {
       return {
         ...state,
-        created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
-        updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
+        created_at: dates.now(),
+        updated_at: dates.now(),
       }
     })
 

@@ -3,7 +3,7 @@
     <div class="col-9">
       <div class="row mb-2">
         <div class="col-6">
-          <button type="button" class="btn">
+          <!-- <button type="button" class="btn">
             <Icon size="18" class="text-muted me-1">CirclePlus</Icon>
             <div
               :class="{
@@ -22,9 +22,8 @@
 
             <label class="dropdown-item">
               Not played
-              <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
             </label>
-          </b-menu>
+          </b-menu> -->
         </div>
         <div class="col-6"></div>
       </div>
@@ -48,7 +47,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Dec 05 2023
+ * Modified: Tue Dec 12 2023
  **/
 
 export default {
@@ -70,6 +69,8 @@ export default {
       f: {},
 
       base: {
+        limit: 10,
+
         string: '',
       },
 

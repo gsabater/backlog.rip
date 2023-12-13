@@ -63,7 +63,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Dec 05 2023
+ * Modified: Thu Dec 07 2023
  **/
 
 export default {
@@ -115,7 +115,7 @@ export default {
     },
 
     async getData() {
-      this.app = await this.dataStore.get(this.appid)
+      this.app = this.dataStore.get(this.appid)
     },
   },
 

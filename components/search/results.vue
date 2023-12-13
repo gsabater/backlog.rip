@@ -21,7 +21,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Dec 05 2023
+ * Modified: Tue Dec 12 2023
  **/
 
 export default {
@@ -200,7 +200,7 @@ export default {
       console.timeEnd('Filter')
       log('⚡ Found', items.length, items[0], window.db?.data?.[items[0]])
 
-      this.items = items.slice(0, 100)
+      this.items = items.slice(0, 30)
 
       // return this.items
       //   .sort((a, b) => b.playtime_forever - a.playtime_forever)

@@ -5,10 +5,8 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th December 2023
- * Modified: Tue Dec 12 2023
+ * Modified: Thu Dec 14 2023
  */
-
-let $nuxt = null
 
 //+-------------------------------------------------
 // Codex: List of events used in the journal
@@ -27,6 +25,8 @@ let $nuxt = null
 // - milestone (100h played)
 //
 //+-------------------------------------------------
+
+let $nuxt = null
 
 export const useJournalStore = defineStore('journal', {
   state: () => ({
@@ -162,21 +162,13 @@ export const useJournalStore = defineStore('journal', {
       // let item = await $nuxt.$db.journal.delete(uuid)
       // return item
     },
-
-    //+-------------------------------------------------
-    // init()
-    // Initialize the data store
-    // -----
-    // Created
-    //+-------------------------------------------------
-    async init() {
-      // $nuxt = useNuxtApp()
-    },
   },
 })
 
-// HMREnabled
-// https://pinia.vuejs.org/cookbook/hot-module-replacement.html
+//+-------------------------------------------------
+//| 🔃 HMR
+//| https://pinia.vuejs.org/cookbook/hot-module-replacement.html
+//+-------------------------------------------------
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useJournalStore, import.meta.hot))
 }

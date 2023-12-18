@@ -14,9 +14,9 @@
     "vue": "latest"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.0.5",
+    "@nuxt/devtools": "^1.0.6",
     "@nuxt/eslint-config": "^0.2.0",
-    "eslint": "^8.55.0",
+    "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-vue": "^9.19.2",
     "prettier": "^3.1.1",
@@ -30,6 +30,7 @@
     "@tabler/core": "^1.0.0-beta20",
     "@tabler/icons-vue": "^2.44.0",
     "@vercel/analytics": "^1.1.1",
+    "@vueuse/rxjs": "^10.7.0",
     "animejs": "^3.2.2",
     "axios": "^1.6.2",
     "dayjs": "^1.11.7",
@@ -37,8 +38,10 @@
     "mitt": "^3.0.0",
     "nuxt": "^3.8.2",
     "pinia": "^2.1",
+    "rxjs": "^7.8.1",
     "tom-select": "^2.3.1",
     "uuid": "^9.0.0",
-    "vue-sonner": "^1.0.2"
+    "vue-sonner": "^1.0.2",
+    "vue-tippy": "^6.3.1"
   }
 }

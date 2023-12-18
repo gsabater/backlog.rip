@@ -78,6 +78,9 @@
           <b-btn @click="leer">leer</b-btn>
           <b-btn @click="testemit">test emit</b-btn>
           <hr />
+          <button v-tippy="{ content: 'Hi!' }">Tippy!</button>
+          <button v-tippy="'Hello!'">Tippy!</button>
+          <hr />
           <fieldset>
             <legend>Add new friend</legend>
             <label>

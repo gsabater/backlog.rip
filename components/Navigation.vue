@@ -4,7 +4,7 @@
       <div class="navbar navbar-light">
         <div class="container-xl">
           <ul class="navbar-nav">
-            <li class="nav-item border-end">
+            <li class="nav-item">
               <NuxtLink to="/games" class="nav-link">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
                   <Icon>Cards</Icon>
@@ -15,6 +15,8 @@
                 </span>
               </NuxtLink>
             </li>
+
+            <li style="border-right: 1px dashed #ccc; margin: 10px"></li>
 
             <li class="nav-item">
               <NuxtLink to="/dashboard" class="nav-link">

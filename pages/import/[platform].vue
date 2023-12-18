@@ -137,7 +137,7 @@
                   </div>
                   <div class="col-9">
                     <h3 class="card-title mb-1">Loading data...</h3>
-                    <div class="text-muted">Working for {{ watchToHuman }} ...</div>
+                    <!-- <div class="text-muted">Working for {{ watchToHuman }} ...</div> -->
                     <div class="mt-3">
                       <div class="row g-2 align-items-center">
                         <!-- <div class="col-auto">
@@ -170,18 +170,20 @@
             <div class="card card-md">
               <div class="card-body text-center">
                 <div class="mb-4">
-                  <h2 class="card-title mb-0">Your Steam library</h2>
+                  <h2 class="mb-0">Your Steam library</h2>
                   <p class="text-muted">Click to begin to scan your games</p>
                 </div>
                 <div class="mb-4">
                   <span
-                    class="avatar avatar-xl mb-3"
+                    class="avatar avatar-xl mb-2"
                     :style="`background-image: url('${
                       account.steam_data?.avatarfull || ''
                     }')`"></span>
-                  <h3 class="mb-0">{{ account.username }}</h3>
+                  <h3 class="card-title mb-0">
+                    {{ account.username }} on {{ module.store }}
+                  </h3>
                   <p class="text-muted">
-                    Steam ID
+                    SteamID
                     <code>{{ account.steam }}</code>
                   </p>
                 </div>
@@ -196,22 +198,24 @@
           </div>
 
           <div v-if="ui.step == 'review'">
-            <div class="row row-deck row-cards mb-3">
-              <div class="col-12">
+            <div class="row row-deck row-cards mb-5">
+              <!-- <div class="col-6">
                 <pre>
-                  {{ appsToImport }}
-                  --
-                  {{ appsToIgnore }}
+IMPORT
+{{ appsToImport }}
                 </pre>
               </div>
+              <div class="col-6">
+                <pre>
+IGNORE
+{{ appsToIgnore }}
+                </pre>
+              </div> -->
               <div class="col-sm-6 col-lg-4">
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex align-items-center">
-                      <div class="subheader">
-                        In your account
-                        <!-- Adding to your library -->
-                      </div>
+                      <div class="subheader">In your account (library)</div>
                     </div>
                     <!-- <div class="h1 mb-3">
                       {{ data.games.length }} / {{ data.library.length }}
@@ -219,24 +223,7 @@
                     </div> -->
                     <div class="d-flex align-items-baseline">
                       <div class="h2 mb-0 me-2 d-flex align-items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="icon icon-tabler icon-tabler-cards mr-2 text-muted mt-1"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          stroke-width="2"
-                          stroke="currentColor"
-                          fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path
-                            d="M3.604 7.197l7.138 -3.109a.96 .96 0 0 1 1.27 .527l4.924 11.902a1 1 0 0 1 -.514 1.304l-7.137 3.109a.96 .96 0 0 1 -1.271 -.527l-4.924 -11.903a1 1 0 0 1 .514 -1.304z" />
-                          <path d="M15 4h1a1 1 0 0 1 1 1v3.5" />
-                          <path
-                            d="M20 6c.264 .112 .52 .217 .768 .315a1 1 0 0 1 .53 1.311l-2.298 5.374" />
-                        </svg>
+                        <Icon class="mr-2 text-muted mt-1">Cards</Icon>
                         {{ data.library.length }} games
                       </div>
                     </div>
@@ -247,27 +234,15 @@
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex align-items-center">
-                      <div class="subheader">New games found</div>
+                      <div class="subheader">
+                        New games found ({{ data.games.length }} -
+                        {{ data.library.length }})
+                      </div>
                     </div>
                     <div class="h2 mb-3 d-flex align-items-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="icon icon-tabler icon-tabler-new-section mr-2 text-muted mt-1"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        stroke-width="2"
-                        stroke="currentColor"
-                        fill="none"
-                        stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M9 12l6 0" />
-                        <path d="M12 9l0 6" />
-                        <path
-                          d="M4 6v-1a1 1 0 0 1 1 -1h1m5 0h2m5 0h1a1 1 0 0 1 1 1v1m0 5v2m0 5v1a1 1 0 0 1 -1 1h-1m-5 0h-2m-5 0h-1a1 1 0 0 1 -1 -1v-1m0 -5v-2m0 -5" />
-                      </svg>
+                      <Icon class="mr-2 text-muted mt-1">NewSection</Icon>
                       {{ data.appsToReview.length }} new
+                      <br />
                     </div>
                     <!-- <b-btn block>Review</b-btn> -->
                   </div>
@@ -277,51 +252,21 @@
                 <div class="card">
                   <div class="card-body">
                     <div class="row">
-                      <div class="col">
+                      <!-- <div class="col">
                         <div class="d-flex align-items-center">
                           <div class="subheader">updating</div>
                         </div>
                         <div class="h2 mb-3 d-flex align-items-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="icon icon-tabler icon-tabler-refresh mr-2 text-muted mt-1"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            stroke-width="2"
-                            stroke="currentColor"
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
-                            <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
-                          </svg>
+                          <Icon class="mr-2 text-muted mt-1">Refresh</Icon>
                           {{ data.appsToUpdate.length }}
                         </div>
-                      </div>
+                      </div> -->
                       <div class="col">
                         <div class="d-flex align-items-center">
                           <div class="subheader">importing</div>
                         </div>
                         <div class="h2 mb-3 d-flex align-items-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="icon icon-tabler icon-tabler-step-into mr-2 text-muted mt-1"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            stroke-width="2"
-                            stroke="currentColor"
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M12 3l0 12" />
-                            <path d="M16 11l-4 4" />
-                            <path d="M8 11l4 4" />
-                            <path d="M12 20m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                          </svg>
+                          <Icon class="mr-2 text-muted mt-1">StepInto</Icon>
                           {{ appsToImport.length }}
                         </div>
                       </div>
@@ -330,25 +275,7 @@
                           <div class="subheader">Ignoring</div>
                         </div>
                         <div class="h2 mb-3 d-flex align-items-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="icon icon-tabler icon-tabler-box-off mr-2 text-muted mt-1"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            stroke-width="2"
-                            stroke="currentColor"
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path
-                              d="M17.765 17.757l-5.765 3.243l-8 -4.5v-9l2.236 -1.258m2.57 -1.445l3.194 -1.797l8 4.5v8.5" />
-                            <path d="M14.561 10.559l5.439 -3.059" />
-                            <path d="M12 12v9" />
-                            <path d="M12 12l-8 -4.5" />
-                            <path d="M3 3l18 18" />
-                          </svg>
+                          <Icon class="mr-2 text-muted mt-1">SquareRotatedOff</Icon>
                           {{ appsToIgnore.length }}
                         </div>
                       </div>
@@ -450,6 +377,12 @@
                 </b-btn>
               </div>
               <div class="col text-end">
+                <small class="text-muted">
+                  Found {{ data.appsToReview.length }} new games,
+                  <br />
+                  of {{ data.games.length }} in your {{ module.store }} library
+                </small>
+
                 <!-- <button type="button" class="btn">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -475,9 +408,13 @@
             <div class="card">
               <div class="list-group card-list-group list-group-hoverable">
                 <div
-                  v-for="(app, i) in toReview"
+                  v-for="(app, i) in loopToReview"
                   :key="'game' + i"
-                  class="list-group-item"
+                  class="list-group-item cursor-pointer"
+                  style="border-style: solid"
+                  :class="{
+                    active: app.will_import,
+                  }"
                   @click="flagAs('import', app)">
                   <div class="row g-4 align-items-center">
                     <!-- <div class="col-auto fs-3">
@@ -487,7 +424,9 @@
                         </label>
                       </div> -->
 
-                    <div v-if="app.will_import" class="col-auto">
+                    <div class="col"></div>
+
+                    <div v-if="!app.will_ignore" class="col-auto">
                       <img
                         loading="lazy"
                         :src="`https://cdn.akamai.steamstatic.com/steam/apps/${app.appid}/capsule_184x69.jpg?t=1699291031`"
@@ -495,31 +434,16 @@
                         style="max-width: 120px" />
                     </div>
                     <div class="col">
-                      <span class="d-block mb-1">
+                      <p class="d-block mb-1">
+                        <span v-if="app.will_ignore" class="badge bg-red-lt me-2">
+                          Will be ignored
+                        </span>
                         {{ app.name }}
-                      </span>
-                      <span v-if="app.will_ignore" class="badge bg-yellow-lt">
-                        Will be ignored
-                      </span>
+                      </p>
                       <small class="text-muted">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="icon icon-tabler icon-tabler-clock-hour-3"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          stroke-width="2"
-                          stroke="currentColor"
-                          fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          style="zoom: 0.9">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
-                          <path d="M12 12h3.5"></path>
-                          <path d="M12 7v5"></path>
-                        </svg>
-
+                        <Icon size="14" style="transform: translateY(-2px)">
+                          ClockHour3
+                        </Icon>
                         Played {{ dates.minToHours(app.playtime_forever) }}
                         <!-- <span class="px-1">&nbsp;</span>
                         <svg
@@ -547,32 +471,20 @@
                       </div> -->
                     <div class="col-auto">
                       <input
-                        v-model="app.will_import"
+                        disabled
+                        :checked="app.will_import"
                         type="checkbox"
-                        class="form-check-input" />
+                        class="form-check-input disabled" />
                     </div>
                     <div
+                      v-tippy="{
+                        content:
+                          'Click to ignore.<br>Ignored games will not be shown again.',
+                        allowHTML: true,
+                      }"
                       class="col-auto text-muted cursor-pointer"
-                      @click="flagAs('ignore', app)">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="icon icon-tabler icon-tabler-box-off cursor-pointer"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        stroke-width="2"
-                        stroke="currentColor"
-                        fill="none"
-                        stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path
-                          d="M17.765 17.757l-5.765 3.243l-8 -4.5v-9l2.236 -1.258m2.57 -1.445l3.194 -1.797l8 4.5v8.5" />
-                        <path d="M14.561 10.559l5.439 -3.059" />
-                        <path d="M12 12v9" />
-                        <path d="M12 12l-8 -4.5" />
-                        <path d="M3 3l18 18" />
-                      </svg>
+                      @click.stop="flagAs('ignore', app)">
+                      <Icon>SquareRotatedOff</Icon>
                     </div>
                     <!-- <div class="col-auto lh-1">
                         <div class="dropdown">
@@ -750,12 +662,14 @@
             </div>
             <div class="card-body">
               <b-btn
+                v-if="ui.step == 'complete'"
                 block
                 :color="ui.step !== 'review' ? 'secondary' : 'success'"
                 :disabled="ui.step !== 'review'"
                 @click="store">
                 Save library
               </b-btn>
+              <b-btn v-else block color="success">View library</b-btn>
             </div>
             <div class="card-footer text-muted">
               This importer is open source. If you want to know more or are concerned
@@ -781,7 +695,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Wed Dec 13 2023
+ * Modified: Sun Dec 17 2023
  **/
 
 /**
@@ -840,6 +754,7 @@ export default {
         games: [], // Raw library games from the scan process
         wishlist: [], // Raw wishlist games from the scan
 
+        libIDs: [], // Array of store_ids of the library
         library: [], // Preloaded content of user library
         appsToReview: [], // Array of apps to review, only new apps not in library
         appsToUpdate: [], // Array of apps already in store, that have different values in playtime or last_played
@@ -881,17 +796,23 @@ export default {
   },
 
   computed: {
-    watchToHuman() {
-      if (this.process.time === 0) return '0s'
-      // return tools.secondsToHuman(this.process.time)
+    ...mapStores(useDataStore),
 
-      if (this.process.time < 60) return `${this.process.time} seconds`
-      if (this.process.time < 60 && this.process.time > 3600)
-        return `${Math.floor(this.process.time / 60)} minute`
-      if (this.process.time < 3600 * 2)
-        return `${Math.floor(this.process.time / 60)} minutes`
+    // watchToHuman() {
+    //   if (this.process.time === 0) return '0s'
+    //   // return tools.secondsToHuman(this.process.time)
 
-      return ''
+    //   if (this.process.time < 60) return `${this.process.time} seconds`
+    //   if (this.process.time < 60 && this.process.time > 3600)
+    //     return `${Math.floor(this.process.time / 60)} minute`
+    //   if (this.process.time < 3600 * 2)
+    //     return `${Math.floor(this.process.time / 60)} minutes`
+
+    //   return ''
+    // },
+
+    platform() {
+      return this.$route.params?.platform || null
     },
 
     steps() {
@@ -918,7 +839,7 @@ export default {
           desc: 'Review the imported data',
         },
         complete: {
-          action: 'Library updated 🎉',
+          action: 'Games imported 🎉',
           desc: 'Import process completed',
         },
       }
@@ -934,11 +855,7 @@ export default {
       return steps
     },
 
-    appsToIgnore() {
-      return ['wip']
-    },
-
-    toReview() {
+    loopToReview() {
       if (this.data.games.length === 0) return []
 
       const items = []
@@ -961,15 +878,52 @@ export default {
       return items
     },
 
+    //+-------------------------------------------------
+    // appsToImport()
+    // Array of apps that will be imported
+    // Only apps with will_import === true
+    // basic object with uuid, store_id and name
+    // -----
+    // Created on Thu Dec 14 2023
+    //+-------------------------------------------------
     appsToImport() {
       const items = []
+
       this.data.appsToReview
         .filter((el) => el.will_import === true)
         .forEach((el) => {
           items.push({
             uuid: this.$uuid(),
-            steam_id: el.appid,
+            [this.platform + '_id']: el.appid,
             name: el.name,
+            is: {
+              owned: true,
+            },
+          })
+        })
+
+      return items
+    },
+
+    //+-------------------------------------------------
+    // appsToIgnore()
+    // -----
+    // Created on Thu Dec 14 2023
+    //+-------------------------------------------------
+    appsToIgnore() {
+      const items = []
+
+      this.data.appsToReview
+        .filter((el) => el.will_ignore === true)
+        .forEach((el) => {
+          items.push({
+            uuid: this.$uuid(),
+            [this.platform + '_id']: el.appid,
+            name: el.name,
+            is: {
+              owned: true,
+              ignored: true,
+            },
           })
         })
 
@@ -1018,10 +972,12 @@ export default {
       const source = this.data.appsToReview.find((el) => el.appid === app.appid)
 
       if (flag === 'ignore') {
+        source.will_import = false
         source.will_ignore = !source.will_ignore
       }
 
       if (flag === 'import') {
+        source.will_ignore = false
         source.will_import = !source.will_import
       }
     },
@@ -1074,15 +1030,15 @@ export default {
     review() {
       this.ui.step = 'review'
 
-      const libraryKeys = this.data.library.reduce((acc, el) => {
+      console.warn('⭕ TODO: search for matches in library (store_id basically)')
+
+      this.data.libIDs = this.data.library.reduce((acc, el) => {
         acc[el.steam_id] = el
         return acc
       }, {})
 
-      console.warn('reviewing libraryKeys', libraryKeys)
-
       this.data.appsToReview = this.data.games
-        .filter((game) => !(game.appid in libraryKeys))
+        .filter((game) => !(game.appid in this.data.libIDs))
         .map((el) => {
           el.will_import = false
           el.will_ignore = false
@@ -1121,20 +1077,24 @@ export default {
       // console.warn('xhr', xhr)
     },
 
+    //+-------------------------------------------------
+    // store()
+    // Process:
+    // - appsToImport
+    // - appsToUpdate
+    // - appsToIgnore
+    // -----
+    // Created on Thu Dec 14 2023
+    //+-------------------------------------------------
     async store() {
-      // const randomGames = []
-      // for (let i = 0; i < 3; i++) {
-      //   const randomIndex = Math.floor(Math.random() * this.data.appsToReview.length)
-      //   const pick = this.data.appsToReview[randomIndex]
-      //   randomGames.push({
-      //     uuid: this.$uuid(),
-      //     steam_id: pick.appid,
-      //     name: pick.name,
-      //   })
-      //   // this.data.appsToReview.splice(randomIndex, 1)
-      // }
+      const payload = []
 
-      const formattedGames = []
+      await this.storeNewGames()
+      // this.updateExistingGames()
+
+      this.ui.step = 'complete'
+      return
+
       this.data.appsToReview
         .filter((el) => el.will_import === true)
         .forEach((el) => {
@@ -1147,17 +1107,46 @@ export default {
           if (app.will_ignore) {
             app.ignored = true
           }
-          formattedGames.push(app)
+          payload.push(app)
         })
 
       // const toimport = this.data.games.filter((el) => el.will_import === true)
-      console.warn('doit', formattedGames[0])
-      console.warn('we have', formattedGames.length)
+      console.warn('doit', payload[0])
+      console.warn('we have', payload.length)
 
       debugger
+    },
 
-      const xhr = await this.$db.games.bulkPut(formattedGames)
+    async storeNewGames() {
+      const items = []
+
+      this.appsToImport.forEach((el) => {
+        const app = this.dataStore.prepareToStore(el)
+        items.push(app)
+      })
+
+      this.appsToIgnore.forEach((el) => {
+        const app = this.dataStore.prepareToStore(el, 'toIgnore')
+        items.push(app)
+      })
+
+      console.warn('going to import', items)
+      console.warn(
+        '⭕ use some kind of datastore add method here, that will update cache as well'
+      )
+      const xhr = await this.$db.games.bulkPut(items)
       console.warn('xhr', xhr)
+    },
+
+    updateExistingGames() {
+      const items = []
+
+      // call a method in steam.js
+      // that adds playtime (here and in storenewgames)
+      // if (lib.playtime_forever !== game.playtime_forever) return true
+      //   if (lib.rtime_last_played !== game.rtime_last_played) return true
+
+      console.warn('going to update', items)
     },
 
     //+-------------------------------------------------

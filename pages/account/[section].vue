@@ -1,5 +1,5 @@
 <template>
-  <div class="page-header d-print-none">
+  <!-- <div class="page-header d-print-none">
     <div class="container-xl">
       <div class="row g-2 align-items-center">
         <div class="col">
@@ -7,7 +7,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <div class="page-body">
     <div class="container-xl">
@@ -16,7 +16,7 @@
           <account-sidebar></account-sidebar>
         </div>
         <div class="col-lg-8">
-          <component ref="section" :is="section"></component>
+          <component :is="section" ref="section"></component>
         </div>
       </div>
     </div>
@@ -28,7 +28,7 @@ import me from './sections/me'
 import history from './sections/history'
 
 export default {
-  name: 'Account-section',
+  name: 'AccountSection',
   components: {
     me,
     history,

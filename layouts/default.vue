@@ -320,8 +320,9 @@
               <a href="#" class="dropdown-item">Profile</a>
               <a href="#" class="dropdown-item">Feedback</a>
               <div class="dropdown-divider"></div>
-              <a href="./settings.html" class="dropdown-item">Settings</a>
-              <a href="./sign-in.html" class="dropdown-item">Logout</a>
+              <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
+
+              <!-- <a href="./sign-in.html" class="dropdown-item">Logout</a> -->
             </div>
           </div>
 
@@ -340,10 +341,10 @@
                 Library
                 <span class="badge bg-primary text-primary-fg ms-auto">12</span>
               </div>
-              <div class="dropdown-item">Journal</div>
+              <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
               <div class="dropdown-divider"></div>
-              <a href="./settings.html" class="dropdown-item">Settings</a>
-              <a href="./sign-in.html" class="dropdown-item">Logout</a>
+              <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
+              <!-- <a href="./sign-in.html" class="dropdown-item">Logout</a> -->
               <!-- <div class="dropdown-divider"></div>
               <div class="dropdown-item">Upgrade to Pro</div> -->
             </b-menu>
@@ -404,8 +405,8 @@
                 </li> -->
               </ul>
               <ul class="list-inline list-inline-dots mb-0">
-                <li class="list-inline-item">
-                  Copyright &copy; 2016 - {{ new Date().getFullYear() }}
+                <!-- <li class="list-inline-item">
+                  A personal project, from 2016 to {{ new Date().getFullYear() }}
                 </li>
                 <li class="list-inline-item">
                   <a href="https://steam-backlog.com" class="link-secondary">
@@ -423,7 +424,7 @@
                     rel="noopener">
                     Mallorca
                   </a>
-                </li>
+                </li> -->
                 <!-- <li class="list-inline-item">
                   <a href="./changelog.html" class="link-secondary" rel="noopener">
                     v1.0.0-beta16

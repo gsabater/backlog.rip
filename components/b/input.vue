@@ -1,8 +1,8 @@
 <template>
-  <!-- <pre>
-layout: {{ layout }}
-Attrs: {{ $attrs }}
-  </pre> -->
+  <pre v-if="false">
+  layout: {{ layout }}
+  Attrs: {{ $attrs }}
+  </pre>
 
   <!--
     Default layout
@@ -14,11 +14,13 @@ Attrs: {{ $attrs }}
 
     <input
       v-bind="$attrs"
-      v-model="inputValue"
+      nv-model="inputValue"
       :type="type"
       :class="colorAndVariant"
-      @change="notify"
-      @update:model-value="notify" />
+      :value="modelValue"
+      nchange="notify"
+      nupdate:modelValue="notify"
+      @input="onChange" />
 
     <div v-if="hint" class="small text-secondary">
       {{ hint }}
@@ -36,16 +38,18 @@ Attrs: {{ $attrs }}
 
     <div class="input-icon">
       <span v-if="$attrs['prepend-icon']" class="input-icon-addon">
-        <!-- <svgs>{{  }}</svgs> -->
         <Icon :icon="$attrs['prepend-icon']"></Icon>
       </span>
+
       <input
         v-bind="$attrs"
-        v-model="inputValue"
+        nv-model="inputValue"
         :type="type"
         :class="colorAndVariant"
-        @change="notify"
-        @update:model-value="notify" />
+        :value="modelValue"
+        nchange="notify"
+        nupdate:modelValue="notify"
+        @input="onChange" />
 
       <span v-if="$attrs['append-icon']" class="input-icon-addon">
         <Icon :icon="$attrs['append-icon']"></Icon>
@@ -54,8 +58,8 @@ Attrs: {{ $attrs }}
       <span
         v-if="clearable"
         class="input-icon-addon cursor-pointer action-icon"
-        :class="{ active: inputValue !== '' }"
-        @click="clear">
+        :class="{ active: modelValue !== '' }"
+        @click="onClear">
         <Icon>SquareX</Icon>
       </span>
 
@@ -72,13 +76,13 @@ Attrs: {{ $attrs }}
   <!--
     Variant Floating input
   -->
-  <div v-if="layout == 'floating'" class="form-floating">
+  <!-- <div v-if="layout == 'floating'" class="form-floating">
     <input
       v-bind="$attrs"
       v-model="inputValue"
       :class="colorAndVariant"
       @change="notify"
-      @update:model-value="notify" />
+      @update:modelValue="notify" />
 
     <label
       v-if="variant == 'floating'"
@@ -86,7 +90,7 @@ Attrs: {{ $attrs }}
       :class="{ required: required }">
       {{ label }}
     </label>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -96,22 +100,25 @@ Attrs: {{ $attrs }}
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Tue Dec 05 2023
+ * Modified: Mon Dec 18 2023
  **/
 
 export default {
   name: 'TablerInput',
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
 
+    // value: {
+    //   type: String,
+    //   default: '',
+    // },
+
     id: {
       type: String,
-      default:
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15),
+      default: () => 'input-' + Math.random().toString(36).substring(2, 10),
     },
 
     type: {
@@ -163,7 +170,7 @@ export default {
     },
   },
 
-  emits: ['input', 'clear', 'update:model-value'],
+  emits: ['clear', 'update:modelValue'],
 
   setup(props, { attrs }) {
     return {
@@ -171,9 +178,9 @@ export default {
     }
   },
 
-  data: (ctx) => ({
-    inputValue: ctx.value,
-  }),
+  // data: (ctx) => ({
+  //   inputValue: ctx.value,
+  // }),
 
   computed: {
     layout() {
@@ -196,28 +203,38 @@ export default {
     },
   },
 
-  watch: {
-    inputValue() {
-      this.notify()
-    },
-  },
+  // watch: {
+  //   inputValue() {
+  //     this.notify()
+  //   },
+  // },
 
   methods: {
-    notify() {
-      // this.$emit('input', this.inputValue)
-      this.$emit('update:model-value', this.inputValue)
+    //+-------------------------------------------------
+    // onChange()
+    // Emits 'update:modelValue' that updates the v-model
+    // on parent. this.modelValue is still the old value, thats
+    // why we need to emit with the target value.
+    // -----
+    // @input is fired by parent on "keydown"
+    // @change is fired by parent on "blur"
+    // @clear is fired by parent onClear, just once
+    // -----
+    // Created on Mon Dec 18 2023
+    //+-------------------------------------------------
+    onChange(e) {
+      const value = e?.target?.value || ''
+      // console.warn('onChange', value, this.modelValue)
+      this.$emit('update:modelValue', value)
     },
 
-    clear() {
-      this.inputValue = ''
-      this.notify()
+    onClear() {
       this.$emit('clear')
+      this.onChange('')
     },
   },
 
-  mounted() {
-    this.inputValue = this.$attrs.modelValue
-  },
+  mounted() {},
 }
 </script>
 

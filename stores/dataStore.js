@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Wed Dec 13 2023
+ * Modified: Thu Dec 14 2023
  */
 
 let $nuxt = null
@@ -247,6 +247,26 @@ export const useDataStore = defineStore('data', {
 
       this.toIndex(local)
       if (toQueue) this.toQueue(local)
+    },
+
+    //+-------------------------------------------------
+    // prepareToStore()
+    // to ensureconsistency, add base values to the item
+    // and remove unwanted values before returning back
+    // -----
+    // Created on Thu Dec 14 2023
+    //+-------------------------------------------------
+    prepareToStore(item, mode) {
+      if (item.is == undefined) item.is = {}
+
+      if (mode !== 'toIgnore') {
+        if (item.playtime == undefined) item.playtime = {}
+        if (item.updated_at == undefined) item.updated_at = 0
+      }
+
+      if (item.created_at == undefined) item.created_at = dates.now()
+
+      return item
     },
 
     //+-------------------------------------------------

@@ -2,17 +2,18 @@
   <div
     v-if="!ui.isReady || (ui.isReady && ui.show)"
     ref="dropdown"
-    class="b-menu dropdown-menu nope-dropdown-menu-end nope-dropdown-menu-arrow"
-    :class="{ show: ui.show }"
-    nopestyle="`
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      transform: translate3d(${posX}px, ${posY}px, 0px);
-      will-change: transform;`"
+    class="b-menu dropdown-menu dropdown-menu-arrow show"
+    :class="{ 'dropdown-menu-end': position == 'end' }"
+    style="opacity: 0"
+    :style="
+      offsetX && opacity == 1
+        ? `opacity: 1;transform: translate3d(${offsetX}px, ${posY}px, 0px);`
+        : ''
+    "
     @click="hide">
     <slot />
-    <!-- <a class="dropdown-item" href="#">Last 3 months</a> -->
+    <!-- <a class="dropdown-item" href="#">x: {{ offsetX }} - y: {{ posY }}</a>
+    <a class="dropdown-item" href="#">opacity {{ opacity }}</a> -->
   </div>
   <div
     v-if="ui.show"
@@ -36,7 +37,7 @@
  * @desc:    https://preview.tabler.io/dropdowns.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Sun Dec 03 2023
+ * Modified: Thu Dec 21 2023
  **/
 
 export default {
@@ -64,13 +65,21 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    position: {
+      type: String,
+      default: 'start',
+      options: ['start', 'end'],
+    },
   },
 
   data() {
     return {
       parent: null,
-      posX: 0,
+
       posY: 0,
+      offsetX: 0,
+      opacity: 0.5,
 
       ui: {
         show: false,
@@ -80,33 +89,53 @@ export default {
     }
   },
 
-  computed: {
-    colorAndVariant() {
-      if (this.variant == 'icon') return `btn-${this.color} btn-icon`
-      if (this.variant == 'pill') return `btn-pill btn-${this.color}`
-
-      let className = 'btn'
-
-      if (this.variant) className += `-${this.variant}`
-      if (this.color) className += `-${this.color}`
-
-      if (Object.prototype.hasOwnProperty.call(this.$attrs, 'block'))
-        className += ` w-100`
-      if (Object.prototype.hasOwnProperty.call(this.$attrs, 'disabled'))
-        className += ` disabled`
-
-      return className
-    },
-  },
+  computed: {},
 
   methods: {
+    //+-------------------------------------------------
+    // calcCorrection()
+    // With current and parent position, try to calculate
+    // offset amount to be 100% aligned with parent
+    // -----
+    // Created on Thu Dec 21 2023
+    //+-------------------------------------------------
+    calcCorrection() {
+      const parent = this.parent.getBoundingClientRect()
+      const dropdown = this.$refs.dropdown?.getBoundingClientRect()
+
+      let anchorX = 0
+
+      if (this.position == 'start') {
+        if (parent.x !== dropdown.x) {
+          anchorX = parent.x - dropdown.x
+          console.warn(parent.x, dropdown.x, anchorX, this.offsetX)
+        } else {
+          anchorX = 1
+        }
+      }
+
+      if (this.position == 'end') {
+        if (parent.right !== dropdown.right) {
+          anchorX = parent.right - dropdown.right
+          console.warn(parent.right, dropdown.right, anchorX, this.offsetX)
+        }
+      }
+
+      this.offsetX = anchorX
+      this.opacity = 1
+    },
+
     toggle(e) {
+      this.offsetX = 0
+      this.opacity = 0.5
+
       this.ui.show = !this.ui.show
 
-      const position = this.parent.getBoundingClientRect()
-      console.warn('🔥', position)
-      this.posX = position.x
-      this.posY = position.y
+      this.$nextTick(() => {
+        window.setTimeout(() => {
+          this.calcCorrection()
+        }, 100)
+      })
 
       e.preventDefault()
       e.stopPropagation()

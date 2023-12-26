@@ -1,6 +1,15 @@
 <template>
-  <div class="card card-game">
-    <div class="poster" @click="showGameModal">
+  <div
+    v-if="app && app.uuid"
+    class="card card-game"
+    @mouseenter="ui.showStates = true"
+    @mouseleave="ui.showStates = false">
+    <div
+      class="poster"
+      :class="{
+        'is-header': iPoster == 1,
+      }"
+      @click="showGameModal">
       <img
         loading="lazy"
         class="b-poster"
@@ -10,18 +19,18 @@
     </div>
     <div class="card-body">
       <div class="h5">
+        <BState v-if="app.state" :state="app.state"></BState>
         {{ app.name }}
       </div>
       <div class="text-muted">
-        {{ appid }}
-        {{ app.steam_id }}
-        <pre>{{ app.state || 'N' }}</pre>
+        <!-- {{ appid }} -->
+        <!-- {{ app.steam_id }} -->
 
-        <b-state :app="app.uuid" @set="setState">
+        <BStateMenu :app="app.uuid" @set="setState">
           <button type="button" class="btn">
             <Icon size="18" class="text-muted me-1">Dots</Icon>
           </button>
-        </b-state>
+        </BStateMenu>
       </div>
     </div>
     <!-- <div class="card-body">
@@ -63,7 +72,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Dec 07 2023
+ * Modified: Tue Dec 26 2023
  **/
 
 export default {
@@ -84,6 +93,10 @@ export default {
     return {
       app: {},
       iPoster: 0,
+
+      ui: {
+        showStates: false,
+      },
     }
   },
 
@@ -91,7 +104,7 @@ export default {
     ...mapStores(useDataStore),
 
     poster() {
-      const ID = this.app.steam_id
+      const ID = this.app.steam_id || null
       if (!ID) return
 
       const posters = [

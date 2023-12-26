@@ -60,7 +60,7 @@
         class="input-icon-addon cursor-pointer action-icon"
         :class="{ active: modelValue !== '' }"
         @click="onClear">
-        <Icon>SquareX</Icon>
+        <Icon>SquareRoundedX</Icon>
       </span>
 
       <span v-if="loading" class="input-icon-addon">
@@ -100,7 +100,7 @@
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Mon Dec 18 2023
+ * Modified: Wed Dec 20 2023
  **/
 
 export default {

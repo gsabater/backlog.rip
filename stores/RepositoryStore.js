@@ -3,12 +3,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Fri Nov 17 2023
+ * Modified: Wed Dec 20 2023
  */
 
 let app = null
 
-export const useRepositoryStore = defineStore('productos', {
+export const useRepositoryStore = defineStore('repository', {
   state: () => ({
     items: [],
 

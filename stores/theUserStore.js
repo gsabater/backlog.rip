@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Wed Dec 13 2023
+ * Modified: Tue Dec 19 2023
  */
 
 let $nuxt = null
@@ -51,8 +51,8 @@ export const useUserStore = defineStore('user', {
       log('🥸 User is authenticated', this.user)
       // log('⭕ Should check for providers', this.user.providers)
 
-      this.isLogged = true
-      // this.isChecked = true
+      // this.isLogged = false
+      this.isChecked = true
 
       return true
     },

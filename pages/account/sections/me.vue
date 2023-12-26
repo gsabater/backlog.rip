@@ -18,7 +18,7 @@
       <div class="row g-3">
         <div class="col-md nope-col-lg-8">
           <!-- <div class="form-label">Username</div> -->
-          <h3 class="card-title my-1">Email</h3>
+          <h3 class="card-title my-1">Username</h3>
           <b-input
             v-model="user.username"
             hint="This is only your preferred profile name"

@@ -21,7 +21,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Dec 12 2023
+ * Modified: Tue Dec 26 2023
  **/
 
 export default {
@@ -30,8 +30,8 @@ export default {
 
   props: {
     source: {
-      type: Array,
-      default: () => [],
+      type: String,
+      default: 'all', // or 'library'
     },
 
     filters: {
@@ -59,6 +59,13 @@ export default {
         search: null,
       },
 
+      stats: {
+        total: 0,
+        filtered: 0,
+
+        time: 0,
+      },
+
       ui: {},
     }
   },
@@ -76,56 +83,6 @@ export default {
     // f() {
     //   return { ...this.base, ...this.filters }
     // },
-
-    // items() {
-    //   log('⚡ Filter')
-    //   if (!this.filters.ready) return []
-
-    //   log('⚡ Filtering')
-    //   console.time('Filter')
-
-    //   const source = this.dataStore.list()
-
-    //   const items = []
-
-    //   for (const uuid in source) {
-    //     const app = source[uuid]
-    //     // console.log(app)
-
-    //     // Filter: Name
-    //     // Match with on app.name and steam_id
-    //     //+---------------------------------------
-    //     if (this.f?.string?.length > 0) {
-    //       let appName = app.name ? app.name : ''
-    //       appName = appName.toString().toLowerCase()
-
-    //       if (
-    //         appName.indexOf(this.filters.string) === -1 &&
-    //         app.steam_id.toString() !== this.filters.string
-    //       ) {
-    //         // counters.skip++
-    //         // data.hidden.string.push(steam_id)
-    //         continue
-    //       }
-    //     }
-
-    //     // Finally, add the app to items
-    //     //+---------------------------------------
-    //     items.push(uuid)
-    //   }
-
-    //   console.timeEnd('Filter')
-
-    //   return items
-
-    //   return this.items
-    //     .sort((a, b) => b.playtime_forever - a.playtime_forever)
-    //     .map((item) => ({
-    //       ...item,
-    //       import: true,
-    //     }))
-    //     .slice(0, 10)
-    // },
   },
 
   methods: {
@@ -137,7 +94,7 @@ export default {
     // Created on Fri Nov 24 2023
     //+-------------------------------------------------
     search(source = null) {
-      log('⚡ Searching from', source)
+      log('⚡ Searching from: ', source || 'direct call')
 
       const json = JSON.stringify(this.filters)
       const hash = btoa(json)
@@ -160,20 +117,35 @@ export default {
     // Created on Thu Nov 23 2023
     //+-------------------------------------------------
     filter() {
-      // log('⚡ Filtering')
+      // log('🌈 Filtering')
       if (!this.dataStore.isReady) return
 
       console.time('Filter')
+      const start = performance.now()
 
+      let logged = 5
       const items = []
-      const source = this.dataStore.list()
 
-      log('⚡ Filtering with', JSON.stringify(this.filters))
-      log('Filtering #', Object.keys(source).length)
+      // prettier-ignore
+      const source = (this.source == 'all')
+        ? this.dataStore.list()
+        : this.dataStore.library()
+
+      log('🌈 Filtering on ', this.source)
+      log('Amount of apps #', Object.keys(source).length)
+      log('Filters: ', JSON.stringify(this.filters))
 
       for (const uuid in source) {
         const app = source[uuid]
         // console.log(app)
+
+        // Filter: Ignored games
+        // Remove any games ignored
+        //+---------------------------------------
+        if (app.is?.ignored) {
+          if (logged > 0) console.warn('🛑 Skipping ignored app', app.name, app)
+          continue
+        }
 
         // Filter: Name
         // Match with on app.name and steam_id
@@ -188,6 +160,10 @@ export default {
           ) {
             // counters.skip++
             // data.hidden.string.push(steam_id)
+
+            if (logged > 0) {
+              console.warn('Skipping as not name', this.filters.string, app.name, app)
+            }
             continue
           }
         }
@@ -195,10 +171,22 @@ export default {
         // Finally, add the app to items
         //+---------------------------------------
         items.push(uuid)
+
+        logged--
       }
 
       console.timeEnd('Filter')
-      log('⚡ Found', items.length, items[0], window.db?.data?.[items[0]])
+      const end = performance.now()
+
+      log(
+        '🌈 Filter done (amount, first, data[first])',
+        items.length,
+        items[0],
+        window.db?.d?.[items[0]]
+      )
+      this.stats.time = end - start
+
+      log('🌈 Dropping stats', this.stats)
 
       this.items = items.slice(0, 30)
 
@@ -213,29 +201,35 @@ export default {
       this.$forceUpdate()
     },
 
-    init() {
+    async loadRepositories() {
       log('Loading repositories')
       this.dataStore.init() // <- this should be some kind of event fired from the store
+    },
+
+    init() {
+      this.loadRepositories
       this.search()
     },
   },
+
   mounted() {
     this.init()
 
     this.$mitt.on('data:updated', () => {
       log('⭕ Starting a search from an event -> data:updated')
-      // this.control.event('data:updated')
+      this.control.event = 'data:updated'
       this.search('event')
     })
 
     this.$mitt.on('data:ready', () => {
       log('⭕ Starting a search from an event -> data:ready')
-      // this.control.event('data:ready')
+      this.control.event = 'data:ready'
       this.search('event')
     })
   },
 
   unmounted() {
+    this.$mitt.off('data:ready')
     this.$mitt.off('data:updated')
   },
 }

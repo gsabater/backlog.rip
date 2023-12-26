@@ -29,7 +29,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // Preload
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  if (userStore.isLogged) {
+  if (userStore.isChecked) {
     dataStore.init()
     // nuxtApp.$db.init()
   }

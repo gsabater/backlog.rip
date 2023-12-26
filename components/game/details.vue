@@ -8,11 +8,19 @@
       <li>
         {{ app.updated_at }}
       </li>
-      <li>State of game: {{ app.state }} (change)</li>
-      <li>Notes: {{ app.notes }}</li>
-      <li v-if="status.noteObject">Note created at {{ status.noteObject.created_at }}</li>
+      <li>
+        <BState :state="app.state" :label="true">({{ app.state }})</BState>
+      </li>
     </ul>
-    <textarea v-model="status.note" name="note" rows="2" @blur="setNote"></textarea>
+    <textarea
+      v-model="status.note"
+      class="form-control"
+      name="note"
+      rows="2"
+      @blur="setNote"></textarea>
+    <span v-if="status.noteObject" class="d-block text-muted">
+      Note created at {{ status.noteObject.created_at }}
+    </span>
   </b-dialog>
 </template>
 <script>
@@ -21,7 +29,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Tue Dec 12 2023
+ * Modified: Tue Dec 26 2023
  **/
 
 export default {
@@ -81,7 +89,16 @@ export default {
       }
     },
 
+    //+-------------------------------------------------
+    // setNote()
+    // update or create a note for the current app
+    // TODO: if note is empty, delete note
+    // -----
+    // Created on Tue Dec 26 2023
+    //+-------------------------------------------------
     setNote() {
+      if (!this.status.note) return
+
       this.journalStore.updateOrCreateNote(this.app.uuid, this.status.note)
       this.$toast.success('Note saved for ' + this.app.name, {
         description: 'Monday, January 3rd at 6:00pm',

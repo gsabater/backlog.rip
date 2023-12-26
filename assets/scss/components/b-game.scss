@@ -10,6 +10,13 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  &.is-header{
+    padding: 13px;
+    background-size: cover;
+    background-position: center center;
+    filter: brightness(0.5);
+  }
 }
 
 .card-game img {

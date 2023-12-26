@@ -55,8 +55,16 @@
       </div> -->
       <div class="my-5">
         <div class="row g-3 justify-center">
+          <div class="col-auto">&nbsp;</div>
           <div class="col-auto">
-            <b-btn variant="outline" color="secondary">Browse games</b-btn>
+            <b-btn to="import/steam" variant="outline" color="orange">
+              <Icon>StepInto</Icon>
+              Import your library
+            </b-btn>
+          </div>
+
+          <div class="col-auto">
+            <b-btn variant="ghost" color="secondary">Browse games</b-btn>
           </div>
           <!-- <div class="col-auto">
             <a
@@ -81,15 +89,12 @@
               Login with Steam
             </a>
           </div> -->
-          <!-- <div class="col-auto">
-            <b-btn variant="ghost" color="secondary">Learn more</b-btn>
-          </div> -->
         </div>
 
         <p class="text-muted my-3">
           V.
-          <strong>{ APP VERSION }</strong>
-          <span class="px-1">·</span>
+          <strong>{{ $app.v }}</strong>
+          <!-- <span class="px-1">·</span>
           <a href="/docs/5.3/getting-started/download/" class="link-secondary">
             Changelog
           </a>
@@ -111,7 +116,7 @@
                 d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0c-2.4-1.6-3.5-1.3-3.5-1.3a4.2 4.2 0 0 0-.1 3.2 4.6 4.6 0 0 0-1.3 3.2c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2v3.5"></path>
             </svg>
             Source code
-          </a>
+          </a> -->
         </p>
       </div>
     </div>

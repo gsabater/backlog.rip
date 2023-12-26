@@ -1,7 +1,7 @@
 <template>
-  <button :class="colorAndVariant">
+  <component :is="component" :to="to" :class="colorAndVariant">
     <slot />
-  </button>
+  </component>
 </template>
 
 <script>
@@ -10,11 +10,13 @@
  * @desc:    https://preview.tabler.io/buttons.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Mon Nov 20 2023
+ * Modified: Thu Dec 21 2023
  **/
+import { NuxtLink } from '#components'
 
 export default {
   name: 'TablerBtn',
+
   props: {
     variant: {
       type: String,
@@ -30,6 +32,11 @@ export default {
     color: {
       type: String,
       default: '',
+    },
+
+    to: {
+      type: String,
+      default: null,
     },
   },
 
@@ -48,6 +55,11 @@ export default {
         className += ` w-100`
 
       return className
+    },
+
+    component() {
+      if (this.to) return NuxtLink
+      return 'button'
     },
   },
 }

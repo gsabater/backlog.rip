@@ -24,14 +24,14 @@
         <div class="modal-body">
           <slot />
         </div>
-        <div class="modal-footer">
+        <!-- <div class="modal-footer">
           <button type="button" class="btn me-auto" data-bs-dismiss="modal" @click="hide">
             Close
           </button>
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
             Save changes
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -43,7 +43,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 30th November 2023
- * Modified: Fri Dec 01 2023
+ * Modified: Thu Dec 21 2023
  **/
 
 export default {

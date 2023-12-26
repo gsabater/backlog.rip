@@ -29,29 +29,14 @@
           <span style="transform: translate(-10px, 7px)">Backlog.rip</span>
         </h1>
         <div class="navbar-nav flex-row order-md-last">
-          <div v-if="!$auth.isLogged" class="nav-item d-none d-md-flex me-3">
+          <!-- <div v-if="!$auth.isLogged" class="nav-item d-none d-md-flex me-3">
             <div class="btn-list">
               <NuxtLink to="/login" class="btn btn-purple">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="icon icon-tabler icon-tabler-login"
-                  width="40"
-                  height="40"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                  stroke="currentColor"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round">
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path
-                    d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
-                  <path d="M20 12h-13l3 -3m0 6l-3 -3"></path>
-                </svg>
-                Sign in {{ $auth.isLogged }}
+                <Icon class="me-2">Login</Icon>
+                Sign in
               </NuxtLink>
             </div>
-          </div>
+          </div> -->
 
           <div class="d-none d-md-flex mx-3">
             <div
@@ -309,7 +294,9 @@
             <div class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
               <span
                 class="avatar avatar-sm"
-                :style="`background-image: url(${$auth.user.avatar})`"></span>
+                :style="`background-image: url(${$auth.user.avatar})`">
+                {{ !$auth.user.avatar ? $auth.user.username[0] : '' }}
+              </span>
               <div class="d-none d-xl-block ps-2">
                 <div>{{ $auth.user.username }}</div>
                 <div class="mt-1 small text-muted">UI Designer</div>
@@ -330,13 +317,15 @@
             <div class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
               <span
                 class="avatar avatar-sm"
-                :style="`background-image: url(${$auth.user.avatar})`"></span>
+                :style="`background-image: url(${$auth.user.avatar})`">
+                {{ !$auth.user.avatar ? $auth.user.username[0] : '' }}
+              </span>
               <div class="d-none d-xl-block ps-2">
                 <div>{{ $auth.user.username }}</div>
                 <!-- <div class="mt-1 small text-muted">UI Designer</div> -->
               </div>
             </div>
-            <b-menu ref="menu">
+            <b-menu ref="menu" position="end">
               <div class="dropdown-item">
                 Library
                 <span class="badge bg-primary text-primary-fg ms-auto">12</span>
@@ -358,6 +347,7 @@
     <Navigation></Navigation>
     <!-- </div> -->
     <div class="page-wrapper">
+      <!-- <div class="ch"></div> -->
       <slot />
       <footer class="footer footer-transparent d-print-none">
         <div class="container-xl">
@@ -443,6 +433,7 @@
   <!-- <search-holder></search-holder> -->
   <b-backdrop></b-backdrop>
   <Toaster position="top-right" />
+  <SpeedInsights />
 
   <!-- <div>
     <nav>
@@ -473,6 +464,7 @@
 </template>
 
 <script setup>
+import { SpeedInsights } from '@vercel/speed-insights/nuxt'
 // import { useUserStore } from '~/stores/UserStore'
 // import { ID_INJECTION_KEY } from 'element-plus'
 

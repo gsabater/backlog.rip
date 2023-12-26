@@ -5,14 +5,14 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu Dec 14 2023
+ * Modified: Tue Dec 26 2023
  */
 
 let $nuxt = null
 
 //+-------------------------------------------------
 // Data repositories
-// Those arrays hold objects of games from multiple sources
+// Those objects hold collections of games from multiple sources
 // Data is the complete list of games available to search
 // Data is updated every time a repository is loaded or a game is added
 // ---
@@ -37,8 +37,8 @@ let repos = {}
 let search = {}
 
 //+-------------------------------------------------
-// index
-// Hold indexed values for each of the stores
+// index (ed, api, epic, igdb, steam)
+// Have indexed values for each of the stores
 //+-------------------------------------------------
 
 let index = {
@@ -52,6 +52,7 @@ let index = {
 
 export const useDataStore = defineStore('data', {
   state: () => ({
+    api: {},
     queue: [],
     loaded: [],
     indexes: [],
@@ -78,6 +79,7 @@ export const useDataStore = defineStore('data', {
         'Loaded': this.loaded.join(', '),
         'Indexes': this.indexes.join(', '),
         '-- Data --': '----',
+        'Api': JSON.stringify(this.api),
         'Data': Object.keys(data).length,
         'States': Object.keys(states).length,
         'Library': Object.keys(library).length,
@@ -105,6 +107,16 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     list() {
       return data
+    },
+
+    //+-------------------------------------------------
+    // library()
+    // Returns the library array
+    // -----
+    // Created on Mon Dec 25 2023
+    //+-------------------------------------------------
+    library() {
+      return library
     },
 
     //+-------------------------------------------------
@@ -148,6 +160,22 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
+    // getTop()
+    // -----
+    // Created on Wed Dec 20 2023
+    //+-------------------------------------------------
+    async getTop(batch) {
+      if (!batch) return
+      if (this.loaded.includes(`top:${batch}`)) return
+
+      const jxr = await $nuxt.$axios.get(`repository/top-${batch}.json`)
+      if (jxr.status) {
+        this.toData(jxr.data, 'api')
+        this.loaded.push(`top:${batch}`)
+      }
+    },
+
+    //+-------------------------------------------------
     // update()
     // Updates an app in memory and adds it to the queue
     // Tries to find the app in the api index
@@ -166,8 +194,11 @@ export const useDataStore = defineStore('data', {
       // If the app is found, update the library, data and store
       // Otherwise, add the app to the data
       //+-------------------------------------------------
-      console.warn('🔎 Searching in Library for', item.name)
-      library.forEach((lib) => {
+      // console.warn('🔎 Searching in Library for', item.name)
+
+      // library.forEach((lib) => {
+      for (const i in library) {
+        let lib = library[i]
         // console.warn('Checking', JSON.stringify(lib), 'against', JSON.stringify(item))
         // console.warn(`Is ${lib.name} - ${item.name} ?` , lib.uuid,  item.uuid)
 
@@ -192,13 +223,13 @@ export const useDataStore = defineStore('data', {
             break
           }
         }
-      })
+      }
 
       // If the app is not found, just add it to data
       // There is no need to update
       //+-------------------------------------------------
       if (uuid == 'add' && ref == 'add') {
-        console.warn('⬅️ Adding to data and exit: ', item.name)
+        // console.warn('⬅️ Adding to data and exit: ', item.name)
         let add = { ...item }
         add.api_id = item.uuid
 
@@ -257,21 +288,46 @@ export const useDataStore = defineStore('data', {
     // Created on Thu Dec 14 2023
     //+-------------------------------------------------
     prepareToStore(item, mode) {
+      if (!item.uuid) item.uuid = $nuxt.$uuid()
       if (item.is == undefined) item.is = {}
 
       if (mode !== 'toIgnore') {
-        if (item.playtime == undefined) item.playtime = {}
         if (item.updated_at == undefined) item.updated_at = 0
+
+        if (item.playtime == undefined) item.playtime = {}
+        if (item.last_played == undefined) item.last_played = {}
       }
 
       if (item.created_at == undefined) item.created_at = dates.now()
+
+      if (item.will_import) delete item.will_import
+      if (item.will_update) delete item.will_update
+      if (item.will_ignore) delete item.will_ignore
 
       return item
     },
 
     //+-------------------------------------------------
+    // store()
+    // Stores items in games table
+    // Adds them to data and indexes
+    // -----
+    // Created on Fri Dec 22 2023
+    //+-------------------------------------------------
+    store(items) {
+      $nuxt.$db.games.bulkPut(items)
+      this.toData(items, 'library')
+
+      log(
+        '🎴 User library updated',
+        `added ${items.length} apps`,
+        items[Math.floor(Math.random() * items.length)]
+      )
+    },
+
+    //+-------------------------------------------------
     // toIndex()
-    //
+    // Adds each uuid to their respective store index
     // -----
     // Created on Thu Nov 30 2023
     //+-------------------------------------------------
@@ -295,9 +351,7 @@ export const useDataStore = defineStore('data', {
     // Created on Tue Nov 21 2023
     //+-------------------------------------------------
     async toData(items, source) {
-      let event = ''
-
-      items.forEach((item) => {
+      Object.values(items).forEach((item) => {
         if (source == 'library') {
           data[item.uuid] = item
           this.toIndex(item, false)
@@ -358,6 +412,8 @@ export const useDataStore = defineStore('data', {
           toSave.push(data[uuid])
         })
 
+        if (this.queue.length < 4) console.log('📦 Queue', toSave)
+
         await $nuxt.$db.games.bulkPut(toSave)
         $nuxt.$toast.success('Saved queue of ' + this.queue.length, {
           // description: 'Monday, January 3rd at 6:00pm',
@@ -365,15 +421,6 @@ export const useDataStore = defineStore('data', {
 
         this.queue = []
       }, 5000)
-    },
-
-    //+-------------------------------------------------
-    // topGames()
-    // Created on Wed Apr 26 2023
-    //+-------------------------------------------------
-    async topGames(params) {
-      // const jxr = await app.$axios.get(`repository/top-games`)
-      // if (jxr.status) return jxr.data
     },
 
     async updateStale() {
@@ -414,8 +461,9 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // loadStates()
+    // Loads the states from the database into memory
+    // NOTE: Might be moved to stateStore
     // -----
     // Created on Mon Nov 27 2023
     //+-------------------------------------------------
@@ -443,15 +491,38 @@ export const useDataStore = defineStore('data', {
     async loadLibrary() {
       if (this.loaded.includes('library')) return
 
-      library = await $nuxt.$db.games.toArray()
+      let query = await $nuxt.$db.games.toArray()
+      library = query.reduce((result, game) => {
+        result[game.uuid] = game
+        return result
+      }, {})
+
       this.toData(library, 'library')
       this.loaded.push('library')
 
       log(
         '🎴 User library is ready',
-        `found ${library.length} apps`,
-        library[Math.floor(Math.random() * library.length)]
+        `found ${query.length} apps in library`,
+        query[Math.floor(Math.random() * query.length)]
       )
+    },
+
+    //+-------------------------------------------------
+    // loadApiStatus()
+    // Just load some status from API
+    // NOTE: Might be moved to apiStore
+    // -----
+    // Created on Fri Dec 22 2023
+    //+-------------------------------------------------
+    async loadApiStatus() {
+      if (this.loaded.includes('api')) return
+
+      const jxr = await $nuxt.$axios.get(`get/status.json`)
+      if (jxr.status) {
+        $nuxt.$app.api = jxr.data
+        this.api = jxr.data
+        this.loaded.push('api')
+      }
     },
 
     //+-------------------------------------------------
@@ -470,25 +541,22 @@ export const useDataStore = defineStore('data', {
       // Load and index data
       await this.loadStates()
       await this.loadLibrary()
-      await this.updateStale()
-      await this.updateMissing()
+      // await this.updateStale()
+      // await this.updateMissing()
 
       // Expose data to the window
       window.db = {
         d: data,
-        i: {
+        o: {
+          index,
           library,
           wishlist,
           states,
           repos,
           search,
-          index,
         },
-        // data,
-        // library,
-        // repos,
-        // search,
-        // index,
+
+        // Functions
         api: this.search,
         status: this.status,
       }

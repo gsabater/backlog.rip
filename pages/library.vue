@@ -8,7 +8,7 @@
         </div>
         <div class="col-auto ms-auto">
           <div class="text-secondary mt-1 text-right" style="text-align: right">
-            About {{ $app.api.games.total }} games
+            About {{ $app?.api?.games?.total || 0 }} games
             <!-- <br />
             <span class="text-muted" style="zoom: 0.8">(0.19 seconds)</span> -->
           </div>
@@ -30,7 +30,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th December 2023
- * Modified: Tue Dec 26 2023
+ * Modified: Thu Dec 28 2023
  **/
 
 export default {

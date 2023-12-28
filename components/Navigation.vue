@@ -1,9 +1,19 @@
 <template>
   <div class="navbar-expand-md">
-    <div id="navbar-menu" class="collapse navbar-collapse">
+    <div id="navbar-menu" class="collapse navbar-collapse" :class="{ show: showMobMenu }">
       <div class="navbar navbar-light">
         <div class="container-xl">
           <ul class="navbar-nav">
+            <li
+              v-if="false"
+              v-tippy="{ content: 'Show Backlog menu', placement: 'bottom' }"
+              class="nav-item cursor-pointer"
+              @click="$app.toggleSidebar()">
+              <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                <Icon>LayoutSidebarInactive</Icon>
+              </span>
+            </li>
+            <li v-if="false" style="border-right: 1px dashed #ccc; margin: 10px"></li>
             <li class="nav-item">
               <NuxtLink to="/games" class="nav-link">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
@@ -116,21 +126,27 @@
         </div>
       </div>
 
-      <div
+      <!-- <div
         v-if="ui.menu"
         class="navbar-backdrop"
         style="position: fixed; top: 0; left: 0; z-index: 1; width: 100vw; height: 100vh"
-        @click="ui.menu = false"></div>
+        @click="ui.menu = false"></div> -->
     </div>
   </div>
 </template>
 
-<script setup>
-// import { ElButton } from 'element-plus'
-
-const ui = reactive({
-  menu: false,
-})
+<script>
+export default {
+  props: {
+    showMobMenu: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {}
+  },
+}
 </script>
 
 <style>

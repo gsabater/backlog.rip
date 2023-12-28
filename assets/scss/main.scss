@@ -21,4 +21,19 @@
 @import 'components/b-game';
 @import 'components/b-poster';
 
+/* b-menu */
+
+.b-menu {
+  margin-top: 7px;
+  padding: 5px;
+  position: absolute;
+
+  --tblr-dropdown-divider-margin-y: 0.4rem;
+}
+
+.b-menu .dropdown-item {
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 @import 'dev';

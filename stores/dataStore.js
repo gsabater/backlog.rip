@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue Dec 26 2023
+ * Modified: Wed Dec 27 2023
  */
 
 let $nuxt = null
@@ -196,7 +196,6 @@ export const useDataStore = defineStore('data', {
       //+-------------------------------------------------
       // console.warn('🔎 Searching in Library for', item.name)
 
-      // library.forEach((lib) => {
       for (const i in library) {
         let lib = library[i]
         // console.warn('Checking', JSON.stringify(lib), 'against', JSON.stringify(item))
@@ -217,8 +216,10 @@ export const useDataStore = defineStore('data', {
 
         for (const store of this.indexes) {
           if (lib[store + '_id'] && lib[store + '_id'] == item[store + '_id']) {
+            if (lib.is?.ignored) return
+
             ref = lib.uuid
-            console.warn('🔎🔎 Found by', store + '_id', ref)
+            console.warn(item.name, '🔎 Found by', store + '_id', ref)
             // console.warn(store, lib[store + '_id'], item[store + '_id'])
             break
           }

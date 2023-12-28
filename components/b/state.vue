@@ -2,7 +2,7 @@
   <span class="status" :style="{ '--tblr-status-color': st.color }">
     <span class="status-dot status-dot-animated"></span>
     <template v-if="label">
-      {{ st.name }},
+      {{ st.name }}
       <slot />
     </template>
   </span>
@@ -16,8 +16,10 @@
  * Can be used as
  * <BState :state="state"></BState>
  * -------------------------------------------
+ * TODO: Add support for multiple props: label and dot
+ * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Tue Dec 26 2023
+ * Modified: Thu Dec 28 2023
  **/
 
 export default {
@@ -26,6 +28,11 @@ export default {
     state: {
       type: [String, Number],
       default: null,
+    },
+
+    dot: {
+      type: Boolean,
+      default: true,
     },
 
     label: {

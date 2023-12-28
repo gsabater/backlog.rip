@@ -77,10 +77,8 @@ export class DexieInstaller {
   // Created on Wed Dec 13 2023
   //+-------------------------------------------------
   async account() {
-    let count = await this.$db.account.get('me')
-    if (count !== undefined) return
-
-    await this.$db.account.add({
+    let row = await this.$db.account.get('me')
+    let data = {
       uuid: 'me',
       api_uuid: null,
       username: 'Anonymous',
@@ -91,7 +89,10 @@ export class DexieInstaller {
 
       created_at: dates.now(),
       updated_at: dates.now(),
-    })
+      ...row,
+    }
+
+    await this.$db.account.put(data)
   }
 
   async checkin() {

@@ -5,8 +5,9 @@
       <p class="hero-description mt-4">
         Free and open source library manager for all your games.
         <br />
-        Works in the cloud, without any launchers. Organize and manage your games with
-        ease.
+        Works in the cloud, without any launchers.
+        <br />
+        Organize and manage your games with ease.
       </p>
 
       <!-- <div class="my-7">
@@ -64,7 +65,7 @@
           </div>
 
           <div class="col-auto">
-            <b-btn variant="ghost" color="secondary">Browse games</b-btn>
+            <b-btn to="games" variant="ghost" color="secondary">Browse games</b-btn>
           </div>
           <!-- <div class="col-auto">
             <a
@@ -92,7 +93,7 @@
         </div>
 
         <p class="text-muted my-3">
-          V.
+          V
           <strong>{{ $app.v }}</strong>
           <!-- <span class="px-1">·</span>
           <a href="/docs/5.3/getting-started/download/" class="link-secondary">

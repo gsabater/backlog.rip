@@ -53,8 +53,7 @@
               style="border-width: 1px; box-shadow: 1px 1px 3px 0px #36302a63">
               <div class="card-body text-center">
                 <div class="mb-4">
-                  <h2 class="mb-0">Your Steam library</h2>
-                  <p class="text-muted">You need to login first</p>
+                  <h2>You need to login</h2>
                   <p class="text-secondary mb-4">
                     In order to get your Steam library, you have to login with your Steam
                     account. This is a safe process, and only your SteamID will be shared
@@ -706,7 +705,7 @@ IGNORE
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Sun Dec 24 2023
+ * Modified: Wed Dec 27 2023
  **/
 
 import steam from '~/modules/importers/steam'

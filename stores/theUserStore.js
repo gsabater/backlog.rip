@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Tue Dec 19 2023
+ * Modified: Wed Dec 27 2023
  */
 
 let $nuxt = null
@@ -45,7 +45,7 @@ export const useUserStore = defineStore('user', {
       // delete me.providers
       // this.storeAccount(me)
 
-      me.config = this.config
+      // me.config = this.config
       this.user = { ...me }
 
       log('🥸 User is authenticated', this.user)

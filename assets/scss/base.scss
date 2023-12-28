@@ -1,14 +1,21 @@
-// @import url('https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic');
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic');
+// @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
+
+  // @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
 
 h1,h2,h3,h4,h5,h6 {
-  // font-family: 'Lora', serif;
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Lora', serif;
+  // font-family: 'DM Serif Display', serif;
+  // font-family: 'Playfair Display', serif;
+  // font-weight: 600;
 }
 
-.font-lora, .font-serif {
-  // font-family: 'Lora', serif;
-  font-family: 'DM Serif Display', serif;
+.font-serif {
+  font-family: 'Lora', serif;
+  // font-family: 'DM Serif Display', serif;
+  // font-family: 'Playfair Display', serif;
+  // font-weight: 600;
 }
 
 .ch {

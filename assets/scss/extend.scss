@@ -8,6 +8,7 @@
   align-items: center !important;
 }
 
+
 // https://unused-css.com/tools/border-gradient-generator
 .border-rainbow{
   // background-color: #241d33;
@@ -23,6 +24,13 @@
   border-radius: 5px;
 }
 
+.scale-90 {
+  transform: scale(.9);
+}
+
+.scale-95 {
+  transform: scale(.95);
+}
 
 .mx-auto {
   margin-right: auto !important;

@@ -17,8 +17,15 @@
       {{ state.name }}
       <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
     </label>
-    <div class="w-100 border-top my-1"></div>
-    <label class="dropdown-item justify-center" style="zoom: 0.9">Clear filter</label>
+    <template v-if="clearable">
+      <div class="w-100 border-top my-1"></div>
+      <label
+        class="dropdown-item justify-center"
+        style="zoom: 0.9"
+        @click="doAction(null)">
+        Clear filter
+      </label>
+    </template>
   </b-menu>
 </template>
 
@@ -30,14 +37,14 @@ import { useJournalStore } from '../../stores/journalStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Thu Dec 28 2023
+ * Modified: Fri Dec 29 2023
  **/
 
 export default {
   name: 'StateMenu',
   props: {
     modelValue: {
-      type: String,
+      type: [String, Number],
       default: '',
     },
 
@@ -75,9 +82,8 @@ export default {
     },
 
     doAction(state) {
-      this.value = state.id
+      this.value = state?.id || null
       this.onChange(state)
-      // this.setState(state)
     },
 
     onChange() {

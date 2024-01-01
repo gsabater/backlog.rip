@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th December 2023
- * Modified: Thu Dec 14 2023
+ * Modified: Fri Dec 29 2023
  */
 
 //+-------------------------------------------------
@@ -14,7 +14,7 @@
 // > ref: null, data: { message: 'string' }
 //
 // - state (Change in a state)
-// > ref: games.uuid, data: { state: 'states.id', 'old': 'states.id / null' }
+// > ref: game.uuid, data: { state: 'states.id', 'old': 'states.id / null' }
 //
 // - added (game added)
 // > ref: null, data: { store: 'steam', games: [uuid, uuid2] }

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Wed Dec 27 2023
+ * Modified: Mon Jan 01 2024
  */
 
 let $nuxt = null
@@ -26,7 +26,6 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     // authenticate()
     // Loads current user from local database
-    // If api uuid is present, load data when required
     // -----
     // Created on Wed Mar 22 2023
     // Updated on Wed Dec 13 2023
@@ -35,7 +34,6 @@ export const useUserStore = defineStore('user', {
       if (this.user?.uuid) return this.user
 
       if (!$nuxt) $nuxt = useNuxtApp()
-      if (!this.bearer) this.setToken()
 
       await this.loadLocalData()
       // await this.getApiData()
@@ -51,8 +49,8 @@ export const useUserStore = defineStore('user', {
       log('🥸 User is authenticated', this.user)
       // log('⭕ Should check for providers', this.user.providers)
 
-      // this.isLogged = false
       this.isChecked = true
+      if (this.bearer) this.isLogged = true
 
       return true
     },
@@ -62,13 +60,26 @@ export const useUserStore = defineStore('user', {
     // Loads the bearer token and adds it to pinia and axios
     // -----
     // Created on Mon Nov 20 2023
+    // Updated on Fri Dec 29 2023 Dont use cookies anymore
     //+-------------------------------------------------
-    setToken(bearer = false) {
-      if (!bearer) bearer = useCookie('auth._token.local').value
-      else useCookie('auth._token.local').value = bearer
-
+    async setToken(bearer = false) {
+      // if (!bearer) bearer = useCookie('auth._token.local').value
+      // else useCookie('auth._token.local').value = bearer
       this.bearer = bearer
+      this.local.bearer = bearer
+
       $nuxt.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + bearer
+      return
+
+      this.user.bearer = bearer
+      this.local.bearer = bearer
+
+      this.update('local', 'account')
+
+      // Dirty hack to reauthenticate with api
+      await this.getApiData()
+      this.user.uuid = null
+      this.authenticate()
     },
 
     //+-------------------------------------------------
@@ -81,6 +92,8 @@ export const useUserStore = defineStore('user', {
       let config = await $nuxt.$db.config.toArray()
       this.local = await $nuxt.$db.account.get('me')
 
+      if (this.local?.bearer) this.setToken(this.local?.bearer)
+
       // prettier-ignore
       let _config = config.reduce((acc, row) =>
         ({ ...acc, [row.key]: row.value }),
@@ -92,49 +105,84 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     // getApiData()
     // Gets the userdata from the API
+    // And then set values on local for future use
     // -----
     // Created on Fri Nov 17 2023
     //+-------------------------------------------------
     async getApiData() {
+      if (!this.bearer) return
+
       const jxr = await $nuxt.$axios.get('me').catch((e) => {
         console.warn(e)
         return e.response
       })
 
       if (jxr?.status === 200) {
+        if (!jxr.data) return
+
         this.api = jxr.data
 
+        this.local.steam = jxr.data.steam || this.local.steam
+
+        // prettier-ignore
+        this.local.username = (this.local.username == 'Anonymous')
+        ? jxr.data.username : this.local.username
+
+        // prettier-ignore
+        this.local.avatar = !this.local.avatar
+        ? jxr.data.avatar : this.local.avatar
+
         let provider = jxr.data.providers.find((p) => p.provider === 'steam')
-        this.local.steam_data = provider?.data || {}
+        this.local.steam_data = provider?.data || null
+        this.local.steam_updated_at = provider.updated_at
 
         log('🧭 Userdata from API', jxr.data)
       }
     },
 
+    // //+-------------------------------------------------
+    // // storeAccount()
+    // // Store the resulting userdata in the local database
+    // // -----
+    // // Created on Fri Nov 17 2023
+    // //+-------------------------------------------------
+    // async storeAccount(me) {
+    //   let json = JSON.parse(JSON.stringify(me))
+    //   await $nuxt.$db.account.put({
+    //     ...json,
+    //     uuid: 'me',
+    //     updated_at: dates.now(),
+    //   })
+    // },
+
     //+-------------------------------------------------
-    // storeAccount()
-    // Store the resulting userdata in the local database
+    // update()
+    // Replaces a record in the journal
     // -----
-    // Created on Fri Nov 17 2023
+    // Created on Fri Dec 29 2023
     //+-------------------------------------------------
-    async storeAccount(me) {
-      let json = JSON.parse(JSON.stringify(me))
-      await $nuxt.$db.account.put({
+    async update(field, store) {
+      let me = { ...this.api, ...this.local }
+      this.user = { ...me }
+
+      log('🥸 Local userdata has been updated', this.user)
+
+      let json = JSON.parse(JSON.stringify(this[field]))
+      await $nuxt.$db[store].put({
         ...json,
-        uuid: 'me',
         updated_at: dates.now(),
       })
     },
 
-    logout() {
-      this.user = {}
-      this.isLogged = false
-      this.bearer = null
+    // logout() {
+    //   this.user = {}
+    //   this.isLogged = false
+    //   this.bearer = null
 
-      useCookie('auth._token.local').value = null
-      delete $nuxt.$axios.defaults.headers.common['Authorization']
-      navigateTo('/login')
-    },
+    //   useCookie('auth._token.local').value = null
+    //   delete $nuxt.$axios.defaults.headers.common['Authorization']
+    //   navigateTo('/login')
+    // },
   },
 
   getters: {

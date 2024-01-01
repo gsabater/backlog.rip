@@ -5,13 +5,13 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Wed Dec 27 2023
+ * Modified: Mon Jan 01 2024
  */
 
 let $nuxt = null
 
 let app = {
-  v: '0.1 Alpha',
+  v: '0.2 (Alpha)',
   key: 0,
 
   api: {},

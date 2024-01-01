@@ -41,7 +41,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Tue Dec 12 2023
+ * Modified: Fri Dec 29 2023
  **/
 
 export default {
@@ -98,14 +98,19 @@ export default {
 
       if (item.event == 'note') {
         const app = this.dataStore.get(item.ref)
-        return `Note added for ${app.name}`
+        return `Note added for ${app?.name}`
       }
 
       if (item.event == 'state') {
         const app = this.dataStore.get(item.ref)
         const old = this.db.states.find((s) => s.id == item.data.old)
         const state = this.db.states.find((s) => s.id == item.data.state)
-        return `State for ${app.name}, changed from ${old.name} to <strong>${state.name}</strong>`
+        return `State for ${app?.name}, changed from ${old?.name} to <strong>${state?.name}</strong>`
+      }
+
+      if (item.event == 'added') {
+        const app = this.dataStore.get(item.ref)
+        return `5 games have been added to your steam library`
       }
     },
 

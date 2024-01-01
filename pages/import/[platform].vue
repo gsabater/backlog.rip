@@ -705,7 +705,7 @@ IGNORE
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Wed Dec 27 2023
+ * Modified: Fri Dec 29 2023
  **/
 
 import steam from '~/modules/importers/steam'
@@ -1149,6 +1149,15 @@ export default {
 
       await this.storeNewGames()
       // this.updateExistingGames()
+
+      const keys = this.appsToImport.map((el) => el.uuid)
+      this.journalStore.add({
+        event: 'added',
+        data: {
+          store: this.module.store,
+          games: keys,
+        },
+      })
 
       this.ui.step = 'complete'
       return

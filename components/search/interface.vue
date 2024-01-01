@@ -1,21 +1,18 @@
 <template>
   <div class="row">
     <div class="col-9">
-      <div class="row mb-4 align-items-center" style="zoom: 0.9">
+      <div class="row mb-4 align-items-center">
         <div class="col col-4">
-          <BMenuStates app="440" @set="setState">
-            <button>440</button>
-          </BMenuStates>
-
-          <button type="button" class="btn me-2">
-            <Icon class="me-2">Background</Icon>
+          <button
+            v-tippy="'Filter the games'"
+            :class="'btn py-2 ps-3 scale-90 ' + (f.state ? 'pe-2' : 'pe-3')">
+            <Icon size="19" class="text-muted me-1">Background</Icon>
             <div :class="{ 'pe-2 me-2 border-end': f.state }">State</div>
-            <!-- <BState v-if="f.state" :state="f.state" :label="true"></BState> -->
+            <BState v-if="f.state" :state="f.state" :label="true"></BState>
           </button>
           <BMenuStates v-model="f.state" :clearable="true"></BMenuStates>
-          <BState v-if="f.state" :state="f.state" :label="true"></BState>
 
-          <b-btn
+          <!-- <b-btn
             v-if="
               !table.filters.played ||
               !table.filters.unplayed ||
@@ -42,27 +39,24 @@
               <path
                 d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"></path>
             </svg>
-          </b-btn>
+          </b-btn> -->
         </div>
         <div class="col text-end">
-          <button type="button" class="btn">
-            <Icon size="18" class="text-muted me-1">CirclePlus</Icon>
-            <div
-              :class="{
-                'pe-2 me-2 border-end': !f.played || !f.unplayed,
-              }">
-              Sort By
-            </div>
-            <span v-if="f.played && !f.unplayed" class="badge bg-indigo-lt">Played</span>
-            <span v-if="!f.played && f.unplayed" class="badge">Not played</span>
-          </button>
+          <div v-tippy="'Filter the games'" class="btn py-2 ps-3 pe-2 scale-90">
+            <Icon size="19" class="text-muted me-1">SortDescending</Icon>
+            <div class="pe-2 me-2 border-end">Sort by</div>
+            <span class="badge bg-indigo-lt">Name</span>
+            <Icon class="text-muted mx-1">SquareRoundedChevronsUp</Icon>
+          </div>
           <b-menu>
-            <label class="dropdown-item">
-              Played
-              <span class="badge bg-primary text-primary-fg ms-auto">12</span>
-            </label>
+            <label class="dropdown-item ps-1">
+              <div class="d-flex justify-center" style="width: 30px">
+                <Icon>SortAscendingLetters</Icon>
+              </div>
 
-            <label class="dropdown-item">Not played</label>
+              Name
+              <span class="ms-auto">AZ - ZA</span>
+            </label>
           </b-menu>
           <!-- <small class="text-muted">
             Found {{ totalApiGames }} games,
@@ -97,7 +91,7 @@
     </div>
 
     <div class="col-3">
-      <div style="zoom: 0.9">
+      <div style="transform: scale(0.9)">
         <b-input
           v-model="f.string"
           placeholder="Filter..."
@@ -107,7 +101,7 @@
       </div>
 
       <div>
-        <pre class="my-3" style="zoom: 0.6"
+        <pre class="my-3" style="transform: scale(0.9)"
           >{{ f }}
 ---
 {{ ui }}
@@ -128,7 +122,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Dec 28 2023
+ * Modified: Fri Dec 29 2023
  **/
 
 export default {
@@ -157,6 +151,7 @@ export default {
       base: {
         string: '',
         sortBy: 'name',
+        sortDir: 'asc',
         state: null,
 
         show: {

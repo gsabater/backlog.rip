@@ -1,18 +1,43 @@
 <template>
-  <ul>
-    <!-- <li>Params: {{ route.query }}</li> -->
-    <li>Token: {{ token }}</li>
-    <li>Auth:
-      <pre>
-      {{ auth }}
-      </pre>
-    </li>
-  </ul>
-  <b-btn @click="authorize">
-    Authorize
-  </b-btn>
-
-  <h1 v-if="ui.loading">Loading</h1>
+  <div class="page-body">
+    <div class="container-xl">
+      <div class="row row-cards">
+        <div class="col-lg-8 mx-auto mt-4">
+          <!-- <pre>
+            Token: {{ token }}
+            Auth:
+            {{ auth }}
+          </pre> -->
+          <div class="card">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-12">
+                  <h3 class="card-title mb-1">Loading your userdata, please wait...</h3>
+                  <!-- <div class="text-muted">Working for {{ watchToHuman }} ...</div> -->
+                  <div class="mt-3">
+                    <div class="row g-2 align-items-center">
+                      <!-- <div class="col-auto">
+                            25%
+                          </div> -->
+                      <div class="col">
+                        <div class="progress progress-sm">
+                          <div
+                            class="progress-bar progress-bar-indeterminate"
+                            role="progressbar"
+                            aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
 /**
@@ -21,16 +46,11 @@
  *          this token identifies the user in the backlog.rip database
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Fri Oct 27 2023
+ * Modified: Mon Jan 01 2024
  **/
 
-// import { mapStores } from 'pinia'
 export default {
   name: 'Auth',
-  // setup() {
-  //   const route = useRoute()
-  //   return { route }
-  // },
 
   data() {
     return {
@@ -48,28 +68,29 @@ export default {
   },
 
   methods: {
-    async authorize() {
+    async authenticate() {
       this.ui.loading = true
-      this.setUser()
+      window.setTimeout(() => {
+        this.setUser()
+      }, 1000)
     },
 
-    async setUser(data) {
+    async setUser() {
       try {
-        this.userStore.setToken(this.token)
+        const redirect = null
 
         // Set the token in the axios header
+        this.userStore.setToken(this.token)
+
         // And load current user
-        let current = await this.userStore.current()
+        await this.userStore.getApiData()
 
-        log(this.userStore.isLogged, this.userStore.user)
-        // console.warn(auth)
-
-        let redirect = this.userStore.redirectTo
-        if (redirect == 'login') redirect = '/dashboard'
-        if (redirect == '/login') redirect = '/dashboard'
-        if (redirect == '/login/') redirect = '/dashboard'
+        // And update the local ddbb
+        await this.userStore.update('local', 'account')
 
         this.$router.push(redirect ? redirect : '/dashboard')
+
+        // console.warn(auth)
       } catch (e) {
         // errors.value = e
         console.error(e)
@@ -80,11 +101,14 @@ export default {
     },
 
     async init() {
-      let route = this.$route
-      let { token } = route.query
+      const route = this.$route
+      const { token } = route.query
 
       this.token = token
       this.auth = this.$auth
+
+      if (!token) return
+      this.authenticate()
     },
   },
 
@@ -92,14 +116,4 @@ export default {
     this.init()
   },
 }
-
-// let route = useRoute()
-// let { token } = route.query
-// let auth = useState('auth').value
-
-// // http://backlog.rip:1337/auth?token=31|Wtg7QmcVIzNF6npXbymQXYEkbb2jlLyml9RXT0c2
-// // http://backlog.rip:1337/auth?token=32|1Adv5EjlQGBgjzW1zZPtRYl7vHNMYPp0yXF3kztf
-
-// // print all get params
-// console.log(route, route.params, route.query, token)
 </script>

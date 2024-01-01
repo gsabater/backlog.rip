@@ -1,5 +1,8 @@
 <template>
-  <span class="status" :style="{ '--tblr-status-color': st.color }">
+  <span
+    class="status"
+    style="border-radius: 4px"
+    :style="{ '--tblr-status-color': st.color }">
     <span class="status-dot status-dot-animated"></span>
     <template v-if="label">
       {{ st.name }}
@@ -19,7 +22,7 @@
  * TODO: Add support for multiple props: label and dot
  * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Thu Dec 28 2023
+ * Modified: Fri Dec 29 2023
  **/
 
 export default {

@@ -1,16 +1,16 @@
 export class DexieInstaller {
   defaultStates = [
-    {
-      id: 1,
-      order: 1,
-      color: 'blue',
-      name: 'Library',
-      description: 'Hold all Played and not played games not in other categories.',
-    },
+    // {
+    //   id: 1,
+    //   order: 1,
+    //   color: 'blue',
+    //   name: 'Library',
+    //   description: 'Hold all Played and not played games not in other categories.',
+    // },
     {
       id: 2,
       order: 2,
-      color: 'green',
+      color: '#ff3d5f',
       name: 'Favorites',
       description:
         'A category for games that the user particularly enjoyed or would recommend. This is useful for revisiting or suggesting to others.',
@@ -58,8 +58,8 @@ export class DexieInstaller {
     {
       id: 8,
       order: 8,
-      color: 'pink',
-      name: 'Replayable / Multiplayer',
+      color: 'green',
+      name: 'Replayable',
       description:
         'Games that offer a significant replay value, either through different story paths, gameplay styles, or just personal preference for revisiting.',
     },
@@ -80,7 +80,6 @@ export class DexieInstaller {
     let row = await this.$db.account.get('me')
     let data = {
       uuid: 'me',
-      api_uuid: null,
       username: 'Anonymous',
 
       steam: null,

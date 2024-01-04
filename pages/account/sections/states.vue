@@ -19,10 +19,10 @@
         <div class="col-md nope-col-lg-8">
           <!-- <div class="form-label">Username</div> -->
           <h3 class="card-title my-1">Username</h3>
-          <b-input
+          <!-- <b-input
             v-model="user.username"
             hint="This is only your preferred profile name"
-            @change="update" />
+            @change="update" /> -->
         </div>
 
         <!-- <div class="col-12">
@@ -72,29 +72,114 @@
         </label> -->
       </div>
     </div>
-    <div class="card-footer">Last updated {{ user.updated_at }}</div>
+    <div class="card-footer">
+      Last updated { { user.updated_at } }
+      <br />
+      Reset defaults
+    </div>
+  </div>
+
+  <pre v-if="$states.value">
+    {{ $states.value[0] }}
+  </pre>
+  <div class="card">
+    <div class="card-body">
+      <div v-if="$states.value">
+        <div
+          v-for="item in $states.value.sort((a, b) => a.order - b.order)"
+          :key="item.id">
+          <div v-if="item" class="row">
+            <div class="col-auto">
+              <!-- <span class="form-colorinput-color bg-lime"></span>
+              <span class="avatar">JL</span> -->
+              <span :style="{ '--tblr-status-color': item.color || '' }">
+                <span class="status-dot status-dot-animated"></span>
+              </span>
+            </div>
+            <div class="col">
+              <div class="text-truncate">
+                <strong>{{ item.name }}</strong>
+              </div>
+              <div class="text-secondary">
+                {{ item.description }}
+                <span v-if="item.key" class="badge">This is your {{ key }}</span>
+              </div>
+            </div>
+            <div class="col-auto align-self-center">
+              <div>
+                <b-btn class="p-2 me-2">
+                  <Icon>Pencil</Icon>
+                </b-btn>
+
+                <b-btn class="p-2 me-2">
+                  <Icon>ChevronUp</Icon>
+                </b-btn>
+
+                <b-btn class="p-2">
+                  <Icon>ChevronDown</Icon>
+                </b-btn>
+              </div>
+              <div>
+                <div class="d-flex">
+                  <a v-tippy="'Move upwards'" href="#" class="btn-action">
+                    <Icon class="icon">ChevronUp</Icon>
+                  </a>
+                  <a v-tippy="'Move downwards'" href="#" class="btn-action">
+                    <Icon class="icon">ChevronDown</Icon>
+                  </a>
+
+                  <a v-tippy="'Edit this state'" href="#" class="btn-action">
+                    <Icon class="icon">Pencil</Icon>
+                  </a>
+
+                  <a v-tippy="'Delete'" href="#" class="btn-action">
+                    <Icon class="icon" color="red">Trash</Icon>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 /**
- * @file:    \pages\account\sections\me.vue
+ * @file:    \pages\account\sections\states.vue
  * @desc:    ...
  * -------------------------------------------
- * Created Date: 16th November 2023
+ * Created Date: 3rd January 2024
  * Modified: Wed Jan 03 2024
  **/
 
+import { liveQuery } from 'dexie'
+import { useObservable } from '@vueuse/rxjs'
+
 export default {
-  name: 'AccountIndex',
+  name: 'AccountStates',
+
   data() {
     return {
-      user: {},
-
-      db: {
-        user: {},
-      },
+      // db: {
+      //   states: [],
+      // },
     }
+  },
+
+  computed: {
+    //+-------------------------------------------------
+    // $states
+    // Live query of Dexie states table.
+    // -----
+    // Created on Wed Jan 03 2024
+    //+-------------------------------------------------
+    $states() {
+      if (!this.$db?.states) return []
+      return useObservable(liveQuery(() => this.$db.states.toArray()))
+    },
   },
 
   methods: {
@@ -148,7 +233,7 @@ export default {
   },
 
   mounted() {
-    this.init()
+    // this.init()
   },
 }
 </script>

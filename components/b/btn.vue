@@ -1,5 +1,9 @@
 <template>
-  <component :is="component" :to="to" :class="colorAndVariant">
+  <!-- <pre v-if="false">
+  layout: {{ layout }}
+  Attrs: {{ $attrs }}
+  </pre> -->
+  <component v-bind="$attrs" :is="component" :to="to" :class="colorAndVariant">
     <slot />
   </component>
 </template>
@@ -10,7 +14,7 @@
  * @desc:    https://preview.tabler.io/buttons.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Thu Dec 21 2023
+ * Modified: Thu Jan 04 2024
  **/
 import { NuxtLink } from '#components'
 

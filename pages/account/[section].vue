@@ -25,13 +25,17 @@
 
 <script>
 import me from './sections/me'
+import states from './sections/states'
 import history from './sections/history'
+import connected from './sections/connected'
 
 export default {
   name: 'AccountSection',
   components: {
     me,
+    states,
     history,
+    connected,
   },
 
   data() {

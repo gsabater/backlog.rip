@@ -100,7 +100,7 @@
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Wed Dec 20 2023
+ * Modified: Thu Jan 04 2024
  **/
 
 export default {
@@ -170,7 +170,7 @@ export default {
     },
   },
 
-  emits: ['clear', 'update:modelValue'],
+  emits: ['clear', 'tick', 'update:modelValue'],
 
   setup(props, { attrs }) {
     return {
@@ -225,6 +225,7 @@ export default {
     onChange(e) {
       const value = e?.target?.value || ''
       // console.warn('onChange', value, this.modelValue)
+      this.$emit('tick', value)
       this.$emit('update:modelValue', value)
     },
 

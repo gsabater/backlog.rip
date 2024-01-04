@@ -4,13 +4,18 @@
       <div class="row mb-4 align-items-center">
         <div class="col col-4">
           <button
-            v-tippy="'Filter the games'"
-            :class="'btn py-2 ps-3 scale-90 ' + (f.state ? 'pe-2' : 'pe-3')">
+            v-tippy="'Filter by game state'"
+            :class="'btn py-2 ps-3 ' + (f.state ? 'pe-2' : 'pe-3')"
+            style="transform: scale(0.9) translateX(-5px)">
             <Icon size="19" class="text-muted me-1">Background</Icon>
             <div :class="{ 'pe-2 me-2 border-end': f.state }">State</div>
-            <BState v-if="f.state" :state="f.state" :label="true"></BState>
+            <BState v-if="f.state" :state="f.state" :label="true" :pulse="false"></BState>
           </button>
-          <BMenuStates v-model="f.state" :clearable="true"></BMenuStates>
+          <BMenuStates
+            v-model="f.state"
+            :clearable="true"
+            @clear="search"
+            @change="search"></BMenuStates>
 
           <!-- <b-btn
             v-if="
@@ -43,19 +48,50 @@
         </div>
         <div class="col text-end">
           <div v-tippy="'Filter the games'" class="btn py-2 ps-3 pe-2 scale-90">
-            <Icon size="19" class="text-muted me-1">SortDescending</Icon>
+            <Icon size="19" class="text-muted me-1">
+              {{ f.sortDir == 'asc' ? 'SortAscending' : 'SortDescending' }}
+            </Icon>
             <div class="pe-2 me-2 border-end">Sort by</div>
-            <span class="badge bg-indigo-lt">Name</span>
-            <Icon class="text-muted mx-1">SquareRoundedChevronsUp</Icon>
+            <span class="badge bg-indigo-lt">
+              Playtime
+              <Icon class="text-muted" size="11">ArrowDown</Icon>
+            </span>
           </div>
           <b-menu>
-            <label class="dropdown-item ps-1">
+            <label
+              class="dropdown-item ps-1"
+              :class="{ active: f.sortBy == 'name' }"
+              @click="f.sortBy = 'name'">
               <div class="d-flex justify-center" style="width: 30px">
-                <Icon>SortAscendingLetters</Icon>
+                <Icon size="16" class="me-1">SortAscendingLetters</Icon>
               </div>
-
               Name
-              <span class="ms-auto">AZ - ZA</span>
+              <!-- <div class="ms-auto">AZ</div> -->
+              <!-- <span class="text-muted">Sorting by Name descending</span> -->
+            </label>
+
+            <label
+              class="dropdown-item ps-1"
+              :class="{ active: f.sortBy == 'playtime' }"
+              @click="f.sortBy = 'playtime'">
+              <div class="d-flex justify-center" style="width: 30px">
+                <Icon size="16" class="me-1">AlarmAverage</Icon>
+              </div>
+              Your playtime
+              <!-- <div class="ms-auto">AZ</div> -->
+              <!-- <span class="text-muted">Sorting by Name descending</span> -->
+            </label>
+
+            <label
+              class="dropdown-item ps-1"
+              :class="{ active: f.sortBy == 'hltb' }"
+              @click="f.sortBy = 'hltb'">
+              <div class="d-flex justify-center" style="width: 30px">
+                <Icon size="16" class="me-1">TimeDuration30</Icon>
+              </div>
+              How long to beat
+              <!-- <div class="ms-auto">AZ</div> -->
+              <!-- <span class="text-muted">Sorting by Name descending</span> -->
             </label>
           </b-menu>
           <!-- <small class="text-muted">
@@ -96,7 +132,7 @@
           v-model="f.string"
           placeholder="Filter..."
           clearable
-          @keydown="search"
+          @tick="search"
           @clear="search"></b-input>
       </div>
 
@@ -122,7 +158,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Dec 29 2023
+ * Modified: Thu Jan 04 2024
  **/
 
 export default {
@@ -150,7 +186,7 @@ export default {
 
       base: {
         string: '',
-        sortBy: 'name',
+        sortBy: 'playtime',
         sortDir: 'asc',
         state: null,
 

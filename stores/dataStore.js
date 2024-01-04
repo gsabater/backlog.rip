@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Wed Dec 27 2023
+ * Modified: Thu Jan 04 2024
  */
 
 let $nuxt = null
@@ -52,6 +52,8 @@ let index = {
 
 export const useDataStore = defineStore('data', {
   state: () => ({
+    app: {},
+
     api: {},
     queue: [],
     loaded: [],
@@ -127,6 +129,17 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     get(uuid) {
       return data[uuid]
+    },
+
+    //+-------------------------------------------------
+    // load()
+    // Sets an element by uuid to this.app to be used
+    // -----
+    // Created on Thu Jan 04 2024
+    //+-------------------------------------------------
+    load(uuid) {
+      this.app = data[uuid]
+      debugger
     },
 
     //+-------------------------------------------------

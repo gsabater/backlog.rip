@@ -1008,7 +1008,7 @@
   </div>
 
   <game-details></game-details>
-  <!-- <search-holder></search-holder> -->
+  <game-manager></game-manager>
   <b-backdrop></b-backdrop>
   <Toaster position="top-right" />
   <SpeedInsights />
@@ -1047,7 +1047,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed Dec 27 2023
+ * Modified: Thu Jan 04 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'

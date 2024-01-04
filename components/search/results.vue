@@ -21,7 +21,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Dec 26 2023
+ * Modified: Thu Jan 04 2024
  **/
 
 export default {
@@ -124,6 +124,7 @@ export default {
       const start = performance.now()
 
       let logged = 5
+      let sorted = []
       const items = []
 
       // prettier-ignore
@@ -134,7 +135,6 @@ export default {
       log('🌈 Filtering on ', this.source)
       log('Amount of apps #', Object.keys(source).length)
       log('Filters: ', JSON.stringify(this.filters))
-
       for (const uuid in source) {
         const app = source[uuid]
         // console.log(app)
@@ -162,8 +162,21 @@ export default {
             // data.hidden.string.push(steam_id)
 
             if (logged > 0) {
-              console.warn('Skipping as not name', this.filters.string, app.name, app)
+              console.warn('🛑 Skipping as not name', this.filters.string, app.name)
             }
+            continue
+          }
+        }
+
+        // Filter: Backlog state
+        // Match with on app.state
+        //+---------------------------------------
+        if (this.filters?.state) {
+          if (app.state !== this.filters.state) {
+            if (logged > 0) {
+              console.warn('🛑 Skipping as not in state', this.filters.state, app.name)
+            }
+
             continue
           }
         }
@@ -186,19 +199,34 @@ export default {
       )
       this.stats.time = end - start
 
-      log('🌈 Dropping stats', this.stats)
+      log('🌈 Dropping stats', this.stats, this.filters)
 
-      this.items = items.slice(0, 30)
-
-      // return this.items
-      //   .sort((a, b) => b.playtime_forever - a.playtime_forever)
-      //   .map((item) => ({
-      //     ...item,
-      //     import: true,
-      //   }))
-      //   .slice(0, 10)
+      sorted = this.sort(items)
+      this.items = sorted.slice(0, 30)
 
       this.$forceUpdate()
+    },
+
+    //+-------------------------------------------------
+    // Sort()
+    //
+    // -----
+    // Created on Thu Jan 04 2024
+    //+-------------------------------------------------
+    sort(items) {
+      log('🌈 Sorting', this.filters.sortBy)
+      // SortBy: playtime
+      // Using app.playtime
+      //+---------------------------------------
+      if (this.filters.sortBy == 'playtime') {
+        items.sort((a, b) => {
+          const playtimeA = a.playtime?.steam || 0
+          const playtimeB = b.playtime?.steam || 0
+          return playtimeB - playtimeA
+        })
+      }
+
+      return items
     },
 
     async loadRepositories() {

@@ -17,25 +17,10 @@
         :alt="app.steam_id"
         @error="iPoster++" />
     </div>
-    <BMenuStates :app="app.uuid" @set="setState">
-      <div
-        style="
-          position: absolute;
-          top: 0;
-          right: 0;
-          z-index: 9;
-          background: #ffffff73;
-          padding: 2px;
-          border-radius: 4px;
-          cursor: pointer;
-        ">
-        <Icon size="18" class="text-muted me-1">Dots</Icon>
-      </div>
-    </BMenuStates>
 
-    <div class="card-body">
+    <div class="card-body" @clik="manage">
       <div class="h5">
-        <BState v-if="app.state" :state="app.state"></BState>
+        <BState v-if="app.state" :state="app.state" :label="false"></BState>
         {{ app.name }}
       </div>
       <div class="text-muted">
@@ -82,7 +67,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Dec 28 2023
+ * Modified: Thu Jan 04 2024
  **/
 
 export default {
@@ -131,6 +116,10 @@ export default {
   methods: {
     showGameModal() {
       this.$mitt.emit('game:modal', this.app.uuid)
+    },
+
+    manage($event) {
+      this.$mitt.emit('game:manager', $event, this.app.uuid)
     },
 
     setState(state) {

@@ -15,10 +15,40 @@
       <li>Give Feedback</li>
 
       <li>---</li> -->
-    <li class="nav-item active">
+    <li class="nav-item">
       <NuxtLink to="/account/me" class="nav-link">
         <Icon class="me-2">Fingerprint</Icon>
         Account settings
+      </NuxtLink>
+    </li>
+
+    <li class="nav-item">
+      <NuxtLink to="/account/connected" class="nav-link">
+        <Icon class="me-2">UserCircle</Icon>
+        Connected accounts
+      </NuxtLink>
+    </li>
+
+    <li class="nav-item">
+      <NuxtLink to="/account/history" class="nav-link">
+        <Icon class="me-2">Clock</Icon>
+        history
+      </NuxtLink>
+    </li>
+  </ul>
+
+  <div class="hr-text">※※※</div>
+
+  <div class="row g-2 align-items-center">
+    <div class="col">
+      <h3>Your data</h3>
+    </div>
+  </div>
+  <ul class="nav nav-pills nav-vertical">
+    <li class="nav-item">
+      <NuxtLink to="/account/states" class="nav-link">
+        <Icon class="me-2">Background</Icon>
+        States
       </NuxtLink>
     </li>
     <!-- <li class="nav-item">
@@ -275,5 +305,3 @@
       </li> -->
   </ul>
 </template>
-
-<script setup></script>

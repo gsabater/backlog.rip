@@ -9,7 +9,9 @@
         {{ app.updated_at }}
       </li>
       <li>
-        <BState :state="app.state" :label="true">({{ app.state }})</BState>
+        <BState v-if="app.state" :state="app.state" :with-menu="true" :app="app.uuid">
+          xxx
+        </BState>
       </li>
     </ul>
     <textarea
@@ -29,13 +31,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Tue Dec 26 2023
+ * Modified: Thu Jan 04 2024
  **/
 
 export default {
   data() {
     return {
-      app: {},
       timeline: [],
 
       status: {
@@ -53,6 +54,9 @@ export default {
 
   computed: {
     ...mapStores(useDataStore, useJournalStore),
+    app() {
+      return this.dataStore.app
+    },
   },
 
   methods: {
@@ -61,19 +65,19 @@ export default {
     },
 
     async load(app) {
-      const data = this.dataStore.get(app)
-      const timeline = await this.journalStore.getForRef(app)
+      this.dataStore.load(app)
+      // const timeline = await this.journalStore.getForRef(app)
 
-      this.app = { ...data }
-      this.timeline = { ...timeline }
+      // this.app = { ...data }
+      // this.timeline = { ...timeline }
 
-      const note = await this.journalStore.getNoteForRef(app)
-      this.status.noteObject = note || null
-      this.status.note = note?.data.note || ''
+      // const note = await this.journalStore.getNoteForRef(app)
+      // this.status.noteObject = note || null
+      // this.status.note = note?.data.note || ''
 
-      // console.warn(app, this.app, timeline)
+      // // console.warn(app, this.app, timeline)
 
-      this.evaluate()
+      // this.evaluate()
     },
 
     //+-------------------------------------------------

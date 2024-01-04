@@ -14,10 +14,15 @@
           :style="{ 'background-color': state.color || '' }"></span>
       </div>
 
-      {{ state.name }}
-      <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
+      <span class="pe-3">
+        {{ state.name }}
+      </span>
+
+      <tippy class="text-muted ms-auto cursor-help" :content="state.description">
+        <Icon>HelpCircleFilled</Icon>
+      </tippy>
     </label>
-    <template v-if="clearable">
+    <template v-if="clearable && value">
       <div class="w-100 border-top my-1"></div>
       <label
         class="dropdown-item justify-center"
@@ -37,7 +42,7 @@ import { useJournalStore } from '../../stores/journalStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Fri Dec 29 2023
+ * Modified: Thu Jan 04 2024
  **/
 
 export default {
@@ -59,7 +64,7 @@ export default {
     },
   },
 
-  emits: ['set', 'update:modelValue'],
+  emits: ['set', 'clear', 'change', 'update:modelValue'],
 
   data() {
     return {
@@ -88,7 +93,9 @@ export default {
 
     onChange() {
       // console.warn('onChange', value, this.modelValue)
+      this.$emit('change', this.value)
       this.$emit('update:modelValue', this.value)
+      if (this.value == null) this.$emit('clear', null)
     },
 
     // TODO: Move this to a store

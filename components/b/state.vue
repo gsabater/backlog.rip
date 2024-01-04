@@ -2,8 +2,9 @@
   <span
     class="status"
     style="border-radius: 4px"
-    :style="{ '--tblr-status-color': st.color }">
-    <span class="status-dot status-dot-animated"></span>
+    :style="{ '--tblr-status-color': st.color }"
+    @click="manage($event)">
+    <span class="status-dot" :class="{ 'status-dot-animated': pulse }"></span>
     <template v-if="label">
       {{ st.name }}
       <slot />
@@ -19,29 +20,42 @@
  * Can be used as
  * <BState :state="state"></BState>
  * -------------------------------------------
- * TODO: Add support for multiple props: label and dot
- * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Fri Dec 29 2023
+ * Modified: Thu Jan 04 2024
  **/
 
 export default {
   name: 'State',
   props: {
+    app: {
+      type: String,
+      default: null,
+    },
+
     state: {
       type: [String, Number],
       default: null,
     },
 
-    dot: {
+    // dot: {
+    //   type: Boolean,
+    //   default: true,
+    // },
+
+    pulse: {
       type: Boolean,
       default: true,
     },
 
     label: {
       type: Boolean,
-      default: false,
+      default: true,
     },
+
+    // withManager: {
+    //   type: Boolean,
+    //   default: true,
+    // },
   },
 
   data() {
@@ -59,6 +73,12 @@ export default {
   },
 
   methods: {
+    manage($event) {
+      console.warn(this.$parent)
+      debugger
+      this.$mitt.emit('game:manager', $event, this.$parent.app)
+    },
+
     getData() {
       this.states = this.dataStore.states()
     },

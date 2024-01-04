@@ -68,7 +68,15 @@
             </div>
           </div>
         </div>
-        <div class="col-md-6 col-xl-3"></div>
+
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="subheader">Currently playing</div>
+              <div class="h3 m-0">3 games</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -80,7 +88,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Wed Dec 20 2023
+ * Modified: Thu Jan 04 2024
  **/
 
 export default {
@@ -91,7 +99,7 @@ export default {
   },
 
   computed: {
-    // ...mapStores(useUserStore),
+    ...mapStores(useStateStore),
   },
 
   methods: {},

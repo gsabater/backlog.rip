@@ -9,9 +9,7 @@
         {{ app.updated_at }}
       </li>
       <li>
-        <BState v-if="app.state" :state="app.state" :with-menu="true" :app="app.uuid">
-          xxx
-        </BState>
+        <BState :app="app.uuid" :state="app.state"></BState>
       </li>
     </ul>
     <textarea
@@ -25,13 +23,14 @@
     </span>
   </b-dialog>
 </template>
+
 <script>
 /**
  * @file:    \components\b\details.vue
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Sat Jan 06 2024
  **/
 
 export default {
@@ -54,9 +53,7 @@ export default {
 
   computed: {
     ...mapStores(useDataStore, useJournalStore),
-    app() {
-      return this.dataStore.app
-    },
+    ...mapState(useDataStore, ['app']),
   },
 
   methods: {

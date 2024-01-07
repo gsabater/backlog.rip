@@ -1,15 +1,25 @@
 <template>
-  <span
+  <div
+    v-tippy="manager ? 'Click to change' : ''"
     class="status"
+    :class="{ 'cursor-pointer': manager }"
     style="border-radius: 4px"
     :style="{ '--tblr-status-color': st.color }"
     @click="manage($event)">
-    <span class="status-dot" :class="{ 'status-dot-animated': pulse }"></span>
+    <span
+      v-if="from"
+      :style="{ color: oldst.color + ' !important' }"
+      style="font-size: 0.775rem">
+      {{ oldst.name || 'Add to your backlog' }}
+      <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon>
+    </span>
+
+    <span class="status-dot" :class="{ 'status-dot-animated': pulse && state }"></span>
     <template v-if="label">
-      {{ st.name }}
+      {{ st.name || 'Add to your backlog' }}
       <slot />
     </template>
-  </span>
+  </div>
 </template>
 
 <script>
@@ -21,7 +31,7 @@
  * <BState :state="state"></BState>
  * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Sun Jan 07 2024
  **/
 
 export default {
@@ -33,6 +43,11 @@ export default {
     },
 
     state: {
+      type: [String, Number],
+      default: null,
+    },
+
+    from: {
       type: [String, Number],
       default: null,
     },
@@ -52,35 +67,49 @@ export default {
       default: true,
     },
 
-    // withManager: {
-    //   type: Boolean,
-    //   default: true,
-    // },
+    manager: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
     return {
-      states: [],
+      // states: [],
     }
   },
 
   computed: {
     ...mapStores(useDataStore),
+    ...mapState(useStateStore, ['states']),
 
     st() {
       return this.states.find((s) => s.id == this.state) || {}
     },
+
+    oldst() {
+      return this.states.find((s) => s.id == this.from) || {}
+    },
   },
 
   methods: {
+    //+-------------------------------------------------
+    // manage()
+    // Invoques the game manager
+    // -----
+    // Created on Sat Jan 06 2024
+    //+-------------------------------------------------
     manage($event) {
-      console.warn(this.$parent)
-      debugger
-      this.$mitt.emit('game:manager', $event, this.$parent.app)
+      if (!this.manager) return
+
+      this.$mitt.emit('game:manager', {
+        $ev: $event,
+        app: this.app,
+      })
     },
 
     getData() {
-      this.states = this.dataStore.states()
+      // this.states = this.dataStore.states()
     },
 
     init() {

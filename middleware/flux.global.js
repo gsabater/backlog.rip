@@ -13,6 +13,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const nuxtApp = useNuxtApp()
   const userStore = useUserStore()
   const dataStore = useDataStore()
+  const stateStore = useStateStore()
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Authenticate the user
@@ -30,8 +31,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   if (userStore.isChecked) {
+    // move to a plugin to run once
     dataStore.init()
-    // nuxtApp.$db.init()
+    stateStore.init()
   }
 
   return

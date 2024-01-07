@@ -37,7 +37,7 @@
  * @desc:    https://preview.tabler.io/dropdowns.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Thu Dec 21 2023
+ * Modified: Sat Jan 06 2024
  **/
 
 export default {
@@ -108,7 +108,7 @@ export default {
       if (this.position == 'start') {
         if (parent.x !== dropdown.x) {
           anchorX = parent.x - dropdown.x
-          console.warn(parent.x, dropdown.x, anchorX, this.offsetX)
+          // console.warn(parent.x, dropdown.x, anchorX, this.offsetX)
         } else {
           anchorX = 1
         }
@@ -117,7 +117,7 @@ export default {
       if (this.position == 'end') {
         if (parent.right !== dropdown.right) {
           anchorX = parent.right - dropdown.right
-          console.warn(parent.right, dropdown.right, anchorX, this.offsetX)
+          // console.warn(parent.right, dropdown.right, anchorX, this.offsetX)
         }
       }
 

@@ -21,7 +21,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Fri Jan 05 2024
  **/
 
 export default {
@@ -94,7 +94,8 @@ export default {
     // Created on Fri Nov 24 2023
     //+-------------------------------------------------
     search(source = null) {
-      log('⚡ Searching from: ', source || 'direct call')
+      log('⚡ Searching from: ', source || 'direct run')
+      if (Object.keys(this.filters).length === 0) return
 
       const json = JSON.stringify(this.filters)
       const hash = btoa(json)
@@ -112,19 +113,22 @@ export default {
 
     //+-------------------------------------------------
     // filter()
-    //
+    // Loads a source and filters out apps
+    // Generates an index to sort afterwords
     // -----
     // Created on Thu Nov 23 2023
     //+-------------------------------------------------
     filter() {
-      // log('🌈 Filtering')
       if (!this.dataStore.isReady) return
 
       console.time('Filter')
       const start = performance.now()
 
       let logged = 5
+
       let sorted = []
+      const toSort = []
+
       const items = []
 
       // prettier-ignore
@@ -135,15 +139,18 @@ export default {
       log('🌈 Filtering on ', this.source)
       log('Amount of apps #', Object.keys(source).length)
       log('Filters: ', JSON.stringify(this.filters))
+
       for (const uuid in source) {
         const app = source[uuid]
-        // console.log(app)
 
         // Filter: Ignored games
         // Remove any games ignored
         //+---------------------------------------
         if (app.is?.ignored) {
-          if (logged > 0) console.warn('🛑 Skipping ignored app', app.name, app)
+          if (logged > 0) {
+            console.warn('🛑 Skipping ignored app', app.name, app)
+            logged--
+          }
           continue
         }
 
@@ -163,6 +170,7 @@ export default {
 
             if (logged > 0) {
               console.warn('🛑 Skipping as not name', this.filters.string, app.name)
+              logged--
             }
             continue
           }
@@ -175,18 +183,35 @@ export default {
           if (app.state !== this.filters.state) {
             if (logged > 0) {
               console.warn('🛑 Skipping as not in state', this.filters.state, app.name)
+              logged--
             }
 
             continue
           }
         }
 
+        // Index: toSort
+        // Create an index of elements to sort
+        //+---------------------------------------
+        if (this.filters?.sortBy == 'name') {
+          toSort.push({ uuid, name: app.name?.toString().toLowerCase() || '' })
+        }
+
+        if (this.filters?.sortBy == 'score') {
+          toSort.push({ uuid, score: app.score || 0 })
+        }
+
+        if (this.filters?.sortBy == 'playtime') {
+          toSort.push({ uuid, playtime: app.playtime?.steam || 0 })
+        }
+
         // Finally, add the app to items
         //+---------------------------------------
         items.push(uuid)
-
-        logged--
       }
+
+      sorted = this.sort(toSort)
+      this.items = sorted.slice(0, 30)
 
       console.timeEnd('Filter')
       const end = performance.now()
@@ -201,9 +226,6 @@ export default {
 
       log('🌈 Dropping stats', this.stats, this.filters)
 
-      sorted = this.sort(items)
-      this.items = sorted.slice(0, 30)
-
       this.$forceUpdate()
     },
 
@@ -215,18 +237,34 @@ export default {
     //+-------------------------------------------------
     sort(items) {
       log('🌈 Sorting', this.filters.sortBy)
-      // SortBy: playtime
-      // Using app.playtime
+
+      // SortBy: name
+      // Using app.name
       //+---------------------------------------
-      if (this.filters.sortBy == 'playtime') {
-        items.sort((a, b) => {
-          const playtimeA = a.playtime?.steam || 0
-          const playtimeB = b.playtime?.steam || 0
-          return playtimeB - playtimeA
-        })
+      if (this.filters?.sortBy == 'name') {
+        return items
+          .sort((a, b) => {
+            const A = a.name || ''
+            const B = b.name || ''
+            return A.localeCompare(B)
+          })
+          .map((item) => item.uuid)
       }
 
-      return items
+      // SortBy: numeric value
+      // Using app.playtime // score
+      //+---------------------------------------
+      if (this.filters?.sortBy == 'playtime' || this.filters?.sortBy == 'score') {
+        const field = this.filters?.sortBy
+
+        return items
+          .sort((a, b) => {
+            const A = a[field] || 0
+            const B = b[field] || 0
+            return B - A
+          })
+          .map((item) => item.uuid)
+      }
     },
 
     async loadRepositories() {

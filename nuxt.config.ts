@@ -8,6 +8,8 @@
  * Modified:
  */
 
+import { mapState } from "pinia";
+
 export default defineNuxtConfig({
   ssr: false,
 
@@ -40,7 +42,7 @@ export default defineNuxtConfig({
     presets: [
       {
         from: 'pinia',
-        imports: ['mapStores'], // ['defineStore', 'mapStores', 'acceptHMRUpdate'],
+        imports: ['mapStores', 'mapState'], // ['defineStore', 'mapStores', 'acceptHMRUpdate'],
       },
     ],
   },

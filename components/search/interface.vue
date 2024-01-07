@@ -4,6 +4,7 @@
       <div class="row mb-4 align-items-center">
         <div class="col col-4">
           <button
+            v-if="isLibrary"
             v-tippy="'Filter by game state'"
             :class="'btn py-2 ps-3 ' + (f.state ? 'pe-2' : 'pe-3')"
             style="transform: scale(0.9) translateX(-5px)">
@@ -53,7 +54,7 @@
             </Icon>
             <div class="pe-2 me-2 border-end">Sort by</div>
             <span class="badge bg-indigo-lt">
-              Playtime
+              {{ sortToHuman[f.sortBy] }}
               <Icon class="text-muted" size="11">ArrowDown</Icon>
             </span>
           </div>
@@ -66,6 +67,23 @@
                 <Icon size="16" class="me-1">SortAscendingLetters</Icon>
               </div>
               Name
+              <!-- <div class="ms-auto">AZ</div> -->
+              <!-- <span class="text-muted">Sorting by Name descending</span> -->
+            </label>
+
+            <label
+              class="dropdown-item ps-1"
+              :class="{ active: f.sortBy == 'score' }"
+              @click="f.sortBy = 'score'">
+              <div class="d-flex justify-center" style="width: 30px">
+                <Icon size="16" class="me-1">SortDescendingNumbers</Icon>
+              </div>
+              <span class="pe-3">Median score</span>
+              <tippy
+                class="text-muted ms-auto cursor-help"
+                :content="'The median score is ....'">
+                <Icon>HelpCircleFilled</Icon>
+              </tippy>
               <!-- <div class="ms-auto">AZ</div> -->
               <!-- <span class="text-muted">Sorting by Name descending</span> -->
             </label>
@@ -136,6 +154,11 @@
           @clear="search"></b-input>
       </div>
 
+      show:
+      <br />
+      all games z-z only owned
+      <br />
+
       <div>
         <pre class="my-3" style="transform: scale(0.9)"
           >{{ f }}
@@ -158,7 +181,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Sun Jan 07 2024
  **/
 
 export default {
@@ -186,8 +209,8 @@ export default {
 
       base: {
         string: '',
-        sortBy: 'playtime',
-        sortDir: 'asc',
+        sortBy: 'score',
+        sortDir: 'desc',
         state: null,
 
         show: {
@@ -226,8 +249,22 @@ export default {
   computed: {
     ...mapStores(useDataStore),
 
+    isLibrary() {
+      return this.source == 'library'
+    },
+
     totalApiGames() {
       return this.$app?.api?.games?.total || 0
+    },
+
+    // TODO: move to a helper
+    sortToHuman() {
+      return {
+        name: 'Name',
+        score: 'Score',
+        playtime: 'Playtime',
+        hltb: 'How long to beat',
+      }
     },
   },
 
@@ -258,9 +295,9 @@ export default {
       this.dataStore.loadApiStatus()
       this.dataStore.getTop('popular')
 
-      this.db.states = this.dataStore
-        .states()
-        .reduce((obj, item) => ({ ...obj, [item.id]: item }), {})
+      // this.db.states = this.dataStore
+      //   .states()
+      //   .reduce((obj, item) => ({ ...obj, [item.id]: item }), {})
     },
 
     init() {
@@ -270,7 +307,6 @@ export default {
   },
 
   mounted() {
-    // window.devi = this
     this.init()
   },
 }

@@ -21,7 +21,7 @@ export class DexieInstaller {
       id: 2,
       order: 2,
       key: 'playing',
-      color: 'orange',
+      color: 'purple',
       name: 'Currently Playing',
       description:
         'Games that are actively being played. This category helps users focus on their current engagements and track progress in these games.',
@@ -30,7 +30,7 @@ export class DexieInstaller {
       id: 3,
       order: 3,
       key: 'completed',
-      color: 'purple',
+      color: '#249b25',
       name: 'Completed',
       description:
         'For games that the user has finished. This can include reaching the end of the story, achieving all objectives, or simply reaching a point where the user feels they have experienced all they wanted from the game.',
@@ -48,23 +48,25 @@ export class DexieInstaller {
     {
       id: 5,
       order: 5,
+      color: '#c76f1c',
+      name: 'On-Hold',
+      description:
+        "This category is for games that the user has paused playing but intends to return to. Different from 'Abandoned', as the intention to finish is still there.",
+    },
+
+    {
+      id: 6,
+      order: 6,
       color: 'grey',
       name: 'Abandoned',
       description:
         "Games that the user started but decided not to finish for various reasons like loss of interest, too difficult, etc. It's useful for understanding personal preferences and patterns in gaming choices.",
     },
-    {
-      id: 6,
-      order: 6,
-      color: 'yellow',
-      name: 'On-Hold',
-      description:
-        "This category is for games that the user has paused playing but intends to return to. Different from 'Abandoned', as the intention to finish is still there.",
-    },
+
     {
       id: 7,
       order: 7,
-      color: 'green',
+      color: '#8682dd',
       name: 'Replayable',
       description:
         'Games that offer a significant replay value, either through different story paths, gameplay styles, or just personal preference for revisiting.',

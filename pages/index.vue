@@ -94,11 +94,12 @@
 
         <p class="text-muted my-3">
           V
-          <strong>{{ $app.v }}</strong>
-          <!-- <span class="px-1">·</span>
+          {{ $app.v }}
+          <span class="px-2">·</span>
           <a href="/docs/5.3/getting-started/download/" class="link-secondary">
             Changelog
           </a>
+          <!--
           <span class="px-1">·</span>
           <a href="/docs/5.3/getting-started/download/" class="link-secondary">
             <svg

@@ -2,7 +2,7 @@
   <slot v-if="$slots.default" />
   <b-menu ref="menu">
     <label
-      v-for="(state, i) in db.states"
+      v-for="(state, i) in states"
       :key="'state' + i"
       class="dropdown-item ps-1"
       @click="doAction(state)">
@@ -16,6 +16,7 @@
 
       <span class="pe-3">
         {{ state.name }}
+        ({{ stateIndex[state.id].length }})
       </span>
 
       <tippy class="text-muted ms-auto cursor-help" :content="state.description">
@@ -42,7 +43,7 @@ import { useJournalStore } from '../../stores/journalStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Sun Jan 07 2024
  **/
 
 export default {
@@ -78,6 +79,10 @@ export default {
 
   computed: {
     ...mapStores(useDataStore, useJournalStore),
+    ...mapState(useStateStore, {
+      states: 'states',
+      stateIndex: 'index',
+    }),
   },
 
   methods: {
@@ -108,18 +113,10 @@ export default {
     //     description: 'Monday, January 3rd at 6:00pm',
     //   })
 
-    //   this.journalStore.add({
-    //     event: 'state',
-    //     ref: this.$parent.app.uuid,
-    //     data: {
-    //       state: state.id,
-    //       old: state.id,
-    //     },
-    //   })
     // },
 
     getData() {
-      this.db.states = this.dataStore.states()
+      // this.db.states = this.dataStore.states()
     },
 
     init() {

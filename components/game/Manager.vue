@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="ui.show"
-    class="card card-stacked"
+    class="card nope-card-stacked"
     style="position: fixed; z-index: 9999"
     :style="{ top: ui.top, left: ui.left }">
     <div
@@ -17,8 +17,9 @@
         <div class="text-center p-2 col-6 active">Status</div>
         <div class="text-center p-2 col-6 active">Collections</div>
       </div> -->
+      <label class="dropdown-item">{{ appUUID }}</label>
       <label
-        v-for="(state, i) in db.states"
+        v-for="(state, i) in states"
         :key="'state' + i"
         class="dropdown-item ps-1"
         @click="doAction(state)">
@@ -44,7 +45,7 @@
     v-if="ui.show"
     class="dropdown-control"
     style="
-      background-color: rgba(0, 0, 0, 0.1);
+      background-color: rgba(0, 0, 0, 0.7);
       width: 100%;
       height: 100%;
       position: fixed;
@@ -58,13 +59,14 @@
 
 <script>
 import { useJournalStore } from '../../stores/journalStore'
+import { useStateStore } from '../../stores/stateStore'
 
 /**
  * @file:    \components\b\stateMenu.vue
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Sat Jan 06 2024
  **/
 
 export default {
@@ -90,6 +92,7 @@ export default {
 
   data() {
     return {
+      appUUID: null,
       value: '',
       item: {},
 
@@ -106,7 +109,8 @@ export default {
   },
 
   computed: {
-    ...mapStores(useDataStore, useJournalStore),
+    ...mapStores(useDataStore, useJournalStore, useStateStore),
+    ...mapState(useStateStore, ['states']),
   },
 
   methods: {
@@ -117,7 +121,6 @@ export default {
     // Created on Thu Jan 04 2024
     //+-------------------------------------------------
     show(event, app) {
-      debugger
       const elementWidth = 200 // replace with the actual width of the element
       const elementHeight = 300 // replace with the actual height of the element
 
@@ -135,6 +138,7 @@ export default {
         y = maxY
       }
 
+      this.appUUID = app
       this.ui.top = `${y}px`
       this.ui.left = `${x}px`
       this.ui.show = true
@@ -149,9 +153,18 @@ export default {
       return favs.includes(state.toLowerCase())
     },
 
+    //+-------------------------------------------------
+    // doAction()
+    // Performs action when an item is clicked
+    // -----
+    // Created on Sat Jan 06 2024
+    //+-------------------------------------------------
     doAction(state) {
       this.value = state?.id || null
+      this.stateStore.set(this.appUUID, state.id)
+
       this.onChange(state)
+      this.hide()
     },
 
     onChange() {
@@ -182,7 +195,7 @@ export default {
     // },
 
     getData() {
-      this.db.states = this.dataStore.states()
+      // this.db.states = this.dataStore.states()
     },
 
     init() {
@@ -193,8 +206,8 @@ export default {
   mounted() {
     this.init()
 
-    this.$mitt.on('game:manager', (event, app) => {
-      this.show(event, app)
+    this.$mitt.on('game:manager', (payload) => {
+      this.show(payload.$ev, payload.app)
     })
   },
 }

@@ -77,6 +77,73 @@
             </div>
           </div>
         </div>
+
+        <div v-if="false" class="col-6">
+          <div class="card">
+            <div class="card-body">
+              <p class="mb-3">Games and backlog breakdown</p>
+              <div class="progress progress-separated mb-3">
+                <div
+                  v-for="(state, i) in states"
+                  v-tippy="state.name"
+                  class="progress-bar"
+                  :style="'background-color:' + state.color"
+                  role="progressbar"
+                  style="width: 44%"
+                  aria-label="Regular"></div>
+                <!-- <div
+                  class="progress-bar bg-info"
+                  role="progressbar"
+                  style="width: 19%"
+                  aria-label="System"></div>
+                <div
+                  class="progress-bar bg-success"
+                  role="progressbar"
+                  style="width: 9%"
+                  aria-label="Shared"></div> -->
+              </div>
+              <div class="row">
+                <!-- <div class="col-auto d-flex align-items-center pe-2">
+                  <span class="legend me-2 bg-primary"></span>
+                  <span>Unplayed</span>
+                  <span
+                    class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-secondary">
+                    915MB
+                  </span>
+                </div>
+                <div class="col-auto d-flex align-items-center px-2">
+                  <span class="legend me-2 bg-info"></span>
+                  <span>Played games</span>
+                  <span
+                    class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-secondary">
+                    415MB
+                  </span>
+                </div>
+                <div class="col-auto d-flex align-items-center px-2">
+                  <span class="legend me-2 bg-success"></span>
+                  <span>Shared</span>
+                  <span
+                    class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-secondary">
+                    201MB
+                  </span>
+                </div> -->
+
+                <div
+                  v-for="(state, i) in states"
+                  class="col-auto d-flex align-items-center ps-2">
+                  <span
+                    class="legend me-2"
+                    :style="'background-color:' + state.color"></span>
+                  <span>{{ state.name }}</span>
+                  <span
+                    class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-secondary">
+                    5
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -88,23 +155,33 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Fri Jan 05 2024
  **/
 
 export default {
   setup() {},
 
   data() {
-    return {}
+    return {
+      db: {
+        states: [],
+      },
+
+      ui: {},
+    }
   },
 
   computed: {
-    ...mapStores(useStateStore),
+    ...mapStores(useDataStore, useStateStore),
+    ...mapState(useStateStore, ['states']),
   },
 
-  methods: {},
+  methods: {
+    init() {},
+  },
 
   mounted() {
+    this.init()
     console.log(this, this.$app)
     // This is just a test, ensures that i can do both
     // this.userstore and this.$auth, and is reactive

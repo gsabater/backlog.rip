@@ -18,9 +18,11 @@
         @error="iPoster++" />
     </div>
 
-    <div class="card-body" @clik="manage">
+    <div v-if="body" class="card-body">
+      <BState :app="app.uuid" :state="app.state" :label="false"></BState>
+
       <div class="h5">
-        <BState v-if="app.state" :state="app.state" :label="false"></BState>
+        <!-- <BState v-if="app.state" :state="app.state" :label="false"></BState> -->
         {{ app.name }}
       </div>
       <div class="text-muted">
@@ -67,7 +69,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Sun Jan 07 2024
  **/
 
 export default {
@@ -77,7 +79,13 @@ export default {
       type: String,
       default: null,
     },
+
+    body: {
+      type: Boolean,
+      default: true,
+    },
   },
+
   //  {
   //   app: {
   //     type: Object,

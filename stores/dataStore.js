@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Sat Jan 06 2024
  */
 
 let $nuxt = null
@@ -23,7 +23,7 @@ let $nuxt = null
 
 let data = {}
 
-let states = {}
+// let states = {}
 let library = {}
 let wishlist = {}
 
@@ -83,7 +83,7 @@ export const useDataStore = defineStore('data', {
         '-- Data --': '----',
         'Api': JSON.stringify(this.api),
         'Data': Object.keys(data).length,
-        'States': Object.keys(states).length,
+        // 'States': Object.keys(states).length,
         'Library': Object.keys(library).length,
         'Wishlist': Object.keys(wishlist).length,
         '-- Repos --': '----',
@@ -103,7 +103,7 @@ export const useDataStore = defineStore('data', {
 
     //+-------------------------------------------------
     // list()
-    // Returns the whole data array
+    // Returns the whole data object
     // -----
     // Created on Tue Nov 21 2023
     //+-------------------------------------------------
@@ -113,11 +113,13 @@ export const useDataStore = defineStore('data', {
 
     //+-------------------------------------------------
     // library()
-    // Returns the library array
+    // Returns the library object
     // -----
     // Created on Mon Dec 25 2023
     //+-------------------------------------------------
-    library() {
+    library(as = 'object') {
+      if (as == 'array') return Object.values(library)
+
       return library
     },
 
@@ -139,17 +141,6 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     load(uuid) {
       this.app = data[uuid]
-      debugger
-    },
-
-    //+-------------------------------------------------
-    // states()
-    // Returns the states array
-    // -----
-    // Created on Wed Nov 29 2023
-    //+-------------------------------------------------
-    states() {
-      return states
     },
 
     //+-------------------------------------------------
@@ -174,6 +165,7 @@ export const useDataStore = defineStore('data', {
 
     //+-------------------------------------------------
     // getTop()
+    // NOTE: Belongs to a repository store
     // -----
     // Created on Wed Dec 20 2023
     //+-------------------------------------------------
@@ -197,11 +189,11 @@ export const useDataStore = defineStore('data', {
     // Created on Fri Nov 24 2023
     // Created on Wed Nov 29 2023
     //+-------------------------------------------------
-    update(item, uuid) {
+    update(item, uuid, force = false) {
       let ref = uuid
       let local = null
 
-      if (index.ed.includes(item.uuid)) return
+      if (!force && index.ed.includes(item.uuid)) return
 
       // Tries to find the app in the library by IDs
       // If the app is found, update the library, data and store
@@ -255,12 +247,10 @@ export const useDataStore = defineStore('data', {
       // The local reference is not found
       if (!data[ref] || !ref) return
 
-      console.warn(
-        'Processing app (from -> to)',
-        JSON.stringify(item),
-        ref,
-        JSON.stringify(data[ref])
-      )
+      console.warn('Processing app (from -> to)')
+      console.warn(JSON.stringify(item))
+      console.warn(ref)
+      console.warn(JSON.stringify(data[ref]))
 
       //+-------------------------------------------------
       // 🌿 Updating data
@@ -270,7 +260,7 @@ export const useDataStore = defineStore('data', {
 
       // Determine if the updates should be
       // Added to the queue and saved in $db
-      if (!data[ref].api_id) toQueue = true
+      if (!data[ref].api_id && item.api_id) toQueue = true
       if (data[ref].updated_at < item.updated_at) toQueue = true
       if (uuid == 'state') {
         toQueue = true
@@ -289,6 +279,7 @@ export const useDataStore = defineStore('data', {
       // Save and index the app
       // Maybe $mitt.emit('data:updated', 'updated', local)
       data[ref] = { ...local }
+      library[ref] = { ...local }
 
       this.toIndex(local)
       if (toQueue) this.toQueue(local)
@@ -474,26 +465,26 @@ export const useDataStore = defineStore('data', {
       }
     },
 
-    //+-------------------------------------------------
-    // loadStates()
-    // Loads the states from the database into memory
-    // NOTE: Might be moved to stateStore
-    // -----
-    // Created on Mon Nov 27 2023
-    //+-------------------------------------------------
-    async loadStates() {
-      if (this.loaded.includes('states')) return
+    // //+-------------------------------------------------
+    // // loadStates()
+    // // Loads the states from the database into memory
+    // // NOTE: Might be moved to stateStore
+    // // -----
+    // // Created on Mon Nov 27 2023
+    // //+-------------------------------------------------
+    // async loadStates() {
+    //   if (this.loaded.includes('states')) return
 
-      states = await $nuxt.$db.states.toArray()
+    //   states = await $nuxt.$db.states.toArray()
 
-      this.loaded.push('states')
+    //   this.loaded.push('states')
 
-      log(
-        '❇️ User states are ready',
-        `found ${states.length} states`,
-        states[Math.floor(Math.random() * states.length)]
-      )
-    },
+    //   log(
+    //     '❇️ User states are ready',
+    //     `found ${states.length} states`,
+    //     states[Math.floor(Math.random() * states.length)]
+    //   )
+    // },
 
     //+-------------------------------------------------
     // loadLibrary()
@@ -515,7 +506,7 @@ export const useDataStore = defineStore('data', {
       this.loaded.push('library')
 
       log(
-        '🎴 User library is ready',
+        '🎴 Library is ready',
         `found ${query.length} apps in library`,
         query[Math.floor(Math.random() * query.length)]
       )
@@ -553,7 +544,7 @@ export const useDataStore = defineStore('data', {
       this.indexes = Object.keys(index)
 
       // Load and index data
-      await this.loadStates()
+      // await this.loadStates()
       await this.loadLibrary()
       // await this.updateStale()
       // await this.updateMissing()
@@ -565,7 +556,7 @@ export const useDataStore = defineStore('data', {
           index,
           library,
           wishlist,
-          states,
+          // states,
           repos,
           search,
         },

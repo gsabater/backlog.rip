@@ -705,7 +705,7 @@ IGNORE
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Fri Dec 29 2023
+ * Modified: Sun Jan 07 2024
  **/
 
 import steam from '~/modules/importers/steam'
@@ -775,7 +775,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useDataStore),
+    ...mapStores(useDataStore, useJournalStore),
 
     // watchToHuman() {
     //   if (this.process.time === 0) return '0s'

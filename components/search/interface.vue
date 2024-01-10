@@ -4,7 +4,6 @@
       <div class="row mb-4 align-items-center">
         <div class="col col-4">
           <button
-            v-if="isLibrary"
             v-tippy="'Filter by game state'"
             :class="'btn py-2 ps-3 ' + (f.state ? 'pe-2' : 'pe-3')"
             style="transform: scale(0.9) translateX(-5px)">
@@ -61,6 +60,20 @@
           <b-menu>
             <label
               class="dropdown-item ps-1"
+              :class="{ active: f.sortBy == 'rand' }"
+              @click="f.sortBy = 'rand'">
+              <div class="d-flex justify-center" style="width: 30px">
+                <Icon size="16" class="me-1">Dice</Icon>
+              </div>
+              Random
+              <!-- <div class="ms-auto">AZ</div> -->
+              <!-- <span class="text-muted">Sorting by Name descending</span> -->
+            </label>
+
+            <div class="w-100 border-top my-1"></div>
+
+            <label
+              class="dropdown-item ps-1"
               :class="{ active: f.sortBy == 'name' }"
               @click="f.sortBy = 'name'">
               <div class="d-flex justify-center" style="width: 30px">
@@ -99,6 +112,8 @@
               <!-- <div class="ms-auto">AZ</div> -->
               <!-- <span class="text-muted">Sorting by Name descending</span> -->
             </label>
+
+            <div class="w-100 border-top my-1"></div>
 
             <label
               class="dropdown-item ps-1"
@@ -142,6 +157,10 @@
       </div>
 
       <search-results ref="results" :filters="f" :source="source"></search-results>
+
+      <div class="pagination my-3">
+        <div class="btn" @click="f.show.page++">Show more</div>
+      </div>
     </div>
 
     <div class="col-3">
@@ -181,7 +200,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sun Jan 07 2024
+ * Modified: Wed Jan 10 2024
  **/
 
 export default {
@@ -271,7 +290,7 @@ export default {
   methods: {
     search() {
       this.$nextTick(() => {
-        log('⭕ Starting a search from the interface', JSON.stringify(this.f))
+        log('#️⃣ Search: Interface', JSON.stringify(this.f))
         this.$refs.results.search()
       })
     },
@@ -292,6 +311,8 @@ export default {
     },
 
     async getData() {
+      if (this.isLibrary) return
+
       this.dataStore.loadApiStatus()
       this.dataStore.getTop('popular')
 

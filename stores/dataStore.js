@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Sat Jan 06 2024
+ * Modified: Wed Jan 10 2024
  */
 
 let $nuxt = null
@@ -144,6 +144,18 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
+    // count()
+    // Returns the amount of elements in the source store
+    // -----
+    // Created on Wed Jan 10 2024
+    //+-------------------------------------------------
+    count(source) {
+      if (['data', 'library'].includes(source)) return Object.keys(data).length
+
+      return 0
+    },
+
+    //+-------------------------------------------------
     // search(hash)
     // Performs a search against the api
     // -----
@@ -247,6 +259,8 @@ export const useDataStore = defineStore('data', {
       // The local reference is not found
       if (!data[ref] || !ref) return
 
+      console.groupCollapsed()
+      console.error('make a cosole.table or console.group')
       console.warn('Processing app (from -> to)')
       console.warn(JSON.stringify(item))
       console.warn(ref)
@@ -275,7 +289,7 @@ export const useDataStore = defineStore('data', {
 
       console.warn('Result: ', local)
       console.warn('Adding to queue?', toQueue)
-
+      console.groupEnd()
       // Save and index the app
       // Maybe $mitt.emit('data:updated', 'updated', local)
       data[ref] = { ...local }

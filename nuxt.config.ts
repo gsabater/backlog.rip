@@ -76,7 +76,7 @@ export default defineNuxtConfig({
     plugins: [],
   },
 
-  sourcemap: { server: false, client: false },
+  sourcemap: { server: false, client: true },
 
   devtools: {
     enabled: false,

@@ -2,17 +2,18 @@
   <div
     v-if="app && app.uuid"
     class="card-game"
+    :class="app.state ? ' has-state-' + app.state : ''"
     @mouseenter="ui.showStates = true"
     @mouseleave="ui.showStates = false">
     <div
-      class="poster"
+      class="cover"
       :class="{
         'is-header': iPoster == 1,
       }"
       @click="showGameModal">
       <img
         loading="lazy"
-        class="b-poster"
+        class="b-cover"
         :src="poster"
         :alt="app.steam_id"
         @error="iPoster++" />
@@ -69,7 +70,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sun Jan 07 2024
+ * Modified: Tue Jan 09 2024
  **/
 
 export default {
@@ -82,7 +83,7 @@ export default {
 
     body: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
 

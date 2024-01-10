@@ -5,10 +5,9 @@
       <p class="hero-description mt-4">
         Free and open source library manager for all your games.
         <br />
-        Works in the cloud, without any launchers.
-        <br />
-        Organize and manage your games with ease.
+        Works in the cloud, without launchers.
       </p>
+      <p class="hero-description mt-2">Organize and manage your games with ease.</p>
 
       <!-- <div class="my-7">
         <div class="text-muted h5">Available modules: </div>
@@ -92,33 +91,27 @@
           </div> -->
         </div>
 
-        <p class="text-muted my-3">
+        <p class="text-muted my-4">
           V
           {{ $app.v }}
           <span class="px-2">·</span>
-          <a href="/docs/5.3/getting-started/download/" class="link-secondary">
+          <!-- <a href="/docs/5.3/getting-started/download/" class="link-secondary">
             Changelog
-          </a>
-          <!--
-          <span class="px-1">·</span>
-          <a href="/docs/5.3/getting-started/download/" class="link-secondary">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon xl:mr-1 icon-tabler icon-tabler-brand-github"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-              <path
-                d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0c-2.4-1.6-3.5-1.3-3.5-1.3a4.2 4.2 0 0 0-.1 3.2 4.6 4.6 0 0 0-1.3 3.2c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2v3.5"></path>
-            </svg>
-            Source code
           </a> -->
+
+          <a href="https://discord.gg/F2sPE5B" class="link-secondary" target="_blank">
+            <Icon>BrandDiscord</Icon>
+            Get involved in the development!
+          </a>
+
+          <span class="px-2">·</span>
+          <a
+            href="https://github.com/gsabater/backlog.rip"
+            class="link-secondary"
+            target="_blank">
+            <Icon>BrandGithub</Icon>
+            Source code
+          </a>
         </p>
       </div>
     </div>

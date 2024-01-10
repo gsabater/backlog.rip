@@ -1,14 +1,17 @@
 <template>
   <div class="row">
-    <!-- <div class="col">
+    <div class="col">
       <pre>
-        {{ repository }}
-      </pre>
-    </div> -->
+items: {{ items.length }}
+--
+{{ control }}
+</pre
+      >
+    </div>
   </div>
   <div class="row row-deck row-cards">
     <template v-for="(app, i) in items" :key="'card' + i">
-      <div class="col col-6 col-lg-25">
+      <div class="col col-6 col-lg-2">
         <b-game :key="app" :appid="app"></b-game>
       </div>
     </template>
@@ -21,7 +24,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Jan 05 2024
+ * Modified: Wed Jan 10 2024
  **/
 
 export default {
@@ -44,29 +47,25 @@ export default {
     return {
       items: [],
 
-      // repository: {
-      //   timer: null,
-      //   delay: 500,
+      // base: {
+      //   string: '',
+      //   ready: true,
       // },
 
-      base: {
-        string: '',
-        ready: true,
-      },
-
       control: {
+        hash: null,
         event: null,
         search: null,
       },
 
-      stats: {
-        total: 0,
-        filtered: 0,
+      // stats: {
+      //   total: 0,
+      //   filtered: 0,
 
-        time: 0,
-      },
+      //   time: 0,
+      // },
 
-      ui: {},
+      // ui: {},
     }
   },
 
@@ -85,19 +84,35 @@ export default {
     // },
   },
 
+  watch: {
+    filters: {
+      handler() {
+        log('💎 Search: Watcher', JSON.stringify(this.filters))
+        this.search('watch')
+      },
+      deep: true,
+    },
+  },
+
   methods: {
     //+-------------------------------------------------
     // search()
-    // Handles throttling of search to the API
-    // And executes a filter()
+    // Generates a hash from the filters
+    // And performs a search on the API or local
     // -----
     // Created on Fri Nov 24 2023
+    // Updated on Tue Jan 09 2024
     //+-------------------------------------------------
     search(source = null) {
-      log('⚡ Searching from: ', source || 'direct run')
+      log('💎 Search: init from: ', source || 'direct run')
+
       if (Object.keys(this.filters).length === 0) return
 
-      const json = JSON.stringify(this.filters)
+      const control = { ...this.filters }
+      delete control.state
+      delete control.show
+
+      const json = JSON.stringify(control)
       const hash = btoa(json)
 
       if (source == 'event' && this.control.search === hash) {
@@ -105,10 +120,13 @@ export default {
         return
       }
 
+      this.control.hash = hash
       this.filter()
 
-      if (!this.filters?.string || this.filters?.string?.length < 3) return
-      this.dataStore.search(hash)
+      if (this.source == 'all') {
+        if (!this.filters?.string || this.filters?.string?.length < 3) return
+        this.dataStore.search(hash)
+      }
     },
 
     //+-------------------------------------------------
@@ -117,154 +135,30 @@ export default {
     // Generates an index to sort afterwords
     // -----
     // Created on Thu Nov 23 2023
+    // Updated on Tue Jan 09 2024 - Included utils.search
     //+-------------------------------------------------
     filter() {
       if (!this.dataStore.isReady) return
-
-      console.time('Filter')
-      const start = performance.now()
-
-      let logged = 5
-
-      let sorted = []
-      const toSort = []
-
-      const items = []
 
       // prettier-ignore
       const source = (this.source == 'all')
         ? this.dataStore.list()
         : this.dataStore.library()
 
-      log('🌈 Filtering on ', this.source)
-      log('Amount of apps #', Object.keys(source).length)
-      log('Filters: ', JSON.stringify(this.filters))
+      log('⚡ Search: Filter on ', this.source)
+      log('⚡ Search: Amount of apps #', Object.keys(source).length)
+      log('⚡ Search: Filters: ', JSON.stringify(this.filters))
 
-      for (const uuid in source) {
-        const app = source[uuid]
+      const items = search.filter(source, this.filters)
+      const paged = search.paginate(items, this.filters.show)
 
-        // Filter: Ignored games
-        // Remove any games ignored
-        //+---------------------------------------
-        if (app.is?.ignored) {
-          if (logged > 0) {
-            console.warn('🛑 Skipping ignored app', app.name, app)
-            logged--
-          }
-          continue
-        }
-
-        // Filter: Name
-        // Match with on app.name and steam_id
-        //+---------------------------------------
-        if (this.filters?.string?.length > 0) {
-          let appName = app.name ? app.name : ''
-          appName = appName.toString().toLowerCase()
-
-          if (
-            appName.indexOf(this.filters.string) === -1 &&
-            app.steam_id.toString() !== this.filters.string
-          ) {
-            // counters.skip++
-            // data.hidden.string.push(steam_id)
-
-            if (logged > 0) {
-              console.warn('🛑 Skipping as not name', this.filters.string, app.name)
-              logged--
-            }
-            continue
-          }
-        }
-
-        // Filter: Backlog state
-        // Match with on app.state
-        //+---------------------------------------
-        if (this.filters?.state) {
-          if (app.state !== this.filters.state) {
-            if (logged > 0) {
-              console.warn('🛑 Skipping as not in state', this.filters.state, app.name)
-              logged--
-            }
-
-            continue
-          }
-        }
-
-        // Index: toSort
-        // Create an index of elements to sort
-        //+---------------------------------------
-        if (this.filters?.sortBy == 'name') {
-          toSort.push({ uuid, name: app.name?.toString().toLowerCase() || '' })
-        }
-
-        if (this.filters?.sortBy == 'score') {
-          toSort.push({ uuid, score: app.score || 0 })
-        }
-
-        if (this.filters?.sortBy == 'playtime') {
-          toSort.push({ uuid, playtime: app.playtime?.steam || 0 })
-        }
-
-        // Finally, add the app to items
-        //+---------------------------------------
-        items.push(uuid)
-      }
-
-      sorted = this.sort(toSort)
-      this.items = sorted.slice(0, 30)
-
-      console.timeEnd('Filter')
-      const end = performance.now()
-
-      log(
-        '🌈 Filter done (amount, first, data[first])',
-        items.length,
-        items[0],
-        window.db?.d?.[items[0]]
-      )
-      this.stats.time = end - start
-
-      log('🌈 Dropping stats', this.stats, this.filters)
+      // this.items = sorted.slice(0, this.filters)
+      this.items = paged
 
       this.$forceUpdate()
-    },
+      return
 
-    //+-------------------------------------------------
-    // Sort()
-    //
-    // -----
-    // Created on Thu Jan 04 2024
-    //+-------------------------------------------------
-    sort(items) {
-      log('🌈 Sorting', this.filters.sortBy)
-
-      // SortBy: name
-      // Using app.name
-      //+---------------------------------------
-      if (this.filters?.sortBy == 'name') {
-        return items
-          .sort((a, b) => {
-            const A = a.name || ''
-            const B = b.name || ''
-            return A.localeCompare(B)
-          })
-          .map((item) => item.uuid)
-      }
-
-      // SortBy: numeric value
-      // Using app.playtime // score
-      //+---------------------------------------
-      if (this.filters?.sortBy == 'playtime' || this.filters?.sortBy == 'score') {
-        const field = this.filters?.sortBy
-
-        return items
-          .sort((a, b) => {
-            const A = a[field] || 0
-            const B = b[field] || 0
-            return B - A
-          })
-          .map((item) => item.uuid)
-      }
+      this.$forceUpdate()
     },
 
     async loadRepositories() {
@@ -273,8 +167,8 @@ export default {
     },
 
     init() {
-      this.loadRepositories
-      this.search()
+      // this.loadRepositories()
+      // this.search('onmounted')
     },
   },
 
@@ -282,13 +176,13 @@ export default {
     this.init()
 
     this.$mitt.on('data:updated', () => {
-      log('⭕ Starting a search from an event -> data:updated')
+      log('💎 Search: event -> data:updated')
       this.control.event = 'data:updated'
       this.search('event')
     })
 
     this.$mitt.on('data:ready', () => {
-      log('⭕ Starting a search from an event -> data:ready')
+      log('💎 Search: event -> data:ready')
       this.control.event = 'data:ready'
       this.search('event')
     })

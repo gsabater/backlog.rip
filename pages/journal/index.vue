@@ -10,7 +10,7 @@
                 <h3 class="card-title">{{ $moment(day).format('LL') }}</h3>
                 <ul class="steps steps-vertical">
                   <template v-for="(item, i) in events" :key="'event' + i">
-                    <li class="step-item">
+                    <li v-if="item" class="step-item">
                       <div v-if="item.event == 'log'">
                         <div class="h4 m-0">
                           {{ _eventTitle(item) }}
@@ -58,12 +58,21 @@
                         Your library has been updated with
                         {{ item.data.games.length }} new games
 
-                        <div class="row row-deck row-cards">
-                          <template v-for="(app, i) in item.data.games" :key="'card' + i">
-                            <div class="col col-2">
-                              <b-game :key="app" :appid="app" :body="false"></b-game>
-                            </div>
-                          </template>
+                        <gameList
+                          :apps="item.data.games"
+                          cols="3"
+                          max="12"
+                          class="pt-3"></gameList>
+
+                        <div v-if="item.data.games.length > 12">
+                          <div class="text-secondary">
+                            <b-btn class="my-1">
+                              <Icon class="text-secondary me-2" size="12">
+                                PlusCircled
+                              </Icon>
+                              Show {{ item.data.games.length - 12 }} more
+                            </b-btn>
+                          </div>
                         </div>
                       </div>
 
@@ -110,7 +119,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Sun Jan 07 2024
+ * Modified: Mon Jan 08 2024
  **/
 
 export default {

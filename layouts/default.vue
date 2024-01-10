@@ -925,6 +925,7 @@
     <Navigation :show-mob-menu="ui.showMobMenu"></Navigation>
     <!-- </div> -->
     <div class="page-wrapper">
+      <NuxtLoadingIndicator />
       <!-- <div class="ch"></div> -->
       <slot />
       <footer class="footer footer-transparent d-print-none">
@@ -1047,7 +1048,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Wed Jan 10 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'
@@ -1095,6 +1096,10 @@ export default {
   },
   data() {
     return {}
+  },
+
+  computed: {
+    ...mapStores(useDataStore),
   },
 
   methods: {

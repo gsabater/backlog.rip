@@ -4,7 +4,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th December 2022
- * Last Modified: Thu Dec 08 2022
+ * Modified: Thu Dec 08 2022
  **/
 
 // imports
@@ -16,7 +16,7 @@
 
 let ui = reactive({
   step: null,
-});
+})
 
 //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Computed
@@ -29,12 +29,12 @@ let ui = reactive({
 //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Initialize
 //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-init();
+init()
 
 onMounted(() => {
   // el.value // <div>
-});
+})
 
 onUnmounted(() => {
   // el.value // <div>
-});
+})

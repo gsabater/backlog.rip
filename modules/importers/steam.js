@@ -4,7 +4,7 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Last Modified: Mon Mar 13 2023
+ * Modified: Mon Mar 13 2023
  **/
 
 // {

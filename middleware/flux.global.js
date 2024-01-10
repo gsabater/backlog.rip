@@ -1,10 +1,9 @@
 /**
- * @project: catas
  * @file:    \middleware\auth.global.js
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 17th March 2023
- * Last Modified: Thu Mar 23 2023
+ * Modified: Thu Mar 23 2023
  **/
 
 import { useState, useRuntimeConfig, useCookie } from '#app'

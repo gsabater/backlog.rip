@@ -8,7 +8,7 @@
         </div>
         <div class="col-auto ms-auto">
           <div class="text-secondary mt-1 text-right" style="text-align: right">
-            About {{ $app?.api?.games?.total || 0 }} games
+            {{ source.count }} games
             <!-- <br />
             <span class="text-muted" style="zoom: 0.8">(0.19 seconds)</span> -->
           </div>
@@ -30,22 +30,31 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th December 2023
- * Modified: Thu Dec 28 2023
+ * Modified: Wed Jan 10 2024
  **/
 
 export default {
   data() {
-    return {}
+    return {
+      source: {
+        is: 'library',
+        count: 0,
+      },
+    }
   },
 
   computed: {
-    // ...mapStores(useDataStore),
+    ...mapStores(useDataStore),
   },
 
-  methods: {},
+  methods: {
+    init() {
+      this.source.count = this.dataStore.count('library')
+    },
+  },
 
   mounted() {
-    window.dev = this
+    this.init()
   },
 }
 </script>

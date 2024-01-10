@@ -4,7 +4,7 @@
  * @desc:    https://kas.kim/blog/using-dayjs-in-nuxt-3-as-plugin/
  * -------------------------------------------
  * Created Date: 28th February 2023
- * Last Modified: Fri May 19 2023
+ * Modified: Fri May 19 2023
  **/
 
 import dayjs from 'dayjs'

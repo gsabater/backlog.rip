@@ -1,16 +1,34 @@
-/**
- * @project: KAAM
+/*
  * @file:    \plugins\mitt.js
  * @desc:    ...
  * -------------------------------------------
- * Created Date: 9th March 2023
- * Last Modified: Mon Mar 13 2023
- **/
+ * Created Date: 13th March 2023
+ * Modified: Sun Jan 07 2024
+ */
+
+//+-------------------------------------------------
+// Codex: List of events
+// ⚡ game:modal
+// ⚡ game:manager
+//
+// ⚡ state:change
+//
+// ⚡ backdrop:open
+//
+// ⚡ confirm:show
+//
+// ⚡ app.render
+//
+// ⚡ data:ready
+// ⚡ data:updated
+//
+//+-------------------------------------------------
 
 import mitt from 'mitt'
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(() => {
   const emitter = mitt()
+  window.$mitt = emitter
 
   emitter.on('event', (e) => {
     console.log('event', e)
@@ -20,12 +38,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   return {
     provide: {
       mitt: emitter,
-      on: emitter.on, // Will register a listener for an event
-      emit: emitter.emit, // Will emit an event
-      all: emitter.all,
-
-      // event: emitter.emit, // Will emit an event
-      // listen: emitter.on, // Will register a listener for an event
     },
   }
 })

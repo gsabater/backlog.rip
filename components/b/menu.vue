@@ -1,11 +1,22 @@
 <template>
-  <div ref="dropdown" class="b-menu dropdown-menu" :class="{ show: ui.show }">
+  <div
+    v-if="!ui.isReady || (ui.isReady && ui.show)"
+    ref="dropdown"
+    class="b-menu dropdown-menu dropdown-menu-arrow show"
+    :class="{ 'dropdown-menu-end': position == 'end' }"
+    style="opacity: 0"
+    :style="
+      offsetX && opacity == 1
+        ? `opacity: 1;transform: translate3d(${offsetX}px, ${posY}px, 0px);`
+        : ''
+    "
+    @click="hide">
     <slot />
-    <!-- <a class="dropdown-item" href="#">Last 3 months</a> -->
+    <!-- <a class="dropdown-item" href="#">x: {{ offsetX }} - y: {{ posY }}</a>
+    <a class="dropdown-item" href="#">opacity {{ opacity }}</a> -->
   </div>
   <div
     v-if="ui.show"
-    @click="hide"
     class="dropdown-control"
     style="
       background-color: rgba(0, 0, 0, 0.1);
@@ -16,7 +27,8 @@
       left: 0px;
       z-index: 10;
       backdrop-filter: blur(0.5px);
-    "></div>
+    "
+    @click="hide"></div>
 </template>
 
 <script>
@@ -25,7 +37,7 @@
  * @desc:    https://preview.tabler.io/dropdowns.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Mon Nov 13 2023
+ * Modified: Sat Jan 06 2024
  **/
 
 export default {
@@ -47,40 +59,83 @@ export default {
       type: String,
       default: 'primary',
     },
-  },
 
-  data: () => ({
-    parent: null,
-
-    ui: {
-      show: false,
-      active: false,
-      isReady: false,
+    // WIP: revisar como es en vuetify para autohide
+    persistent: {
+      type: Boolean,
+      default: false,
     },
-  }),
 
-  computed: {
-    colorAndVariant() {
-      if (this.variant == 'icon') return `btn-${this.color} btn-icon`
-      if (this.variant == 'pill') return `btn-pill btn-${this.color}`
-
-      let className = 'btn'
-
-      if (this.variant) className += `-${this.variant}`
-      if (this.color) className += `-${this.color}`
-
-      if (Object.prototype.hasOwnProperty.call(this.$attrs, 'block'))
-        className += ` w-100`
-      if (Object.prototype.hasOwnProperty.call(this.$attrs, 'disabled'))
-        className += ` disabled`
-
-      return className
+    position: {
+      type: String,
+      default: 'start',
+      options: ['start', 'end'],
     },
   },
+
+  data() {
+    return {
+      parent: null,
+
+      posY: 0,
+      offsetX: 0,
+      opacity: 0.5,
+
+      ui: {
+        show: false,
+        active: false,
+        isReady: false,
+      },
+    }
+  },
+
+  computed: {},
 
   methods: {
+    //+-------------------------------------------------
+    // calcCorrection()
+    // With current and parent position, try to calculate
+    // offset amount to be 100% aligned with parent
+    // -----
+    // Created on Thu Dec 21 2023
+    //+-------------------------------------------------
+    calcCorrection() {
+      const parent = this.parent.getBoundingClientRect()
+      const dropdown = this.$refs.dropdown?.getBoundingClientRect()
+
+      let anchorX = 0
+
+      if (this.position == 'start') {
+        if (parent.x !== dropdown.x) {
+          anchorX = parent.x - dropdown.x
+          // console.warn(parent.x, dropdown.x, anchorX, this.offsetX)
+        } else {
+          anchorX = 1
+        }
+      }
+
+      if (this.position == 'end') {
+        if (parent.right !== dropdown.right) {
+          anchorX = parent.right - dropdown.right
+          // console.warn(parent.right, dropdown.right, anchorX, this.offsetX)
+        }
+      }
+
+      this.offsetX = anchorX
+      this.opacity = 1
+    },
+
     toggle(e) {
+      this.offsetX = 0
+      this.opacity = 0.5
+
       this.ui.show = !this.ui.show
+
+      this.$nextTick(() => {
+        window.setTimeout(() => {
+          this.calcCorrection()
+        }, 100)
+      })
 
       e.preventDefault()
       e.stopPropagation()
@@ -97,12 +152,12 @@ export default {
 
       if (this.parent) {
         this.parent.addEventListener('click', this.toggle)
+        this.ui.isReady = true
       }
     },
 
     async init() {
       await delay(300)
-      this.ui.isReady = true
       this.enableMenu()
     },
   },

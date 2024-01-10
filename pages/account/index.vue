@@ -20,7 +20,9 @@
             <div class="card-body">
               <div class="row g-2 align-items-center">
                 <div class="col-auto">
-                  <span class="avatar avatar-md bg-primary-lt" style="background-image: url(...)">
+                  <span
+                    class="avatar avatar-md bg-primary-lt"
+                    style="background-image: url(...)">
                     <span class="badge bg-danger"></span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -50,11 +52,15 @@
                   </div> -->
                 </div>
                 <div class="col-auto">
-                  <a href="#" class="btn"> Activate </a>
+                  <a href="#" class="btn">Activate</a>
                 </div>
                 <div class="col-auto">
                   <div class="dropdown">
-                    <a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a
+                      href="#"
+                      class="btn-action"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false">
                       <!-- Download SVG icon from http://tabler-icons.io/i/dots-vertical -->
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +95,9 @@
             <div class="card-body">
               <div class="row g-2 align-items-center">
                 <div class="col-auto">
-                  <span class="avatar avatar-md bg-primary-lt" style="background-image: url(...)">
+                  <span
+                    class="avatar avatar-md bg-primary-lt"
+                    style="background-image: url(...)">
                     <span class="badge bg-danger"></span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -119,11 +127,15 @@
                   </div> -->
                 </div>
                 <div class="col-auto">
-                  <a href="#" class="btn"> Activate </a>
+                  <a href="#" class="btn">Activate</a>
                 </div>
                 <div class="col-auto">
                   <div class="dropdown">
-                    <a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a
+                      href="#"
+                      class="btn-action"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false">
                       <!-- Download SVG icon from http://tabler-icons.io/i/dots-vertical -->
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -163,8 +175,8 @@
                   </div>
                 </div>
                 <p>
-                  You can link your multiple store accounts and enable importers to get your games
-                  automatically to your backlog.rip library.
+                  You can link your multiple store accounts and enable importers to get
+                  your games automatically to your backlog.rip library.
                 </p>
               </div>
             </div>
@@ -177,7 +189,7 @@
 
 <script>
 export default {
-  name: 'Account-index',
+  name: 'AccountIndex',
 
   data() {
     return {}

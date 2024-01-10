@@ -1,9 +1,37 @@
 <template>
-  <div class="card card-game">
-    <div class="background">
-      <img :src="'https://steamcdn-a.akamaihd.net/steam/apps/'+app+'/library_600x900.jpg'" alt="">
+  <div
+    v-if="app && app.uuid"
+    class="card-game"
+    :class="app.state ? ' has-state-' + app.state : ''"
+    @mouseenter="ui.showStates = true"
+    @mouseleave="ui.showStates = false">
+    <div
+      class="cover"
+      :class="{
+        'is-header': iPoster == 1,
+      }"
+      @click="showGameModal">
+      <img
+        loading="lazy"
+        class="b-cover"
+        :src="poster"
+        :alt="app.steam_id"
+        @error="iPoster++" />
     </div>
-                  <div class="card-body">
+
+    <div v-if="body" class="card-body">
+      <BState :app="app.uuid" :state="app.state" :label="false"></BState>
+
+      <div class="h5">
+        <!-- <BState v-if="app.state" :state="app.state" :label="false"></BState> -->
+        {{ app.name }}
+      </div>
+      <div class="text-muted">
+        <!-- {{ appid }} -->
+        <!-- {{ app.steam_id }} -->
+      </div>
+    </div>
+    <!-- <div class="card-body">
                     <div class="d-flex align-items-center">
                       <div class="subheader">Sales</div>
                       <div class="ms-auto lh-1">
@@ -22,7 +50,7 @@
                       <div>Conversion rate</div>
                       <div class="ms-auto">
                         <span class="text-green d-inline-flex align-items-center lh-1">
-                          7% <!-- Download SVG icon from http://tabler-icons.io/i/trending-up -->
+                          7%
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 17l6 -6l4 4l8 -8"></path><path d="M14 7l7 0l0 7"></path></svg>
                         </span>
                       </div>
@@ -32,14 +60,33 @@
                         <span class="visually-hidden">75% Complete</span>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </div> -->
+  </div>
 </template>
 
 <script>
+/**
+ * @file:    \components\b\game.vue
+ * @desc:    ...
+ * -------------------------------------------
+ * Created Date: 16th November 2023
+ * Modified: Tue Jan 09 2024
+ **/
+
 export default {
   name: 'Game',
-  props: ['app'],
+  props: {
+    appid: {
+      type: String,
+      default: null,
+    },
+
+    body: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   //  {
   //   app: {
   //     type: Object,
@@ -48,36 +95,54 @@ export default {
   // },
   data() {
     return {
-      //
+      app: {},
+      iPoster: 0,
+
+      ui: {
+        showStates: false,
+      },
     }
   },
+
+  computed: {
+    ...mapStores(useDataStore),
+
+    poster() {
+      const ID = this.app.steam_id || null
+      if (!ID) return
+
+      const posters = [
+        `https://steamcdn-a.akamaihd.net/steam/apps/${ID}/library_600x900.jpg`,
+        `https://cdn.akamai.steamstatic.com/steam/apps/${ID}/header.jpg`,
+      ]
+
+      const poster = posters[this.iPoster]
+      // this.$mitt.emit('poster:hold', poster)
+      return poster
+    },
+  },
+
   methods: {
-    //
+    showGameModal() {
+      this.$mitt.emit('game:modal', this.app.uuid)
+    },
+
+    manage($event) {
+      this.$mitt.emit('game:manager', $event, this.app.uuid)
+    },
+
+    setState(state) {
+      // this.app.state = state.id
+    },
+
+    async getData() {
+      this.app = this.dataStore.get(this.appid)
+    },
+  },
+
+  mounted() {
+    this.getData()
+    // console.warn('⚓', this.appid)
   },
 }
 </script>
-
-<style>
-.card.card-game {
-  aspect-ratio: 2 / 3;
-  border: 1px solid red;
-  /* background: url(https://steamcdn-a.akamaihd.net/steam/apps/2114740/library_600x900.jpg) 0% 0% /
-    cover; */
-}
-
-.card-game img {
-  outline: 1px solid rgba(255, 255, 255, 0.15);
-  outline-offset: -1px;
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
-}
-/*
-.card.card-game::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(120 120 120 / 50%); adjust opacity as needed
-} */
-</style>

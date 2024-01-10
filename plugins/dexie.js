@@ -3,10 +3,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Wed Nov 15 2023
+ * Modified: Wed Dec 13 2023
  */
 
 import Dexie from 'dexie'
+import { DexieInstaller } from '~/utils/dexieInstaller'
 
 //+-------------------------------------------------
 // Initialize stores
@@ -14,9 +15,17 @@ import Dexie from 'dexie'
 //+-------------------------------------------------
 const db = new Dexie('backlog.rip')
 
-db.version(2).stores({
+db.version(9).stores({
+  // User stores
+  account: 'uuid,steam',
   config: '&key,value',
-  games: '&uuid,steam_id,name',
+
+  // Database stores
+  games: '&uuid,api_id,steam_id,name',
+
+  // Userdata related stores
+  states: '&id,order,name',
+  journal: '++id,event,ref,created_at',
 })
 
 function check() {
@@ -29,36 +38,26 @@ function check() {
 }
 
 //+-------------------------------------------------
-// init()
+// initialize()
 // Check that indexxeddb is supported (it should be)
 // set a few values in the config store
 // and expose db to window
 // -----
 // Created on Thu Nov 09 2023
+// Updated on Tue Nov 28 2023
 //+-------------------------------------------------
-function init() {
+
+function initialize() {
   if (check() === false) return
+  // log('Using Dexie v' + Dexie.semVer)
 
-  window.$db = db
-  log('Using Dexie v' + Dexie.semVer)
+  const install = new DexieInstaller(db)
 
-  db.config.count().then((count) => {
-    if (count === 0) {
-      db.config.put({
-        key: 'created_at',
-        value: new Date().toISOString().replace('T', ' ').substring(0, 19),
-      })
-    }
-  })
+  install.account()
+  install.checkin()
 
-  db.config
-    .put({
-      key: 'updated_at',
-      value: new Date().toISOString().replace('T', ' ').substring(0, 19),
-    })
-    .catch((err) => {
-      console.error(`Error: ${err.stack}`)
-    })
+  install.states()
+  install.journal()
 }
 
 //+-------------------------------------------------
@@ -73,8 +72,15 @@ async function getValue(store, key) {
   return null
 }
 
+//+-------------------------------------------------
+// Define Nuxt plugin
+// $db and window.$db
+// -----
+// Created on Tue Nov 28 2023
+//+-------------------------------------------------
 export default defineNuxtPlugin((nuxtApp) => {
-  init()
+  window.$db = db
+  initialize()
 
   // extend dexie
   db.get = getValue

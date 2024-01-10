@@ -1,10 +1,9 @@
 /**
- * @project: catas
  * @file:    \utils\globalHelper.js
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 2nd June 2023
- * Last Modified: Tue Jun 06 2023
+ * Modified: Tue Jun 06 2023
  **/
 
 export default {

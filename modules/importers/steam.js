@@ -4,8 +4,27 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Last Modified: Mon Mar 13 2023
+ * Modified: Mon Mar 13 2023
  **/
+
+// {
+//   appid: 211420,
+//   name: 'DARK SOULS™: Prepare To Die Edition',
+//   playtime_forever: 1286,
+//   img_icon_url: 'a24804c6c8412c8cd9d50efd06bf03fa58ff80a9',
+//   has_community_visible_stats: true,
+//   playtime_windows_forever: 0,
+//   playtime_mac_forever: 0,
+//   playtime_linux_forever: 0,
+//   rtime_last_played: 1418686838,
+//   sort_as: 'Dark Souls',
+//   has_workshop: false,
+//   has_market: false,
+//   will_import: true,
+//   will_ignore: false,
+//   has_dlc: true,
+//   playtime_disconnected: 0,
+// }
 
 let $log = null
 let $axios = null
@@ -13,7 +32,7 @@ let $account = null
 
 export default {
   manifest: {
-    version: '0.1',
+    version: '1.0',
     store: 'Steam',
     name: 'Steam public profiles',
     author: 'Gaspar S.',
@@ -59,6 +78,20 @@ export default {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Methods
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  //+-------------------------------------------------
+  // prepareToStore()
+  // Gets an app and appends data to it
+  // -----
+  // Created on Sun Dec 24 2023
+  //+-------------------------------------------------
+  prepareToStore(app) {
+    let data = app.data
+    app.playtime.steam = data.playtime_forever
+    app.last_played.steam = data.rtime_last_played
+    delete app.data
+    return app
+  },
 
   //+-------------------------------------------------
   // getUserdata()

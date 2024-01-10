@@ -31,8 +31,12 @@
 
       <hr />
 
-      <svgs icon="search"></svgs>
-      <svgs>search</svgs>
+      <icon icon="Search"></icon>
+      <icon>Circle-x</icon>
+      <icon>Ad</icon>
+      <icon>Circlex</icon>
+      <icon>CircleX</icon>
+      <icon>Search</icon>
 
       <h1>Inputs</h1>
       <div class="row">
@@ -60,7 +64,7 @@
         </div>
 
         <div class="col-3">
-          <b-input label="Prepend icon: search" prepend-icon="search"></b-input>
+          <b-input label="Prepend icon: search" prepend-icon="Search"></b-input>
         </div>
 
         <div class="col-3">
@@ -511,6 +515,43 @@
       </div>
 
       <hr />
+
+      <button @click="$toast('My first toast')">Render a toast</button>
+      <button
+        @click="
+          $toast('Event has been created', {
+            description: 'Monday, January 3rd at 6:00pm',
+          })
+        ">
+        Render a toast
+      </button>
+      <button
+        @click="
+          $toast.success('Event has been created', {
+            description: 'Monday, January 3rd at 6:00pm',
+          })
+        ">
+        Render a toast
+      </button>
+      <button
+        @click="
+          $toast.error('Event has been created', {
+            description: 'Monday, January 3rd at 6:00pm',
+          })
+        ">
+        Render a toast
+      </button>
+      <button
+        @click="
+          $toast('Event has been created', {
+            action: {
+              label: 'Undo',
+              onClick: () => console.log('Undo'),
+            },
+          })
+        ">
+        Render a toast
+      </button>
     </div>
   </div>
 </template>
@@ -524,6 +565,8 @@ export default {
       three: false,
     }
   },
+
+  methods: {},
 }
 </script>
 

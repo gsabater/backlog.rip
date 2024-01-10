@@ -14,28 +14,36 @@
     "vue": "latest"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.0",
+    "@nuxt/devtools": "^1.0.6",
     "@nuxt/eslint-config": "^0.2.0",
-    "eslint": "^8.53.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-vue": "^9.18.1",
-    "prettier": "3.0.3",
-    "sass": "^1.62",
-    "sass-loader": "^13.2.0"
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-vue": "^9.19.2",
+    "nuxt": "^3.9.1",
+    "prettier": "^3.1.1",
+    "sass": "^1.69.7",
+    "sass-loader": "^13.3.3"
   },
   "dependencies": {
-    "@nuxt/content": "^2.8.5",
-    "@nuxt/image": "^1.0.0",
+    "@nuxt/content": "^2.10.0",
+    "@nuxt/image": "^1.1.0",
     "@pinia/nuxt": "^0.5",
     "@tabler/core": "^1.0.0-beta20",
-    "axios": "^1.5",
+    "@tabler/icons-vue": "^2.45.0",
+    "@vercel/analytics": "^1.1.1",
+    "@vercel/speed-insights": "^1.0.2",
+    "@vueuse/rxjs": "^10.7.1",
+    "aioli": "^0.2.1",
+    "animejs": "^3.2.2",
+    "axios": "^1.6.5",
     "dayjs": "^1.11.7",
     "dexie": "^3.2.4",
     "mitt": "^3.0.0",
-    "nuxt": "^3.8",
     "pinia": "^2.1",
+    "rxjs": "^7.8.1",
     "tom-select": "^2.3.1",
     "uuid": "^9.0.0",
-    "vue-sonner": "^1.0.2"
+    "vue-sonner": "^1.0.2",
+    "vue-tippy": "^6.4.1"
   }
 }

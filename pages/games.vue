@@ -1,57 +1,62 @@
 <template>
-  <div class="page-body">
+  <div class="page-header d-print-none">
     <div class="container-xl">
-      <div class="row justify-content-center">
-        <div class="col-8">
-          <!-- <h3>Account History bby</h3>
-          <games-browser
-            :items="games"
-            layout="list"
-            layouts="list/grid/sheety"></games-browser> -->
-
-          <hr />
-          <h2>Filters interface</h2>
-          <search-interface></search-interface>
-
-          <h2>Data store</h2>
-          <b-btn @click="test">test</b-btn>
-          <b-btn @click="list">list</b-btn>
-          <b-btn @click="giveme(440)">pepa</b-btn>
-          <pre>
-            {{ dataStore }}
-          </pre>
+      <div class="row g-2 align-items-center">
+        <div class="col">
+          <div class="page-pretitle">Browsing</div>
+          <h2 class="page-title">All games</h2>
+        </div>
+        <div v-if="source.count > 0" class="col-auto ms-auto">
+          <div class="text-secondary mt-1 text-right" style="text-align: right">
+            About ~{{ format.num(source.count) }} games
+            <!-- <br />
+            <span class="text-muted" style="zoom: 0.8">(0.19 seconds)</span> -->
+          </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="container-xl">
+      <search-interface></search-interface>
     </div>
   </div>
 </template>
 
 <script>
+/**
+ * @file:    \pages\games.vue
+ * @desc:    ...
+ * -------------------------------------------
+ * Created Date: 21st November 2022
+ * Modified: Wed Jan 10 2024
+ **/
+
 export default {
   data() {
-    return {}
+    return {
+      source: {
+        is: 'all',
+        count: 0,
+      },
+    }
   },
 
   computed: {
-    ...mapStores(useDataStore),
+    // ...mapStores(useDataStore),
   },
 
   methods: {
-    list() {
-      console.log(this.dataStore)
+    init() {
+      window.setTimeout(() => {
+        this.source.count = this.$app.api?.games?.total
+      }, 1000)
     },
+  },
 
-    test() {
-      // this.dataStore.pepa.a = 'pepa'
-      // this.dataStore.pepe.b = 'pepe'
-      // this.dataStore.db.c = 'pepc'
-      this.dataStore.test()
-    },
-
-    async giveme(appid) {
-      const pp = await this.dataStore.get(appid)
-      debugger
-    },
+  mounted() {
+    this.init()
   },
 }
 </script>

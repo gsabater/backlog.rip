@@ -1,21 +1,15 @@
 # Backlog.rip
 
 Based on a Nuxt 3 project.
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
 ## Setup
 
 Make sure to install the dependencies:
 
 ```bash
-# yarn
-yarn install
-
 # npm
 npm install
 
-# pnpm
-pnpm install
 ```
 
 ## Development Server
@@ -26,10 +20,13 @@ Start the development server on http://localhost:1337
 npm run dev
 ```
 
-## Production
+### Emoji Cheat Sheet
 
-Build the application for production:
+⚡ - General backlog logs
+💽 - Used in $db or dexie
+🥸 - Uer account
+🎴 - User library
+📜 - User Journal
+⭕ - Search is going to run + some todo's have this as well
 
-```bash
-npm run build
-```
+❇️ and ✅ - For success messages

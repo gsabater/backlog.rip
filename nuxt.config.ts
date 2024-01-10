@@ -8,6 +8,8 @@
  * Modified:
  */
 
+import { mapState } from "pinia";
+
 export default defineNuxtConfig({
   ssr: false,
 
@@ -40,7 +42,7 @@ export default defineNuxtConfig({
     presets: [
       {
         from: 'pinia',
-        imports: ['mapStores'], // ['defineStore', 'mapStores', 'acceptHMRUpdate'],
+        imports: ['mapStores', 'mapState'], // ['defineStore', 'mapStores', 'acceptHMRUpdate'],
       },
     ],
   },
@@ -49,6 +51,7 @@ export default defineNuxtConfig({
     // '@tabler/core/dist/css/tabler.css', <-- imported via scss
     '@/assets/scss/main.scss',
   ],
+
 
   build: {
     transpile: ['vue-sonner']
@@ -72,6 +75,8 @@ export default defineNuxtConfig({
 
     plugins: [],
   },
+
+  sourcemap: { server: false, client: true },
 
   devtools: {
     enabled: false,

@@ -2,19 +2,38 @@
 
 // Import libs
 @import '../../node_modules/@tabler/core/dist/css/tabler.css';
-@import '../../node_modules/@tabler/core/dist/css/tabler-flags.css';
-@import '../../node_modules/@tabler/core/dist/css/tabler-payments.css';
+// @import '../../node_modules/@tabler/core/dist/css/tabler-flags.css';
+// @import '../../node_modules/@tabler/core/dist/css/tabler-payments.css';
 @import '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
 @import '../../node_modules/@tabler/core/dist/css/demo.css';
 @import 'extend.scss';
+
+@import 'base';
 
 // Import layout
 @import 'partials/home';
 @import 'partials/base/_menus';
 @import 'partials/base/_sidebar';
 @import 'partials/base/_lists';
+@import 'partials/base/_modal';
 
 // Import components
+@import 'components/b-game';
 @import 'components/b-poster';
+
+/* b-menu */
+
+.b-menu {
+  margin-top: 7px;
+  padding: 5px;
+  position: absolute;
+
+  --tblr-dropdown-divider-margin-y: 0.4rem;
+}
+
+.b-menu .dropdown-item {
+  border-radius: 5px;
+  cursor: pointer;
+}
 
 @import 'dev';

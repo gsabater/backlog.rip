@@ -3,7 +3,7 @@
  * @desc:    https://vueschool.io/articles/vuejs-tutorials/eslint-and-prettier-with-vite-and-vue-js-3/
  * -------------------------------------------
  * Created Date: 11th November 2023
- * Modified: Tue Nov 14 2023
+ * Modified: Sun Jan 07 2024
  */
 
 module.exports = {
@@ -36,6 +36,11 @@ module.exports = {
     mapStores: true,
     defineStore: true,
     acceptHMRUpdate: true,
+    defineNuxtConfig: true,
+    defineNuxtPlugin: true,
+
+    useDataStore: true,
+    useJournalStore: true,
 
     log: true,
     delay: true,
@@ -46,7 +51,48 @@ module.exports = {
 
   rules: {
     'vue/first-attribute-linebreak': 'off',
-
+    'vue/no-multiple-template-root': 'off',
+    'vue/no-v-html': 'off',
+    'vue/order-in-components': [
+      'error',
+      {
+        order: [
+          'el',
+          'name',
+          'key',
+          'parent',
+          'functional',
+          ['delimiters', 'comments'],
+          ['components', 'directives', 'filters'],
+          'extends',
+          'mixins',
+          ['provide', 'inject'],
+          'ROUTER_GUARDS',
+          'layout',
+          'middleware',
+          'validate',
+          'scrollToTop',
+          'transition',
+          'loading',
+          'inheritAttrs',
+          'model',
+          ['props', 'propsData'],
+          'emits',
+          'setup',
+          'asyncData',
+          'data',
+          'fetch',
+          'head',
+          'computed',
+          'watch',
+          'watchQuery',
+          'methods',
+          'LIFECYCLE_HOOKS',
+          ['template', 'render'],
+          'renderError',
+        ],
+      },
+    ],
     // override/add rules settings here, such as:
     // 'vue/no-unused-vars': 'error'
     // "vue/require-default-prop": "off",

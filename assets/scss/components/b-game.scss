@@ -1,0 +1,65 @@
+.card-game {
+  /* border: 1px solid red; */
+  position: relative;
+}
+
+.card-game[class*="has-state"] .cover {
+  outline: 2px solid red;
+}
+
+.card-game .cover {
+  cursor: pointer;
+  border-radius: 3px;
+
+  // aspect-ratio: 2.2/3;
+  // Steam has 2/3 aspect ratio
+  // IGDB has 3/4 aspect ratio (not for all games)
+  // EGS has 3/4 aspect ratio
+  // 27/40 is a good compromise
+  aspect-ratio: 27/40;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  overflow: hidden;
+
+  &.is-header{
+    padding: 13px;
+    background-size: cover;
+    background-position: center center;
+    filter: brightness(0.5);
+  }
+}
+
+.card-game img {
+  /* object-fit: cover; */
+  // aspect-ratio: 2 / 3;
+  outline: 1px solid rgba(255, 255, 255, 0.15);
+  outline-offset: -1px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
+}
+
+.b-cover {
+  // border-radius: 4px;
+  // max-width: 100%;
+  // max-height: 100%;
+  outline: 1px solid rgba(255, 255, 255, 0.15);
+  outline-offset: -1px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
+
+  outline: rgba(255, 255, 255, 0.15) solid 2px;
+  outline-offset: -2px;
+  box-shadow: rgba(0, 0, 0, 0.36) 1px 1px 3px;
+}
+
+/*
+.card.card-game::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cover-color: rgb(120 120 120 / 50%); adjust opacity as needed
+} */

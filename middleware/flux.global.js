@@ -1,10 +1,9 @@
 /**
- * @project: catas
  * @file:    \middleware\auth.global.js
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 17th March 2023
- * Last Modified: Thu Mar 23 2023
+ * Modified: Thu Mar 23 2023
  **/
 
 import { useState, useRuntimeConfig, useCookie } from '#app'
@@ -12,15 +11,28 @@ import { useState, useRuntimeConfig, useCookie } from '#app'
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const nuxtApp = useNuxtApp()
   const userStore = useUserStore()
+  const dataStore = useDataStore()
+  const stateStore = useStateStore()
+
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Authenticate the user
+  // Tries to determinate if the user has an account
+  // either locally or online
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   let current = false
-
   if (userStore?.isChecked === false) {
     await userStore.authenticate()
   }
 
-  if (userStore.isLogged) {
-    // nuxtApp.$db.init()
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Preload
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  if (userStore.isChecked) {
+    // move to a plugin to run once
+    dataStore.init()
+    stateStore.init()
   }
 
   return

@@ -1,8 +1,8 @@
 <template>
-  <!-- <pre>
-layout: {{ layout }}
-Attrs: {{ $attrs }}
-  </pre> -->
+  <pre v-if="false">
+  layout: {{ layout }}
+  Attrs: {{ $attrs }}
+  </pre>
 
   <!--
     Default layout
@@ -14,10 +14,13 @@ Attrs: {{ $attrs }}
 
     <input
       v-bind="$attrs"
-      v-model="inputValue"
+      nv-model="inputValue"
       :type="type"
       :class="colorAndVariant"
-      @input="$emit('input', $event.target.value)" />
+      :value="modelValue"
+      nchange="notify"
+      nupdate:modelValue="notify"
+      @input="onChange" />
 
     <div v-if="hint" class="small text-secondary">
       {{ hint }}
@@ -26,37 +29,41 @@ Attrs: {{ $attrs }}
 
   <!--
     Layout with icon
+    and clearable
   -->
   <template v-if="layout == 'with-icon'">
     <label v-if="label" class="form-label" :class="{ required: required }">
       {{ label }}
     </label>
 
-    <div class="input-icon mb-3">
-      <span class="input-icon-addon" v-if="$attrs['prepend-icon']">
-        <svgs>{{ $attrs['prepend-icon'] }}</svgs>
+    <div class="input-icon">
+      <span v-if="$attrs['prepend-icon']" class="input-icon-addon">
+        <Icon :icon="$attrs['prepend-icon']"></Icon>
       </span>
 
       <input
         v-bind="$attrs"
-        v-model="inputValue"
+        nv-model="inputValue"
         :type="type"
         :class="colorAndVariant"
-        @input="$emit('input', $event.target.value)" />
+        :value="modelValue"
+        nchange="notify"
+        nupdate:modelValue="notify"
+        @input="onChange" />
 
-      <span class="input-icon-addon" v-if="$attrs['append-icon']">
-        <svgs>{{ $attrs['append-icon'] }}</svgs>
+      <span v-if="$attrs['append-icon']" class="input-icon-addon">
+        <Icon :icon="$attrs['append-icon']"></Icon>
       </span>
 
       <span
-        class="input-icon-addon cursor-pointer action-icon"
-        :class="{ active: inputValue !== '' }"
         v-if="clearable"
-        @click="clear">
-        <svgs>clearable</svgs>
+        class="input-icon-addon cursor-pointer action-icon"
+        :class="{ active: modelValue !== '' }"
+        @click="onClear">
+        <Icon>SquareRoundedX</Icon>
       </span>
 
-      <span class="input-icon-addon" v-if="loading">
+      <span v-if="loading" class="input-icon-addon">
         <div class="spinner-border spinner-border-sm text-secondary"></div>
       </span>
     </div>
@@ -69,12 +76,13 @@ Attrs: {{ $attrs }}
   <!--
     Variant Floating input
   -->
-  <div v-if="layout == 'floating'" class="form-floating">
+  <!-- <div v-if="layout == 'floating'" class="form-floating">
     <input
       v-bind="$attrs"
       v-model="inputValue"
       :class="colorAndVariant"
-      @input="$emit('input', $event.target.value)" />
+      @change="notify"
+      @update:modelValue="notify" />
 
     <label
       v-if="variant == 'floating'"
@@ -82,7 +90,7 @@ Attrs: {{ $attrs }}
       :class="{ required: required }">
       {{ label }}
     </label>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -92,17 +100,25 @@ Attrs: {{ $attrs }}
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Tue Nov 14 2023
+ * Modified: Thu Jan 04 2024
  **/
 
 export default {
   name: 'TablerInput',
   props: {
+    modelValue: {
+      type: String,
+      default: '',
+    },
+
+    // value: {
+    //   type: String,
+    //   default: '',
+    // },
+
     id: {
       type: String,
-      default:
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15),
+      default: () => 'input-' + Math.random().toString(36).substring(2, 10),
     },
 
     type: {
@@ -152,12 +168,9 @@ export default {
       type: String,
       default: 'primary',
     },
-
-    value: {
-      type: String,
-      default: '',
-    },
   },
+
+  emits: ['clear', 'tick', 'update:modelValue'],
 
   setup(props, { attrs }) {
     return {
@@ -165,11 +178,9 @@ export default {
     }
   },
 
-  data() {
-    return {
-      inputValue: this.value,
-    }
-  },
+  // data: (ctx) => ({
+  //   inputValue: ctx.value,
+  // }),
 
   computed: {
     layout() {
@@ -192,11 +203,39 @@ export default {
     },
   },
 
+  // watch: {
+  //   inputValue() {
+  //     this.notify()
+  //   },
+  // },
+
   methods: {
-    clear() {
-      this.inputValue = ''
+    //+-------------------------------------------------
+    // onChange()
+    // Emits 'update:modelValue' that updates the v-model
+    // on parent. this.modelValue is still the old value, thats
+    // why we need to emit with the target value.
+    // -----
+    // @input is fired by parent on "keydown"
+    // @change is fired by parent on "blur"
+    // @clear is fired by parent onClear, just once
+    // -----
+    // Created on Mon Dec 18 2023
+    //+-------------------------------------------------
+    onChange(e) {
+      const value = e?.target?.value || ''
+      // console.warn('onChange', value, this.modelValue)
+      this.$emit('tick', value)
+      this.$emit('update:modelValue', value)
+    },
+
+    onClear() {
+      this.$emit('clear')
+      this.onChange('')
     },
   },
+
+  mounted() {},
 }
 </script>
 

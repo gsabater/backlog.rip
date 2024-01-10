@@ -3,19 +3,21 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th October 2021
- * Modified: Fri Nov 10 2023
+ * Modified: Tue Dec 26 2023
  */
 
 import axios from 'axios'
 
-export default defineNuxtPlugin((nuxtApp) => {
-  let domain =
-    process.env.NODE_ENV == 'development' ? 'https://api.backlog.rip' : 'https://api.backlog.rip'
+export default defineNuxtPlugin(() => {
+  // let domain =
+  //   process.env.NODE_ENV == 'development'
+  //   ? 'https://api.backlog.rip'
+  //   : 'https://api.backlog.rip'
 
-  log('Axios domain set to: ', domain)
+  // log('Axios domain set to: ', domain)
 
   const instance = axios.create({
-    baseURL: domain,
+    baseURL: 'https://api.backlog.rip',
     timeout: 60000,
     headers: {
       // accept: 'application/ld+json',

@@ -1,20 +1,4 @@
 <template>
-  <!-- <ul>
-  <li><h4>Steps:</h4></li> -->
-  <!-- <li>detect: detect if plugin is present.</li> -->
-  <!-- <li>Check: getUserdata, getGames, getWishlist...</li> -->
-  <!-- <li>Connect: Read manifest and give methods to the module.</li> -->
-  <!-- <li>Receive plugin manifest: name, description, author, repository url , steps (things is going to do), requeriments, what it does, what it does not</li> -->
-  <!-- <li>Give: vue instance?, axios instance, log(info, warning, error), error event, success event</li> -->
-  <!-- <li>----</li> -->
-  <!-- <li>initialize: get userdata</li>
-  <li>onclick: getgames</li> -->
-
-  <!-- <li>store each in every category</li>
-  <li>get game data from api</li>
-  <li>end</li>
-</ul> -->
-
   <!-- Page header -->
   <!-- <div class="page-header d-print-none">
       <div class="container-xl">
@@ -32,9 +16,14 @@
     <div class="container-xl">
       <div class="row row-cards">
         <div class="col-lg-8">
+          <!--
+            *+---------------------------------
+            *| Block of errors
+            *| Shown when ui.showLogs == true
+            *+--------------------------------- -->
           <div v-if="ui.showlogs" class="card" style="border: 2px solid #d63939">
             <div class="card-body">
-              <h3 class="card-title">There has been an error</h3>
+              <h3 class="card-title">There has been an errorccc</h3>
               <p class="text-muted">
                 We could not import your profile. Check your logs and try again or report
                 the issue
@@ -51,109 +40,48 @@
             </div>
           </div>
 
-          <!-- <div class="steps mb-4">
-              <span href="#" class="step-item active" data-bs-toggle="tooltip" title="Step 4 description"></span>
-              <span
-                class="step-item"
-                v-for="(el, i) in importer.steps" :key="i"
-                :class="{'active': i == ui.step}">
-                {{ el.name }}
-              </span>
-              <span href="#" class="step-item" data-bs-toggle="tooltip" title="Step 4 description"></span>
-            </div> -->
-
-          <div v-if="ui.error" class="card" style="border: 2px solid #d63939">
-            <div class="card-body">
-              <h3 class="card-title">There has been an error</h3>
-              <p class="text-muted">{{ ui.error }}</p>
-            </div>
-            <!-- Card footer -->
-            <div class="card-footer">
-              <div class="d-flex">
-                <a href="#" class="btn btn-link">Cerrar</a>
-                <a href="#" class="btn btn-primary ms-auto">Notify on Github</a>
-                <a href="#" class="btn btn-primary ms-auto">Notify on Discord</a>
+          <!--
+            *+---------------------------------
+            *| Block of login
+            *| Shown when the error is account:provider
+            *+--------------------------------- -->
+          <div
+            v-if="ui.error == 'account:provider'"
+            class="container container-tight py-4">
+            <div
+              class="card border-rainbow"
+              style="border-width: 1px; box-shadow: 1px 1px 3px 0px #36302a63">
+              <div class="card-body text-center">
+                <div class="mb-4">
+                  <h2>You need to login</h2>
+                  <p class="text-secondary mb-4">
+                    In order to get your Steam library, you have to login with your Steam
+                    account. This is a safe process, and only your SteamID will be shared
+                    with us.
+                  </p>
+                </div>
+                <div>
+                  <a class="btn btn-github" href="https://api.backlog.rip/auth/steam">
+                    <Icon class="me-2">BrandSteam</Icon>
+                    Sign in with Steam
+                  </a>
+                </div>
               </div>
             </div>
           </div>
 
+          <!--
+            *+---------------------------------
+            *| Loading block
+            *| Shown when ui.loading == true
+            *+--------------------------------- -->
           <div v-if="ui.loading" class="col-lg-8 mx-auto mt-4">
             <div class="card">
               <div class="card-body">
                 <div class="row align-items-center">
-                  <div class="col-2">
-                    <svg
-                      width="45"
-                      height="45"
-                      viewBox="0 0 45 45"
-                      xmlns="http://www.w3.org/2000/svg"
-                      stroke="#4d72a1;">
-                      <g
-                        fill="none"
-                        fill-rule="evenodd"
-                        transform="translate(1 1)"
-                        stroke-width="2">
-                        <circle cx="22" cy="22" r="6" stroke-opacity="0">
-                          <animate
-                            attributeName="r"
-                            begin="1.5s"
-                            dur="3s"
-                            values="6;22"
-                            calcMode="linear"
-                            repeatCount="indefinite" />
-                          <animate
-                            attributeName="stroke-opacity"
-                            begin="1.5s"
-                            dur="3s"
-                            values="1;0"
-                            calcMode="linear"
-                            repeatCount="indefinite" />
-                          <animate
-                            attributeName="stroke-width"
-                            begin="1.5s"
-                            dur="3s"
-                            values="2;0"
-                            calcMode="linear"
-                            repeatCount="indefinite" />
-                        </circle>
-                        <circle cx="22" cy="22" r="6" stroke-opacity="0">
-                          <animate
-                            attributeName="r"
-                            begin="3s"
-                            dur="3s"
-                            values="6;22"
-                            calcMode="linear"
-                            repeatCount="indefinite" />
-                          <animate
-                            attributeName="stroke-opacity"
-                            begin="3s"
-                            dur="3s"
-                            values="1;0"
-                            calcMode="linear"
-                            repeatCount="indefinite" />
-                          <animate
-                            attributeName="stroke-width"
-                            begin="3s"
-                            dur="3s"
-                            values="2;0"
-                            calcMode="linear"
-                            repeatCount="indefinite" />
-                        </circle>
-                        <circle cx="22" cy="22" r="8">
-                          <animate
-                            attributeName="r"
-                            begin="0s"
-                            dur="1.5s"
-                            values="6;1;2;3;4;5;6"
-                            calcMode="linear"
-                            repeatCount="indefinite" />
-                        </circle>
-                      </g>
-                    </svg>
-                  </div>
-                  <div class="col-9">
-                    <h3 class="card-title mb-1">Loading data...</h3>
-                    <div class="text-muted">Working for {{ watchToHuman }} ...</div>
+                  <div class="col-12">
+                    <h3 class="card-title mb-1">Scanning library...</h3>
+                    <!-- <div class="text-muted">Working for {{ watchToHuman }} ...</div> -->
                     <div class="mt-3">
                       <div class="row g-2 align-items-center">
                         <!-- <div class="col-auto">
@@ -177,52 +105,36 @@
           </div>
 
           <!--
-              Block with account profile data
-              Waiting to start the process
-            -->
+            Block with account profile data
+            Waiting to start the process
+          -->
           <div
             v-if="process.ready && ui.step == 'prep'"
             class="container container-tight py-4">
             <div class="card card-md">
               <div class="card-body text-center">
                 <div class="mb-4">
-                  <h2 class="card-title mb-0">Steam library</h2>
-                  <p class="text-muted">Click to begin the import</p>
+                  <h2 class="mb-0">Your Steam library</h2>
+                  <p class="text-muted">Click to begin to scan your games</p>
                 </div>
                 <div class="mb-4">
                   <span
-                    class="avatar avatar-xl mb-3"
+                    class="avatar avatar-xl mb-2"
                     :style="`background-image: url('${
-                      account.provider?.data?.avatarfull || ''
+                      account.steam_data?.avatarfull || ''
                     }')`"></span>
-                  <h3 class="mb-0">{{ account.username }}</h3>
+                  <h3 class="card-title mb-0">
+                    {{ account.username }} on {{ module.store }}
+                  </h3>
                   <p class="text-muted">
-                    Steam ID
+                    SteamID
                     <code>{{ account.steam }}</code>
                   </p>
                 </div>
                 <div>
-                  <div class="btn btn-primary w-100" @click="doImport">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="icon icon-tabler icon-tabler-arrows-transfer-down"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                      stroke="currentColor"
-                      fill="none"
-                      stroke-linecap="round"
-                      stroke-linejoin="round">
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                      <path d="M17 3v6"></path>
-                      <path d="M10 18l-3 3l-3 -3"></path>
-                      <path d="M7 21v-18"></path>
-                      <path d="M20 6l-3 -3l-3 3"></path>
-                      <path d="M17 21v-2"></path>
-                      <path d="M17 15v-2"></path>
-                    </svg>
-                    Update your {{ importer.store }} library
+                  <div class="btn btn-primary w-100" @click="scan">
+                    <Icon class="me-2">ArrowsTransferDown</Icon>
+                    Scan your {{ module.store }} library
                   </div>
                 </div>
               </div>
@@ -230,15 +142,24 @@
           </div>
 
           <div v-if="ui.step == 'review'">
-            <div class="row row-deck row-cards mb-3">
+            <div class="row row-deck row-cards mb-5">
+              <!-- <div class="col-6">
+                <pre>
+IMPORT
+{{ appsToImport }}
+                </pre>
+              </div>
+              <div class="col-6">
+                <pre>
+IGNORE
+{{ appsToIgnore }}
+                </pre>
+              </div> -->
               <div class="col-sm-6 col-lg-4">
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex align-items-center">
-                      <div class="subheader">
-                        Found in your account
-                        <!-- Adding to your library -->
-                      </div>
+                      <div class="subheader">In your account (library)</div>
                     </div>
                     <!-- <div class="h1 mb-3">
                       {{ data.games.length }} / {{ data.library.length }}
@@ -246,46 +167,9 @@
                     </div> -->
                     <div class="d-flex align-items-baseline">
                       <div class="h2 mb-0 me-2 d-flex align-items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="icon icon-tabler icon-tabler-cards mr-2"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          stroke-width="2"
-                          stroke="currentColor"
-                          fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path
-                            d="M3.604 7.197l7.138 -3.109a.96 .96 0 0 1 1.27 .527l4.924 11.902a1 1 0 0 1 -.514 1.304l-7.137 3.109a.96 .96 0 0 1 -1.271 -.527l-4.924 -11.903a1 1 0 0 1 .514 -1.304z" />
-                          <path d="M15 4h1a1 1 0 0 1 1 1v3.5" />
-                          <path
-                            d="M20 6c.264 .112 .52 .217 .768 .315a1 1 0 0 1 .53 1.311l-2.298 5.374" />
-                        </svg>
-                        {{ data.games.length }} games
+                        <Icon class="mr-2 text-muted mt-1">Cards</Icon>
+                        {{ data.library.length }} games
                       </div>
-                      <!-- <div class="me-auto">
-                        <span class="text-green d-inline-flex align-items-center lh-1">
-                          8%
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="icon ms-1"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            stroke-width="2"
-                            stroke="currentColor"
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M3 17l6 -6l4 4l8 -8"></path>
-                            <path d="M14 7l7 0l0 7"></path>
-                          </svg>
-                        </span>
-                      </div> -->
                     </div>
                   </div>
                 </div>
@@ -294,29 +178,17 @@
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex align-items-center">
-                      <div class="subheader">New games found</div>
+                      <div class="subheader">
+                        New games found ({{ data.games.length }} -
+                        {{ data.library.length }})
+                      </div>
                     </div>
-                    <div class="h2 mb-3 d-flex align-items-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="icon icon-tabler icon-tabler-new-section mr-2"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        stroke-width="2"
-                        stroke="currentColor"
-                        fill="none"
-                        stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M9 12l6 0" />
-                        <path d="M12 9l0 6" />
-                        <path
-                          d="M4 6v-1a1 1 0 0 1 1 -1h1m5 0h2m5 0h1a1 1 0 0 1 1 1v1m0 5v2m0 5v1a1 1 0 0 1 -1 1h-1m-5 0h-2m-5 0h-1a1 1 0 0 1 -1 -1v-1m0 -5v-2m0 -5" />
-                      </svg>
-                      {{ data.appsToReview.length }}
+                    <div class="h2 mb-1 d-flex align-items-center">
+                      <Icon class="mr-2 text-muted mt-1">NewSection</Icon>
+                      {{ data.appsToReview.length }} new
+                      <br />
                     </div>
-                    <b-btn block>Review</b-btn>
+                    <!-- <b-btn block>Review</b-btn> -->
                   </div>
                 </div>
               </div>
@@ -325,12 +197,33 @@
                   <div class="card-body">
                     <div class="row">
                       <div class="col">
-                        <div class="subheader">Review</div>
-                        <div class="h1 mb-3">{{ data.appsToUpdate.length }} updating</div>
+                        <div class="d-flex align-items-center">
+                          <div class="subheader">updating</div>
+                        </div>
+                        <div class="h2 mb-1 d-flex align-items-center">
+                          <Icon class="mr-2 text-muted mt-1">Refresh</Icon>
+                          {{ data.appsToUpdate.length }}
+                        </div>
                       </div>
                       <div class="col">
-                        <div class="subheader">Review</div>
-                        <div class="h1 mb-3">{{ appsToImport.length }} importing</div>
+                        <div class="d-flex align-items-center">
+                          <div class="subheader">importing</div>
+                        </div>
+                        <div class="h2 mb-1 d-flex align-items-center">
+                          <Icon class="mr-2 text-muted mt-1">StepInto</Icon>
+                          {{ appsToImport.length }}
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="d-flex align-items-center">
+                          <div class="subheader">Ignoring</div>
+                        </div>
+                        <div class="h2 mb-1 d-flex align-items-center">
+                          <Icon class="mr-2 text-muted mt-1">SquareRotatedOff</Icon>
+                          {{ appsToIgnore.length }}
+                          <!-- <br />
+                          <span class="d-block text-muted">view</span> -->
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -340,10 +233,13 @@
 
             <div class="row mb-3 align-items-center" style="zoom: 0.9">
               <div class="col col-4">
-                <b-input v-model="table.filters.search" placeholder="Filter..."></b-input>
+                <b-input
+                  v-model="table.filters.search"
+                  placeholder="Filter..."
+                  clearable></b-input>
               </div>
-              <div class="col col-4">
-                <button type="button" class="btn">
+              <div class="col col-2">
+                <!-- <button type="button" class="btn mr-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="icon icon-tabler icon-tabler-circle-plus"
@@ -385,7 +281,6 @@
                       class="form-check-input m-0 me-2"
                       type="checkbox" />
                     Played
-                    <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
                   </label>
 
                   <label class="dropdown-item">
@@ -394,7 +289,6 @@
                       class="form-check-input m-0 me-2"
                       type="checkbox" />
                     Not played
-                    <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
                   </label>
                 </b-menu>
                 <b-btn
@@ -407,6 +301,7 @@
                   color="secondary"
                   @click="resetFilters">
                   Reset
+                  <Icon style="margin-right: 0; margin-left: 5px">SquareRoundedX</Icon>
                   <svg
                     style="margin-right: 0; margin-left: 5px"
                     xmlns="http://www.w3.org/2000/svg"
@@ -424,38 +319,48 @@
                     <path
                       d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"></path>
                   </svg>
-                </b-btn>
+                </b-btn> -->
               </div>
               <div class="col text-end">
-                <button type="button" class="btn">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="icon icon-tabler icon-tabler-checkbox"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M9 11l3 3l8 -8"></path>
-                    <path
-                      d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"></path>
-                  </svg>
+                <button
+                  v-if="ui.tab == 'appsToReview'"
+                  type="button"
+                  class="btn btn-ghost-dark">
+                  <Icon class="me-2">Checkbox</Icon>
                   Toggle all
                 </button>
-                <b-btn @click="doit">doit</b-btn>
+
+                <button class="btn dropdown-toggle pe-2">
+                  <!-- <span class="badge text-blue me-2">{{ tabs[ui.tab].count }}</span> -->
+                  {{ tabs[ui.tab].label }}
+                  <span class="badge text-blue mx-2">
+                    {{ tabs[ui.tab].count }}
+                  </span>
+                </button>
+                <b-menu position="end">
+                  <template v-for="(tab, i) in tabs" :key="'tab' + i">
+                    <label class="dropdown-item" @click="ui.tab = i">
+                      <!-- <input class="form-check-input m-0 me-2" type="checkbox" /> -->
+                      {{ tab.label }}
+                      <span class="badge text-blue ms-auto">
+                        {{ tab.count }}
+                      </span>
+                    </label>
+                  </template>
+                </b-menu>
               </div>
             </div>
             <div class="card">
               <div class="list-group card-list-group list-group-hoverable">
                 <div
-                  v-for="(app, i) in toReview"
+                  v-for="(app, i) in loopToReview"
                   :key="'game' + i"
-                  class="list-group-item"
-                  @click="controlApp(app, i)">
+                  class="list-group-item cursor-pointer"
+                  style="border-style: solid"
+                  :class="{
+                    active: app.will_import,
+                  }"
+                  @click="flagAs('import', app)">
                   <div class="row g-4 align-items-center">
                     <!-- <div class="col-auto fs-3">
                         <label class="form-check form-switch">
@@ -464,37 +369,67 @@
                         </label>
                       </div> -->
 
-                    <div v-if="app.will_import" class="col-auto">
+                    <div v-if="!app.will_ignore" class="col-auto">
                       <img
                         loading="lazy"
-                        :src="`https://cdn.akamai.steamstatic.com/steam/apps/${app.appid}/capsule_184x69.jpg?t=1699291031`"
+                        :src="`https://cdn.akamai.steamstatic.com/steam/apps/${
+                          app.appid || app.steam_id
+                        }/capsule_184x69.jpg?t=1699291031`"
                         class="b-poster"
                         style="max-width: 120px" />
                     </div>
                     <div class="col">
-                      <span class="d-block mb-1">
+                      <p class="d-block mb-1">
+                        <span v-if="app.will_ignore" class="badge bg-red-lt me-2">
+                          Will be ignored
+                        </span>
                         {{ app.name }}
-                      </span>
-                      <div class="text-secondary">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="icon icon-tabler icon-tabler-clock-hour-3"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          stroke-width="2"
-                          stroke="currentColor"
-                          fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          style="zoom: 0.9">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
-                          <path d="M12 12h3.5"></path>
-                          <path d="M12 7v5"></path>
-                        </svg>
+                      </p>
 
-                        Played {{ format.minToHours(app.playtime_forever) }}
+                      <template v-if="ui.tab == 'appsToImport'">
+                        <small class="text-muted">Will be added to your library</small>
+                      </template>
+
+                      <template v-if="ui.tab == 'appsToIgnore'">
+                        <small class="text-muted text-red">
+                          Will be ignored and won't be shown again
+                        </small>
+                      </template>
+
+                      <template v-if="ui.tab == 'appsToUpdate'">
+                        <div v-if="app.toUpdate.owned" class="mb-2">
+                          <span class="badge bg-teal-lt text-green">
+                            + Marking the game as owned in your library
+                          </span>
+                        </div>
+
+                        <div v-if="app.toUpdate.playtime" class="mb-2">
+                          <span class="badge bg-teal-lt text-green">
+                            + Updating playtime on Steam from "xx" to
+                            <strong>
+                              {{ dates.minToHours(app.playtime_forever) }}
+                            </strong>
+                          </span>
+                        </div>
+
+                        <div v-if="app.toUpdate.last_played" class="mb-2">
+                          <span class="badge bg-teal-lt text-green">
+                            + Updating your last played date on steam to
+                            {{ app.last_played }}
+                          </span>
+                        </div>
+                      </template>
+
+                      <template v-if="ui.tab == 'appsToReview'">
+                        <small class="text-muted">
+                          <Icon size="14" style="transform: translateY(-2px)">
+                            ClockHour3
+                          </Icon>
+                          Played {{ dates.minToHours(app.playtime_forever) }}
+                        </small>
+                      </template>
+
+                      <!-- <span class="px-1">&nbsp;</span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="icon icon-tabler icon-tabler-clock-record"
@@ -505,23 +440,34 @@
                           stroke="currentColor"
                           fill="none"
                           stroke-linecap="round"
-                          stroke-linejoin="round">
+                          stroke-linejoin="round"
+                          style="zoom: 0.9">
                           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                           <path d="M21 12.3a9 9 0 1 0 -8.683 8.694"></path>
                           <path d="M12 7v5l2 2"></path>
                           <path d="M19 19m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
                         </svg>
-                        last played {{ dates.unixToDiff(app.rtime_last_played) }}
-                      </div>
+                        last played {{ dates.unixToDiff(app.rtime_last_played) }} -->
                     </div>
                     <!-- <div class="col-auto text-secondary">
                         03:41
                       </div> -->
                     <div class="col-auto">
                       <input
-                        v-model="app.will_import"
+                        disabled
+                        :checked="app.will_import"
                         type="checkbox"
                         class="form-check-input disabled" />
+                    </div>
+                    <div
+                      v-tippy="{
+                        content:
+                          'Click to ignore.<br>Ignored games will not be shown again.',
+                        allowHTML: true,
+                      }"
+                      class="col-auto text-muted cursor-pointer"
+                      @click.stop="flagAs('ignore', app)">
+                      <Icon>SquareRotatedOff</Icon>
                     </div>
                     <!-- <div class="col-auto lh-1">
                         <div class="dropdown">
@@ -542,60 +488,82 @@
             <div class="row align-items-center p-2">
               <div class="col">
                 <small class="text-muted">
-                  {{ data.games.filter((item) => item.will_import).length }} of
-                  {{ data.games.length }} games selected
+                  {{
+                    table.perPage < data.games.length ? table.perPage : data.games.length
+                  }}
+                  of {{ data.games.length }}
+                </small>
+
+                <small class="text-muted">
+                  Found {{ data.appsToReview.length }} new games,
+                  <br />
+                  of {{ data.games.length }} in your {{ module.store }} library
                 </small>
               </div>
               <div class="col col-4 text-end">
-                <b-btn variant="outline" color="secondary" @click="table.perPage += 50">
+                <b-btn
+                  v-if="table.perPage < data.games.length"
+                  variant="outline"
+                  color="secondary"
+                  @click="table.perPage += 50">
                   View 50 more
                 </b-btn>
 
-                <b-btn variant="outline" color="secondary" @click="table.perPage = 50000">
+                <b-btn
+                  v-if="table.perPage < data.games.length"
+                  variant="outline"
+                  color="secondary"
+                  @click="table.perPage = 50000">
                   View all
                 </b-btn>
               </div>
             </div>
           </div>
+
+          <!--
+            Block with account profile data
+            Waiting to start the process
+          -->
+          <div v-if="ui.step == 'complete'" class="container container-tight py-4">
+            <div class="card card-md">
+              <div class="card-body text-center">
+                <div class="mb-4">
+                  <h2 class="mb-0">awesome</h2>
+                  <p class="text-muted">Done</p>
+                </div>
+                <div class="mb-4">added x games, updated X games</div>
+                <div>
+                  <div class="btn btn-primary w-100">
+                    <Icon class="me-2">Apps</Icon>
+                    View your library and backlog
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="col-lg-4">
-          <div class="card">
+          <div class="card" style="position: sticky; top: 20px">
             <div class="card-body">
               <div class="d-flex align-items-center mb-0">
                 <div class="me-3">
-                  <!-- Download SVG icon from http://tabler-icons.io/i/scale -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="icon icon-tabler icon-tabler-brand-steam"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path
-                      d="M16.5 5a4.5 4.5 0 1 1 -.653 8.953l-4.347 3.009l0 .038a3 3 0 0 1 -2.824 3l-.176 0a3 3 0 0 1 -2.94 -2.402l-2.56 -1.098v-3.5l3.51 1.755a2.989 2.989 0 0 1 2.834 -.635l2.727 -3.818a4.5 4.5 0 0 1 4.429 -5.302z"></path>
-                    <circle cx="16.5" cy="9.5" r="1" fill="currentColor"></circle>
-                  </svg>
+                  <Icon size="26">BrandSteam</Icon>
                 </div>
                 <div>
                   <small class="text-muted">
-                    v.{{ importer.version }} by {{ importer.author }}
+                    Version {{ module.version }} by {{ module.author }}
                   </small>
-                  <h3 class="lh-1">{{ importer.name }}</h3>
+                  <h3 class="lh-1">{{ module.name }}</h3>
                 </div>
               </div>
               <div class="text-muted mb-1">
-                {{ importer.description }}
+                {{ module.description }}
               </div>
             </div>
             <div class="card-body d-none">
               <h4 class="mb-1">What will be loaded</h4>
               <ul class="list-unstyled space-y-1">
-                <li v-for="(el, i) in importer.does" :key="i">
+                <li v-for="(el, i) in module.does" :key="i">
                   <!-- Download SVG icon from http://tabler-icons.io/i/check -->
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -616,7 +584,7 @@
               </ul>
               <h4 class="mb-1">What cannot be imported</h4>
               <ul class="list-unstyled space-y-1">
-                <li v-for="(el, i) in importer.doesnot" :key="i">
+                <li v-for="(el, i) in module.doesnot" :key="i">
                   <!-- Download SVG icon from http://tabler-icons.io/i/x -->
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -679,6 +647,7 @@
                 </li>
               </ul>
             </div>
+
             <div class="card-body">
               <ul class="steps steps-vertical">
                 <li
@@ -691,7 +660,7 @@
                 </li>
               </ul>
               <!-- <ul class="list-unstyled space-y-1">
-                  <li v-for="(el, i) in importer.steps" :key="i">
+                  <li v-for="(el, i) in module.steps" :key="i">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green" width="24" height="24"
                       viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                       stroke-linejoin="round">
@@ -701,6 +670,16 @@
                     {{ el }}
                   </li>
                 </ul> -->
+            </div>
+            <div v-if="['review', 'complete'].includes(ui.step)" class="card-body">
+              <b-btn
+                block
+                :color="ui.step !== 'review' ? 'secondary' : 'success'"
+                :disabled="ui.step !== 'review'"
+                @click="store">
+                Save your library
+              </b-btn>
+              <!-- v-if="ui.step == 'complete'" <b-btn v-else block color="success">View library</b-btn> -->
             </div>
             <div class="card-footer text-muted">
               This importer is open source. If you want to know more or are concerned
@@ -712,7 +691,7 @@
           </div>
 
           <!-- <pre>
-            {{ importer.manifest }}
+            {{ module.manifest }}
             </pre> -->
         </div>
       </div>
@@ -726,7 +705,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Thu Nov 16 2023
+ * Modified: Wed Jan 10 2024
  **/
 
 import steam from '~/modules/importers/steam'
@@ -744,609 +723,25 @@ export default {
   name: 'LibraryImporter',
   data() {
     return {
-      account: {}, // The user account -> store to import
-      importer: {}, // the importer instance, plugin or module
       logs: [], // log array for the whole process
+      module: {}, // the plugin / module instance
+      account: {}, // The user account -> store to import
 
       data: {
         user: {}, // Raw of the imported userdata
-        games: [
-          {
-            appid: 211420,
-            name: 'DARK SOULS™: Prepare To Die Edition',
-            playtime_forever: 1286,
-            img_icon_url: 'a24804c6c8412c8cd9d50efd06bf03fa58ff80a9',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1418686838,
-            sort_as: 'Dark Souls',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 204300,
-            name: 'Awesomenauts',
-            playtime_forever: 536,
-            img_icon_url: '4996933171d0804bd0ceb7b9a0e224b3139d18ba',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1374511517,
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 217200,
-            name: 'Worms Armageddon',
-            playtime_forever: 1,
-            img_icon_url: '68c6d17bde9c578d91dd1e207b58eb4d8308ce40',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1417637852,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 98800,
-            name: 'Dungeons of Dredmor',
-            playtime_forever: 195,
-            img_icon_url: '4924fdf2a9c2cf45bd7d1dcfaa4c039c60b9d410',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1439730943,
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            has_leaderboards: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 214150,
-            name: 'Galactic Civilizations I: Ultimate Edition',
-            playtime_forever: 0,
-            img_icon_url: '66df956909f51af564f8d6086c201004ab81aa51',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 214340,
-            name: 'Deponia',
-            playtime_forever: 113,
-            img_icon_url: '48a94d33cae6065b0bedf7eefd01bd5321c7c729',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1392246823,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 209080,
-            name: 'Guns of Icarus Online',
-            playtime_forever: 305,
-            img_icon_url: '968e8c0b7a55f0229392278123dfd486140c9421',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1440031829,
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 204220,
-            name: 'Snapshot',
-            playtime_forever: 0,
-            img_icon_url: '322122b6f0560b73c5c36ff5009907d8087fd146',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            capsule_filename: 'portrait.png',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 204630,
-            name: 'Retro City Rampage™ DX',
-            playtime_forever: 336,
-            img_icon_url: '423b87d4a5a00ff6e807558e565b0b515fadf61b',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1456354383,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            has_leaderboards: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 49520,
-            name: 'Borderlands 2',
-            playtime_forever: 13968,
-            img_icon_url: 'a3f4945226e69b6196074df4c776e342d3e5a3be',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1561586642,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 205100,
-            name: 'Dishonored',
-            playtime_forever: 311,
-            img_icon_url: '74f8ee1ba536e0759e64a9bf801fc013e16c8dd1',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1427991765,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            has_leaderboards: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 730,
-            name: 'Counter-Strike 2',
-            playtime_forever: 1409,
-            img_icon_url: '8dbc71957312bbd3baea65848b545be9eae2a355',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1466447415,
-            has_workshop: true,
-            has_market: true,
-            has_dlc: true,
-            will_import: true,
-            content_descriptorids: [2, 5],
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 204120,
-            name: 'LEGO® Harry Potter: Years 5-7',
-            playtime_forever: 0,
-            img_icon_url: 'eb9617f00259ad2dee791ec91b4862447080f0cb',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 213330,
-            name: 'LEGO® Batman™ 2: DC Super Heroes',
-            playtime_forever: 0,
-            img_icon_url: '92446ccf0abc6ab3e716251c0004acda5c3b13fd',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 33600,
-            name: 'Broken Sword 2 - the Smoking Mirror: Remastered',
-            playtime_forever: 0,
-            img_icon_url: 'a136ba9e8ed89c49c23a55293f591a474cb6cdb1',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 214790,
-            name: 'The Basement Collection',
-            playtime_forever: 0,
-            img_icon_url: '0bd402578e431f679c9709f34b4ecfe334914600',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            capsule_filename: 'portrait.png',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 72000,
-            name: 'Closure',
-            playtime_forever: 179,
-            img_icon_url: '7da11a2030451f15450452b6c5f0aeb45b39fbd3',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1439571914,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 215510,
-            name: 'Rocketbirds: Hardboiled Chicken',
-            playtime_forever: 115,
-            img_icon_url: 'be9c980e8243b58aad6b568aa47dc1418be79fd4',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1485462780,
-            capsule_filename: 'portrait.png',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 200510,
-            name: 'XCOM: Enemy Unknown',
-            playtime_forever: 1606,
-            img_icon_url: '48be2fee1d0d511b5c7313e1359beafd36ea92ed',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1389694287,
-            sort_as: 'XCOM 1: Enemy Unknown',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 211260,
-            name: 'They Bleed Pixels',
-            playtime_forever: 248,
-            img_icon_url: '902560daa6a68b17e443a96652dfef1066b0eb34',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1372951339,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            has_leaderboards: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 216290,
-            name: 'Gateways',
-            playtime_forever: 0,
-            img_icon_url: '3cc65892ba65ac6eb9201ad77db3d11327e222e6',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            capsule_filename: 'portrait.png',
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 65300,
-            name: 'Dustforce',
-            playtime_forever: 340,
-            img_icon_url: '7823652dcb6b11c024003ec590c17f461637c66f',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1439743076,
-            capsule_filename: 'portrait.png',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 209540,
-            name: 'Strike Suit Zero',
-            playtime_forever: 77,
-            img_icon_url: 'b30877270af7d5775ce626ef9bacab727ff979f3',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1392161616,
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            has_leaderboards: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 214970,
-            name: 'Intrusion 2',
-            playtime_forever: 16,
-            img_icon_url: 'e63fe503a18fc70c3c759e96341a406dc1c8cbe5',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1370407835,
-            capsule_filename: 'portrait.png',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 206440,
-            name: 'To the Moon',
-            playtime_forever: 184,
-            img_icon_url: '6e29eb4076a6253fdbccb987a2a21746d2df54d7',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1441203112,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 219740,
-            name: "Don't Starve",
-            playtime_forever: 2481,
-            img_icon_url: '03fe647df40dccc4d19bf42a0185cd3e6b9f2953',
-            playtime_windows_forever: 16,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1573407589,
-            has_workshop: true,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 322330,
-            name: "Don't Starve Together",
-            playtime_forever: 2151,
-            img_icon_url: 'a80aa6cff8eebc1cbc18c367d9ab063e1553b0ee',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1558783496,
-            will_import: true,
-            has_workshop: true,
-            has_market: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 220780,
-            name: 'Thomas Was Alone',
-            playtime_forever: 63,
-            img_icon_url: '14a9056a76a256fbcfe833dd1420d01eeba14abc',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1405961995,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 7830,
-            name: 'Men of War',
-            playtime_forever: 0,
-            img_icon_url: 'bbaf5e7ea25bdd0235311558d95570dbd7e90348',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 220860,
-            name: 'McPixel',
-            playtime_forever: 263,
-            img_icon_url: '236a6f77afff3814552ae2a6ccadbf84d992a252',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1373900053,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: false,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 221260,
-            name: 'Little Inferno',
-            playtime_forever: 113,
-            img_icon_url: '478d0b4bbe94d5d6c5248e07f0da75cbe9f6ba95',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 113,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1587062081,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 219910,
-            name: "Edna & Harvey: Harvey's New Eyes",
-            playtime_forever: 94,
-            img_icon_url: 'df160221c5be01797610ac2e452404c01e968b59',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1392591596,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 204360,
-            name: 'Castle Crashers',
-            playtime_forever: 534,
-            img_icon_url: '9b7625f9b70f103397fd0416fd92abb583db8659',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1527498497,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 213610,
-            name: 'Sonic Adventure™ 2 ',
-            playtime_forever: 0,
-            img_icon_url: '0ff2b133493b0bf7f1c16a38a83e7053f0b90f2d',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 0,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 7510,
-            name: 'X-Blades',
-            playtime_forever: 179,
-            img_icon_url: '311b4363fd29a55fbdd23f515e409785b520b6e8',
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1446487625,
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-          {
-            appid: 203140,
-            name: 'Hitman: Absolution',
-            playtime_forever: 226,
-            img_icon_url: 'fe5e36ac1548793eb48b6b25b701b37d86fb94a3',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1439322140,
-            sort_as: 'Hitman 5: Absolution',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-        ], // Raw library games from the importer
-        wishlist: [], // Raw wishlist games from the importer
+        games: [], // Raw library games from the scan process
+        wishlist: [], // Raw wishlist games from the scan
 
+        libIDs: [], // Array of store_ids of the library
         library: [], // Preloaded content of user library
-        appsToReview: [], // Array of apps to review, only new apps not in library
-        appsToUpdate: [], // Array of apps already in store, that have different values in playtime or last_played
+        appsToReview: [], // Processed array of apps missing in library
+        appsToUpdate: [], // Processed array of apps already in library, that needs to update fields
       },
 
       // helper object to control ui
       process: {
         time: 0,
-        ready: true,
-
+        ready: false,
         progress: 0,
       },
 
@@ -1363,8 +758,15 @@ export default {
 
       ui: {
         error: null,
+        knownErrors: [
+          // Account provider ID or provider object is missing from $auth
+          'account:provider',
+        ],
 
-        step: 'review', //'prep',
+        step: 'prep',
+        tab: 'appsToReview',
+
+        // step: 'review',
         watch: null,
         loading: false,
         showlogs: false,
@@ -1373,24 +775,35 @@ export default {
   },
 
   computed: {
-    watchToHuman() {
-      if (this.process.time === 0) return '0s'
-      // return tools.secondsToHuman(this.process.time)
+    ...mapStores(useDataStore, useJournalStore),
 
-      if (this.process.time < 60) return `${this.process.time} seconds`
-      if (this.process.time < 60 && this.process.time > 3600)
-        return `${Math.floor(this.process.time / 60)} minute`
-      if (this.process.time < 3600 * 2)
-        return `${Math.floor(this.process.time / 60)} minutes`
+    // watchToHuman() {
+    //   if (this.process.time === 0) return '0s'
+    //   // return tools.secondsToHuman(this.process.time)
 
-      return ''
+    //   if (this.process.time < 60) return `${this.process.time} seconds`
+    //   if (this.process.time < 60 && this.process.time > 3600)
+    //     return `${Math.floor(this.process.time / 60)} minute`
+    //   if (this.process.time < 3600 * 2)
+    //     return `${Math.floor(this.process.time / 60)} minutes`
+
+    //   return ''
+    // },
+
+    platform() {
+      return this.$route.params?.platform || null
     },
 
     steps() {
       const steps = {
+        // check: {
+        //   action: 'Prepare modules',
+        //   desc: 'Verifying requeriments',
+        // },
+
         prep: {
-          action: 'Preparation',
-          desc: 'Verifying requeriments',
+          action: 'Preparing modules',
+          desc: 'Verifying requeriments and account',
         },
         games: {
           action: 'Import games',
@@ -1405,45 +818,71 @@ export default {
           desc: 'Review the imported data',
         },
         complete: {
-          action: 'Completion',
+          action: 'Library updated 🎉',
           desc: 'Import process completed',
         },
       }
 
-      if (this.importer?.games !== true) {
+      if (this.module?.games !== true) {
         delete steps.games
       }
 
-      if (this.importer?.wishlist !== true) {
+      if (this.module?.wishlist !== true) {
         delete steps.wishlist
       }
 
       return steps
     },
 
-    /**
-     * appsToReview:
-     *  Array of apps to review, only new apps not in library
-     *  Review means the user will check the will_import or will_ignore
-     *  Also have 'exists' and 'is_updated'
+    tabs() {
+      // > view to review > view played, view unplayed > view to ignore > view to
+      //           update > import all > import none
 
-     * appsToImport:
-     *  Array of apps to import, only the ones with will_import or will_ignore
+      const tabs = {
+        appsToReview: {
+          label: 'new games',
+          object: 'data.appsToReview',
+          count: this.data.appsToReview.length,
+        },
 
-     * appsToUpdate:
-     *  Array of apps already in store, that have different dates in playtime or last_played
-     */
+        appsToImport: {
+          label: 'to be imported',
+          object: 'appsToImport',
+          count: this.appsToImport.length,
+        },
 
-    appsToImport() {
-      return ['wip']
+        appsToUpdate: {
+          label: 'to be updated',
+          object: 'data.appsToUpdate',
+          count: this.data.appsToUpdate.length,
+        },
+
+        appsToIgnore: {
+          label: 'to be ignored',
+          object: 'appsToIgnore',
+          count: this.appsToIgnore.length,
+        },
+      }
+
+      return tabs
     },
 
-    toReview() {
+    loopToReview() {
       if (this.data.games.length === 0) return []
 
+      let loop = []
       const items = []
 
-      this.data.games.forEach((el, i) => {
+      let source = this.tabs[this.ui.tab].object
+
+      if (source.indexOf('data.') == -1) {
+        loop = this[source]
+      } else {
+        source = source.replace('data.', '')
+        loop = this.data[source]
+      }
+
+      loop.forEach((el, i) => {
         if (items.length > this.table.perPage) return false
 
         if (
@@ -1455,58 +894,64 @@ export default {
         items.push({
           ...el,
           index: i,
-          will_import: el.will_import,
         })
       })
 
       return items
     },
 
-    /**
-     * {
-            appid: 211420,
-            name: 'DARK SOULS™: Prepare To Die Edition',
-            playtime_forever: 1286,
-            img_icon_url: 'a24804c6c8412c8cd9d50efd06bf03fa58ff80a9',
-            has_community_visible_stats: true,
-            playtime_windows_forever: 0,
-            playtime_mac_forever: 0,
-            playtime_linux_forever: 0,
-            rtime_last_played: 1418686838,
-            sort_as: 'Dark Souls',
-            has_workshop: false,
-            has_market: false,
-            will_import: true,
-            has_dlc: true,
-            playtime_disconnected: 0,
-          },
-     */
-    toImport() {
+    //+-------------------------------------------------
+    // appsToImport()
+    // Array of apps that will be imported
+    // Only apps with will_import === true
+    // basic object with uuid, store_id and name
+    // -----
+    // Created on Thu Dec 14 2023
+    //+-------------------------------------------------
+    appsToImport() {
       const items = []
 
-      this.data.games.forEach((el, i) => {
-        if (!el.will_import) return false
-
-        if (i % 3 === 0) el.appid = null
-
-        items.push({
-          uuid: this.$uuid(),
-          steam_id: el.appid,
-          name: el.name,
+      this.data.appsToReview
+        .filter((el) => el.will_import === true)
+        .forEach((el) => {
+          items.push({
+            // uuid: this.$uuid(),
+            [this.platform + '_id']: el.appid,
+            name: el.name,
+            is: {
+              owned: true,
+            },
+            data: el,
+          })
         })
-      })
 
       return items
     },
-  },
 
-  mounted() {
-    this.init()
-  },
+    //+-------------------------------------------------
+    // appsToIgnore()
+    // -----
+    // Created on Thu Dec 14 2023
+    //+-------------------------------------------------
+    appsToIgnore() {
+      const items = []
 
-  unmounted() {
-    log('importer', 'unmounted()')
-    clearInterval(this.ui.watch)
+      this.data.appsToReview
+        .filter((el) => el.will_ignore === true)
+        .forEach((el) => {
+          items.push({
+            // uuid: this.$uuid(),
+            [this.platform + '_id']: el.appid,
+            name: el.name,
+            is: {
+              owned: true,
+              ignored: true,
+            },
+          })
+        })
+
+      return items
+    },
   },
 
   methods: {
@@ -1524,17 +969,21 @@ export default {
       const now = new Date().getTime()
       log(`${message}`)
 
-      if (type === 'error') {
-        this.ui.error = message
-        this.ui.showlogs = true
-      }
-
       this.logs.unshift({
         type,
         time: now,
         message,
         data,
       })
+
+      if (type == 'error') {
+        if (this.ui.knownErrors.includes(data)) {
+          this.ui.error = data
+        } else {
+          this.ui.error = message
+          this.ui.showlogs = true
+        }
+      }
     },
 
     resetFilters() {
@@ -1543,18 +992,32 @@ export default {
       this.table.filters.search = ''
     },
 
-    controlApp(item) {
-      this.data.games[item.index].will_import = !item.will_import
+    flagAs(flag, app) {
+      const source = this.data.appsToReview.find((el) => el.appid === app.appid)
+
+      if (flag === 'ignore') {
+        source.will_import = false
+        source.will_ignore = !source.will_ignore
+      }
+
+      if (flag === 'import') {
+        source.will_ignore = false
+        source.will_import = !source.will_import
+      }
     },
 
+    // controlApp(item) {
+    //   this.data.games[item.index].will_import = !item.will_import
+    // },
+
     //+-------------------------------------------------
-    // doImport()
+    // import()
     // Main call that will execute the importing methods
     // available on the module
     // -----
     // Created on Thu Dec 01 2022
     //+-------------------------------------------------
-    async doImport() {
+    async scan() {
       log(`🧶 Starting data import...`)
       this.ui.loading = true
       this.ui.step = 'games'
@@ -1577,60 +1040,183 @@ export default {
       }
 
       console.warn(this.data)
-      this.ui.loading = true
+      this.ui.loading = false
 
       this.review()
     },
 
+    //+-------------------------------------------------
+    // review()
+    // Generate helper arrays with prepared data
+    // -----
+    // Created on Mon Nov 20 2023
+    //+-------------------------------------------------
     review() {
-      this.data.games = this.data.games.slice(0, 30)
       this.ui.step = 'review'
-    },
 
-    async doit() {
-      this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
-      const libraryKeys = this.data.library.reduce((acc, el) => {
+      this.data.libIDs = this.data.library.reduce((acc, el) => {
         acc[el.steam_id] = el
         return acc
       }, {})
+      // console.warn(this.data.libIDs)
 
-      this.data.appsToReview = this.data.games.filter(
-        (game) => !(game.appid in libraryKeys)
-      )
+      //+-------------------------------------------------
+      // Categorize found games with the library
+      // And create two new groups: review and update
+      //+-------------------------------------------------
+      this.data.games.forEach((app) => {
+        if (app.appid in this.data.libIDs) {
+          // <- match by store_id instead of appid
+          let add = false
+          const lib = this.data.libIDs[app.appid]
 
+          app.toUpdate = {}
+
+          if (!lib.is?.owned) {
+            add = true
+            app.toUpdate.owned = true
+          }
+
+          if (lib.playtime?.steam !== app.playtime_forever) {
+            add = true
+            app.toUpdate.playtime = {
+              from: lib.playtime?.steam,
+              to: app.playtime_forever,
+            }
+          }
+
+          if (lib.last_played?.steam !== app.rtime_last_played) {
+            add = true
+            app.toUpdate.last_played = {
+              from: lib.last_played?.steam,
+              to: app.rtime_last_played,
+            }
+          }
+
+          if (add) this.data.appsToUpdate.push(app)
+        } else {
+          app.will_import = false
+          app.will_ignore = false
+
+          this.data.appsToReview.push(app)
+        }
+      })
+
+      this.data.appsToReview.sort((a, b) => {
+        // Primary sort by 'playtime_forever'
+        const diff = b.playtime_forever - a.playtime_forever
+        if (diff !== 0) return diff
+
+        // Secondary sort by 'name' (alphabetically)
+        if (a.name < b.name) return -1
+        if (a.name > b.name) return 1
+        return 0
+      })
+
+      console.warn('reviewing apps')
+      console.warn('appsToReview', this.data.appsToReview)
+      console.warn('appsToUpdate', this.data.appsToUpdate)
+    },
+
+    async doit() {
       // This will be done in the future
       // this.data.appsToUpdate = this.data.games.filter((game) => {
       //   if (!(game.appid in libraryKeys)) return false
-
       //   const lib = libraryKeys[game.appid]
-      //   if (lib.playtime_forever !== game.playtime_forever) return true
-      //   if (lib.rtime_last_played !== game.rtime_last_played) return true
-
       //   return false
       // })
-
       // // const toimport = this.data.games.filter((el) => el.will_import === true)
       // console.warn('doit', this.toImport[0])
       // console.warn('we have', this.toImport.length)
-
       // this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
       // console.warn(`📚 Library loaded`, this.data.library, this.data.library.length)
-
       // debugger
-
       // const xhr = await this.$db.games.bulkPut(this.toImport)
       // console.warn('xhr', xhr)
     },
 
-    async import() {
+    //+-------------------------------------------------
+    // store()
+    // Process:
+    // - appsToImport
+    // - appsToUpdate
+    // - appsToIgnore
+    // -----
+    // Created on Thu Dec 14 2023
+    //+-------------------------------------------------
+    async store() {
+      const payload = []
+
+      await this.storeNewGames()
+      // this.updateExistingGames()
+
+      const keys = this.appsToImport.map((el) => el.uuid)
+      this.journalStore.add({
+        event: 'added',
+        data: {
+          store: this.module.store,
+          games: keys,
+        },
+      })
+
+      this.ui.step = 'complete'
+      return
+
+      this.data.appsToReview
+        .filter((el) => el.will_import === true)
+        .forEach((el) => {
+          const app = {
+            uuid: this.$uuid(),
+            steam_id: el.appid,
+            name: el.name,
+          }
+
+          if (app.will_ignore) {
+            app.ignored = true
+          }
+          payload.push(app)
+        })
+
       // const toimport = this.data.games.filter((el) => el.will_import === true)
-      console.warn('doit', this.toImport[0])
-      console.warn('we have', this.toImport.length)
+      console.warn('doit', payload[0])
+      console.warn('we have', payload.length)
 
       debugger
+    },
 
-      const xhr = await this.$db.games.bulkPut(this.toImport)
-      console.warn('xhr', xhr)
+    //+-------------------------------------------------
+    // storeNewGames()
+    // Take appsToImport and appsToIgnore
+    // and store them in the data store
+    // -----
+    // Created on Fri Dec 22 2023
+    //+-------------------------------------------------
+    async storeNewGames() {
+      const items = []
+
+      this.appsToImport.forEach((el) => {
+        let app = this.dataStore.prepareToStore(el)
+        app = steam.prepareToStore(app)
+        items.push(app)
+      })
+
+      this.appsToIgnore.forEach((el) => {
+        const app = this.dataStore.prepareToStore(el, 'toIgnore')
+        items.push(app)
+      })
+      debugger
+      this.dataStore.store(items)
+    },
+
+    updateExistingGames() {
+      const items = []
+
+      // call a method in steam.js
+      // that adds playtime (here and in storenewgames)
+      // if (lib.playtime_forever !== game.playtime_forever) return true
+      //   if (lib.rtime_last_played !== game.rtime_last_played) return true
+
+      console.warn('going to update', items)
     },
 
     //+-------------------------------------------------
@@ -1641,13 +1227,13 @@ export default {
     // Created on Sat Oct 28 2023
     //+-------------------------------------------------
     async connect() {
-      log('importer', 'connect()')
+      log('⬇️ importer', 'connect()')
 
       let connected = false
-      this.importer = steam.manifest
       importer = steam
 
       log('Manifest loaded', steam.manifest)
+      log('Steps of the importing process', Object.keys(this.steps).join(', '))
 
       try {
         connected = importer.connect(this.account, _axios, this._log)
@@ -1668,34 +1254,42 @@ export default {
     // - Detects if the platform is valid
     // - Detects that the requested importer is present and available
     // - Detect if the user is logged in
-    // - Also detects the browser has support for IndexedDB
     // - And finally detects that the importer has the required methods
     // -----
     // Created on Sat Oct 28 2023
+    // Updated on Wed Dec 13 2023
     //+-------------------------------------------------
     detect() {
-      log('importer', 'detect()')
+      log('⬇️ importer', 'detect()')
 
       const { platform } = this.$route.params
       this._log(`🎨 Platform ID: ${platform}`)
 
-      if (this.$auth.user.isLogged || this.$auth.user.id == undefined) {
-        this._log('You need to login first', 'error')
-        return false
-      }
-
-      this.account = { ...this.$auth.api }
-      this.account.provider = this.account.providers.find(
-        (el) => el.provider === platform
-      )
-      this.account.bearer = this.$auth.bearer
-
       if (this.$route.params.platform !== 'steam') return false
 
       if (steam == undefined) {
-        this._log('The Steam instance is not available', 'error')
+        this._log('The Steam importer plugin is not available', 'error')
         return false
       }
+
+      this.module = steam.manifest
+
+      if (
+        !this.$auth.bearer ||
+        !this.$auth.user[platform] ||
+        !this.$auth.user[platform + '_data']
+      ) {
+        this._log(
+          'User needs to login with provider - code: [account:provider]',
+          'error',
+          'account:provider'
+        )
+        return false
+      }
+
+      this.account = { ...this.$auth.user }
+      this.account.bearer = this.$auth.bearer
+      this.account.provider = this.account.steam_data
 
       if (
         steam.getUserdata === undefined ||
@@ -1716,59 +1310,19 @@ export default {
     async init() {
       window.dev = this
 
-      log('importer', 'init()')
+      log('⬇️ importer', 'init()')
       this._log('✨ Initializing the importer')
 
       if (this.detect()) await this.connect()
-
-      this.ui.watch = setInterval(() => {
-        this.process.time++
-        if (this.process.time <= 3) log(this.process.time)
-      }, 1000)
     },
   },
+
+  mounted() {
+    this.init()
+  },
+
+  unmounted() {
+    log('⬇️ importer', 'unmounted()')
+  },
 }
-
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// // Data
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// // Computed
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// // Methods
-// //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// //+-------------------------------------------------
-// // init()
-// // Loads and registers the route importer
-// // And calls first register method in it
-// // -----
-// // Created on Fri Dec 02 2022
-// //+-------------------------------------------------
-// let init = () => {
-
-//   importer = {
-//     name: steam.name,
-//     icon: steam.icon,
-//     author: steam.author,
-//     version: steam.version,
-//     description: steam.description,
-
-//     steps: steam.steps,
-//     imports: steam.imports,
-//     not_imports: steam.not_imports,
-//   }
-
-//   ui.step = 0
-//   log('🆗 Importer ready to use')
-//   console.warn(importer)
-
-//   watch = setInterval(() => {
-//     ui.time++
-//     if (ui.time <= 3) console.warn(ui.time)
-//   }, 1000)
-// }
 </script>

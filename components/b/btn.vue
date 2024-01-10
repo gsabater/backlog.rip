@@ -1,7 +1,11 @@
 <template>
-  <button :class="colorAndVariant">
+  <!-- <pre v-if="false">
+  layout: {{ layout }}
+  Attrs: {{ $attrs }}
+  </pre> -->
+  <component v-bind="$attrs" :is="component" :to="to" :class="colorAndVariant">
     <slot />
-  </button>
+  </component>
 </template>
 
 <script>
@@ -10,11 +14,13 @@
  * @desc:    https://preview.tabler.io/buttons.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Wed Nov 15 2023
+ * Modified: Thu Jan 04 2024
  **/
+import { NuxtLink } from '#components'
 
 export default {
   name: 'TablerBtn',
+
   props: {
     variant: {
       type: String,
@@ -22,9 +28,19 @@ export default {
       options: ['outline', 'ghost', 'square', 'pill'],
     },
 
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+
     color: {
       type: String,
       default: '',
+    },
+
+    to: {
+      type: String,
+      default: null,
     },
   },
 
@@ -35,13 +51,19 @@ export default {
 
       let className = 'btn'
 
-      if (this.variant) className += `-${this.variant}`
-      if (this.color) className += `-${this.color}`
+      if (this.variant) className += ` btn-${this.variant}-${this.color}`
+      if (this.color) className += ` btn-${this.color}`
 
-      if (this.$attrs.hasOwnProperty('block')) className += ` w-100`
-      if (this.$attrs.hasOwnProperty('disabled')) className += ` disabled`
+      if (this.disabled === true) className += ` disabled`
+      if (Object.prototype.hasOwnProperty.call(this.$attrs, 'block'))
+        className += ` w-100`
 
       return className
+    },
+
+    component() {
+      if (this.to) return NuxtLink
+      return 'button'
     },
   },
 }

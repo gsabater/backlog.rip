@@ -16,15 +16,17 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th November 2023
- * Modified: Mon Nov 13 2023
+ * Modified: Sat Nov 25 2023
  **/
 
 export default {
   name: 'TablerBackdrop',
-  data: () => ({
-    show: false,
-    display: false,
-  }),
+  data() {
+    return {
+      show: false,
+      display: false,
+    }
+  },
 
   computed: {},
 
@@ -48,7 +50,7 @@ export default {
   },
 
   mounted() {
-    this.$on('backdrop:open', (payload) => {
+    this.$mitt.on('backdrop:open', (payload) => {
       console.warn('backdrop:open', payload)
       this.open(payload)
     })

@@ -55,6 +55,18 @@
       backdrop-filter: blur(0.5px);
     "
     @click="hide"></div>
+
+  // prettier-ignore
+  <component :is="'style'" id="dynamic-state-vars" type="text/css">
+    <template v-for="(state, i) in states" :key="'state' + i">
+      --bckg-state-{{ state.id }}: {{ state.color }};
+    </template>
+  </component>
+  <component :is="'style'" id="dynamic-states" type="text/css">
+    <template v-for="(state, i) in states" :key="'state' + i">
+      .bckg-state-{{ state.id }}{ color: {{ state.color }}; }
+    </template>
+  </component>
 </template>
 
 <script>
@@ -66,7 +78,7 @@ import { useStateStore } from '../../stores/stateStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Wed Jan 10 2024
+ * Modified: Thu Jan 11 2024
  **/
 
 export default {

@@ -6,12 +6,13 @@
  * Modified: Thu Mar 23 2023
  **/
 
-import { useState, useRuntimeConfig, useCookie } from '#app'
+// import { useState, useRuntimeConfig, useCookie } from '#app'
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const nuxtApp = useNuxtApp()
+  // const nuxtApp = useNuxtApp()
   const userStore = useUserStore()
   const dataStore = useDataStore()
+  const gameStore = useGameStore()
   const stateStore = useStateStore()
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,6 +34,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     // move to a plugin to run once
     dataStore.init()
     stateStore.init()
+    gameStore.init()
   }
 
   return

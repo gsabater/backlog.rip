@@ -39,6 +39,7 @@ export class DexieInstaller {
     {
       id: 4,
       order: 0,
+      key: 'favorites',
       color: '#ff3d5f',
       name: 'Favorites',
       description:

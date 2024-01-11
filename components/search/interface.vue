@@ -200,7 +200,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Jan 10 2024
+ * Modified: Thu Jan 11 2024
  **/
 
 export default {
@@ -235,8 +235,7 @@ export default {
         show: {
           display: 'grid',
           page: 1,
-          limit: 10,
-          perPage: 10,
+          perPage: 30,
         },
       },
 
@@ -291,6 +290,7 @@ export default {
     search() {
       this.$nextTick(() => {
         log('#️⃣ Search: Interface', JSON.stringify(this.f))
+        this.f.show.page = 1
         this.$refs.results.search()
       })
     },

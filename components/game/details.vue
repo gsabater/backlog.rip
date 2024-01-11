@@ -30,7 +30,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Sat Jan 06 2024
+ * Modified: Thu Jan 11 2024
  **/
 
 export default {
@@ -52,8 +52,9 @@ export default {
   },
 
   computed: {
-    ...mapStores(useDataStore, useJournalStore),
-    ...mapState(useDataStore, ['app']),
+    ...mapStores(useGameStore, useJournalStore),
+    // ...mapState(useDataStore, ['app']),
+    ...mapState(useGameStore, ['app']),
   },
 
   methods: {
@@ -61,8 +62,8 @@ export default {
       this.ui.dialog = true
     },
 
-    async load(app) {
-      this.dataStore.load(app)
+    async load(uuid) {
+      this.gameStore.load(uuid)
       // const timeline = await this.journalStore.getForRef(app)
 
       // this.app = { ...data }

@@ -1,8 +1,8 @@
 <template>
   <div
     v-if="app && app.uuid"
-    class="card-game"
-    :class="app.state ? ' has-state-' + app.state : ''"
+    class="card-game has-state"
+    :class="app.state ? ' bckg-state-' + app.state : ''"
     @mouseenter="ui.showStates = true"
     @mouseleave="ui.showStates = false">
     <div
@@ -70,7 +70,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Jan 09 2024
+ * Modified: Thu Jan 11 2024
  **/
 
 export default {

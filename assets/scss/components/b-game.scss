@@ -4,12 +4,13 @@
 }
 
 .card-game[class*="has-state"] .cover {
-  outline: 2px solid red;
+  // outline: 3px dashed red;
 }
 
 .card-game .cover {
   cursor: pointer;
   border-radius: 3px;
+  position: relative;
 
   // aspect-ratio: 2.2/3;
   // Steam has 2/3 aspect ratio
@@ -22,7 +23,9 @@
   flex-direction: column;
   justify-content: center;
 
-  overflow: hidden;
+  // overflow: hidden;
+
+  background: linear-gradient(0deg, #000, #272727);
 
   &.is-header{
     padding: 13px;
@@ -32,9 +35,29 @@
   }
 }
 
+.card-game:before, .card-game:after {
+	content: '';
+	position: absolute;
+  border-radius: 3px;
+	left: -1px;
+	top: -1px;
+	// background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00,#ffff00, #ff0000, #fb0094,
+	// 	#0000ff, #00ff00,#ffff00, #ff0000);
+    background: linear-gradient(0deg, #0000002c, #272727af);
+	background-size: 400%;
+	width: calc(100% + 2px);
+	height: calc(100% + 2px);
+	z-index: -1;
+}
+
+.card-game:after {
+  opacity: 0.7;
+	filter: blur(50px);
+}
+
 .card-game img {
   /* object-fit: cover; */
-  // aspect-ratio: 2 / 3;
+
   outline: 1px solid rgba(255, 255, 255, 0.15);
   outline-offset: -1px;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);

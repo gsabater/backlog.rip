@@ -76,10 +76,10 @@ export default defineNuxtConfig({
     plugins: [],
   },
 
-  sourcemap: { server: false, client: true },
+  sourcemap: { server: false, client: false },
 
   devtools: {
-    enabled: false,
+    enabled: true,
     // VS Code Server options
     vscode: {},
 

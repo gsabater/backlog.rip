@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Sun Jan 07 2024
+ * Modified: Thu Jan 11 2024
  */
 
 let $nuxt = null
@@ -15,7 +15,11 @@ let $journal = null
 export const useStateStore = defineStore('state', {
   state: () => ({
     states: [],
+
     index: {},
+    backlog: {},
+    playing: {},
+    completed: {},
 
     meta: {
       loaded: false,
@@ -124,6 +128,7 @@ export const useStateStore = defineStore('state', {
       let library = await $data.library('array')
 
       this.states.forEach((state) => {
+        // let key = state.key || null
         this.index[state.id] = library
           .filter((app) => app.state === state.id)
           .map((app) => app.uuid)

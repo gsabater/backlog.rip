@@ -1,4 +1,6 @@
 # Backlog.rip
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip?ref=badge_shield)
+
 
 Based on a Nuxt 3 project.
 
@@ -30,3 +32,7 @@ npm run dev
 ⭕ - Search is going to run + some todo's have this as well
 
 ❇️ and ✅ - For success messages
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip?ref=badge_large)

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu Jan 11 2024
+ * Modified: Fri Jan 12 2024
  */
 
 let $nuxt = null
@@ -151,7 +151,8 @@ export const useDataStore = defineStore('data', {
     // Created on Wed Jan 10 2024
     //+-------------------------------------------------
     count(source) {
-      if (['data', 'library'].includes(source)) return Object.keys(data).length
+      if (source == 'data') return Object.keys(data).length
+      if (source == 'library') return Object.keys(library).length
 
       return 0
     },
@@ -346,6 +347,24 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
+    // save()
+    // Saves a single item in the database
+    // Update library and data arrays when match
+    // -----
+    // Created on Fri Jan 12 2024
+    //+-------------------------------------------------
+    save(item) {
+      let _item = this.prepareToStore(item)
+
+      data[item.uuid] = { ..._item }
+      library[item.uuid] = { ..._item }
+
+      this.toIndex(_item)
+
+      $nuxt.$db.games.put(_item)
+    },
+
+    //+-------------------------------------------------
     // toIndex()
     // Adds each uuid to their respective store index
     // -----
@@ -422,15 +441,16 @@ export const useDataStore = defineStore('data', {
 
       local = { ...app, ...api }
       local.uuid = app.uuid
-      debugger
+
       if (local.api_id !== api.uuid) {
         local.api_id = api.uuid
       }
-
+      console.warn(local, api)
+      debugger
       // Save and index the app
       // Maybe $mitt.emit('data:updated', 'updated', local)
       data[app.uuid] = { ...local }
-      // library[app.uuid] = { ...local }
+      library[app.uuid] = { ...local }
 
       console.warn('🌈 Updating app in db', local)
       this.toQueue(local)
@@ -649,9 +669,9 @@ export const useDataStore = defineStore('data', {
       // Expose data to the window
       window.db = {
         d: data,
+        l: library,
         o: {
           index,
-          library,
           repos,
           search,
         },

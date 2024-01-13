@@ -1,0 +1,30 @@
+.game-details{
+  & .modal-dialog{
+    min-width: 800px;
+  }
+
+  & .modal-content{
+    box-shadow: 0 0 25px #000;
+    outline: 1px solid #3a4049;
+    outline-offset: -1px;
+    border-radius: 3px;
+  }
+
+  & .modal-body{
+    padding: 0;
+    overflow: hidden;
+
+    & .details-sidebar{
+      padding: 50px;
+
+      // display: flex;
+      // flex-direction: column;
+      // justify-content: center;
+      background-color: #3a4049;
+    }
+
+    & .details-content{
+      padding: 20px;
+    }
+  }
+}

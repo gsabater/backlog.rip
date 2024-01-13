@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Wed Jan 10 2024
+ * Modified: Fri Jan 12 2024
  */
 
 export default {
@@ -13,7 +13,7 @@ export default {
   // -----
   // Created on Tue Jan 09 2024
   //+-------------------------------------------------
-  filter(source, filters) {
+  filter(source, filters, extra) {
     let logged = 5
     let items = []
     let toSort = []
@@ -48,6 +48,18 @@ export default {
           continue
         }
       }
+
+      // This should be a check "Show only owned games"
+      // if (extra?.source == 'library' && filters?.state == null) {
+      //   if (!app.is?.owned) {
+      //     if (logged > 0) {
+      //       console.warn('🛑 Skipping because game is not owned', app.name)
+      //       logged--
+      //     }
+
+      //     continue
+      //   }
+      // }
 
       // Filter: Name
       // Match with on app.name and steam_id

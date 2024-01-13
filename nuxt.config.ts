@@ -28,9 +28,9 @@ export default defineNuxtConfig({
     // '@nuxt/image',
     '@nuxt/content',
     '@nuxt/devtools',
+    '@vueuse/nuxt',
 
     '@pinia/nuxt',
-    // 'nuxt-sanctum-auth',
     // ['@pinia/nuxt', {
     //   autoImports: ['defineStore', 'mapStores', 'acceptHMRUpdate']
     // }],

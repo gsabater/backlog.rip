@@ -12,7 +12,7 @@ items: {{ items.length }}
   <div class="row row-deck row-cards">
     <template v-for="(app, i) in items" :key="'card' + i">
       <div class="col col-6 col-lg-2">
-        <b-game :key="app" :appid="app"></b-game>
+        <b-game :key="app" :uuid="app"></b-game>
       </div>
     </template>
   </div>
@@ -24,7 +24,7 @@ items: {{ items.length }}
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Jan 10 2024
+ * Modified: Fri Jan 12 2024
  **/
 
 export default {
@@ -149,7 +149,7 @@ export default {
       log('⚡ Search: Amount of apps #', Object.keys(source).length)
       log('⚡ Search: Filters: ', JSON.stringify(this.filters))
 
-      const items = search.filter(source, this.filters)
+      const items = search.filter(source, this.filters, { source: this.source })
       const paged = search.paginate(items, this.filters.show)
 
       // this.items = sorted.slice(0, this.filters)
@@ -188,7 +188,7 @@ export default {
     })
   },
 
-  unmounted() {
+  beforeUnmount() {
     this.$mitt.off('data:ready')
     this.$mitt.off('data:updated')
   },

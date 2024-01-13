@@ -1014,6 +1014,10 @@
   <Toaster position="top-right" />
   <SpeedInsights />
 
+  <component :is="'style'" id="dynamic-style" type="text/css">
+    <template v-if="!$app.dev">pre{ display: none !important; }</template>
+  </component>
+
   <!-- <div>
     <nav>
       <ul>
@@ -1048,7 +1052,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed Jan 10 2024
+ * Modified: Sat Jan 13 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'

@@ -1,33 +1,20 @@
 <template>
   <div
     v-if="app && app.uuid"
-    class="card-game has-state"
-    :class="app.state ? ' bckg-state-' + app.state : ''"
-    @mouseenter="ui.showStates = true"
-    @mouseleave="ui.showStates = false">
-    <div
-      class="cover"
-      :class="{
-        'is-header': iPoster == 1,
-      }"
-      @click="showGameModal">
-      <img
-        loading="lazy"
-        class="b-cover"
-        :src="poster"
-        :alt="app.steam_id"
-        @error="iPoster++" />
+    class="card-game"
+    :class="app.state ? 'has-state' + app.state : ''">
+    <div class="card-game__cover" @click.stop="showGameModal">
+      <BState :app="app.uuid" :state="app.state" :label="false"></BState>
+      <game-asset :app="app" asset="cover" :priority="['steam', 'igdb']"></game-asset>
     </div>
 
     <div v-if="body" class="card-body">
-      <BState :app="app.uuid" :state="app.state" :label="false"></BState>
-
-      <div class="h5">
-        <!-- <BState v-if="app.state" :state="app.state" :label="false"></BState> -->
+      <span class="h5">
         {{ app.name }}
-      </div>
+      </span>
       <div class="text-muted">
-        <!-- {{ appid }} -->
+        halal
+        <!-- {{ uuid }} -->
         <!-- {{ app.steam_id }} -->
       </div>
     </div>
@@ -70,13 +57,13 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Jan 11 2024
+ * Modified: Fri Jan 12 2024
  **/
 
 export default {
   name: 'Game',
   props: {
-    appid: {
+    uuid: {
       type: String,
       default: null,
     },
@@ -87,39 +74,16 @@ export default {
     },
   },
 
-  //  {
-  //   app: {
-  //     type: Object,
-  //     required: true,
-  //   },
-  // },
   data() {
     return {
       app: {},
-      iPoster: 0,
 
-      ui: {
-        showStates: false,
-      },
+      ui: {},
     }
   },
 
   computed: {
     ...mapStores(useDataStore),
-
-    poster() {
-      const ID = this.app.steam_id || null
-      if (!ID) return
-
-      const posters = [
-        `https://steamcdn-a.akamaihd.net/steam/apps/${ID}/library_600x900.jpg`,
-        `https://cdn.akamai.steamstatic.com/steam/apps/${ID}/header.jpg`,
-      ]
-
-      const poster = posters[this.iPoster]
-      // this.$mitt.emit('poster:hold', poster)
-      return poster
-    },
   },
 
   methods: {
@@ -131,18 +95,23 @@ export default {
       this.$mitt.emit('game:manager', $event, this.app.uuid)
     },
 
-    setState(state) {
-      // this.app.state = state.id
-    },
-
     async getData() {
-      this.app = this.dataStore.get(this.appid)
+      this.app = this.dataStore.get(this.uuid)
     },
   },
 
   mounted() {
     this.getData()
-    // console.warn('⚓', this.appid)
+
+    this.$mitt.on('state:change', (payload) => {
+      if (payload.uuid != this.app.uuid) return
+      this.app.state = payload.state
+      this.$forceUpdate()
+    })
+  },
+
+  beforeUnmount() {
+    this.$mitt.off('state:change')
   },
 }
 </script>

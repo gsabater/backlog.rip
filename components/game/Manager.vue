@@ -17,7 +17,6 @@
         <div class="text-center p-2 col-6 active">Status</div>
         <div class="text-center p-2 col-6 active">Collections</div>
       </div> -->
-      <label class="dropdown-item">{{ appUUID }}</label>
       <label
         v-for="(state, i) in states"
         :key="'state' + i"
@@ -56,7 +55,10 @@
     "
     @click="hide"></div>
 
-  // prettier-ignore
+  <!-- prettier-ignore-start -->
+
+  <!-- prettier-ignore-end -->
+
   <component :is="'style'" id="dynamic-state-vars" type="text/css">
     <template v-for="(state, i) in states" :key="'state' + i">
       --bckg-state-{{ state.id }}: {{ state.color }};
@@ -78,7 +80,7 @@ import { useStateStore } from '../../stores/stateStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Thu Jan 11 2024
+ * Modified: Fri Jan 12 2024
  **/
 
 export default {

@@ -41,7 +41,7 @@
 
                         <GameChip :app="item.ref"></GameChip>
 
-                        {{ item.data.old ? 'changed state from' : 'has been added to' }}
+                        {{ item.data.old ? 'changed state' : 'has been added to' }}
 
                         <BState
                           :state="item.data.state"
@@ -77,7 +77,7 @@
                       </div>
 
                       <small class="text-secondary d-inline-block border-top pt-2 mt-2">
-                        Entry added {{ item.created_at }}
+                        Entry added {{ dates.format(item.created_at, 'DD-MM-YY h:m:s') }}
                       </small>
 
                       <!-- <ul
@@ -119,7 +119,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Mon Jan 08 2024
+ * Modified: Fri Jan 12 2024
  **/
 
 export default {

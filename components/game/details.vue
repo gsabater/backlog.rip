@@ -1,26 +1,34 @@
 <template>
-  <b-dialog v-model="ui.dialog">
-    <h1>{{ app.name }}</h1>
-    <pre>{{ app }}</pre>
-    <pre>{{ timeline }}</pre>
-    <ul>
-      <li>Amount of data: 0 / lite / full</li>
-      <li>
-        {{ app.updated_at }}
-      </li>
-      <li>
-        <BState :app="app.uuid" :state="app.state"></BState>
-      </li>
-    </ul>
-    <textarea
-      v-model="status.note"
-      class="form-control"
-      name="note"
-      rows="2"
-      @blur="setNote"></textarea>
-    <span v-if="status.noteObject" class="d-block text-muted">
-      Note created at {{ status.noteObject.created_at }}
-    </span>
+  <b-dialog v-model="ui.dialog" class="game-details">
+    <div class="row">
+      <div class="col-4 details-sidebar" style="position: relative">
+        <game-asset :app="app" asset="logo" :priority="['steam', 'igdb']"></game-asset>
+      </div>
+      <div class="col-8 details-content">
+        <h1>{{ app.name }}</h1>
+
+        <pre>{{ app }}</pre>
+        <pre>{{ timeline }}</pre>
+        <ul>
+          <li>Amount of data: 0 / lite / full</li>
+          <li>
+            {{ app.updated_at }}
+          </li>
+          <li>
+            <BState :app="app.uuid" :state="app.state"></BState>
+          </li>
+        </ul>
+        <textarea
+          v-model="status.note"
+          class="form-control"
+          name="note"
+          rows="2"
+          @blur="setNote"></textarea>
+        <span v-if="status.noteObject" class="d-block text-muted">
+          Note created at {{ status.noteObject.created_at }}
+        </span>
+      </div>
+    </div>
   </b-dialog>
 </template>
 
@@ -30,10 +38,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Thu Jan 11 2024
+ * Modified: Fri Jan 12 2024
  **/
 
 export default {
+  name: 'GameDetails',
   data() {
     return {
       timeline: [],

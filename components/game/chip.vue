@@ -19,11 +19,11 @@
  * <GameChip :state="state"></GameChip>
  * -------------------------------------------
  * Created Date: 7th January 2024
- * Modified: Sun Jan 07 2024
+ * Modified: Fri Jan 12 2024
  **/
 
 export default {
-  name: 'Chip',
+  name: 'GameChip',
   props: {
     app: {
       type: String,

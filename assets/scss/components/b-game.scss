@@ -1,37 +1,72 @@
-.card-game {
+.card-game{
   /* border: 1px solid red; */
   position: relative;
-}
+  will-change: transform brightness;
+  transition: all 0.1s ease-in-out;
 
-.card-game[class*="has-state"] .cover {
-  // outline: 3px dashed red;
-}
+  &__cover {
+    cursor: pointer;
+    border-radius: 3px;
+    border-radius: 0px;
+    position: relative;
 
-.card-game .cover {
-  cursor: pointer;
-  border-radius: 3px;
-  position: relative;
+    // aspect-ratio: 2.2/3;
+    // Steam has 2/3 aspect ratio
+    // IGDB has 3/4 aspect ratio (not for all games)
+    // EGS has 3/4 aspect ratio
+    // 27/40 is a good compromise
+    aspect-ratio: 27/40;
+    // aspect-ratio: 3/1;
+    overflow: hidden;
 
-  // aspect-ratio: 2.2/3;
-  // Steam has 2/3 aspect ratio
-  // IGDB has 3/4 aspect ratio (not for all games)
-  // EGS has 3/4 aspect ratio
-  // 27/40 is a good compromise
-  aspect-ratio: 27/40;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 
-  // overflow: hidden;
+    filter: brightness(0.9);
+    background: linear-gradient(0deg, #000, #272727);
 
-  background: linear-gradient(0deg, #000, #272727);
+    outline: 1px solid rgba(0, 0, 0, 0.3);
+    outline-offset: -1px;
+    // box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
 
-  &.is-header{
-    padding: 13px;
-    background-size: cover;
-    background-position: center center;
-    filter: brightness(0.5);
+    &.is-header{
+      padding: 13px;
+      background-size: cover;
+      background-position: center center;
+      filter: brightness(0.5);
+    }
+
+    & img {
+      /* object-fit: cover; */
+
+      // outline: 1px solid rgba(255, 255, 255, 0.15);
+      // outline-offset: -1px;
+      // box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
+
+      //   // border-radius: 4px;
+      //   // max-width: 100%;
+      //   // max-height: 100%;
+        // outline: 1px solid rgba(255, 255, 255, 0.15);
+        // outline-offset: -1px;
+        // box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
+
+        // outline: rgba(255, 255, 255, 0.65) solid 2px;
+        // outline-offset: -2px;
+        // box-shadow: rgba(0, 0, 0, 0.36) 1px 1px 3px;
+    }
+  }
+
+
+  & .status{
+    border-radius: 2px;
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    padding: 0.25rem 0.5rem;
+    background: #66738266;
+    transform: scale(0.9);
   }
 }
 
@@ -39,14 +74,22 @@
 	content: '';
 	position: absolute;
   border-radius: 3px;
-	left: -1px;
-	top: -1px;
+  border-radius: 0px;
+
+	// left: -1px;
+	// top: -1px;
+  // width: calc(100% + 2px);
+  // height: calc(100% + 2px);
+
+  left: 0px;
+	top: 0px;
+  width: calc(100% );
+  height: calc(100% );
+
 	// background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00,#ffff00, #ff0000, #fb0094,
 	// 	#0000ff, #00ff00,#ffff00, #ff0000);
     background: linear-gradient(0deg, #0000002c, #272727af);
 	background-size: 400%;
-	width: calc(100% + 2px);
-	height: calc(100% + 2px);
 	z-index: -1;
 }
 
@@ -55,26 +98,17 @@
 	filter: blur(50px);
 }
 
-.card-game img {
-  /* object-fit: cover; */
+.card-game:hover{
+  transform: translateY(-3px);
 
-  outline: 1px solid rgba(255, 255, 255, 0.15);
-  outline-offset: -1px;
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
+  & .card-game__cover{
+    // opacity: 1;
+    // filter: brightness(1);
+  }
 }
 
-.b-cover {
-  // border-radius: 4px;
-  // max-width: 100%;
-  // max-height: 100%;
-  outline: 1px solid rgba(255, 255, 255, 0.15);
-  outline-offset: -1px;
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
 
-  outline: rgba(255, 255, 255, 0.15) solid 2px;
-  outline-offset: -2px;
-  box-shadow: rgba(0, 0, 0, 0.36) 1px 1px 3px;
-}
+
 
 /*
 .card.card-game::after {

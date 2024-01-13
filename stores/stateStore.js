@@ -5,21 +5,23 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Thu Jan 11 2024
+ * Modified: Fri Jan 12 2024
  */
 
 let $nuxt = null
 let $data = null
+let $game = null
 let $journal = null
 
 export const useStateStore = defineStore('state', {
   state: () => ({
     states: [],
 
-    index: {},
-    backlog: {},
-    playing: {},
-    completed: {},
+    index: [],
+    backlog: [],
+    playing: [],
+    completed: [],
+    favorites: [],
 
     meta: {
       loaded: false,
@@ -53,16 +55,25 @@ export const useStateStore = defineStore('state', {
       )
     },
 
+    //+-------------------------------------------------
+    // list()
+    // Returns the array of states
+    // -----
+    // Created on Fri Jan 12 2024
+    //+-------------------------------------------------
     async list() {
-      const items = await $nuxt.$db.states.toArray()
-      return items
+      return this.states
     },
 
-    // async get(id) {
-    //   const $nuxt = useNuxtApp()
-    //   const item = await $nuxt.$db.states.get(id)
-    //   return item
-    // },
+    //+-------------------------------------------------
+    // get()
+    // Returns a single state by id
+    // -----
+    // Created on Fri Jan 12 2024
+    //+-------------------------------------------------
+    async get(id) {
+      return this.states.find((state) => state.id === id)
+    },
 
     // async add(data) {
     //   const $nuxt = useNuxtApp()
@@ -92,13 +103,13 @@ export const useStateStore = defineStore('state', {
     // Created on Sat Jan 06 2024
     //+-------------------------------------------------
     set(uuid, state) {
-      $data.app.state = state
+      $game.app.state = state
 
       let app = $data.get(uuid)
       let old = app.state || null
 
       app.state = state
-      $data.update(app, uuid, true)
+      $data.save(app)
 
       $journal.add({
         event: 'state',
@@ -112,6 +123,10 @@ export const useStateStore = defineStore('state', {
       $nuxt.$mitt.emit('state:change', {
         uuid: uuid,
         state: state,
+      })
+
+      $nuxt.$toast.success('Added to ' + app.state, {
+        description: 'Monday, January 3rd at 6:00pm',
       })
 
       this.indexLibrary()
@@ -128,16 +143,17 @@ export const useStateStore = defineStore('state', {
       let library = await $data.library('array')
 
       this.states.forEach((state) => {
-        // let key = state.key || null
-        this.index[state.id] = library
-          .filter((app) => app.state === state.id)
-          .map((app) => app.uuid)
+        let apps = library.filter((app) => app.state === state.id).map((app) => app.uuid)
+
+        this.index[state.id] = apps
+        if (state.key) this[state.key] = apps
       })
     },
 
     async init() {
       if (!$nuxt) $nuxt = useNuxtApp()
       if (!$data) $data = useDataStore()
+      if (!$game) $game = useGameStore()
       if (!$journal) $journal = useJournalStore()
 
       await this.load()

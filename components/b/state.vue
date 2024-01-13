@@ -5,7 +5,7 @@
     :class="{ 'cursor-pointer': manager }"
     style="border-radius: 4px"
     :style="{ '--tblr-status-color': st.color }"
-    @click="manage($event)">
+    @click.stop="manage($event)">
     <span
       v-if="from"
       :style="{ color: oldst.color + ' !important' }"
@@ -31,7 +31,7 @@
  * <BState :state="state"></BState>
  * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Sun Jan 07 2024
+ * Modified: Fri Jan 12 2024
  **/
 
 export default {

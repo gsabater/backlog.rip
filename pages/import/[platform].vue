@@ -132,10 +132,14 @@
                   </p>
                 </div>
                 <div>
-                  <div class="btn btn-primary w-100" @click="scan">
+                  <div class="btn btn-primary w-100 mb-2" @click="scan">
                     <Icon class="me-2">ArrowsTransferDown</Icon>
                     Scan your {{ module.store }} library
                   </div>
+                  <small class="text-muted">
+                    Last update
+                    {{ $auth.user.steam_updated_at }}
+                  </small>
                 </div>
               </div>
             </div>
@@ -705,7 +709,7 @@ IGNORE
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Sun Jan 07 2024
+ * Modified: Fri Jan 12 2024
  **/
 
 import steam from '~/modules/importers/steam'

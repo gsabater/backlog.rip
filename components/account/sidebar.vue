@@ -29,12 +29,12 @@
       </NuxtLink>
     </li>
 
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <NuxtLink to="/account/history" class="nav-link">
         <Icon class="me-2">Clock</Icon>
         history
       </NuxtLink>
-    </li>
+    </li> -->
   </ul>
 
   <div class="hr-text">※※※</div>

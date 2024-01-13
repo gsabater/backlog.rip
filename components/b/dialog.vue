@@ -43,12 +43,17 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 30th November 2023
- * Modified: Thu Dec 21 2023
+ * Modified: Fri Jan 12 2024
  **/
 
 export default {
   name: 'TablerDialog',
   props: {
+    width: {
+      type: String,
+      default: '500px',
+    },
+
     title: {
       type: String,
       default: null,

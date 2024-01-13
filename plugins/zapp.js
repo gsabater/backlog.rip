@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Mon Jan 08 2024
+ * Modified: Fri Jan 12 2024
  */
 
 let $nuxt = null
@@ -13,11 +13,15 @@ let $nuxt = null
 let app = {
   v: 'β 0.5',
   key: 0,
+  dev: false,
+  env: 'production',
 
   api: {},
   layout: {
     sidebar: false,
   },
+
+  loading: false,
 }
 
 //+-------------------------------------------------
@@ -32,8 +36,23 @@ async function toggleSidebar($nuxt) {
   $nuxt.$mitt.emit('app:render')
 }
 
+//+-------------------------------------------------
+// detectEnvironment()
+// Detects the environment and sets the app.dev and app.env
+// -----
+// Created on Fri Jan 12 2024
+//+-------------------------------------------------
+function detectEnvironment() {
+  if (window.location.hostname == 'localhost') {
+    app.dev = true
+    app.env = 'local'
+  }
+}
+
 export default defineNuxtPlugin(() => {
   app.toggleSidebar = toggleSidebar
+
+  detectEnvironment()
 
   return {
     provide: {

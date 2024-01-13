@@ -3,10 +3,18 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Wed Dec 13 2023
+ * Modified: Fri Jan 12 2024
  */
 
+let $nuxt = null
+
 export default {
+  //+-------------------------------------------------
+  // now()
+  // returns a date string, mainly used to store
+  // -----
+  // Created on Fri Jan 12 2024
+  //+-------------------------------------------------
   now() {
     return new Date().toISOString().replace('T', ' ').substring(0, 19)
   },
@@ -27,6 +35,12 @@ export default {
     return date.format('D MMM YYYY, HH:mm')
   },
 
+  //+-------------------------------------------------
+  // minToHours()
+  // takes an amount of minutes, and returns hours
+  // -----
+  // Created on Fri Jan 12 2024
+  //+-------------------------------------------------
   minToHours(min) {
     if (!min) return ''
 
@@ -50,4 +64,27 @@ export default {
   // unixToDiff(unix) {
   //   let date = this.mnow()
   // },
+
+  //+-------------------------------------------------
+  // function()
+  //
+  // -----
+  // Created on Fri Jan 12 2024
+  //+-------------------------------------------------
+  format(theDate, format = 'L') {
+    if (!$nuxt) $nuxt = useNuxtApp()
+    if (!theDate) return ''
+
+    let date = theDate.replace(/\//g, '-')
+    let moment = null
+
+    if (typeof date === 'string' && date.indexOf('-') > -1) {
+      moment = $nuxt.$dayjs(date) // ['DD-MM-YYYY', 'YYYY-MM-DD', 'MM-DD-YYYY']
+    }
+
+    if (format == 'nice') format = 'D [de] MMMM, YYYY'
+    if (format == 'nice time') format = 'DD [de] MMMM, YYYY [-] HH:mm:ss'
+    if (format) return moment.format(format)
+    return moment
+  },
 }

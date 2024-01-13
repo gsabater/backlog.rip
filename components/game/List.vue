@@ -2,7 +2,7 @@
   <div class="row row-deck row-cards" v-bind="$attrs">
     <template v-for="(app, i) in items" :key="'card' + i">
       <div class="col col-2">
-        <b-game :key="app" :appid="app" :body="false"></b-game>
+        <b-game :key="app" :uuid="app" :body="false"></b-game>
       </div>
     </template>
     <slot />
@@ -15,19 +15,19 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th January 2024
- * Modified: Mon Jan 08 2024
+ * Modified: Fri Jan 12 2024
  **/
 
 export default {
   name: 'List',
   props: {
     apps: {
-      type: String,
+      type: [String, Array],
       default: null,
     },
 
     max: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
   },

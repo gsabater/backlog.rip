@@ -9,6 +9,7 @@
 @import 'extend.scss';
 
 @import 'base';
+@import 'borders';
 
 // Import layout
 @import 'partials/home';
@@ -18,22 +19,10 @@
 @import 'partials/base/_modal';
 
 // Import components
+@import 'components/b-menu';
 @import 'components/b-game';
 @import 'components/b-poster';
+@import 'components/b-game-details';
 
-/* b-menu */
-
-.b-menu {
-  margin-top: 7px;
-  padding: 5px;
-  position: absolute;
-
-  --tblr-dropdown-divider-margin-y: 0.4rem;
-}
-
-.b-menu .dropdown-item {
-  border-radius: 5px;
-  cursor: pointer;
-}
 
 @import 'dev';

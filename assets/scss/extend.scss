@@ -8,22 +8,6 @@
   align-items: center !important;
 }
 
-
-// https://unused-css.com/tools/border-gradient-generator
-.border-rainbow{
-  // background-color: #241d33;
-  // background-color: #302244;
-
-  // border: 5px solid transparent;
-  // border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
-  // border-image-slice: 1;
-  --border:4px;
-  border: var(--border) solid transparent;
-  background: linear-gradient(#fff, #fff), linear-gradient( to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%) center center /calc(100% + (var(--border) * 2)) calc(100% + (var(--border) * 2));
-  background-clip: content-box, border-box;
-  border-radius: 5px;
-}
-
 .scale-90 {
   transform: scale(.9);
 }

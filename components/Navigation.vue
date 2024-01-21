@@ -13,20 +13,49 @@
                 <Icon>LayoutSidebarInactive</Icon>
               </span>
             </li>
+
             <li v-if="false" style="border-right: 1px dashed #ccc; margin: 10px"></li>
-            <li class="nav-item">
+
+            <li class="nav-item dropdown">
+              <div class="nav-link dropdown-toggle">
+                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                  <Icon>ChartBubble</Icon>
+                </span>
+                <span class="nav-link-title">Explore</span>
+              </div>
+              <b-menu :arrow="false">
+                <NuxtLink to="/games" class="dropdown-item">
+                  <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                    <Icon>Cards</Icon>
+                  </span>
+                  <span class="nav-link-title">
+                    All games
+                    <!-- (drop> add a game, connect accounts) -->
+                  </span>
+                </NuxtLink>
+
+                <NuxtLink to="/genres" class="dropdown-item">
+                  <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                    <Icon>Triangles</Icon>
+                  </span>
+                  <span class="nav-link-title">Genres</span>
+                </NuxtLink>
+              </b-menu>
+            </li>
+
+            <!-- <li class="nav-item">
               <NuxtLink to="/games" class="nav-link">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
                   <Icon>Cards</Icon>
                 </span>
                 <span class="nav-link-title">
                   Browse games
-                  <!-- (drop> add a game, connect accounts) -->
                 </span>
               </NuxtLink>
-            </li>
+            </li> -->
 
             <li style="border-right: 1px dashed #ccc; margin: 10px"></li>
+            <!-- (drop> add a game, connect accounts) -->
 
             <li class="nav-item">
               <NuxtLink to="/dashboard" class="nav-link">

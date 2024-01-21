@@ -202,6 +202,10 @@
   padding-left: 6rem !important;
 }
 
+.capitalized, .capitalize {
+  text-transform: capitalize !important;
+}
+
 .select-none {
   -webkit-user-select: none !important;
   -moz-user-select: none !important;

@@ -137,8 +137,7 @@
                     Scan your {{ module.store }} library
                   </div>
                   <small class="text-muted">
-                    Last update
-                    {{ $auth.user.steam_updated_at }}
+                    Last update, {{ dates.timeAgo($auth.user.steam_updated_at) }}
                   </small>
                 </div>
               </div>
@@ -709,7 +708,7 @@ IGNORE
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Fri Jan 12 2024
+ * Modified: Thu Jan 18 2024
  **/
 
 import steam from '~/modules/importers/steam'
@@ -1099,7 +1098,7 @@ export default {
 
           if (add) this.data.appsToUpdate.push(app)
         } else {
-          app.will_import = false
+          app.will_import = true
           app.will_ignore = false
 
           this.data.appsToReview.push(app)
@@ -1199,7 +1198,7 @@ export default {
       const items = []
 
       this.appsToImport.forEach((el) => {
-        let app = this.dataStore.prepareToStore(el)
+        let app = this.dataStore.prepareToStore(el, 'steam')
         app = steam.prepareToStore(app)
         items.push(app)
       })

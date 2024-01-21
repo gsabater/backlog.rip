@@ -5,7 +5,11 @@
     :class="app.state ? 'has-state' + app.state : ''">
     <div class="card-game__cover" @click.stop="showGameModal">
       <BState :app="app.uuid" :state="app.state" :label="false"></BState>
-      <game-asset :app="app" asset="cover" :priority="['steam', 'igdb']"></game-asset>
+      <game-asset
+        ref="cover"
+        :app="app"
+        asset="cover"
+        :priority="['steam', 'igdb']"></game-asset>
     </div>
 
     <div v-if="body" class="card-body">
@@ -57,7 +61,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Jan 12 2024
+ * Modified: Tue Jan 16 2024
  **/
 
 export default {

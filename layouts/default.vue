@@ -1052,7 +1052,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Sat Jan 13 2024
+ * Modified: Sun Jan 14 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'
@@ -1069,7 +1069,7 @@ export default {
 
   setup() {
     const ui = reactive({
-      theme: 'light',
+      theme: 'dark', // 'light',
       dialog: false,
       showMobMenu: false,
     })
@@ -1079,7 +1079,7 @@ export default {
 
       bodyAttrs: {
         'class': 'antialiased',
-        'data-bs-theme': ui.theme.value,
+        'data-bs-theme': ui.theme.value || 'dark',
       },
 
       script: [

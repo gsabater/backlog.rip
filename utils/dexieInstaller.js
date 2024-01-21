@@ -12,7 +12,7 @@ export class DexieInstaller {
       id: 1,
       order: 1,
       key: 'backlog',
-      color: 'red',
+      color: '#ff0000',
       name: 'Backlog',
       description:
         'For games that have been purchased or added to a collection but not yet started. This helps to keep track of games that the user intends to play.',
@@ -21,7 +21,7 @@ export class DexieInstaller {
       id: 2,
       order: 2,
       key: 'playing',
-      color: 'purple',
+      color: '#800080',
       name: 'Currently Playing',
       description:
         'Games that are actively being played. This category helps users focus on their current engagements and track progress in these games.',
@@ -58,7 +58,7 @@ export class DexieInstaller {
     {
       id: 6,
       order: 6,
-      color: 'grey',
+      color: '#808080',
       name: 'Abandoned',
       description:
         "Games that the user started but decided not to finish for various reasons like loss of interest, too difficult, etc. It's useful for understanding personal preferences and patterns in gaming choices.",

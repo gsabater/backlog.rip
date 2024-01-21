@@ -1,7 +1,8 @@
 <template>
-  <pre v-if="false">
+  <pre>
   layout: {{ layout }}
   Attrs: {{ $attrs }}
+  Valudate: {{ v$ }}
   </pre>
 
   <!--
@@ -25,6 +26,8 @@
     <div v-if="hint" class="small text-secondary">
       {{ hint }}
     </div>
+
+    <div v-if="hasErrors" class="invalid-feedback">Invalid feedback</div>
   </template>
 
   <!--
@@ -100,7 +103,7 @@
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Fri Jan 19 2024
  **/
 
 export default {
@@ -135,6 +138,11 @@ export default {
     hint: {
       type: String,
       default: '',
+    },
+
+    v$: {
+      type: Object,
+      default: null,
     },
 
     required: {
@@ -199,7 +207,12 @@ export default {
     colorAndVariant() {
       let className = 'form-control'
       if (this.size !== 'regular') className += ` form-control-${this.size}`
+      if (this.hasErrors) className += ' is-invalid'
       return className
+    },
+
+    hasErrors() {
+      return this.v$?.$errors?.length || this.v$?.$silentErrors?.length
     },
   },
 

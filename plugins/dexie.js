@@ -3,10 +3,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Wed Dec 13 2023
+ * Modified: Sat Jan 20 2024
  */
 
 import Dexie from 'dexie'
+import { importDB, exportDB, importInto, peakImportFile } from 'dexie-export-import'
 import { DexieInstaller } from '~/utils/dexieInstaller'
 
 //+-------------------------------------------------
@@ -15,16 +16,17 @@ import { DexieInstaller } from '~/utils/dexieInstaller'
 //+-------------------------------------------------
 const db = new Dexie('backlog.rip')
 
-db.version(9).stores({
+db.version(10).stores({
   // User stores
   account: 'uuid,steam',
   config: '&key,value',
 
   // Database stores
   games: '&uuid,api_id,steam_id,name',
+  buffer: '&uuid',
 
   // Userdata related stores
-  states: '&id,order,name',
+  states: '++id,order,name',
   journal: '++id,event,ref,created_at',
 })
 
@@ -71,6 +73,17 @@ async function getValue(store, key) {
   if (data && data.value) return data.value
   return null
 }
+
+// async function exportDB() {
+//   let data = {
+//     account: await db.account.toArray(),
+//     config: await db.config.toArray(),
+//     games: await db.games.toArray(),
+//     states: await db.states.toArray(),
+//     journal: await db.journal.toArray(),
+//   }
+//   console.log(data)
+// }
 
 //+-------------------------------------------------
 // Define Nuxt plugin

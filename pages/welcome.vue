@@ -2,19 +2,44 @@
   <div class="page-body">
     <div class="container-xl">
       <div class="row justify-content-center">
-        <div class="col-7">
-          <div class="row g-0">
-            <div class="col-6">
-              <h1>Journal</h1>
+        <div class="col-8 row">
+          <div class="col-6"></div>
+          <div class="col-6 text-center">
+            <div class="row">
+              <div class="col-2">x</div>
+              <div class="col-2">x</div>
+              <div class="col-2">x</div>
+              <div class="col-2">x</div>
+              <div class="col-2">x</div>
+              <div class="col-2">x</div>
             </div>
-            <div class="col-6 d-flex justify-content-end">
-              <div class="btn" @click="$refs.crud.create()">Add a new entry</div>
-            </div>
+            <h1>Welcome to Backlog.rip</h1>
+            <p>You can use lorem ipsum</p>
+            <div class="btn w-100">Continue</div>
+            <h1>Import your libraries</h1>
+            <p>
+              You can automatically import your library from Steam (Public and private
+              profiles) or GOG and more to come.
+            </p>
+            <h1>Keep a journal of your deeds</h1>
+            <p>Everything you do is recorded in your journal, you can add notes too.</p>
+            <h1>Your games, your way</h1>
+            <p>
+              You can manually add any games to your library, even if you don't own them.
+              Then, you add a state to each game to keep track of your progress.
+            </p>
+            <p>
+              You start with 3 states:
+              <b>Backlog</b>
+              ,
+              <b>Playing</b>
+              and
+              <b>Finished</b>
+              , but you can add more to fit your needs.
+            </p>
           </div>
+          <h1>Journal</h1>
           <template v-for="(events, day) in journal" :key="'journal' + day">
-            <h2 v-if="events[0] && events[0].newMonth" class="capitalize">
-              {{ $moment(day).format('MMMM') }}
-            </h2>
             <div class="card mb-3">
               <div class="card-body">
                 <h3 class="card-title">{{ $moment(day).format('LL') }}</h3>
@@ -121,12 +146,6 @@
       </div>
     </div>
   </div>
-
-  <journal-crud-dialog
-    ref="crud"
-    @close="selected = null"
-    @stored="$forceUpdate()"
-    @deleted="$forceUpdate()" />
 </template>
 
 <script>
@@ -135,7 +154,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Sat Jan 20 2024
+ * Modified: Fri Jan 19 2024
  **/
 
 export default {
@@ -196,12 +215,9 @@ export default {
       const grouped = {}
 
       let prev = null
-      let prevMonth = null
-
       this.db.data.reverse().forEach((entry) => {
         // Extract the date part from the 'created_at' field
         const day = entry.created_at.split(' ')[0]
-        const month = entry.created_at.split('-')[1]
 
         // Initialize the array if this is the first entry for the day
         if (!grouped[day]) {
@@ -231,11 +247,6 @@ export default {
         // Add the entry to the appropriate day
         // entry.prev = prev
         grouped[day].push(entry)
-
-        if (prevMonth !== month) {
-          entry.newMonth = true
-          prevMonth = month
-        }
 
         prev = { ...entry }
         if (prev.prev) delete prev.prev

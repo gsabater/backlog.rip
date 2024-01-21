@@ -18,14 +18,14 @@
     <li class="nav-item">
       <NuxtLink to="/account/me" class="nav-link">
         <Icon class="me-2">Fingerprint</Icon>
-        Account settings
+        Preferences
       </NuxtLink>
     </li>
 
     <li class="nav-item">
-      <NuxtLink to="/account/connected" class="nav-link">
+      <NuxtLink to="/account/linked" class="nav-link">
         <Icon class="me-2">UserCircle</Icon>
-        Connected accounts
+        Linked accounts
       </NuxtLink>
     </li>
 
@@ -49,6 +49,13 @@
       <NuxtLink to="/account/states" class="nav-link">
         <Icon class="me-2">Background</Icon>
         States
+      </NuxtLink>
+    </li>
+
+    <li class="nav-item">
+      <NuxtLink to="/account/database" class="nav-link">
+        <Icon class="me-2">Database</Icon>
+        Database
       </NuxtLink>
     </li>
     <!-- <li class="nav-item">

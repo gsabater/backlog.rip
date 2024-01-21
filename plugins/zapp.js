@@ -5,10 +5,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Fri Jan 12 2024
+ * Modified: Thu Jan 18 2024
  */
 
 let $nuxt = null
+let $data = null
 
 let app = {
   v: 'β 0.5',
@@ -30,8 +31,6 @@ let app = {
 // Created on Wed Dec 27 2023
 //+-------------------------------------------------
 async function toggleSidebar($nuxt) {
-  if (!$nuxt) $nuxt = useNuxtApp()
-
   app.layout.sidebar = !app.layout.sidebar
   $nuxt.$mitt.emit('app:render')
 }
@@ -48,12 +47,20 @@ function detectEnvironment() {
     app.env = 'local'
   }
 }
-
-export default defineNuxtPlugin(() => {
-  app.toggleSidebar = toggleSidebar
+function init() {
+  if (!$nuxt) $nuxt = useNuxtApp()
+  if (!$data) $data = useDataStore()
 
   detectEnvironment()
+}
 
+export default defineNuxtPlugin(() => {
+  init()
+
+  app.toggleSidebar = toggleSidebar
+  app.c_library = Object.keys($data.library).length
+
+  window.$app = app
   return {
     provide: {
       app,

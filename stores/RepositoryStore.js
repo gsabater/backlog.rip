@@ -3,20 +3,16 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Wed Dec 20 2023
+ * Modified: Tue Jan 16 2024
  */
 
-let app = null
+let $nuxt = null
 
 export const useRepositoryStore = defineStore('repository', {
   state: () => ({
-    items: [],
+    genres: [],
 
-    meta: {
-      time: 0,
-      timeout: 5 * 60 * 1000,
-      loading: false,
-    },
+    loaded: [],
   }),
 
   getters: {
@@ -27,12 +23,39 @@ export const useRepositoryStore = defineStore('repository', {
 
   actions: {
     //+-------------------------------------------------
-    // topGames()
-    // Created on Wed Apr 26 2023
+    // getGenres()
+    // -----
+    // Created on Mon Jan 15 2024
     //+-------------------------------------------------
-    async topGames(params) {
-      const jxr = await app.$axios.get(`repository/top-games`)
-      if (jxr.status) return jxr.data
+    async getGenres() {
+      if (this.loaded.includes('genres')) return
+
+      const jxr = await $nuxt.$axios.get(`repository/genres.json`)
+      if (jxr.status) {
+        this.loaded.push('genres')
+        this.genres = jxr.data
+      }
+    },
+
+    //+-------------------------------------------------
+    // getTop()
+    // NOTE: Belongs to a repository store
+    // -----
+    // Created on Wed Dec 20 2023
+    //+-------------------------------------------------
+    async getTop(batch) {
+      if (!batch) return
+      if (this.loaded.includes(`top:${batch}`)) return
+
+      const jxr = await $nuxt.$axios.get(`repository/top-${batch}.json`)
+      if (jxr.status) {
+        this.toData(jxr.data, 'api')
+        this.loaded.push(`top:${batch}`)
+      }
+    },
+
+    async init() {
+      if (!$nuxt) $nuxt = useNuxtApp()
     },
   },
 })

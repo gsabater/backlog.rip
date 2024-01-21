@@ -12,7 +12,7 @@
  * <game-asset :app="app" show="cover" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Fri Jan 12 2024
+ * Modified: Tue Jan 16 2024
  **/
 
 export default {
@@ -41,6 +41,7 @@ export default {
 
   data() {
     return {
+      is: null, // steam, igdb, etc
       showing: 0,
 
       resources: {
@@ -86,13 +87,13 @@ export default {
 
     assetUrl(index) {
       const item = this.assets[index]
-      const isIgdb = item.includes('igdb/')
-      const isSteam = item.includes('steam/')
+      const cover = this.app?.cover
 
-      const cover = this.app?.cover ? JSON.parse(this.app?.cover) : {}
+      if (item.includes('igdb/')) this.is = 'igdb'
+      else if (item.includes('steam/')) this.is = 'steam'
 
-      if (isSteam) return item.replace('%ID%', this.app.steam_id)
-      else if (isIgdb) return item.replace('%ID%', cover.igdb)
+      if (this.is == 'steam') return item.replace('%ID%', this.app.steam_id)
+      else if (this.is == 'igdb') return item.replace('%ID%', cover.igdb)
     },
 
     init() {

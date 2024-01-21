@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Fri Jan 12 2024
+ * Modified: Sun Jan 14 2024
  */
 
 export default {
@@ -70,7 +70,7 @@ export default {
 
         if (
           appName.indexOf(filters.string) === -1 &&
-          app.steam_id.toString() !== filters.string
+          app.steam_id?.toString() !== filters.string
         ) {
           // counters.skip++
           // data.hidden.string.push(steam_id)

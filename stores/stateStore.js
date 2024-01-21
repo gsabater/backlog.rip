@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Fri Jan 12 2024
+ * Modified: Fri Jan 19 2024
  */
 
 let $nuxt = null
@@ -17,11 +17,11 @@ export const useStateStore = defineStore('state', {
   state: () => ({
     states: [],
 
-    index: [],
-    backlog: [],
-    playing: [],
-    completed: [],
-    favorites: [],
+    index: [], // Holds index for every state keyed by state.id
+    backlog: [], // Holds index for special state 'backlog'
+    playing: [], // Holds index for special state 'playing'
+    completed: [], // Holds index for special state 'completed'
+    favorites: [], // Holds index for special state 'favorites'
 
     meta: {
       loaded: false,
@@ -34,27 +34,6 @@ export const useStateStore = defineStore('state', {
   //+-------------------------------------------------
 
   actions: {
-    //+-------------------------------------------------
-    // load()
-    // Loads the state array from DB to this
-    // -----
-    // Created on Sat Jan 06 2024
-    //+-------------------------------------------------
-    async load() {
-      if (this.meta.loaded) return
-
-      const states = await $nuxt.$db.states.toArray()
-
-      this.states = states.sort((a, b) => a.order - b.order)
-      this.meta.loaded = true
-
-      log(
-        '❇️ States are ready',
-        `found ${states.length} states`,
-        states[Math.floor(Math.random() * states.length)]
-      )
-    },
-
     //+-------------------------------------------------
     // list()
     // Returns the array of states
@@ -87,10 +66,36 @@ export const useStateStore = defineStore('state', {
     //   return id
     // },
 
-    // async delete(id) {
-    //   const $nuxt = useNuxtApp()
-    //   await $nuxt.$db.states.delete(id)
-    // },
+    async delete(id) {
+      this.states = this.states.filter((state) => state.id !== id)
+      await $nuxt.$db.states.delete(id)
+    },
+
+    //+-------------------------------------------------
+    // sortState()
+    //
+    // -----
+    // Created on Wed Jan 17 2024
+    //+-------------------------------------------------
+    sortState(direction, id) {
+      let states = this.states
+      const index = states.findIndex((item) => item.id === id)
+
+      if (index > 0 && direction === 'up') {
+        const temp = states[index].order
+        states[index].order = states[index - 1].order
+        states[index - 1].order = temp
+      }
+
+      if (index < states.length - 1 && direction === 'down') {
+        const temp = states[index].order
+        states[index].order = states[index + 1].order
+        states[index + 1].order = temp
+      }
+
+      this.states = states.sort((a, b) => a.order - b.order)
+      console.warn('🔃 Sorted states', this.states)
+    },
 
     //+-------------------------------------------------
     // set()
@@ -148,6 +153,27 @@ export const useStateStore = defineStore('state', {
         this.index[state.id] = apps
         if (state.key) this[state.key] = apps
       })
+    },
+
+    //+-------------------------------------------------
+    // load()
+    // Loads the state array from DB to this
+    // -----
+    // Created on Sat Jan 06 2024
+    //+-------------------------------------------------
+    async load() {
+      if (this.meta.loaded) return
+
+      const states = await $nuxt.$db.states.toArray()
+
+      this.states = states.sort((a, b) => a.order - b.order)
+      this.meta.loaded = true
+
+      log(
+        '❇️ States are ready',
+        `found ${states.length} states`,
+        states[Math.floor(Math.random() * states.length)]
+      )
     },
 
     async init() {

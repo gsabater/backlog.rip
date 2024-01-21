@@ -4,6 +4,14 @@
   position: absolute;
 
   --tblr-dropdown-divider-margin-y: 0.4rem;
+
+}
+
+/*
+  Fix the dropdown position on menu
+*/
+.nav-item .b-menu {
+  top: 100%;
 }
 
 .b-menu .dropdown-item {

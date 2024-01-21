@@ -14,6 +14,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const dataStore = useDataStore()
   const gameStore = useGameStore()
   const stateStore = useStateStore()
+  const repositoryStore = useRepositoryStore()
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Authenticate the user
@@ -35,6 +36,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     dataStore.init()
     stateStore.init()
     gameStore.init()
+    repositoryStore.init()
   }
 
   return

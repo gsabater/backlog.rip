@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Fri Jan 12 2024
+ * Modified: Sat Jan 20 2024
  */
 
 let $nuxt = null
@@ -23,8 +23,8 @@ let $nuxt = null
 
 let data = {}
 
+let buffer = {}
 let library = {}
-// let states = {}
 // let wishlist = {}
 
 //+-------------------------------------------------
@@ -58,12 +58,6 @@ export const useDataStore = defineStore('data', {
     indexes: [],
 
     isReady: false,
-
-    meta: {
-      time: 0,
-      timeout: 5 * 60 * 1000,
-      loading: false,
-    },
   }),
 
   //+-------------------------------------------------
@@ -174,6 +168,9 @@ export const useDataStore = defineStore('data', {
       if (jxr.status) {
         log('Search', hash, jxr.data)
         this.toData(jxr.data, 'api')
+        window.setTimeout(() => {
+          $nuxt.$mitt.emit('data:updated', 'loaded')
+        }, 500)
       }
     },
 
@@ -309,13 +306,17 @@ export const useDataStore = defineStore('data', {
     // Created on Thu Dec 14 2023
     //+-------------------------------------------------
     prepareToStore(item, mode) {
+      console.warn(item)
       if (!item.uuid) item.uuid = $nuxt.$uuid()
-      if (item.is == undefined) item.is = {}
+
+      if (item.is == undefined) item.is = { in: {} }
+      if (item.is.in == undefined) item.is.in = {}
+      if (item.log == undefined) item.log = []
 
       if (mode !== 'toIgnore') {
-        if (item.updated_at == undefined) item.updated_at = 0
-
+        item.is.in[mode] = dates.now()
         if (item.playtime == undefined) item.playtime = {}
+        if (item.updated_at == undefined) item.updated_at = 0
         if (item.last_played == undefined) item.last_played = {}
       }
 

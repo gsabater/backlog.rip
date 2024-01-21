@@ -9,29 +9,39 @@
     v-if="show"
     class="modal modal-blur fade d-block"
     :class="{ show: display }"
-    @click.self="hide">
+    @mousedown.self="hide">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
-        <div v-if="title" class="modal-header">
+        <!-- Modal header -->
+        <div v-if="title && header" class="modal-header">
           <h5 class="modal-title">{{ title }}</h5>
           <button
             type="button"
             class="btn-close"
-            data-bs-dismiss="modal"
             aria-label="Close"
             @click="hide"></button>
         </div>
+
+        <!-- Modal body -->
         <div class="modal-body">
           <slot />
         </div>
-        <!-- <div class="modal-footer">
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
           <button type="button" class="btn me-auto" data-bs-dismiss="modal" @click="hide">
             Close
           </button>
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-            Save changes
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+            @click="$emit('save')">
+            Save
           </button>
-        </div> -->
+
+          <slot name="footer"></slot>
+        </div>
       </div>
     </div>
   </div>
@@ -43,15 +53,20 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 30th November 2023
- * Modified: Fri Jan 12 2024
+ * Modified: Fri Jan 19 2024
  **/
 
 export default {
   name: 'TablerDialog',
   props: {
-    width: {
-      type: String,
-      default: '500px',
+    // width: {
+    //   type: String,
+    //   default: '500px',
+    // },
+
+    header: {
+      type: Boolean,
+      default: true,
     },
 
     title: {
@@ -59,12 +74,17 @@ export default {
       default: null,
     },
 
+    footer: {
+      type: [Boolean, Array],
+      default: () => ['close', 'save'],
+    },
+
     persistent: {
       type: Boolean,
       default: false,
     },
   },
-  emits: ['update:model-value'],
+  emits: ['update:model-value', 'save'],
 
   data() {
     return {

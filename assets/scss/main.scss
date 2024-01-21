@@ -6,10 +6,13 @@
 // @import '../../node_modules/@tabler/core/dist/css/tabler-payments.css';
 @import '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
 @import '../../node_modules/@tabler/core/dist/css/demo.css';
-@import 'extend.scss';
+@import 'extend';
 
 @import 'base';
 @import 'borders';
+
+// Import mixins
+@import 'mixins/buttons';
 
 // Import layout
 @import 'partials/home';

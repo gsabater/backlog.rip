@@ -78,6 +78,17 @@
           </div>
         </div>
 
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="subheader">Steam library</div>
+              <div class="h3 m-0">
+                Last sync, {{ dates.timeAgo($auth.user.steam_updated_at) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div v-if="false" class="col-6">
           <div class="card">
             <div class="card-body">
@@ -155,7 +166,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Fri Jan 05 2024
+ * Modified: Tue Jan 16 2024
  **/
 
 export default {

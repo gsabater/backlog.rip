@@ -1,8 +1,41 @@
 <template>
   <div class="row">
-    <div class="col-9">
+    <div class="col-12">
+      <pre
+        class="my-3"
+        style="
+          position: fixed;
+          bottom: 10px;
+          right: 10px;
+          z-index: 9999;
+          max-height: 90vh;
+          overflow-y: scroll;
+          background: rgba(0, 0, 0, 0.5);
+          color: white;
+          padding: 10px;
+          border-radius: 5px;
+        "
+        >{{ f }}
+---
+{{ ui }}
+---
+{{ $app }}
+</pre
+      >
+    </div>
+    <div class="col-12">
       <div class="row mb-4 align-items-center">
         <div class="col col-4">
+          <div style="transform: scale(0.9) translateX(-5px)">
+            <b-input
+              v-model="f.string"
+              placeholder="Filter..."
+              clearable
+              @tick="search"
+              @clear="search"></b-input>
+          </div>
+        </div>
+        <div class="col col-6">
           <button
             v-tippy="'Filter by game state'"
             :class="'btn py-2 ps-3 ' + (f.state ? 'pe-2' : 'pe-3')"
@@ -156,40 +189,24 @@
         </div>
       </div>
 
-      <search-results ref="results" :filters="f" :source="source"></search-results>
+      <search-results
+        ref="results"
+        :filters="f"
+        :source="source"
+        @loading="onLoading"></search-results>
 
       <div class="pagination my-3">
         <div class="btn" @click="f.show.page++">Show more</div>
       </div>
     </div>
 
-    <div class="col-3">
-      <div style="transform: scale(0.9)">
-        <b-input
-          v-model="f.string"
-          placeholder="Filter..."
-          clearable
-          @tick="search"
-          @clear="search"></b-input>
-      </div>
-
+    <div v-if="false" class="col-3">
       show:
       <br />
       all games z-z only owned
       <br />
 
-      <div>
-        <pre class="my-3" style="transform: scale(0.9)"
-          >{{ f }}
----
-{{ ui }}
----
-{{ $app }}
---
-{{ $auth.config }}
-</pre
-        >
-      </div>
+      <div></div>
     </div>
   </div>
 </template>
@@ -200,7 +217,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Jan 11 2024
+ * Modified: Sun Jan 28 2024
  **/
 
 export default {
@@ -228,14 +245,17 @@ export default {
 
       base: {
         string: '',
+
         sortBy: 'score',
         sortDir: 'desc',
+
         state: null,
+        genres: [],
 
         show: {
           display: 'grid',
           page: 1,
-          perPage: 30,
+          perPage: 48,
         },
       },
 
@@ -260,12 +280,15 @@ export default {
         states: [],
       },
 
-      ui: {},
+      ui: {
+        loading: false,
+      },
     }
   },
 
   computed: {
-    ...mapStores(useDataStore),
+    ...mapStores(useDataStore, useRepositoryStore),
+    ...mapState(useRepositoryStore, ['genres']),
 
     isLibrary() {
       return this.source == 'library'
@@ -287,6 +310,11 @@ export default {
   },
 
   methods: {
+    onLoading(loading) {
+      this.ui.loading = loading
+      console.warn('loading', loading)
+    },
+
     search() {
       this.$nextTick(() => {
         log('#️⃣ Search: Interface', JSON.stringify(this.f))
@@ -303,14 +331,25 @@ export default {
     // Created on Tue Nov 14 2023
     //+-------------------------------------------------
     mergeFilters() {
+      const loaded = {}
+
+      const param = this.$route.params?.slug || null
+
+      if (param) {
+        const genre = this.genres.find((g) => g.slug == param)
+        loaded.genres = [genre.id]
+      }
+
       this.f = {
         ...this.base,
         ...(this.preset ? this.presets[this.preset] : {}),
         ...this.filters,
+        ...loaded,
       }
     },
 
     async getData() {
+      await this.repositoryStore.getGenres()
       if (this.isLibrary) return
 
       this.dataStore.loadApiStatus()

@@ -1,5 +1,6 @@
 <template>
   <component :is="theIcon" v-bind="$attrs" :size="size" :stroke-width="width" />
+  <!-- <pre>{{ theIcon }}</pre> -->
 </template>
 
 <script>
@@ -11,7 +12,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sun Jan 07 2024
+ * Modified: Mon Jan 22 2024
  **/
 
 // import {
@@ -67,9 +68,16 @@ export default {
 
   computed: {
     theIcon() {
-      return (
-        TablerIcons[`Icon${this.icon || this.slotIcon}`] || TablerIcons.IconFaceIdError
-      )
+      let icon = this.icon || this.slotIcon
+      if (!icon) return TablerIcons.IconFaceIdError
+      if (icon?.startsWith('Icon')) icon.replace('Icon', '')
+
+      icon = icon.replace(/\n/g, '').trim()
+      icon = icon.replace(/\s*[\r\n]\s*/g, '').trim()
+      icon = icon.replace(/^\s+|\s+$/g, '')
+      // console.warn(icon)
+
+      return TablerIcons[`Icon${icon}`] || TablerIcons.IconFaceIdError
       // return () => import(`@tabler/icons-vue/Icon${this.icon || this.slotIcon}`)
       // return 'Icon' + (this.icon || this.slotIcon)
     },

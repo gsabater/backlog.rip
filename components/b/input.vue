@@ -1,9 +1,9 @@
 <template>
-  <pre>
+  <!-- <pre>
   layout: {{ layout }}
   Attrs: {{ $attrs }}
-  Valudate: {{ v$ }}
-  </pre>
+  vuelidate: {{ v$ }}
+  </pre> -->
 
   <!--
     Default layout
@@ -23,11 +23,11 @@
       nupdate:modelValue="notify"
       @input="onChange" />
 
-    <div v-if="hint" class="small text-secondary">
+    <small v-if="hint" class="form-hint">
       {{ hint }}
-    </div>
+    </small>
 
-    <div v-if="hasErrors" class="invalid-feedback">Invalid feedback</div>
+    <div v-if="hasErrors" class="invalid-feedback">{{ errorMessage }}</div>
   </template>
 
   <!--
@@ -103,7 +103,7 @@
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Fri Jan 19 2024
+ * Modified: Thu Jan 25 2024
  **/
 
 export default {
@@ -214,6 +214,10 @@ export default {
     hasErrors() {
       return this.v$?.$errors?.length || this.v$?.$silentErrors?.length
     },
+
+    errorMessage() {
+      return this.v$?.$errors?.[0]?.$message || this.v$?.$silentErrors?.[0]?.$message
+    },
   },
 
   // watch: {
@@ -223,6 +227,10 @@ export default {
   // },
 
   methods: {
+    touch() {
+      if (this.v$) this.v$.$touch()
+    },
+
     //+-------------------------------------------------
     // onChange()
     // Emits 'update:modelValue' that updates the v-model

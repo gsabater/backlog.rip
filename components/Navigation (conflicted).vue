@@ -17,7 +17,7 @@
             <li v-if="false" style="border-right: 1px dashed #ccc; margin: 10px"></li>
 
             <li class="nav-item dropdown">
-              <div class="nav-link dropdown-toggle cursor-pointer">
+              <div class="nav-link dropdown-toggle">
                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                   <Icon>ChartBubble</Icon>
                 </span>

@@ -1,11 +1,18 @@
 <template>
   <header class="hero pt-7 pb-9 md:pt-10 md:pb-13">
     <div class="container">
+      <img
+        src="/img/logo.png"
+        width="130"
+        alt="Backlog.rip"
+        class="mb-3"
+        style="text-shadow: 4px black" />
+
       <h1 class="hero-title">Backlog.rip</h1>
       <p class="hero-description mt-4">
         Free and open source library manager for all your games.
         <br />
-        Works in the cloud, without launchers.
+        Runs only in your browser, without cookies or trackers.
       </p>
       <p class="hero-description mt-2">Organize and manage your games with ease.</p>
 
@@ -92,7 +99,8 @@
         </div>
 
         <p class="text-muted my-4">
-          V
+          Version
+          <span style="font-size: 20px">α</span>
           {{ $app.v }}
           <span class="px-2">·</span>
           <!-- <a href="/docs/5.3/getting-started/download/" class="link-secondary">
@@ -110,7 +118,7 @@
             class="link-secondary"
             target="_blank">
             <Icon>BrandGithub</Icon>
-            Source code
+            Source code on Github
           </a>
         </p>
       </div>
@@ -155,6 +163,28 @@
       from all stores - create a collection - Track your game status
     </div>
   </div> -->
+  <svg width="0" height="0">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".537"></feTurbulence>
+      <feColorMatrix type="saturate" values="0"></feColorMatrix>
+      <feBlend mode="multiply" in="SourceGraphic"></feBlend>
+    </filter>
+  </svg>
 </template>
 
 <script></script>
+
+<style>
+/* https://codepen.io/thebabydino/pen/abjpEbz */
+svg[height='0'] {
+  position: fixed;
+}
+
+header.herod {
+  background: radial-gradient(circle, #191a22, rgb(46, 18, 94), #191a22);
+  /* background: url(https://images.unsplash.com/photo-1633596683562-4a47eb4983c5?w=1400) 50% /    cover; */
+
+  /* filter: url(#grainy); */
+  border-bottom: 2px solid #191a22;
+}
+</style>

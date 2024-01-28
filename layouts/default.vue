@@ -640,7 +640,7 @@
               class="navbar-brand-image d-none d-md-inline-block"
               style="height: auto; width: 100px; transform: translateY(15px)" />
           </NuxtLink>
-          <span nopestyle="transform: translate(-10px, 7px)">Backlog.rip</span>
+          <span>Backlog.rip</span>
         </h1>
         <div class="navbar-nav flex-row order-md-last">
           <!-- <div v-if="!$auth.isLogged" class="nav-item d-none d-md-flex me-3">
@@ -655,19 +655,19 @@
           <div class="d-none d-md-flex mx-3">
             <div
               v-tippy="'Enable dark mode'"
-              class="nav-link px-0 hide-theme-dark"
+              class="nav-link cursor-pointer px-0 hide-theme-dark"
               @click="changeTheme('dark')">
               <Icon>Moon</Icon>
             </div>
 
             <div
               v-tippy="'Enable light mode'"
-              class="nav-link px-0 hide-theme-light"
+              class="nav-link cursor-pointer px-0 hide-theme-light"
               @click="changeTheme('light')">
               <Icon>Sun</Icon>
             </div>
 
-            <div class="nav-item dropdown me-3 d-none noped-md-flex">
+            <div v-if="false" class="nav-item dropdown me-3 d-none d-md-flex">
               <a
                 href="#"
                 class="nav-link px-0"
@@ -841,54 +841,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- <div
-              class="nav-link px-0 hide-theme-dark"
-              data-bs-toggle="tooltip"
-              data-bs-placement="bottom"
-              aria-label="Enable dark mode"
-              data-bs-original-title="Enable dark mode">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon icon-tabler icon-tabler-brand-discord-filled"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path
-                  d="M14.983 3l.123 .006c2.014 .214 3.527 .672 4.966 1.673a1 1 0 0 1 .371 .488c1.876 5.315 2.373 9.987 1.451 12.28c-1.003 2.005 -2.606 3.553 -4.394 3.553c-.732 0 -1.693 -.968 -2.328 -2.045a21.512 21.512 0 0 0 2.103 -.493a1 1 0 1 0 -.55 -1.924c-3.32 .95 -6.13 .95 -9.45 0a1 1 0 0 0 -.55 1.924c.717 .204 1.416 .37 2.103 .494c-.635 1.075 -1.596 2.044 -2.328 2.044c-1.788 0 -3.391 -1.548 -4.428 -3.629c-.888 -2.217 -.39 -6.89 1.485 -12.204a1 1 0 0 1 .371 -.488c1.439 -1.001 2.952 -1.459 4.966 -1.673a1 1 0 0 1 .935 .435l.063 .107l.651 1.285l.137 -.016a12.97 12.97 0 0 1 2.643 0l.134 .016l.65 -1.284a1 1 0 0 1 .754 -.54l.122 -.009zm-5.983 7a2 2 0 0 0 -1.977 1.697l-.018 .154l-.005 .149l.005 .15a2 2 0 1 0 1.995 -2.15zm6 0a2 2 0 0 0 -1.977 1.697l-.018 .154l-.005 .149l.005 .15a2 2 0 1 0 1.995 -2.15z"
-                  stroke-width="0"
-                  fill="currentColor"></path>
-              </svg>
-            </div> -->
-          </div>
-
-          <div class="nav-item dropdown d-none">
-            <div class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
-              <span
-                class="avatar avatar-sm"
-                :style="`background-image: url(${$auth.user.avatar})`">
-                {{ !$auth.user.avatar ? $auth.user.username[0] : '' }}
-              </span>
-              <div class="d-none d-xl-block ps-2">
-                <div>{{ $auth.user.username }}</div>
-                <div class="mt-1 small text-muted">UI Designer</div>
-              </div>
-            </div>
-            <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-              <a href="#" class="dropdown-item">Status</a>
-              <a href="#" class="dropdown-item">Profile</a>
-              <a href="#" class="dropdown-item">Feedback</a>
-              <div class="dropdown-divider"></div>
-              <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
-
-              <!-- <a href="./sign-in.html" class="dropdown-item">Logout</a> -->
-            </div>
           </div>
 
           <div class="nav-item dropdown d-block align-self-center">
@@ -1011,9 +963,19 @@
   <game-details></game-details>
   <game-manager></game-manager>
   <b-backdrop></b-backdrop>
-  <Toaster position="top-right" />
-  <SpeedInsights />
 
+  <Toaster
+    position="bottom-right"
+    close-button
+    rich-colors
+    :theme="ui.theme"
+    nopetoast-options="{
+      style: { background: '#fda4af' },
+      className: 'card',
+      descriptionClassName: 'my-toast-description',
+    }" />
+
+  <SpeedInsights v-if="!$app.dev" />
   <component :is="'style'" id="dynamic-style" type="text/css">
     <template v-if="!$app.dev">pre{ display: none !important; }</template>
   </component>
@@ -1052,7 +1014,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Sun Jan 14 2024
+ * Modified: Fri Jan 26 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'
@@ -1116,7 +1078,7 @@ export default {
   created() {
     this.$mitt.on('*', (e, payload) => {
       log('🎆 Fired event', e, payload)
-      console.info(this.$mitt.all)
+      // console.info(this.$mitt.all)
     })
 
     this.$mitt.on('app:render', () => {

@@ -45,13 +45,13 @@
                   {{ table.name }}
                 </a>
                 <div class="d-block text-secondary text-truncate mt-n1">
-                  {{ table.count }} records
+                  {{ table.count }} rows
                 </div>
               </div>
               <div class="col-auto">
                 <b-btn class="btn-sm btn-outline-warning">
                   <Icon size="16" class="mr-1">Restore</Icon>
-                  Reset table
+                  Reset data
                 </b-btn>
               </div>
             </div>
@@ -108,7 +108,7 @@
  * @desc:    https://dexie.org/docs/ExportImport/dexie-export-import
  * -------------------------------------------
  * Created Date: 18th January 2024
- * Modified: Fri Jan 19 2024
+ * Modified: Thu Jan 25 2024
  **/
 
 export default {

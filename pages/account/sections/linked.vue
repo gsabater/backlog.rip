@@ -18,62 +18,68 @@
       <div class="row g-2 align-items-center">
         <div class="col-auto">
           <span class="avatar avatar-md bg-primary-lt" style="background-image: url(...)">
-            <span class="badge bg-danger"></span>
+            <span v-if="!$auth.user.steam" class="badge bg-danger"></span>
             <Icon>BrandSteam</Icon>
           </span>
         </div>
         <div class="col ps-3">
           <h4 class="card-title m-0">
-            <a href="#">Steam Library</a>
+            <span>Steam Library</span>
           </h4>
-          <div v-if="$auth.user" class="text-muted">
+          <div v-if="$auth.user.steam_updated_at" class="text-muted">
             Last sync, {{ dates.timeAgo($auth.user.steam_updated_at) }}
           </div>
+          <!-- <div class="d-flex flex-direction-row">asdsadsad</div> -->
           <!-- <div class="small mt-1">
                     <span class="badge bg-green"></span> Online
                   </div> -->
         </div>
-        <div class="col-auto">
-          <a href="#" class="btn">Activate</a>
-        </div>
-        <div class="col-auto">
-          <div class="dropdown">
-            <a
-              href="#"
-              class="btn-action"
-              data-bs-toggle="dropdown"
-              aria-expanded="false">
-              <!-- Download SVG icon from http://tabler-icons.io/i/dots-vertical -->
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <circle cx="12" cy="12" r="1"></circle>
-                <circle cx="12" cy="19" r="1"></circle>
-                <circle cx="12" cy="5" r="1"></circle>
-              </svg>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end">
-              <a href="#" class="dropdown-item">Import</a>
-              <a href="#" class="dropdown-item">Export</a>
-              <a href="#" class="dropdown-item">Download</a>
-              <a href="#" class="dropdown-item text-danger">Delete</a>
+        <div class="col-auto me-5">
+          <template v-if="$auth.user.steam">
+            <span
+              style="--tblr-status-color: #74b816; transform: translateY(-1px)"
+              class="status-dot status-dot-animated me-2"></span>
+            {{ $auth.user.steam_data.personaname }}
+          </template>
+          <template v-else>
+            <div class="btn btn-outlined bg-secondary-subtle">
+              <Icon class="me-2">LayersIntersect</Icon>
+              Enable
             </div>
-          </div>
+          </template>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="row align-items-center">
+        <div class="col-auto">
+          <label class="form-check form-switch m-0">
+            <input class="form-check-input position-static" type="checkbox" checked="" />
+            <span class="form-check-label form-check-label-on">
+              Auto updates are enabled
+            </span>
+            <span class="form-check-label form-check-label-off">
+              Enable automatic updates
+            </span>
+          </label>
+        </div>
+        <div class="col-auto ms-auto">
+          <small
+            v-tippy="{
+              content:
+                'Enable automatic updates to keep your Steam library in sync with your backlog.rip account. The update will run every 24 hours.',
+              placement: 'top',
+            }"
+            class="text-muted cursor-help">
+            More information
+            <span class="form-help mx-2">?</span>
+          </small>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="card mb-3">
+  <div v-if="false" class="card mb-3">
     <div class="card-body">
       <div class="row g-2 align-items-center">
         <div class="col-auto">
@@ -147,7 +153,7 @@
     </div>
   </div>
 
-  <div class="card mb-3">
+  <div v-if="false" class="card mb-3">
     <div class="card-body">
       <div class="row g-2 align-items-center">
         <div class="col-auto">
@@ -218,6 +224,35 @@
         </div>
       </div>
     </div>
+    <div class="card-footer disabled">
+      <div class="row align-items-center">
+        <div class="col-auto">
+          <label class="form-check form-switch m-0">
+            <input
+              class="form-check-input position-static disabled"
+              type="checkbox"
+              disabled="" />
+            <span class="form-check-label form-check-label-on">
+              Auto updates are enabled
+            </span>
+            <span class="form-check-label form-check-label-off">
+              Auto updates are not available
+            </span>
+          </label>
+        </div>
+        <div class="col-auto ms-auto">
+          <small
+            v-tippy="{
+              content: 'Automatic updates are disabled for GOG libraries',
+              placement: 'top',
+            }"
+            class="text-muted cursor-help">
+            More information
+            <span class="form-help mx-2">?</span>
+          </small>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -227,7 +262,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Thu Jan 18 2024
+ * Modified: Thu Jan 25 2024
  **/
 
 export default {

@@ -5,13 +5,13 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th December 2023
- * Modified: Fri Jan 12 2024
+ * Modified: Sun Jan 21 2024
  */
 
 //+-------------------------------------------------
 // Codex: List of events used in the journal
 // - log (general message)
-// > ref: null, data: { message: 'string' }
+// > ref: null, data: { title: 'string', message: 'string' }
 //
 // - state (Change in a state)
 // > ref: game.uuid, data: { state: 'states.id', 'old': 'states.id / null' }
@@ -19,8 +19,8 @@
 // - added (game added)
 // > ref: null, data: { store: 'steam', games: [uuid, uuid2] }
 //
-// - note (note added to ref)
-// > ref: uuid, data: { note: 'string' }
+// - note (note added -> General or to a ref)
+// > ref: null / uuid, data: { note: 'string' }
 //
 // - milestone (100h played)
 //

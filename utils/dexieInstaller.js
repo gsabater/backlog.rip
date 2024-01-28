@@ -103,13 +103,29 @@ export class DexieInstaller {
     await this.$db.account.put(data)
   }
 
+  //+-------------------------------------------------
+  // checkin()
+  // Checks in the user in the database and updates
+  // config with missing values
+  // -----
+  // Created on Thu Jan 25 2024
+  //+-------------------------------------------------
+
   async checkin() {
-    let count = await this.$db.config.count()
-    if (count === 0) {
-      this.$db.config.put({
-        key: 'created_at',
-        value: dates.now(),
-      })
+    const fields = {
+      created_at: dates.now(),
+      autosync_steam: false,
+    }
+
+    for (const [field, value] of Object.entries(fields)) {
+      let row = await this.$db.config.get(field)
+
+      if (row === undefined) {
+        this.$db.config.put({
+          key: field,
+          value: value,
+        })
+      }
     }
 
     this.$db.config.put({

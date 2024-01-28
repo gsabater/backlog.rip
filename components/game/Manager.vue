@@ -80,7 +80,7 @@ import { useStateStore } from '../../stores/stateStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Fri Jan 12 2024
+ * Modified: Sun Jan 21 2024
  **/
 
 export default {
@@ -198,14 +198,6 @@ export default {
     //     description: 'Monday, January 3rd at 6:00pm',
     //   })
 
-    //   this.journalStore.add({
-    //     event: 'state',
-    //     ref: this.$parent.app.uuid,
-    //     data: {
-    //       state: state.id,
-    //       old: state.id,
-    //     },
-    //   })
     // },
 
     getData() {

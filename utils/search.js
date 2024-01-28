@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Sun Jan 14 2024
+ * Modified: Sun Jan 28 2024
  */
 
 export default {
@@ -81,6 +81,19 @@ export default {
               filters.string,
               app.name
             )
+            logged--
+          }
+          continue
+        }
+      }
+
+      // Filter: Genres
+      // Include only apps with genres
+      //+---------------------------------------
+      if (filters?.genres?.length) {
+        if (!app.genres?.some((item) => filters?.genres.includes(item))) {
+          if (logged > 0) {
+            console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
             logged--
           }
           continue

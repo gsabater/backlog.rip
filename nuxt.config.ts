@@ -8,7 +8,7 @@
  * Modified:
  */
 
-import { mapState } from "pinia";
+// import { mapState } from "pinia";
 
 export default defineNuxtConfig({
   ssr: false,
@@ -76,7 +76,7 @@ export default defineNuxtConfig({
     plugins: [],
   },
 
-  sourcemap: { server: false, client: false },
+  sourcemap: { server: false, client: true },
 
   devtools: {
     enabled: true,

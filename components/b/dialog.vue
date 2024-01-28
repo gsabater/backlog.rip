@@ -12,9 +12,16 @@
     @mousedown.self="hide">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
+        <div v-if="loading" class="progress progress-sm">
+          <div class="progress-bar progress-bar-indeterminate"></div>
+        </div>
+
         <!-- Modal header -->
         <div v-if="title && header" class="modal-header">
-          <h5 class="modal-title">{{ title }}</h5>
+          <div>
+            <h5 class="modal-title mb-1">{{ title }}</h5>
+            <p class="text-muted mb-1">{{ subtitle }}</p>
+          </div>
           <button
             type="button"
             class="btn-close"
@@ -29,17 +36,17 @@
 
         <!-- Modal footer -->
         <div class="modal-footer">
-          <button type="button" class="btn me-auto" data-bs-dismiss="modal" @click="hide">
+          <!-- <button type="button" class="btn me-auto" data-bs-dismiss="modal" @click="hide">
             Close
-          </button>
+          </button> -->
+
           <button
             type="button"
-            class="btn btn-primary"
-            data-bs-dismiss="modal"
+            class="btn px-5"
+            :class="{ disabled: loading }"
             @click="$emit('save')">
             Save
           </button>
-
           <slot name="footer"></slot>
         </div>
       </div>
@@ -53,7 +60,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 30th November 2023
- * Modified: Fri Jan 19 2024
+ * Modified: Sun Jan 28 2024
  **/
 
 export default {
@@ -74,12 +81,22 @@ export default {
       default: null,
     },
 
+    subtitle: {
+      type: String,
+      default: null,
+    },
+
     footer: {
       type: [Boolean, Array],
       default: () => ['close', 'save'],
     },
 
     persistent: {
+      type: Boolean,
+      default: false,
+    },
+
+    loading: {
       type: Boolean,
       default: false,
     },

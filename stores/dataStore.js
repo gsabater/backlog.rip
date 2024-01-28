@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Sat Jan 20 2024
+ * Modified: Sat Jan 27 2024
  */
 
 let $nuxt = null
@@ -16,16 +16,16 @@ let $nuxt = null
 // Data is the complete list of games available to search
 // Data is updated every time a repository is loaded or a game is added
 // ---
+// Buffer is a top-list of games that is refreshed from the api
+// ---
 // Library is loaded on init and updated when a game is added
 // ---
 // All elements are indexed by uuid
 //+-------------------------------------------------
 
 let data = {}
-
 let buffer = {}
 let library = {}
-// let wishlist = {}
 
 //+-------------------------------------------------
 // repos
@@ -167,10 +167,8 @@ export const useDataStore = defineStore('data', {
       const jxr = await $nuxt.$axios.get(`repository/${hash}.json`)
       if (jxr.status) {
         log('Search', hash, jxr.data)
-        this.toData(jxr.data, 'api')
-        window.setTimeout(() => {
-          $nuxt.$mitt.emit('data:updated', 'loaded')
-        }, 500)
+
+        await this.toData(jxr.data, 'api')
       }
     },
 
@@ -397,7 +395,7 @@ export const useDataStore = defineStore('data', {
 
       for (const store of this.indexes) {
         if (item[store + '_id'] && index[store][item[store + '_id']]) {
-          console.warn('🔥 Element is already indexed on', store, item.name, item)
+          // console.warn('🔥 Element is already indexed on', store, item.name, item)
           return index[store][item[store + '_id']]
         }
 
@@ -447,7 +445,7 @@ export const useDataStore = defineStore('data', {
         local.api_id = api.uuid
       }
       console.warn(local, api)
-      debugger
+
       // Save and index the app
       // Maybe $mitt.emit('data:updated', 'updated', local)
       data[app.uuid] = { ...local }
@@ -464,21 +462,25 @@ export const useDataStore = defineStore('data', {
     // -----
     // Created on Tue Nov 21 2023
     //+-------------------------------------------------
-    async toData(item) {
-      if (item.length) return item.forEach((item) => this.toData(item))
+    async toData(items) {
+      if (!items.length) items = [items]
 
-      // console.warn('✨ ', item)
+      items.forEach((item) => {
+        // console.warn('✨ ', item)
+        // if (item.steam_id == '292030') {
+        //   console.warn(local)
+        //   debugger
+        // }
 
-      // if (item.steam_id == '292030') {
-      //   console.warn(local)
-      //   debugger
-      // }
-      let uuid = this.isInData(item)
-      if (uuid) this.updateAndQueue(uuid, item)
-      else data[item.uuid] = { ...item, api_id: item.uuid }
+        let uuid = this.isInData(item)
+        if (uuid) this.updateAndQueue(uuid, item)
+        else data[item.uuid] = { ...item, api_id: item.uuid }
 
-      this.toIndex(item)
+        this.toIndex(item)
+      })
 
+      $nuxt.$mitt.emit('data:updated', 'loaded')
+      console.warn('🌈 Data updated')
       return
       Object.values(items).forEach((item) => {
         if (source == 'library') {

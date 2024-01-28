@@ -32,20 +32,19 @@ let $account = null
 
 export default {
   manifest: {
-    version: '1.0',
-    store: 'Steam',
-    name: 'Steam public profiles',
+    version: '1.1',
+    name: 'Steam importer',
     author: 'Gaspar S.',
 
+    store: 'Steam',
+    source: 'steam',
+
     description:
-      'This tool will import all your games and playtime for every game on your library, including free games.',
+      'Import all your games and playtime for every game on your library, including free games.',
 
     games: true,
     account: true,
     wishlist: false,
-
-    does: ['Your Steam library'],
-    doesnot: [],
 
     requeriments: [
       {
@@ -87,10 +86,46 @@ export default {
   //+-------------------------------------------------
   prepareToStore(app) {
     let data = app.data
+
     app.playtime.steam = data.playtime_forever
     app.last_played.steam = data.rtime_last_played
     delete app.data
+
     return app
+  },
+
+  //+-------------------------------------------------
+  // hasUpdates()
+  // Receives a field and compares two objects
+  // Returns false if there are no updates
+  // Returns an object with the updates if there are
+  // -----
+  // Created on Wed Jan 24 2024
+  //+-------------------------------------------------
+  hasUpdates(field, lib, app) {
+    // Update: playtime
+    //+---------------------------------------
+    if (field == 'playtime') {
+      if (lib.playtime?.steam !== app.playtime_forever) {
+        return {
+          from: lib.playtime?.steam,
+          to: app.playtime_forever,
+        }
+      }
+    }
+
+    // Update: playtime
+    //+---------------------------------------
+    if (field == 'last_played') {
+      if (lib.last_played?.steam !== app.rtime_last_played) {
+        return {
+          from: lib.last_played?.steam,
+          to: app.rtime_last_played,
+        }
+      }
+    }
+
+    return false
   },
 
   //+-------------------------------------------------
@@ -119,9 +154,5 @@ export default {
       // xDDDD
       return jxr.data?.fetch?.data?.games || {}
     }
-  },
-
-  getWishlist() {
-    return 333
   },
 }

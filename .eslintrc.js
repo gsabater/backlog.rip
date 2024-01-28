@@ -3,7 +3,7 @@
  * @desc:    https://vueschool.io/articles/vuejs-tutorials/eslint-and-prettier-with-vite-and-vue-js-3/
  * -------------------------------------------
  * Created Date: 11th November 2023
- * Modified: Thu Jan 11 2024
+ * Modified: Mon Jan 22 2024
  */
 
 module.exports = {
@@ -30,6 +30,7 @@ module.exports = {
   globals: {
     markRaw: true,
     useNuxtApp: true,
+    useRoute: true,
     useCookie: true,
     navigateTo: true,
 

@@ -5,14 +5,14 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Thu Jan 18 2024
+ * Modified: Thu Jan 25 2024
  */
 
 let $nuxt = null
 let $data = null
 
 let app = {
-  v: 'β 0.5',
+  v: '0.6', //β
   key: 0,
   dev: false,
   env: 'production',
@@ -22,6 +22,28 @@ let app = {
     sidebar: false,
   },
 
+  //+-------------------------------------------------
+  // Counters of data
+  // states are counted in stateStore
+  // count.api is the number of games available in the api
+  // count.data is the number of games in the database
+  // count.lib is the number of games in each library
+  // ---
+  // Maybe move this to libraryStore, or some other plugin
+  //+-------------------------------------------------
+  count: {
+    api: 0,
+    data: 0,
+    lib: {
+      steam: 0,
+      gog: 0,
+      epic: 0,
+    },
+  },
+
+  // Loading state
+  // Controls global nprogress bar
+  //+-----------------------------------------------
   loading: false,
 }
 
@@ -58,7 +80,7 @@ export default defineNuxtPlugin(() => {
   init()
 
   app.toggleSidebar = toggleSidebar
-  app.c_library = Object.keys($data.library).length
+  // app.c_library = Object.keys($data.library).length
 
   window.$app = app
   return {

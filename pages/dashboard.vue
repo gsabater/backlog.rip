@@ -89,6 +89,11 @@
           </div>
         </div>
 
+        <div class="col-12">
+          <h2>Continue playing</h2>
+          games-list
+        </div>
+
         <div v-if="false" class="col-6">
           <div class="card">
             <div class="card-body">
@@ -166,7 +171,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Tue Jan 16 2024
+ * Modified: Mon Jan 22 2024
  **/
 
 export default {

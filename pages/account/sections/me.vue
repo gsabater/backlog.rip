@@ -18,9 +18,10 @@
       <div class="row g-3">
         <div class="col-md nope-col-lg-8">
           <!-- <div class="form-label">Username</div> -->
-          <h3 class="card-title my-1">Username</h3>
+          <!-- <h4 class="card-title mb-2">Username</h4> -->
           <b-input
             v-model="user.username"
+            label="Username"
             hint="This is only your preferred profile name"
             @change="update" />
         </div>
@@ -72,7 +73,7 @@
         </label> -->
       </div>
     </div>
-    <div class="card-footer">Last updated {{ user.updated_at }}</div>
+    <div class="card-footer">Registered {{ user.created_at }}</div>
   </div>
 </template>
 
@@ -82,7 +83,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Jan 03 2024
+ * Modified: Thu Jan 25 2024
  **/
 
 export default {
@@ -132,7 +133,7 @@ export default {
     //+-------------------------------------------------
     async update() {
       this.$toast.success('Your data has been updated', {
-        description: 'Monday, January 3rd at 6:00pm',
+        duration: Infinity,
       })
     },
 

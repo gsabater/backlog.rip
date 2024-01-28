@@ -1,26 +1,19 @@
 <template>
-  <b-dialog v-model="ui.show" title="New entry">
+  <b-dialog
+    ref="dialog"
+    v-model="ui.show"
+    title="New journal entry"
+    subtitle="Lorem ipsum dolor"
+    :loading="ui.loading"
+    @save="submit">
     <div class="mb-3 align-items-end">
       <label class="form-label">Title</label>
-      <b-input v-model="item.name" type="text" class="form-control" :v$="v$.item.name" />
-      <span>{{ v$.item.$params }}</span>
+      <b-input v-model="item.title" type="text" class="form-control" />
     </div>
-    <div class="mb-3">
+    <div>
       <label class="form-label">Additional info</label>
-      <textarea v-model="item.description" class="form-control" rows="4"></textarea>
-      <textarea
-        v-model="item.note"
-        class="form-control"
-        name="note"
-        rows="2"
-        @blur="setNote"></textarea>
+      <textarea v-model="item.note" class="form-control" name="note" rows="3"></textarea>
     </div>
-
-    <pre>
-      xxx
-      {{ v$.item }}
-      xxx
-    </pre>
   </b-dialog>
 </template>
 
@@ -30,7 +23,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th January 2024
- * Modified: Sat Jan 20 2024
+ * Modified: Sun Jan 21 2024
  **/
 
 import { useVuelidate } from '@vuelidate/core'
@@ -38,6 +31,7 @@ import { required } from '@vuelidate/validators'
 
 export default {
   props: [],
+  emits: ['stored'],
 
   data() {
     return {
@@ -52,11 +46,11 @@ export default {
     }
   },
 
-  validations() {
-    return {
-      item: { title: { required }, note: { required } },
-    }
-  },
+  // validations() {
+  //   return {
+  //     item: { title: { required }, note: { required } },
+  //   }
+  // },
 
   computed: {
     ...mapStores(useJournalStore),
@@ -96,69 +90,58 @@ export default {
     //   this.ui.show = true
     // },
 
+    //+-------------------------------------------------
+    // submit()
+    // Validates, stores, notifies and closes the modal
+    // -----
+    // Created on Sun Jan 21 2024
+    //+-------------------------------------------------
     async submit() {
       let step = false
-
       // 1 . Form validations
-      if (await this.validate()) step = 'valid'
+      step = 'valid'
+      // if (await this.v$.$validate()) step = 'valid'
 
-      // 2. Do api requests
+      // 2. Perform store of data
       if (step == 'valid') await this.store()
-      else
-        useNuxtApp().$emit('notifications:show', {
-          type: 'error',
-          text: 'Debes revisar los campos antes de continuar',
-        })
-    },
-
-    async validate() {
-      await this.$refs.form.resetValidation()
-      await this.$refs.form.validate()
-
-      if (this.ui.isValid) return true
-
-      console.warn('🔴', this.$refs.form?.errors)
-      return false
     },
 
     //+-------------------------------------------------
-    // Async API crud actions
+    // store()
+    //
+    // -----
+    // Created on Sun Jan 21 2024
     //+-------------------------------------------------
-
     async store() {
       this.ui.loading = true
 
-      const index = this.item.index || 0
       const action = this.action
       const payload = { ...this.item }
 
-      payload.tipo = 'evaluador'
-      payload.roles = ['ROLE_EVALUADOR']
-      payload.empresa_id = this.$auth.user?.empresa?.id
-      payload.plainPassword = payload.password
+      // payload.tipo = 'evaluador'
 
       try {
         // if (action == 'create') await this.evaluadoresStore.create(payload)
         // if (action == 'update') await this.evaluadoresStore.update(payload)
 
+        this.journalStore.add({
+          event: 'note',
+          ref: null,
+          data: {
+            title: payload.title,
+            note: payload.note,
+          },
+        })
+
         this.$emit('stored', {
-          index,
           action,
           item: payload,
         })
 
-        notify.show({
-          // type: 'error',
-          text: 'Los cambios se han guardado correctamente',
-        })
-
         this.ui.show = false
+        this.$refs.dialog.hide()
       } catch (e) {
         console.info(e)
-        useNuxtApp().$emit('notifications:show', {
-          type: 'error',
-          text: 'Ha ocurrido un error al guardar. Revisa todos los campos',
-        })
       } finally {
         this.ui.loading = false
       }

@@ -22,7 +22,7 @@
                   <template v-for="(item, i) in events" :key="'event' + i">
                     <li v-if="item" class="step-item">
                       <div v-if="item.event == 'log'">
-                        <div class="h4 m-0">
+                        <div class="h4 mb-1">
                           {{ _eventTitle(item) }}
                         </div>
                         <div class="text-secondary">
@@ -31,12 +31,18 @@
                       </div>
 
                       <div v-if="item.event == 'note'">
-                        <div class="h4 m-0">
-                          <Icon class="text-secondary" size="17">Note</Icon>
+                        <div class="h4 mb-1">
+                          <span
+                            style="transform: translateY(-1px); display: inline-block">
+                            <Icon class="text-secondary mr-1" size="18">Note</Icon>
+                          </span>
                           {{ _eventTitle(item) }}
                         </div>
-                        A note has been added for
-                        <GameChip :app="item.ref"></GameChip>
+                        <template v-if="item.ref">
+                          A note has been added for
+                          <GameChip :app="item.ref"></GameChip>
+                        </template>
+
                         <div v-if="item.data?.note" class="text-secondary">
                           <Icon>Quote</Icon>
                           {{ item.data.note }}
@@ -45,7 +51,11 @@
 
                       <div v-if="item.event == 'state'">
                         <div class="h4 mb-2">
-                          <Icon class="text-secondary" size="17">Background</Icon>
+                          <span
+                            style="transform: translateY(-1px); display: inline-block">
+                            <Icon class="text-secondary mr-1" size="18">Background</Icon>
+                          </span>
+
                           {{ _eventTitle(item) }}
                         </div>
 
@@ -61,7 +71,7 @@
                       </div>
 
                       <div v-if="item.event == 'added'">
-                        <div class="h4 m-0">
+                        <div class="h4 mb-1">
                           <Icon class="text-secondary" size="17">StepInto</Icon>
                           {{ _eventTitle(item) }}
                         </div>
@@ -70,18 +80,19 @@
 
                         <gameList
                           :apps="item.data.games"
+                          :max="item.show"
                           cols="3"
-                          max="12"
                           class="pt-3"></gameList>
 
                         <div v-if="item.data.games.length > 12">
                           <div class="text-secondary">
-                            <b-btn class="my-1">
-                              <Icon class="text-secondary me-2" size="12">
-                                PlusCircled
-                              </Icon>
+                            <b-btn class="mt-3" @click="item.show = 10000">
+                              <Icon class="text-secondary me-2">ArrowsMoveVertical</Icon>
                               Show {{ item.data.games.length - 12 }} more
                             </b-btn>
+                            <pre>
+                              {{ item }}
+                            </pre>
                           </div>
                         </div>
                       </div>
@@ -122,11 +133,7 @@
     </div>
   </div>
 
-  <journal-crud-dialog
-    ref="crud"
-    @close="selected = null"
-    @stored="$forceUpdate()"
-    @deleted="$forceUpdate()" />
+  <journal-crud-dialog ref="crud" @stored="onStored" />
 </template>
 
 <script>
@@ -135,7 +142,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Sat Jan 20 2024
+ * Modified: Sun Jan 21 2024
  **/
 
 export default {
@@ -158,6 +165,10 @@ export default {
   },
 
   methods: {
+    onStored() {
+      this.init()
+    },
+
     get(uuid) {
       if (this.db.apps[uuid]) return this.db.apps[uuid]
 
@@ -179,6 +190,7 @@ export default {
       }
 
       if (item.event == 'note') {
+        if (item.data?.title) return item.data.title
         // const app = this.dataStore.get(item.ref)
         return `Note added`
       }
@@ -209,7 +221,12 @@ export default {
         }
 
         // Control duplicated
-        if (prev && prev.event == entry.event && prev.ref == entry.ref) {
+        if (
+          entry.event == 'state' &&
+          prev &&
+          prev.event == entry.event &&
+          prev.ref == entry.ref
+        ) {
           //take the previous item in the grouped[day] and update it
           const previous = grouped[day].pop()
 
@@ -226,6 +243,10 @@ export default {
           if (entry.data?.old == entry.data?.state) {
             delete entry.data.old
           }
+        }
+
+        if (entry.event == 'added') {
+          entry.show = 12
         }
 
         // Add the entry to the appropriate day
@@ -251,7 +272,6 @@ export default {
 
     async init() {
       await this.getData()
-
       this.groupByDay()
     },
   },

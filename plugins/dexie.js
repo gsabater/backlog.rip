@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Sat Jan 20 2024
+ * Modified: Thu Jan 25 2024
  */
 
 import Dexie from 'dexie'
@@ -18,16 +18,16 @@ const db = new Dexie('backlog.rip')
 
 db.version(10).stores({
   // User stores
-  account: 'uuid,steam',
-  config: '&key,value',
+  account: 'uuid',
+  config: '&key',
 
   // Database stores
-  games: '&uuid,api_id,steam_id,name',
+  games: '&uuid,api_id,steam_id',
   buffer: '&uuid',
 
   // Userdata related stores
   states: '++id,order,name',
-  journal: '++id,event,ref,created_at',
+  journal: '++id,event,ref',
 })
 
 function check() {
@@ -36,7 +36,7 @@ function check() {
     return
   }
 
-  log('💽 ✅ IndexedDB is supported')
+  log('💽 IndexedDB is supported')
 }
 
 //+-------------------------------------------------
@@ -48,7 +48,6 @@ function check() {
 // Created on Thu Nov 09 2023
 // Updated on Tue Nov 28 2023
 //+-------------------------------------------------
-
 function initialize() {
   if (check() === false) return
   // log('Using Dexie v' + Dexie.semVer)
@@ -73,17 +72,6 @@ async function getValue(store, key) {
   if (data && data.value) return data.value
   return null
 }
-
-// async function exportDB() {
-//   let data = {
-//     account: await db.account.toArray(),
-//     config: await db.config.toArray(),
-//     games: await db.games.toArray(),
-//     states: await db.states.toArray(),
-//     journal: await db.journal.toArray(),
-//   }
-//   console.log(data)
-// }
 
 //+-------------------------------------------------
 // Define Nuxt plugin

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Mon Jan 01 2024
+ * Modified: Thu Jan 25 2024
  */
 
 let $nuxt = null
@@ -47,7 +47,7 @@ export const useUserStore = defineStore('user', {
       this.user = { ...me }
 
       log('🥸 User is authenticated', this.user)
-      // log('⭕ Should check for providers', this.user.providers)
+      if (this.user.username == 'Anonymous') log('🥸 Anonymous user', this.user)
 
       this.isChecked = true
       if (this.bearer) this.isLogged = true

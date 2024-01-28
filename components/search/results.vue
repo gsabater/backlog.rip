@@ -9,9 +9,9 @@ items: {{ items.length }}
       >
     </div>
   </div>
-  <div class="row row-deck row-cards">
+  <div class="row row-deck row-cards row-games-list">
     <template v-for="(app, i) in items" :key="'card' + i">
-      <div class="col col-6 col-lg-2">
+      <div class="col col-6 col-sm-4 col-md-3 col-lg-142">
         <b-game :key="app" :uuid="app"></b-game>
       </div>
     </template>
@@ -24,12 +24,11 @@ items: {{ items.length }}
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Jan 12 2024
+ * Modified: Sun Jan 28 2024
  **/
 
 export default {
   name: 'SearchResults',
-  components: {},
 
   props: {
     source: {
@@ -42,6 +41,8 @@ export default {
       default: () => ({}),
     },
   },
+
+  emits: ['loading'],
 
   data() {
     return {
@@ -107,6 +108,7 @@ export default {
       log('💎 Search: init from: ', source || 'direct run')
 
       if (Object.keys(this.filters).length === 0) return
+      // this.$emit('loading', false)
 
       const control = { ...this.filters }
       delete control.state
@@ -126,6 +128,7 @@ export default {
       if (this.source == 'all') {
         if (!this.filters?.string || this.filters?.string?.length < 3) return
         this.dataStore.search(hash)
+        // this.$emit('loading', true)
       }
     },
 
@@ -179,6 +182,7 @@ export default {
       log('💎 Search: event -> data:updated')
       this.control.event = 'data:updated'
       this.search('event')
+      // this.$emit('loading', false)
     })
 
     this.$mitt.on('data:ready', () => {
@@ -200,6 +204,11 @@ export default {
   .col-lg-25 {
     flex: 0 0 auto;
     width: 20%;
+  }
+
+  .col-lg-142 {
+    flex: 0 0 auto;
+    width: 12.5%;
   }
 }
 

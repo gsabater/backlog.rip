@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Sun Jan 14 2024
+ * Modified: Tue Jan 30 2024
  */
 
 let $nuxt = null
@@ -16,7 +16,7 @@ export default {
   // Created on Fri Jan 12 2024
   //+-------------------------------------------------
   now() {
-    return new Date().toISOString().replace('T', ' ').substring(0, 19)
+    return new Date().toISOString()
   },
 
   //+-------------------------------------------------

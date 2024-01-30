@@ -25,8 +25,8 @@
     </div>
     <div class="col-12">
       <div class="row mb-4 align-items-center">
-        <div class="col col-4">
-          <div style="transform: scale(0.9) translateX(-5px)">
+        <div class="col col-3">
+          <div>
             <b-input
               v-model="f.string"
               placeholder="Filter..."
@@ -242,6 +242,7 @@ export default {
   data() {
     return {
       f: {},
+      slug: null,
 
       base: {
         string: '',
@@ -274,10 +275,6 @@ export default {
         'my-preset': {
           string: 'my preset',
         },
-      },
-
-      db: {
-        states: [],
       },
 
       ui: {
@@ -329,14 +326,13 @@ export default {
     // With values from props and presets
     // -----
     // Created on Tue Nov 14 2023
+    // Updated on Sun Jan 28 2024 - Added slug param
     //+-------------------------------------------------
     mergeFilters() {
       const loaded = {}
 
-      const param = this.$route.params?.slug || null
-
-      if (param) {
-        const genre = this.genres.find((g) => g.slug == param)
+      if (this.slug && this.genres.length) {
+        const genre = this.genres.find((g) => g.slug == this.slug)
         loaded.genres = [genre.id]
       }
 
@@ -349,7 +345,11 @@ export default {
     },
 
     async getData() {
-      await this.repositoryStore.getGenres()
+      this.slug = this.$route.params?.slug || null
+
+      if (this.slug) await this.repositoryStore.getGenres()
+      else this.repositoryStore.getGenres()
+
       if (this.isLibrary) return
 
       this.dataStore.loadApiStatus()
@@ -360,8 +360,8 @@ export default {
       //   .reduce((obj, item) => ({ ...obj, [item.id]: item }), {})
     },
 
-    init() {
-      this.getData()
+    async init() {
+      await this.getData()
       this.mergeFilters()
     },
   },

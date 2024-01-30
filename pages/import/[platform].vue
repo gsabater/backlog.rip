@@ -116,12 +116,12 @@
                   <h2 class="mb-0">Your Steam library</h2>
                   <!-- <p class="text-muted">Click to begin to scan your games</p> -->
                 </div>
-                <div class="mb-4">
-                  <span
-                    class="avatar avatar-xl mb-2"
-                    :style="`background-image: url('${
-                      account.steam_data?.avatarfull || ''
-                    }')`"></span>
+                <span
+                  class="avatar avatar-xl mb-3"
+                  :style="`background-image: url('${
+                    account.steam_data?.avatarfull || ''
+                  }')`"></span>
+                <div class="mb-6">
                   <h3 class="card-title mb-0">
                     {{ account.username }} on {{ module.store }}
                   </h3>
@@ -480,7 +480,9 @@ IGNORE
                         last played {{ dates.unixToDiff(app.rtime_last_played) }} -->
                     </div>
                     <div class="col-auto text-secondary">
-                      <code v-tippy="'Steam appid'">#{{ app.appid }}</code>
+                      <code v-tippy="'Steam appid'">
+                        #{{ app.appid || app.steam_id }}
+                      </code>
                     </div>
 
                     <div
@@ -519,16 +521,23 @@ IGNORE
           <div v-if="ui.step == 'complete'" class="container container-tight py-4">
             <div class="card card-md">
               <div class="card-body text-center">
+                <h2 class="mb-2">awesome</h2>
+
                 <div class="mb-4">
-                  <h2 class="mb-0">awesome</h2>
-                  <p class="text-muted">Done</p>
+                  Your library has been updated with
+                  {{ appsToImport.length }} new games
                 </div>
-                <div class="mb-4">added x games, updated X games</div>
+
                 <div>
-                  <div class="btn btn-primary w-100">
+                  <NuxtLink to="/library" class="btn btn-primary w-100">
                     <Icon class="me-2">Apps</Icon>
                     View your library and backlog
-                  </div>
+                  </NuxtLink>
+
+                  <!-- <div class="btn btn-primary w-100" @click="store">Again</div>
+                  <div class="btn btn-primary w-100" @click="$importer.notify()">
+                    only wrap
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -610,7 +619,7 @@ IGNORE
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Sat Jan 27 2024
+ * Modified: Tue Jan 30 2024
  **/
 
 const importer = null
@@ -634,9 +643,10 @@ export default {
 
       // helper object to control ui
       process: {
-        time: 0,
         ready: false,
-        progress: 0,
+
+        // time: 0,
+        // progress: 0,
       },
 
       table: {
@@ -667,7 +677,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useDataStore, useJournalStore),
+    // ...mapStores(useDataStore, useJournalStore),
 
     // watchToHuman() {
     //   if (this.process.time === 0) return '0s'
@@ -753,6 +763,14 @@ export default {
       return tabs
     },
 
+    //+-------------------------------------------------
+    // loopToReview()
+    // Used to display apps in the upper list
+    // Takes this.ui.tab and returns the reference array
+    // Has basic datatable controls
+    // -----
+    // Created on Tue Jan 30 2024
+    //+-------------------------------------------------
     loopToReview() {
       if (this.data.games.length === 0) return []
 
@@ -808,6 +826,7 @@ export default {
               owned: true,
             },
             data: el,
+            will_import: true,
           })
         })
 
@@ -872,12 +891,12 @@ export default {
       }
     },
 
-    resetFilters() {
-      this.table.filters.played = true
-      this.table.filters.unplayed = true
-      this.table.filters.search = ''
-    },
-
+    //+-------------------------------------------------
+    // toggleAll()
+    // Toggles and select all the apps in the list to import
+    // -----
+    // Created on Tue Jan 30 2024
+    //+-------------------------------------------------
     toggleAll() {
       const action =
         this.data.appsToReview.length == this.appsToImport.length ? 'none' : 'all'
@@ -887,8 +906,16 @@ export default {
       })
     },
 
+    //+-------------------------------------------------
+    // flagAs()
+    // When reviewing, get the app object and flag it as
+    // -----
+    // Created on Tue Jan 30 2024
+    //+-------------------------------------------------
     flagAs(flag, app) {
-      const source = this.data.appsToReview.find((el) => el.appid === app.appid)
+      const source = this.data.appsToReview.find(
+        (el) => el.appid === (app.appid || app.steam_id)
+      )
 
       if (flag === 'ignore') {
         source.will_import = false
@@ -905,130 +932,113 @@ export default {
     //   this.data.games[item.index].will_import = !item.will_import
     // },
 
-    //+-------------------------------------------------
-    // import()
-    // Main call that will execute the importing methods
-    // available on the module
-    // -----
-    // Created on Thu Dec 01 2022
-    //+-------------------------------------------------
-    async OLDscan() {
-      log(`🧶 Starting data import...`)
-      this.ui.loading = true
-      this.ui.step = 'games'
+    // //+-------------------------------------------------
+    // // import()
+    // // Main call that will execute the importing methods
+    // // available on the module
+    // // -----
+    // // Created on Thu Dec 01 2022
+    // //+-------------------------------------------------
+    // async OLDscan() {
+    //   log(`🧶 Starting data import...`)
+    //   this.ui.loading = true
+    //   this.ui.step = 'games'
 
-      try {
-        this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
-        this._log(`📚 Library loaded`)
+    //   try {
+    //     this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
+    //     this._log(`📚 Library loaded`)
 
-        this.data.user = await steam.getUserdata()
-        this._log(`👩‍🚀 Account store userdata received`)
+    //     this.data.user = await steam.getUserdata()
+    //     this._log(`👩‍🚀 Account store userdata received`)
 
-        this.data.games = await steam.getGames()
-        this._log(`🎮 Games received`)
+    //     this.data.games = await steam.getGames()
+    //     this._log(`🎮 Games received`)
 
-        // this.data.wishlist = await steam.getWishlist()
-        // this._log(`🎁 Wishlist received`)
-      } catch (e) {
-        this._log('Error getting user data', 'error', e)
-        return false
-      }
+    //     // this.data.wishlist = await steam.getWishlist()
+    //     // this._log(`🎁 Wishlist received`)
+    //   } catch (e) {
+    //     this._log('Error getting user data', 'error', e)
+    //     return false
+    //   }
 
-      console.warn(this.data)
-      this.ui.loading = false
+    //   console.warn(this.data)
+    //   this.ui.loading = false
 
-      this.review()
-    },
+    //   this.review()
+    // },
 
-    //+-------------------------------------------------
-    // review()
-    // Generate helper arrays with prepared data
-    // -----
-    // Created on Mon Nov 20 2023
-    //+-------------------------------------------------
-    review() {
-      this.ui.step = 'review'
+    // //+-------------------------------------------------
+    // // review()
+    // // Generate helper arrays with prepared data
+    // // -----
+    // // Created on Mon Nov 20 2023
+    // //+-------------------------------------------------
+    // review() {
+    //   this.ui.step = 'review'
 
-      this.data.libIDs = this.data.library.reduce((acc, el) => {
-        acc[el.steam_id] = el
-        return acc
-      }, {})
-      // console.warn(this.data.libIDs)
+    //   this.data.libIDs = this.data.library.reduce((acc, el) => {
+    //     acc[el.steam_id] = el
+    //     return acc
+    //   }, {})
+    //   // console.warn(this.data.libIDs)
 
-      //+-------------------------------------------------
-      // Categorize found games with the library
-      // And create two new groups: review and update
-      //+-------------------------------------------------
-      this.data.games.forEach((app) => {
-        if (app.appid in this.data.libIDs) {
-          // <- match by store_id instead of appid
-          let add = false
-          const lib = this.data.libIDs[app.appid]
+    //   //+-------------------------------------------------
+    //   // Categorize found games with the library
+    //   // And create two new groups: review and update
+    //   //+-------------------------------------------------
+    //   this.data.games.forEach((app) => {
+    //     if (app.appid in this.data.libIDs) {
+    //       // <- match by store_id instead of appid
+    //       let add = false
+    //       const lib = this.data.libIDs[app.appid]
 
-          app.toUpdate = {}
+    //       app.toUpdate = {}
 
-          if (!lib.is?.owned) {
-            add = true
-            app.toUpdate.owned = true
-          }
+    //       if (!lib.is?.owned) {
+    //         add = true
+    //         app.toUpdate.owned = true
+    //       }
 
-          if (lib.playtime?.steam !== app.playtime_forever) {
-            add = true
-            app.toUpdate.playtime = {
-              from: lib.playtime?.steam,
-              to: app.playtime_forever,
-            }
-          }
+    //       if (lib.playtime?.steam !== app.playtime_forever) {
+    //         add = true
+    //         app.toUpdate.playtime = {
+    //           from: lib.playtime?.steam,
+    //           to: app.playtime_forever,
+    //         }
+    //       }
 
-          if (lib.last_played?.steam !== app.rtime_last_played) {
-            add = true
-            app.toUpdate.last_played = {
-              from: lib.last_played?.steam,
-              to: app.rtime_last_played,
-            }
-          }
+    //       if (lib.last_played?.steam !== app.rtime_last_played) {
+    //         add = true
+    //         app.toUpdate.last_played = {
+    //           from: lib.last_played?.steam,
+    //           to: app.rtime_last_played,
+    //         }
+    //       }
 
-          if (add) this.data.appsToUpdate.push(app)
-        } else {
-          app.will_import = true
-          app.will_ignore = false
+    //       if (add) this.data.appsToUpdate.push(app)
+    //     } else {
+    //       app.will_import = true
+    //       app.will_ignore = false
 
-          this.data.appsToReview.push(app)
-        }
-      })
+    //       this.data.appsToReview.push(app)
+    //     }
+    //   })
 
-      this.data.appsToReview.sort((a, b) => {
-        // Primary sort by 'playtime_forever'
-        const diff = b.playtime_forever - a.playtime_forever
-        if (diff !== 0) return diff
+    //   this.data.appsToReview.sort((a, b) => {
+    //     // Primary sort by 'playtime_forever'
+    //     const diff = b.playtime_forever - a.playtime_forever
+    //     if (diff !== 0) return diff
 
-        // Secondary sort by 'name' (alphabetically)
-        if (a.name < b.name) return -1
-        if (a.name > b.name) return 1
-        return 0
-      })
+    //     // Secondary sort by 'name' (alphabetically)
+    //     if (a.name < b.name) return -1
+    //     if (a.name > b.name) return 1
+    //     return 0
+    //   })
 
-      console.warn('reviewing apps')
-      console.warn('appsToReview', this.data.appsToReview)
-      console.warn('appsToUpdate', this.data.appsToUpdate)
-    },
-
-    async doit() {
-      // This will be done in the future
-      // this.data.appsToUpdate = this.data.games.filter((game) => {
-      //   if (!(game.appid in libraryKeys)) return false
-      //   const lib = libraryKeys[game.appid]
-      //   return false
-      // })
-      // // const toimport = this.data.games.filter((el) => el.will_import === true)
-      // console.warn('doit', this.toImport[0])
-      // console.warn('we have', this.toImport.length)
-      // this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
-      // console.warn(`📚 Library loaded`, this.data.library, this.data.library.length)
-      // debugger
-      // const xhr = await this.$db.games.bulkPut(this.toImport)
-      // console.warn('xhr', xhr)
-    },
+    //   console.warn('reviewing apps')
+    //   console.warn('appsToReview', this.data.appsToReview)
+    //   console.warn('appsToUpdate', this.data.appsToUpdate)
+    // },
 
     //+-------------------------------------------------
     // store()
@@ -1040,79 +1050,93 @@ export default {
     // Created on Thu Dec 14 2023
     //+-------------------------------------------------
     async store() {
-      const payload = []
+      log('✨ importer', 'store()')
 
-      await this.storeNewGames()
-      // this.updateExistingGames()
-
-      const keys = this.appsToImport.map((el) => el.uuid)
-      this.journalStore.add({
-        event: 'added',
-        data: {
-          store: this.module.store,
-          games: keys,
+      await this.$importer.store({
+        notify: true,
+        journal: true,
+        apps: {
+          toUpdate: this.data.appsToUpdate,
+          toImport: this.appsToImport,
+          toIgnore: this.appsToIgnore,
         },
       })
 
       this.ui.step = 'complete'
       return
+      // const payload = []
 
-      this.data.appsToReview
-        .filter((el) => el.will_import === true)
-        .forEach((el) => {
-          const app = {
-            uuid: this.$uuid(),
-            steam_id: el.appid,
-            name: el.name,
-          }
+      // await this.storeNewGames()
+      // // this.updateExistingGames()
 
-          if (app.will_ignore) {
-            app.ignored = true
-          }
-          payload.push(app)
-        })
+      // const keys = this.appsToImport.map((el) => el.uuid)
+      // this.journalStore.add({
+      //   event: 'added',
+      //   data: {
+      //     store: this.module.store,
+      //     games: keys,
+      //   },
+      // })
 
-      // const toimport = this.data.games.filter((el) => el.will_import === true)
-      console.warn('doit', payload[0])
-      console.warn('we have', payload.length)
+      // this.ui.step = 'complete'
+      // return
 
-      debugger
+      // this.data.appsToReview
+      //   .filter((el) => el.will_import === true)
+      //   .forEach((el) => {
+      //     const app = {
+      //       uuid: this.$uuid(),
+      //       steam_id: el.appid,
+      //       name: el.name,
+      //     }
+
+      //     if (app.will_ignore) {
+      //       app.ignored = true
+      //     }
+      //     payload.push(app)
+      //   })
+
+      // // const toimport = this.data.games.filter((el) => el.will_import === true)
+      // console.warn('doit', payload[0])
+      // console.warn('we have', payload.length)
+
+      // debugger
     },
 
-    //+-------------------------------------------------
-    // storeNewGames()
-    // Take appsToImport and appsToIgnore
-    // and store them in the data store
-    // -----
-    // Created on Fri Dec 22 2023
-    //+-------------------------------------------------
-    async storeNewGames() {
-      const items = []
+    // //+-------------------------------------------------
+    // // storeNewGames()
+    // // Take appsToImport and appsToIgnore
+    // // and store them in the data store
+    // // -----
+    // // Created on Fri Dec 22 2023
+    // //+-------------------------------------------------
+    // async storeNewGames() {
+    //   const items = []
 
-      this.appsToImport.forEach((el) => {
-        let app = this.dataStore.prepareToStore(el, 'steam')
-        app = steam.prepareToStore(app)
-        items.push(app)
-      })
+    //   this.appsToImport.forEach((el) => {
+    //     let app = this.dataStore.prepareToStore(el, 'steam')
+    //     app = steam.prepareToStore(app)
+    //     items.push(app)
+    //   })
 
-      this.appsToIgnore.forEach((el) => {
-        const app = this.dataStore.prepareToStore(el, 'toIgnore')
-        items.push(app)
-      })
-      debugger
-      this.dataStore.store(items)
-    },
+    //   this.appsToIgnore.forEach((el) => {
+    //     const app = this.dataStore.prepareToStore(el, 'toIgnore')
+    //     items.push(app)
+    //   })
+    //   debugger
+    //   this.dataStore.store(items)
+    // },
 
-    updateExistingGames() {
-      const items = []
+    // updateExistingGames() {
+    //   const items = []
 
-      // call a method in steam.js
-      // that adds playtime (here and in storenewgames)
-      // if (lib.playtime_forever !== game.playtime_forever) return true
-      //   if (lib.rtime_last_played !== game.rtime_last_played) return true
+    //   // call a method in steam.js
+    //   // that adds playtime (here and in storenewgames)
+    //   // if (lib.playtime_forever !== game.playtime_forever) return true
+    //   //   if (lib.rtime_last_played !== game.rtime_last_played) return true
 
-      console.warn('going to update', items)
-    },
+    //   console.warn('going to update', items)
+    // },
 
     //+-------------------------------------------------
     // scanAndPrepare()

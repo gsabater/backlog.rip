@@ -2,16 +2,29 @@
 // @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
 // @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
+@font-face {
+  font-family: Mackinac;
+  src: url("../fonts/Mackinac/Fontspring-DEMO-P22MackinacProMedium.otf") format("opentype");
+}
+
+@font-face {
+  font-family: Mackinac;
+  font-weight: bold;
+  src: url("../fonts/Mackinac/Fontspring-DEMO-P22MackinacProExtraBold.otf") format("opentype");
+}
+
 
 h1,h2,h3,h4,h5,h6 {
-  font-family: 'Lora', serif;
+  font-family: Mackinac, sans-serif;
+  // font-family: 'Lora', serif;
   // font-family: 'DM Serif Display', serif;
   // font-family: 'Playfair Display', serif;
   // font-weight: 600;
 }
 
 .font-serif {
-  font-family: 'Lora', serif;
+  font-family: Mackinac, sans-serif;
+  // font-family: 'Lora', serif;
   // font-family: 'DM Serif Display', serif;
   // font-family: 'Playfair Display', serif;
   // font-weight: 600;
@@ -36,6 +49,10 @@ body{
   // background: linear-gradient(rgb(44, 45, 60) 0%, rgb(25, 26, 35) 50%);
 }
 
+* {
+  scrollbar-color: unset;
+}
+
 ::-webkit-scrollbar {
   width: 6px; /* Adjust scrollbar width */
 }
@@ -45,7 +62,7 @@ body{
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888; /* Color of the scroll thumb */
+  background: #363b41; /* Color of the scroll thumb */
   border-radius: 2px; /* Roundness of the scroll thumb */
 }
 

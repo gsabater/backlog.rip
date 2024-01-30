@@ -1,14 +1,4 @@
 <template>
-  <div class="row">
-    <div class="col">
-      <pre>
-items: {{ items.length }}
---
-{{ control }}
-</pre
-      >
-    </div>
-  </div>
   <div class="row row-deck row-cards row-games-list">
     <template v-for="(app, i) in items" :key="'card' + i">
       <div class="col col-6 col-sm-4 col-md-3 col-lg-142">

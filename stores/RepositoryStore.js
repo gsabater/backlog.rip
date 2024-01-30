@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Tue Jan 16 2024
+ * Modified: Sun Jan 28 2024
  */
 
 let $nuxt = null
@@ -35,6 +35,8 @@ export const useRepositoryStore = defineStore('repository', {
         this.loaded.push('genres')
         this.genres = jxr.data
       }
+
+      return true
     },
 
     //+-------------------------------------------------

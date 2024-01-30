@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Sat Jan 27 2024
+ * Modified: Tue Jan 30 2024
  */
 
 import importer from '~/utils/importer'
@@ -11,10 +11,8 @@ import Toast from '../components/toasts/Importing.vue'
 
 //+-------------------------------------------------
 // Importer plugin (_sync)
-// Performs an automatic and silent import of libraries
-// Fires events to communicate with the layout
-// -----
-// Created on Mon Jan 22 2024
+// Performs actions to scan, prepare and store a library
+// Allows automatic and silent import of libraries
 //+-------------------------------------------------
 
 let $nuxt = null
@@ -23,7 +21,7 @@ let $toast = null
 const _sync = {
   x: {
     log: null, // logger used to communicate with the layout
-    source: null, // source currently running
+    source: null, // source currently running ('steam', 'gog'...)
 
     // From detect...
     module: null, // the module assigned to that source to run the import
@@ -96,7 +94,7 @@ async function sync(options = {}) {
   // await delay(2000, true)
   if ((await connect()) == false) return false
 
-  // Waiting to the user to start the scan
+  // Wait for the user to start the scan
   if (!_sync.background) {
     return _sync.x
   }
@@ -152,7 +150,10 @@ async function connect() {
 //+-------------------------------------------------
 async function scan() {
   const scanned = await importer.scan(_sync.x)
-  if (scanned) _sync.x.data = { ...scanned }
+
+  if (scanned) {
+    _sync.x.data = { ...scanned }
+  }
 
   await prepare()
 
@@ -189,14 +190,19 @@ async function prepare() {
 // -----
 // Created on Wed Jan 24 2024
 //+-------------------------------------------------
-function store() {
-  console.info('6. sync store')
-  const stored = importer.store({
-    log,
-    inst: _sync.x,
-  })
+function store(options = {}) {
+  if (options.apps) {
+    _sync.x.apps = {
+      toUpdate: options.apps.toUpdate || [],
+      toImport: options.apps.toImport || [],
+      toIgnore: options.apps.toIgnore || [],
+    }
+  }
+
+  const stored = importer.store(_sync.x)
 
   if (stored) {
+    _sync.x.apps.stored = [...stored.uuids]
     notify()
   }
 }
@@ -208,6 +214,8 @@ function store() {
 // Created on Wed Jan 24 2024
 //+-------------------------------------------------
 function notify() {
+  importer.wrap(_sync.x)
+
   $nuxt.$toast.dismiss($toast)
   $nuxt.$toast.info('Your Steam library has been updated', {
     description: 'Monday, January 3rd at 6:00pm',
@@ -240,6 +248,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   _sync.sync = sync
   _sync.scan = scan
+  _sync.store = store
 
   return {
     provide: {

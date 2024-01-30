@@ -80,21 +80,8 @@
 
                         <gameList
                           :apps="item.data.games"
-                          :max="item.show"
                           cols="3"
                           class="pt-3"></gameList>
-
-                        <div v-if="item.data.games.length > 12">
-                          <div class="text-secondary">
-                            <b-btn class="mt-3" @click="item.show = 10000">
-                              <Icon class="text-secondary me-2">ArrowsMoveVertical</Icon>
-                              Show {{ item.data.games.length - 12 }} more
-                            </b-btn>
-                            <pre>
-                              {{ item }}
-                            </pre>
-                          </div>
-                        </div>
                       </div>
 
                       <small class="text-secondary d-inline-block border-top pt-2 mt-2">
@@ -142,7 +129,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Sun Jan 21 2024
+ * Modified: Tue Jan 30 2024
  **/
 
 export default {

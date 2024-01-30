@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Fri Jan 19 2024
+ * Modified: Tue Jan 30 2024
  */
 
 let $nuxt = null
@@ -114,7 +114,7 @@ export const useStateStore = defineStore('state', {
       let old = app.state || null
 
       app.state = state
-      $data.save(app)
+      $data.store(app)
 
       $journal.add({
         event: 'state',

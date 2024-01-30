@@ -85,10 +85,10 @@ export default {
   // Created on Sun Dec 24 2023
   //+-------------------------------------------------
   prepareToStore(app) {
-    let data = app.data
+    if (!app.data) console.warn('prepareToStore() called without data', app)
 
-    app.playtime.steam = data.playtime_forever
-    app.last_played.steam = data.rtime_last_played
+    app.playtime.steam = app.data.playtime_forever
+    app.last_played.steam = app.data.rtime_last_played
     delete app.data
 
     return app

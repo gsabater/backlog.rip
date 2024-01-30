@@ -1,5 +1,9 @@
 @charset "utf-8";
 
+::root{
+  --tblr-scrollbar-color: #e9ecef;
+}
+
 // Import libs
 @import '../../node_modules/@tabler/core/dist/css/tabler.css';
 // @import '../../node_modules/@tabler/core/dist/css/tabler-flags.css';

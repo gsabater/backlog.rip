@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Sat Jan 27 2024
+ * Modified: Tue Jan 30 2024
  */
 
 import axios from 'axios'
@@ -12,6 +12,7 @@ import steam from '~/modules/importers/steam'
 let $nuxt = null
 let $data = null
 let $axios = null
+let $journal = null
 
 // Valid available and enabled sources
 let sources = ['steam']
@@ -250,20 +251,48 @@ export default {
   // -----
   // Created on Wed Jan 24 2024
   //+-------------------------------------------------
-  store(conf = {}) {
-    let { inst } = conf
-    x.log('💠 importer: Storing data ...')
+  store(x = {}) {
+    x.log('💠 Importer(6): Storing data ...')
+    if (!$data) $data = useDataStore()
 
+    let uuids = []
     const items = []
 
-    x.log('Check 6.1: Storing array of new apps')
-    inst.apps.ToImport.forEach((el) => {
-      let app = $data.prepareToStore(el, 'steam')
+    x.log('Check 6.1: Storing the array of new apps')
+    x.apps.toImport.forEach((el) => {
+      let app = { ...el }
+      app = $data.prepareToStore(app)
       app = steam.prepareToStore(app)
+
       items.push(app)
+      uuids.push(app.uuid)
     })
 
     $data.store(items)
-    return true
+
+    return {
+      uuids: uuids,
+    }
+  },
+
+  wrap(x = {}) {
+    x.log('💠 Importer(7): Wrapping up ...')
+    if (!$nuxt) $nuxt = useNuxtApp()
+    if (!$data) $data = useDataStore()
+    if (!$journal) $journal = useJournalStore()
+
+    x.log('7.1: Writing journal')
+    let keys = x.apps.stored || []
+    $journal.add({
+      event: 'added',
+      data: {
+        store: x.source,
+        games: keys,
+      },
+    })
+
+    x.log('7.2: Updating user data')
+    $nuxt.$auth.local.steam_updated_at = dates.now()
+    $nuxt.$auth.update('user', 'account')
   },
 }

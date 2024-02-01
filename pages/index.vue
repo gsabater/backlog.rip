@@ -163,13 +163,6 @@
       from all stores - create a collection - Track your game status
     </div>
   </div> -->
-  <svg width="0" height="0">
-    <filter id="grainy" x="0" y="0" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency=".537"></feTurbulence>
-      <feColorMatrix type="saturate" values="0"></feColorMatrix>
-      <feBlend mode="multiply" in="SourceGraphic"></feBlend>
-    </filter>
-  </svg>
 </template>
 
 <script></script>

@@ -879,7 +879,17 @@
     <div class="page-wrapper">
       <NuxtLoadingIndicator />
       <!-- <div class="ch"></div> -->
+      <div id="detailPage" class="hide-theme-light">
+        <div id="detailCanvas" class="">
+          <div class="bg_gradient_body">
+            <div class="bg_gradient_large"></div>
+            <div class="bg_gradient_small"></div>
+          </div>
+        </div>
+      </div>
+
       <slot />
+
       <footer class="footer footer-transparent d-print-none">
         <div class="container-xl">
           <div class="row text-center align-items-center flex-row-reverse">
@@ -980,6 +990,14 @@
     <template v-if="!$app.dev">pre{ display: none !important; }</template>
   </component>
 
+  <svg width="0" height="0" style="display: none">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".837"></feTurbulence>
+      <feColorMatrix type="saturate" values="0"></feColorMatrix>
+      <feBlend mode="multiply" in="SourceGraphic"></feBlend>
+    </filter>
+  </svg>
+
   <!-- <div>
     <nav>
       <ul>
@@ -1006,6 +1024,24 @@
     <slot />
     <AppFooter />
   </div> -->
+
+  <!-- <DialogRoot>
+    <DialogTrigger>Open</DialogTrigger>
+    <DialogPortal>
+      <DialogContent>Content</DialogContent>
+      <DialogOverlay />
+    </DialogPortal>
+  </DialogRoot> -->
+
+  <DrawerRoot>
+    <DrawerTrigger>Open</DrawerTrigger>
+    <DrawerPortal>
+      <DrawerOverlay />
+      <DrawerContent>
+        <p>Content</p>
+      </DrawerContent>
+    </DrawerPortal>
+  </DrawerRoot>
 </template>
 
 <script>
@@ -1014,10 +1050,26 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Fri Jan 26 2024
+ * Modified: Thu Feb 01 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'
+
+import {
+  DialogRoot,
+  DialogTrigger,
+  DialogPortal,
+  DialogOverlay,
+  DialogContent,
+} from 'aioli'
+
+import {
+  DrawerRoot,
+  DrawerTrigger,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerPortal,
+} from 'vaul-vue'
 
 // const app = useNuxtApp()
 // const $auth = useUserStore()
@@ -1027,6 +1079,17 @@ export default {
   name: 'DefaultLayout',
   components: {
     SpeedInsights,
+    DialogRoot,
+    DialogTrigger,
+    DialogPortal,
+    DialogOverlay,
+    DialogContent,
+
+    DrawerRoot,
+    DrawerTrigger,
+    DrawerOverlay,
+    DrawerContent,
+    DrawerPortal,
   },
 
   setup() {
@@ -1038,10 +1101,8 @@ export default {
 
     useHead({
       title: 'Backlog.rip',
-
       bodyAttrs: {
-        'class': 'antialiased',
-        'data-bs-theme': ui.theme.value || 'dark',
+        class: 'antialiased',
       },
 
       script: [
@@ -1076,6 +1137,8 @@ export default {
   },
 
   created() {
+    this.changeTheme(this.ui.theme)
+
     this.$mitt.on('*', (e, payload) => {
       log('🎆 Fired event', e, payload)
       // console.info(this.$mitt.all)
@@ -1096,3 +1159,72 @@ export default {
 //   // getDB('top-games')
 // })
 </script>
+
+<style>
+[aioli-drawer],
+[vaul-drawer] {
+  position: fixed;
+  background-color: white;
+  /*
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(229 231 235);
+  pointer-events: auto; */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  max-height: 93%;
+  margin: 0 -1px;
+}
+
+[aioli-drawer] {
+  touch-action: none;
+  transform: translate3d(0, 100%, 0);
+  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+[aioli-drawer][aioli-visible='true'] {
+  transform: translateZ(0);
+  transform: translate3d(0, var(--snap-point-height, 0), 0);
+}
+
+[aioli-overlay] {
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+[aioli-overlay] {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.4);
+  inset: 0;
+}
+
+.aioli-dragging .aioli-scrollable {
+  overflow-y: hidden !important;
+}
+
+[aioli-overlay][aioli-visible='true'] {
+  opacity: 1;
+  opacity: var(--drag-percent, 1);
+}
+
+[aioli-drawer]:after {
+  background: inherit;
+  background-color: inherit;
+  content: '';
+  height: 200%;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 100%;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [aioli-drawer] {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+}
+</style>

@@ -89,7 +89,7 @@ export class DexieInstaller {
     let row = await this.$db.account.get('me')
     let data = {
       uuid: 'me',
-      username: 'Anonymous',
+      username: 'Traveler',
 
       steam: null,
       steam_data: null,

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Thu Jan 25 2024
+ * Modified: Thu Feb 01 2024
  */
 
 import Dexie from 'dexie'
@@ -16,19 +16,42 @@ import { DexieInstaller } from '~/utils/dexieInstaller'
 //+-------------------------------------------------
 const db = new Dexie('backlog.rip')
 
-db.version(10).stores({
+db.version(9).stores({
   // User stores
-  account: 'uuid',
-  config: '&key',
+  account: 'uuid,steam',
+  config: '&key,value',
 
   // Database stores
   games: '&uuid,api_id,steam_id',
-  buffer: '&uuid',
 
   // Userdata related stores
-  states: '++id,order,name',
+  states: '&id,order,name',
   journal: '++id,event,ref',
 })
+
+db.version(10).stores({
+  account: 'uuid',
+  config: '&key',
+  states: '++id,order,name',
+})
+
+db.version(11).stores({
+  buffer: '&uuid',
+})
+
+// db.version(10).stores({
+//   // User stores
+//   account: 'uuid',
+//   config: '&key',
+
+//   // Database stores
+//   games: '&uuid,api_id,steam_id',
+//   buffer: '&uuid',
+
+//   // Userdata related stores
+//   states: '++id,order,name',
+//   journal: '++id,event,ref',
+// })
 
 function check() {
   if (!window.indexedDB) {

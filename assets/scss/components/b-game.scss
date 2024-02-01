@@ -1,4 +1,4 @@
-.card-game{
+.card-game {
   /* border: 1px solid red; */
   position: relative;
   will-change: transform brightness;
@@ -7,7 +7,7 @@
   &__cover {
     cursor: pointer;
     border-radius: 3px;
-    border-radius: 3px;
+    border-radius: 2px;
     position: relative;
 
     // aspect-ratio: 2.2/3;
@@ -23,15 +23,16 @@
     flex-direction: column;
     justify-content: center;
 
+    // filter: brightness(0.9);
+    // background: linear-gradient(0deg, #000, #272727);
 
-    filter: brightness(0.9);
-    background: linear-gradient(0deg, #000, #272727);
-
-    outline: 1px solid rgba(0, 0, 0, 0.3);
+    // outline: 1px solid rgba(0, 0, 0, 0.3);
+    outline: 1px solid rgba(255, 255, 255, 0.15);
     outline-offset: -1px;
-    // box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
 
-    &.is-header{
+
+    &.is-header {
       padding: 13px;
       background-size: cover;
       background-position: center center;
@@ -48,18 +49,17 @@
       //   // border-radius: 4px;
       //   // max-width: 100%;
       //   // max-height: 100%;
-        // outline: 1px solid rgba(255, 255, 255, 0.15);
-        // outline-offset: -1px;
-        // box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
+      // outline: 1px solid rgba(255, 255, 255, 0.15);
+      // outline-offset: -1px;
+      // box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
 
-        // outline: rgba(255, 255, 255, 0.65) solid 2px;
-        // outline-offset: -2px;
-        // box-shadow: rgba(0, 0, 0, 0.36) 1px 1px 3px;
+      // outline: rgba(255, 255, 255, 0.65) solid 2px;
+      // outline-offset: -2px;
+      // box-shadow: rgba(0, 0, 0, 0.36) 1px 1px 3px;
     }
   }
 
-
-  & .status{
+  & .status {
     border-radius: 2px;
     position: absolute;
     right: 4px;
@@ -70,45 +70,43 @@
   }
 }
 
-.card-game:before, .card-game:after {
-	content: '';
-	position: absolute;
+.card-game:before,
+.card-game:after {
+  content: '';
+  position: absolute;
   border-radius: 3px;
   border-radius: 3px;
 
-	// left: -1px;
-	// top: -1px;
+  // left: -1px;
+  // top: -1px;
   // width: calc(100% + 2px);
   // height: calc(100% + 2px);
 
   left: 0px;
-	top: 0px;
-  width: calc(100% );
-  height: calc(100% );
+  top: 0px;
+  width: calc(100%);
+  height: calc(100%);
 
-	// background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00,#ffff00, #ff0000, #fb0094,
-	// 	#0000ff, #00ff00,#ffff00, #ff0000);
-    background: linear-gradient(0deg, #0000002c, #272727af);
-	background-size: 400%;
-	z-index: -1;
+  // background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00,#ffff00, #ff0000, #fb0094,
+  // 	#0000ff, #00ff00,#ffff00, #ff0000);
+  background: linear-gradient(0deg, #0000002c, #272727af);
+  background-size: 400%;
+  z-index: -1;
 }
 
 .card-game:after {
   opacity: 0.7;
-	filter: blur(50px);
+  filter: blur(50px);
 }
 
-.card-game:hover{
+.card-game:hover {
   transform: translateY(-3px);
 
-  & .card-game__cover{
+  & .card-game__cover {
     // opacity: 1;
     // filter: brightness(1);
   }
 }
-
-
-
 
 /*
 .card.card-game::after {

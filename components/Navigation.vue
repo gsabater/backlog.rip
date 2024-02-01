@@ -123,11 +123,20 @@
               </NuxtLink>
             </li>
 
-            <li class="nav-item">
+            <li v-if="$app.dev" class="nav-item">
               <NuxtLink to="/welcome" class="nav-link">
                 <span class="nav-link-title text-yellow">
                   <Icon>Subtask</Icon>
                   Onboarding
+                </span>
+              </NuxtLink>
+            </li>
+
+            <li v-if="$app.dev" class="nav-item">
+              <NuxtLink to="/docs" class="nav-link">
+                <span class="nav-link-title text-purple">
+                  <Icon>Note</Icon>
+                  Documentation
                 </span>
               </NuxtLink>
             </li>

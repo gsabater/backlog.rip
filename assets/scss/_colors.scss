@@ -1,6 +1,10 @@
 $primary: #49240f;
 $secondary: #e4a79d;
 
-[data-bs-theme=dark]{
-  --tblr-body-bg: #191a22;
+// [data-bs-theme=dark]{
+//   --tblr-body-bg: #191a22;
+// }
+
+::root{
+  --tblr-scrollbar-color: #e9ecef;
 }

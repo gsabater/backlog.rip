@@ -1,7 +1,7 @@
 <template>
   <div class="row row-deck row-cards row-games-list">
     <template v-for="(app, i) in items" :key="'card' + i">
-      <div class="col col-6 col-sm-4 col-md-3 col-lg-142">
+      <div class="col col-6 col-sm-4 col-md-3 col-lg-custom">
         <b-game :key="app" :uuid="app"></b-game>
       </div>
     </template>
@@ -14,7 +14,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sun Jan 28 2024
+ * Modified: Thu Feb 01 2024
  **/
 
 export default {
@@ -196,9 +196,11 @@ export default {
     width: 20%;
   }
 
-  .col-lg-142 {
+  .col-lg-custom {
     flex: 0 0 auto;
-    width: 12.5%;
+    width: 14.285%;
+    /* width: 12.5%; 7 columns */
+    /* width: 12.5%; 8 columns */
   }
 }
 

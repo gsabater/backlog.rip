@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Thu Jan 25 2024
+ * Modified: Wed Jan 31 2024
  */
 
 let $nuxt = null
@@ -47,7 +47,7 @@ export const useUserStore = defineStore('user', {
       this.user = { ...me }
 
       log('🥸 User is authenticated', this.user)
-      if (this.user.username == 'Anonymous') log('🥸 Anonymous user', this.user)
+      if (this.user.username == 'Traveler') log('🥸 Traveler user', this.user)
 
       this.isChecked = true
       if (this.bearer) this.isLogged = true
@@ -125,12 +125,14 @@ export const useUserStore = defineStore('user', {
         this.local.steam = jxr.data.steam || this.local.steam
 
         // prettier-ignore
-        this.local.username = (this.local.username == 'Anonymous')
-        ? jxr.data.username : this.local.username
+        this.local.username = (this.local.username == 'Traveler')
+          ? jxr.data.username
+          : this.local.username
 
         // prettier-ignore
         this.local.avatar = !this.local.avatar
-        ? jxr.data.avatar : this.local.avatar
+          ? jxr.data.avatar
+          : this.local.avatar
 
         let provider = jxr.data.providers.find((p) => p.provider === 'steam')
         this.local.steam_data = provider?.data || null

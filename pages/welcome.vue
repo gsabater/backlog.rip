@@ -2,146 +2,95 @@
   <div class="page-body">
     <div class="container-xl">
       <div class="row justify-content-center">
-        <div class="col-8 row">
-          <div class="col-6"></div>
-          <div class="col-6 text-center">
-            <div class="row">
-              <div class="col-2">x</div>
-              <div class="col-2">x</div>
-              <div class="col-2">x</div>
-              <div class="col-2">x</div>
-              <div class="col-2">x</div>
-              <div class="col-2">x</div>
+        <div class="col-8 row mt-5">
+          <div class="col-5 d-none d-md-block">
+            <div
+              class="card card-sponsor"
+              style="
+                background-size: cover;
+                min-height: 350px;
+                outline: 3px solid rgba(33, 15, 47, 0.61);
+                outline-offset: -2px;
+              "
+              :style="'background-image: url(' + tabs[set][step].image + ')'"
+              @click="set = set == 'one' ? 'two' : 'one'">
+              <div class="card-body"></div>
             </div>
-            <h1>Welcome to Backlog.rip</h1>
-            <p>You can use lorem ipsum</p>
-            <div class="btn w-100">Continue</div>
-            <h1>Import your libraries</h1>
-            <p>
-              You can automatically import your library from Steam (Public and private
-              profiles) or GOG and more to come.
-            </p>
-            <h1>Keep a journal of your deeds</h1>
-            <p>Everything you do is recorded in your journal, you can add notes too.</p>
-            <h1>Your games, your way</h1>
-            <p>
-              You can manually add any games to your library, even if you don't own them.
-              Then, you add a state to each game to keep track of your progress.
-            </p>
-            <p>
-              You start with 3 states:
-              <b>Backlog</b>
-              ,
-              <b>Playing</b>
-              and
-              <b>Finished</b>
-              , but you can add more to fit your needs.
-            </p>
           </div>
-          <h1>Journal</h1>
-          <template v-for="(events, day) in journal" :key="'journal' + day">
-            <div class="card mb-3">
-              <div class="card-body">
-                <h3 class="card-title">{{ $moment(day).format('LL') }}</h3>
-                <ul class="steps steps-vertical">
-                  <template v-for="(item, i) in events" :key="'event' + i">
-                    <li v-if="item" class="step-item">
-                      <div v-if="item.event == 'log'">
-                        <div class="h4 m-0">
-                          {{ _eventTitle(item) }}
-                        </div>
-                        <div class="text-secondary">
-                          {{ item.data.message }}
-                        </div>
-                      </div>
-
-                      <div v-if="item.event == 'note'">
-                        <div class="h4 m-0">
-                          <Icon class="text-secondary" size="17">Note</Icon>
-                          {{ _eventTitle(item) }}
-                        </div>
-                        A note has been added for
-                        <GameChip :app="item.ref"></GameChip>
-                        <div v-if="item.data?.note" class="text-secondary">
-                          <Icon>Quote</Icon>
-                          {{ item.data.note }}
-                        </div>
-                      </div>
-
-                      <div v-if="item.event == 'state'">
-                        <div class="h4 mb-2">
-                          <Icon class="text-secondary" size="17">Background</Icon>
-                          {{ _eventTitle(item) }}
-                        </div>
-
-                        <GameChip :app="item.ref"></GameChip>
-
-                        {{ item.data.old ? 'changed state' : 'has been added to' }}
-
-                        <BState
-                          :state="item.data.state"
-                          :from="item.data.old"
-                          :label="true"
-                          :manager="false"></BState>
-                      </div>
-
-                      <div v-if="item.event == 'added'">
-                        <div class="h4 m-0">
-                          <Icon class="text-secondary" size="17">StepInto</Icon>
-                          {{ _eventTitle(item) }}
-                        </div>
-                        Your library has been updated with
-                        {{ item.data.games.length }} new games
-
-                        <gameList
-                          :apps="item.data.games"
-                          cols="3"
-                          max="12"
-                          class="pt-3"></gameList>
-
-                        <div v-if="item.data.games.length > 12">
-                          <div class="text-secondary">
-                            <b-btn class="my-1">
-                              <Icon class="text-secondary me-2" size="12">
-                                PlusCircled
-                              </Icon>
-                              Show {{ item.data.games.length - 12 }} more
-                            </b-btn>
-                          </div>
-                        </div>
-                      </div>
-
-                      <small class="text-secondary d-inline-block border-top pt-2 mt-2">
-                        Entry added {{ dates.format(item.created_at, 'DD-MM-YY h:m:s') }}
-                      </small>
-
-                      <!-- <ul
-                        style="
-                          background: #f0f0f0;
-                          list-style-type: none;
-                          border-radius: 4px;
-                          padding: 8px;
-                          margin-bottom: 10px;
-                        ">
-                        <li>
-                          <strong>Event type: {{ item.event }}</strong>
-                        </li>
-                        <li>Ref: {{ item.ref }}</li>
-                        <li>name: {{ _appName(item) }}</li>
-                        <li>
-                          <pre>{{ item }}</pre>
-                        </li>
-                      </ul> -->
-                      <!-- <div class="pull-right">
-                        <Icon class="text-secondary" size="10">Trash</Icon>
-                      </div> -->
-                      <div>&nbsp;</div>
-                    </li>
-                  </template>
-                </ul>
+          <div class="col col-1 d-none d-md-block"></div>
+          <div class="col-12 col-md-5 text-center">
+            <div class="row onboarding-steps">
+              <div v-for="(tab, i) in tabs.one" :key="'tab' + i" class="col-2">
+                <div
+                  class="bullet"
+                  :class="{ past: i < step, active: i == step }"
+                  @click="step = i"></div>
               </div>
             </div>
-          </template>
+            <div v-if="step == 0">
+              <h1>Welcome to Backlog.rip</h1>
+              <p>
+                With Backlog.rip you can organize, keep track of your progress and have a
+                single place for all your games.
+              </p>
+
+              <!-- <div class="card-body text-center my-5">
+                <span
+                  class="avatar avatar-xl rounded"
+                  :style="`background-image: url(${$auth.user.avatar})`"></span>
+                <div class="card-title mb-1">{{ $auth.user.username }}</div>
+              </div> -->
+
+              <div class="btn w-100 my-4" @click="step++">Get started</div>
+            </div>
+
+            <div v-if="step == 1">
+              <h1>This is your ground</h1>
+
+              <p>
+                Everything is stored in your browser, you own your data and you can export
+                and modify it at any time.
+              </p>
+              <p>
+                With zero ads, zero tracking and zero bullshit, you can be sure that your
+                data is safe. The project is open source.
+              </p>
+              <div class="btn w-100 my-4" @click="step++">Continue</div>
+            </div>
+
+            <div v-if="step == 2">
+              <h1>Bring your games</h1>
+              <p>
+                You can automatically import your library from Steam (Public profiles),
+                with more to come.
+              </p>
+
+              <div class="btn w-100 my-4" @click="step++">Continue</div>
+            </div>
+
+            <div v-if="step == 3">
+              <h1>Keep a journal</h1>
+              <p>
+                Everything you do is recorded automatically in your journal. But you can
+                add your own notes too.
+              </p>
+              <div class="btn w-100 my-4" @click="step++">Continue</div>
+            </div>
+
+            <div v-if="step == 4">
+              <h1>Your games, your way</h1>
+              <p>
+                You can manually add any games to your Backlog, even if you don't have
+                them in any library. Then, you can add a state to any game to keep track
+                of your progress.
+              </p>
+              <p>You start with 7 states, but you can modify them to fit your needs.</p>
+              <div class="btn btn-primary w-100 mb-2">
+                <Icon class="me-2">ArrowsTransferDown</Icon>
+                Import your library
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -150,121 +99,81 @@
 
 <script>
 /**
- * @file:    \pages\journal\index.vue
+ * @file:    \pages\welcome.vue
  * @desc:    ...
  * -------------------------------------------
- * Created Date: 4th December 2023
- * Modified: Fri Jan 19 2024
+ * Created Date: 19th January 2024
+ * Modified: Thu Feb 01 2024
  **/
 
 export default {
-  name: 'Journal',
+  name: 'Onboarding',
   data() {
     return {
-      journal: {},
+      step: 0,
+      set: 'one',
 
-      db: {
-        apps: {},
-        data: [],
-        states: [],
+      tabs: {
+        one: [
+          {
+            image: '/img/illustrations/_545b83a8-77ee-4cf8-a565-995a7c8b5057.jpg',
+            link: 'Continue',
+            prompt: 'You can use lorem ipsum',
+          },
+          {
+            image: 'img/illustrations/_b51641e9-154a-4cc5-a871-4d9258e43f9f.jpeg',
+            link: 'Continue',
+            prompt: 'You can use lorem ipsum',
+          },
+          {
+            image: '/img/illustrations/_78ccd6f6-7612-449e-909f-6784e9f6562b.jpg',
+            link: 'Continue',
+            prompt: 'You can use lorem ipsum',
+          },
+          {
+            image: 'img/illustrations/_b11d2f73-91ab-4c7e-bae2-a93f7abe84c9.jpg',
+            link: 'Continue',
+            prompt: 'You can use lorem ipsum',
+          },
+          {
+            image: 'img/illustrations/_d69c1929-5ff6-4943-88d3-2a86f811e727.jpg',
+            link: 'Continue',
+            prompt: 'You can use lorem ipsum',
+          },
+        ],
+        two: [
+          {
+            image: '/img/illustrations/_e0724e4c-8e38-4fc4-8b4d-39a5991c20b2.jpg',
+            link: 'Continue',
+            prompt: 'You can use lorem ipsum',
+          },
+          {
+            image: 'img/illustrations/_a93d86c4-87c6-4ed3-8ba2-b6f12f67dba8.jpg',
+            link: 'Continue',
+            prompt: 'You can use lorem ipsum',
+          },
+          {
+            image: '/img/illustrations/_5fcdad47-41c2-42cc-ad81-532a30957a73.jpg',
+            link: 'Continue',
+            prompt: 'You can use lorem ipsum',
+          },
+          {
+            image: 'img/illustrations/_9ce11824-4e49-471a-8887-e67015ac598f.jpg',
+            link: 'Continue',
+            prompt: 'You can use lorem ipsum',
+          },
+          {
+            image: 'img/illustrations/_d4780673-addf-46dc-a0cb-cc822fa5a690.jpg',
+            link: 'Continue',
+            prompt: 'You can use lorem ipsum',
+          },
+        ],
       },
     }
   },
 
-  computed: {
-    ...mapStores(useDataStore, useJournalStore),
-    ...mapState(useStateStore, ['states']),
-  },
-
   methods: {
-    get(uuid) {
-      if (this.db.apps[uuid]) return this.db.apps[uuid]
-
-      this.db.apps[uuid] = this.dataStore.get(uuid)
-      return this.db.apps[uuid]
-    },
-
-    _appName(item) {
-      if (!item.ref) return 'Unknown app'
-      this.get(item.ref)
-
-      const app = this.db.apps[item.ref]
-      return app?.name || 'Unknown app'
-    },
-
-    _eventTitle(item) {
-      if (item.event == 'log') {
-        return 'Event recorded'
-      }
-
-      if (item.event == 'note') {
-        // const app = this.dataStore.get(item.ref)
-        return `Note added`
-      }
-
-      if (item.event == 'state') {
-        return 'State changed'
-      }
-
-      if (item.event == 'added') {
-        return 'Library updated'
-      }
-    },
-
-    groupByDay() {
-      const grouped = {}
-
-      let prev = null
-      this.db.data.reverse().forEach((entry) => {
-        // Extract the date part from the 'created_at' field
-        const day = entry.created_at.split(' ')[0]
-
-        // Initialize the array if this is the first entry for the day
-        if (!grouped[day]) {
-          grouped[day] = []
-        }
-
-        // Control duplicated
-        if (prev && prev.event == entry.event && prev.ref == entry.ref) {
-          //take the previous item in the grouped[day] and update it
-          const previous = grouped[day].pop()
-
-          if (entry.event == 'state' && entry.data.old) {
-            previous.data.old = entry.data.old
-          }
-
-          grouped[day].push(previous)
-          return
-        }
-
-        // control possible mistakes
-        if (entry.event == 'state') {
-          if (entry.data?.old == entry.data?.state) {
-            delete entry.data.old
-          }
-        }
-
-        // Add the entry to the appropriate day
-        // entry.prev = prev
-        grouped[day].push(entry)
-
-        prev = { ...entry }
-        if (prev.prev) delete prev.prev
-      })
-
-      this.journal = grouped
-    },
-
-    async getData() {
-      const jxr = await this.journalStore.list()
-      this.db.data = jxr
-    },
-
-    async init() {
-      await this.getData()
-
-      this.groupByDay()
-    },
+    async init() {},
   },
 
   mounted() {
@@ -272,3 +181,28 @@ export default {
   },
 }
 </script>
+
+<style>
+.onboarding-steps {
+  justify-content: space-evenly;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.onboarding-steps .bullet {
+  background-color: #ddd;
+  border-radius: 100%;
+  height: 10px;
+  width: 10px;
+  cursor: pointer;
+  margin: auto;
+}
+
+.onboarding-steps .bullet.past {
+  background-color: #182433;
+}
+
+.onboarding-steps .bullet.active {
+  background-color: #446184;
+}
+</style>

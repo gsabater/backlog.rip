@@ -1,13 +1,5 @@
 export class DexieInstaller {
   defaultStates = [
-    // {
-    //   id: 1,
-    //   order: 1,
-    //   color: 'blue',
-    //   name: 'Library',
-    //   description: 'Hold all Played and not played games not in other categories.',
-    // },
-
     {
       id: 1,
       order: 1,

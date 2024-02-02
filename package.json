@@ -3,6 +3,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --port=1337",
+    "host": "NOTE: add --host to dev",
     "devOnNewNode": "set NODE_OPTIONS=--openssl-legacy-provider && dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
@@ -10,6 +11,7 @@
     "cart": "npx nuxi cleanup",
     "lint": "eslint --ext .js,.vue,.ts,.tsx --ignore-path .gitignore ."
   },
+
   "overrides": {
     "vue": "latest"
   },
@@ -30,7 +32,7 @@
     "@nuxt/content": "^2.11.0",
     "@pinia/nuxt": "^0.5",
     "@tabler/core": "^1.0.0-beta20",
-    "@tabler/icons-vue": "^2.46.0",
+    "@tabler/icons-vue": "^2.47.0",
     "@vercel/analytics": "^1.1.2",
     "@vercel/speed-insights": "^1.0.9",
     "@vuelidate/core": "^2.0.3",

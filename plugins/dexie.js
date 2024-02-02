@@ -3,63 +3,54 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Thu Feb 01 2024
+ * Modified: Fri Feb 02 2024
  */
 
 import Dexie from 'dexie'
-import { importDB, exportDB, importInto, peakImportFile } from 'dexie-export-import'
 import { DexieInstaller } from '~/utils/dexieInstaller'
+import Migrator from '~/utils/dexieMigrator'
 
+import { importDB, exportDB, importInto, peakImportFile } from 'dexie-export-import'
 //+-------------------------------------------------
 // Initialize stores
 // Ref: https://dexie.org/docs/Version/Version.stores()
 //+-------------------------------------------------
-const db = new Dexie('backlog.rip')
-
-db.version(9).stores({
-  // User stores
-  account: 'uuid,steam',
-  config: '&key,value',
-
-  // Database stores
-  games: '&uuid,api_id,steam_id',
-
-  // Userdata related stores
-  states: '&id,order,name',
-  journal: '++id,event,ref',
-})
-
-db.version(10).stores({
+let db = new Dexie('backlog.rip')
+let schema = {
   account: 'uuid',
   config: '&key',
-  states: '++id,order,name',
-})
 
-db.version(11).stores({
+  games: '&uuid,api_id,steam_id',
   buffer: '&uuid',
-})
 
-// db.version(10).stores({
-//   // User stores
-//   account: 'uuid',
-//   config: '&key',
+  states: '++id,order,name',
+  journal: '++id,event,ref',
+}
 
-//   // Database stores
-//   games: '&uuid,api_id,steam_id',
-//   buffer: '&uuid',
+await db.open()
+if (db.verno == 9) {
+  await Migrator.migrate9to10(db)
+  db = await Migrator.restore(schema)
+}
 
-//   // Userdata related stores
-//   states: '++id,order,name',
-//   journal: '++id,event,ref',
-// })
+db.close()
+db = new Dexie('backlog.rip')
+db.version(11).stores(schema)
 
+//+-------------------------------------------------
+// check()
+// Chec, if indexeddb is supported
+// -----
+// Created on Fri Feb 02 2024
+//+-------------------------------------------------
 function check() {
   if (!window.indexedDB) {
     log('💽 ❌ IndexedDB is not supported')
-    return
+    return false
   }
 
   log('💽 IndexedDB is supported')
+  return true
 }
 
 //+-------------------------------------------------
@@ -73,15 +64,36 @@ function check() {
 //+-------------------------------------------------
 function initialize() {
   if (check() === false) return
-  // log('Using Dexie v' + Dexie.semVer)
+  log('Using Dexie v' + Dexie.semVer, db.verno)
 
-  const install = new DexieInstaller(db)
+  let installer = new DexieInstaller(db)
+  installer.account()
+  installer.checkin()
 
-  install.account()
-  install.checkin()
+  installer.states()
+  installer.journal()
+}
 
-  install.states()
-  install.journal()
+//+-------------------------------------------------
+// migrate()
+// Moves data between tables
+// -----
+// Created on Fri Feb 02 2024
+//+-------------------------------------------------
+async function migrate(db, tables, action) {
+  let backup = new Dexie('backlog.backup')
+
+  let dest = action === 'backup' ? 'x_' : ''
+  let source = action === 'backup' ? '' : 'x_'
+
+  for (const storeName of tables) {
+    try {
+      const items = await db.table(`${source}${storeName}`).toArray()
+      await db.table(`${dest}${storeName}`).bulkAdd(items)
+    } catch (error) {
+      console.error('Error migrating', storeName, error)
+    }
+  }
 }
 
 //+-------------------------------------------------

@@ -13,12 +13,8 @@
               <div class="row align-items-center">
                 <div class="col-12">
                   <h3 class="card-title mb-1">Loading your userdata, please wait...</h3>
-                  <!-- <div class="text-muted">Working for {{ watchToHuman }} ...</div> -->
                   <div class="mt-3">
                     <div class="row g-2 align-items-center">
-                      <!-- <div class="col-auto">
-                            25%
-                          </div> -->
                       <div class="col">
                         <div class="progress progress-sm">
                           <div
@@ -43,10 +39,10 @@
 /**
  * @file:    \pages\auth.vue
  * @desc:    Receives the token from the backend and stores it
- *          this token identifies the user in the backlog.rip database
+ *           this token identifies the user in the backlog.rip database
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Mon Jan 01 2024
+ * Modified: Fri Feb 02 2024
  **/
 
 export default {
@@ -88,7 +84,7 @@ export default {
         // And update the local ddbb
         await this.userStore.update('local', 'account')
 
-        this.$router.push(redirect ? redirect : '/dashboard')
+        this.$router.push(redirect ? redirect : '/welcome')
 
         // console.warn(auth)
       } catch (e) {

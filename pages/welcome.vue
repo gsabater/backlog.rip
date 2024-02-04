@@ -5,16 +5,43 @@
         <div class="col-8 row mt-5">
           <div class="col-5 d-none d-md-block">
             <div
-              class="card card-sponsor"
-              style="
-                background-size: cover;
-                min-height: 350px;
-                outline: 3px solid rgba(33, 15, 47, 0.61);
-                outline-offset: -2px;
-              "
-              :style="'background-image: url(' + tabs[set][step].image + ')'"
+              class="card"
+              style="border: none"
               @click="set = set == 'one' ? 'two' : 'one'">
-              <div class="card-body"></div>
+              <div
+                class="card-body"
+                style="
+                  background-size: cover;
+                  min-height: 350px;
+                  outline: 3px solid rgba(255, 255, 255, 0.7);
+                  outline-offset: -5px;
+                  border: 2px solid black;
+                "
+                :style="'background-image: url(' + tabs[set][step].image + ')'"></div>
+            </div>
+            <div class="row pt-2 px-1">
+              <div class="col">
+                <small class="text-muted">
+                  <Icon style="transform: translateY(-1px); margin-right: 2px">
+                    Photo
+                  </Icon>
+                  Image created with AI
+                </small>
+              </div>
+              <div class="col-auto ms-auto">
+                <small
+                  v-tippy="{
+                    content: tabs[set][step].prompt,
+                    placement: 'right',
+                    theme: 'translucent',
+                  }"
+                  class="text-muted cursor-help">
+                  <Icon style="transform: translateY(-1px); margin-right: 2px">
+                    Terminal2
+                  </Icon>
+                  Prompt
+                </small>
+              </div>
             </div>
           </div>
           <div class="col col-1 d-none d-md-block"></div>
@@ -45,15 +72,15 @@
             </div>
 
             <div v-if="step == 1">
-              <h1>This is your ground</h1>
+              <h1>Everything is yours</h1>
 
               <p>
-                Everything is stored in your browser, you own your data and you can export
+                All data is stored in your browser, you own it and you can export, import
                 and modify it at any time.
               </p>
               <p>
                 With zero ads, zero tracking and zero bullshit, you can be sure that your
-                data is safe. The project is open source.
+                data is safe.
               </p>
               <div class="btn w-100 my-4" @click="step++">Continue</div>
             </div>
@@ -85,7 +112,7 @@
                 of your progress.
               </p>
               <p>You start with 7 states, but you can modify them to fit your needs.</p>
-              <div class="btn btn-primary w-100 mb-2">
+              <div class="btn btn-primary w-100 my-4">
                 <Icon class="me-2">ArrowsTransferDown</Icon>
                 Import your library
               </div>
@@ -103,7 +130,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 19th January 2024
- * Modified: Thu Feb 01 2024
+ * Modified: Sun Feb 04 2024
  **/
 
 export default {
@@ -111,61 +138,66 @@ export default {
   data() {
     return {
       step: 0,
-      set: 'one',
+      set: 'two',
 
       tabs: {
         one: [
           {
             image: '/img/illustrations/_545b83a8-77ee-4cf8-a565-995a7c8b5057.jpg',
-            link: 'Continue',
+
             prompt: 'You can use lorem ipsum',
           },
           {
             image: 'img/illustrations/_b51641e9-154a-4cc5-a871-4d9258e43f9f.jpeg',
-            link: 'Continue',
+
             prompt: 'You can use lorem ipsum',
           },
           {
             image: '/img/illustrations/_78ccd6f6-7612-449e-909f-6784e9f6562b.jpg',
-            link: 'Continue',
+
             prompt: 'You can use lorem ipsum',
           },
           {
             image: 'img/illustrations/_b11d2f73-91ab-4c7e-bae2-a93f7abe84c9.jpg',
-            link: 'Continue',
+
             prompt: 'You can use lorem ipsum',
           },
           {
             image: 'img/illustrations/_d69c1929-5ff6-4943-88d3-2a86f811e727.jpg',
-            link: 'Continue',
+
             prompt: 'You can use lorem ipsum',
           },
         ],
         two: [
           {
             image: '/img/illustrations/_e0724e4c-8e38-4fc4-8b4d-39a5991c20b2.jpg',
-            link: 'Continue',
-            prompt: 'You can use lorem ipsum',
+
+            prompt:
+              '"Link from Zelda games, arriving to a town. The town has a medieval tone and style. in Viennese secession style, gilded, chromatic, whimsical. Alphonse mucha style"',
           },
           {
             image: 'img/illustrations/_a93d86c4-87c6-4ed3-8ba2-b6f12f67dba8.jpg',
-            link: 'Continue',
-            prompt: 'You can use lorem ipsum',
+
+            prompt:
+              '"Master chief from halo videogame series, Holding an hologram of data with both hands. The hologram shows the bust of master chief from halo videogame series as well. Medieval tone and style. byzantine Japanese woodblock scene, chromatic. Alphonse mucha style"',
           },
           {
             image: '/img/illustrations/_5fcdad47-41c2-42cc-ad81-532a30957a73.jpg',
-            link: 'Continue',
-            prompt: 'You can use lorem ipsum',
+
+            prompt:
+              '"Geralt of rivia carrying a wooden box full and overflowing with books. he is in a big library. The box is labeled as games and resembles a treasure chest. byzantine Japanese woodblock scene, gilded, chromatic. Alphonse mucha style"',
           },
           {
             image: 'img/illustrations/_9ce11824-4e49-471a-8887-e67015ac598f.jpg',
-            link: 'Continue',
-            prompt: 'You can use lorem ipsum',
+
+            prompt:
+              '"Lara croft from Tomb Raider writing in a notebook. she is in a big library. Medieval tone and style. byzantine Japanese woodblock scene, gilded, chromatic, whimsical. Alphonse mucha style"',
           },
           {
             image: 'img/illustrations/_d4780673-addf-46dc-a0cb-cc822fa5a690.jpg',
-            link: 'Continue',
-            prompt: 'You can use lorem ipsum',
+
+            prompt:
+              '"Cloud Strife holding a closed book with long and colorful notes getting out of the book. He is in a library. byzantine Japanese woodblock scene, in Viennese secession style"',
           },
         ],
       },

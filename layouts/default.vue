@@ -1033,7 +1033,7 @@
     </DialogPortal>
   </DialogRoot> -->
 
-  <DrawerRoot>
+  <!-- <DrawerRoot>
     <DrawerTrigger>Open</DrawerTrigger>
     <DrawerPortal>
       <DrawerOverlay />
@@ -1041,7 +1041,7 @@
         <p>Content</p>
       </DrawerContent>
     </DrawerPortal>
-  </DrawerRoot>
+  </DrawerRoot> -->
 </template>
 
 <script>
@@ -1050,7 +1050,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu Feb 01 2024
+ * Modified: Sun Feb 04 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'

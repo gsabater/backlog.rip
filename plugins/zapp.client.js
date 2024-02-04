@@ -5,19 +5,29 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Tue Jan 30 2024
+ * Modified: Sun Feb 04 2024
  */
 
 let $nuxt = null
+let $user = null
 let $data = null
+let $game = null
+let $state = null
+let $repos = null
 
 let app = {
-  v: '0.6.5', //β
+  v: '0.7', //β
   key: 0,
   dev: false,
   env: 'production',
 
+  // $db.status
+  // can be true when is ready or a status
+  // like 'loading' , 'error' or 'update'
+  // db: null,
+
   api: {},
+
   layout: {
     sidebar: false,
   },
@@ -41,7 +51,7 @@ let app = {
     },
   },
 
-  // Loading state
+  // Global loading state
   // Controls global nprogress bar
   //+-----------------------------------------------
   loading: false,
@@ -69,18 +79,46 @@ function detectEnvironment() {
     app.env = 'local'
   }
 }
-function init() {
+
+//+-------------------------------------------------
+// init()
+// Initializes the plugin. The idea of this plugin is
+// to be able to serve as a global object to get app
+// properties and methods
+// -----
+// Created on Sun Feb 04 2024
+//+-------------------------------------------------
+async function init() {
   if (!$nuxt) $nuxt = useNuxtApp()
+  if (!$user) $user = useUserStore()
   if (!$data) $data = useDataStore()
+  if (!$game) $game = useGameStore()
+  if (!$state) $state = useStateStore()
+  if (!$repos) $repos = useRepositoryStore()
 
   detectEnvironment()
+
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Authenticate the user
+  // Try to determinate if the user has an account
+  // either locally or online and load values
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  await $user.authenticate()
+
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Initialize stores
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  $data.init()
+  $game.init()
+  $state.init()
+  $repos.init()
 }
 
 export default defineNuxtPlugin(() => {
   init()
 
   app.toggleSidebar = toggleSidebar
-  // app.c_library = Object.keys($data.library).length
 
   window.$app = app
   return {

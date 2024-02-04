@@ -102,7 +102,6 @@ export class DexieInstaller {
   // -----
   // Created on Thu Jan 25 2024
   //+-------------------------------------------------
-
   async checkin() {
     const fields = {
       created_at: dates.now(),

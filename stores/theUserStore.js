@@ -3,14 +3,14 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Wed Jan 31 2024
+ * Modified: Sun Feb 04 2024
  */
 
 let $nuxt = null
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    user: {},
+    user: { username: 'Traveler' },
     bearer: null,
 
     api: {},
@@ -46,7 +46,7 @@ export const useUserStore = defineStore('user', {
       // me.config = this.config
       this.user = { ...me }
 
-      log('🥸 User is authenticated', this.user)
+      log('🥸 User is authenticated as ' + this.user.username, this.user)
       if (this.user.username == 'Traveler') log('🥸 Traveler user', this.user)
 
       this.isChecked = true

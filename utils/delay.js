@@ -6,7 +6,8 @@
 // Updated on Sat Nov 04 2023
 //+-------------------------------------------------
 async function delay(ms, notify = false) {
-  if (notify) console.log('⏳ Waiting ' + ms + 'ms')
+  // console.log('delay', ms, notify)
+  if (notify) console.warn('⏳ Waiting ' + ms + 'ms', notify)
 
   // return await for better async stack trace support in case of errors.
   return await new Promise((resolve) => setTimeout(resolve, ms))

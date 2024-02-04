@@ -9,7 +9,8 @@
 // import { useState, useRuntimeConfig, useCookie } from '#app'
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  // const nuxtApp = useNuxtApp()
+  return
+  const nuxtApp = useNuxtApp()
   const userStore = useUserStore()
   const dataStore = useDataStore()
   const gameStore = useGameStore()
@@ -22,6 +23,14 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // either locally or online
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  if (!nuxtApp.$db.isOpen() || !nuxtApp.$db.isReady) {
+    console.warn('db is closed or not ready', nuxtApp.$db)
+    return
+  } else {
+    console.warn('db is open', nuxtApp.$db)
+    return
+  }
+
   let current = false
   if (userStore?.isChecked === false) {
     await userStore.authenticate()
@@ -30,8 +39,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Preload
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  if (userStore.isChecked) {
+  else {
     // move to a plugin to run once
     dataStore.init()
     stateStore.init()

@@ -77,29 +77,6 @@
       </div>
     </div>
   </div>
-
-  <b-dialog v-model="ui.dialog" :header="false" title="Manage states">
-    <div class="row mb-3 align-items-end">
-      <div class="col col-10">
-        <label class="form-label">Name</label>
-      </div>
-      <div class="col col-2">
-        <label class="form-label">Color</label>
-      </div>
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Additional info</label>
-    </div>
-
-    <div>
-      <label class="form-label">Special category</label>
-      <small class="form-hint">
-        <span class="badge">fgdfgfdg</span>
-        This is a special and unique state utilized for generating personalized
-        recommendations and statistics. Is becuase of this that it cannot be deleted.
-      </small>
-    </div>
-  </b-dialog>
 </template>
 
 <script>
@@ -108,7 +85,7 @@
  * @desc:    https://dexie.org/docs/ExportImport/dexie-export-import
  * -------------------------------------------
  * Created Date: 18th January 2024
- * Modified: Thu Jan 25 2024
+ * Modified: Sat Feb 03 2024
  **/
 
 export default {
@@ -127,22 +104,6 @@ export default {
     }
   },
 
-  computed: {
-    ...mapStores(useStateStore),
-    ...mapState(useStateStore, ['states']),
-
-    // //+-------------------------------------------------
-    // // $states
-    // // Live query of Dexie states table.
-    // // -----
-    // // Created on Wed Jan 03 2024
-    // //+-------------------------------------------------
-    // $states() {
-    //   if (!this.$db?.states) return []
-    //   return useObservable(liveQuery(() => this.$db.states.toArray()))
-    // },
-  },
-
   methods: {
     //+-------------------------------------------------
     // clear()
@@ -154,6 +115,12 @@ export default {
       return await this.$db[table].clear()
     },
 
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Sat Feb 03 2024
+    //+-------------------------------------------------
     async reset() {
       this.db.tables.forEach(async (table) => {
         await this.clear(table.name)
@@ -161,6 +128,12 @@ export default {
       return true
     },
 
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Sat Feb 03 2024
+    //+-------------------------------------------------
     async exportAndDownload() {
       const progressCallback = this.progressCallback
 
@@ -191,12 +164,25 @@ export default {
     openFileDialog() {
       this.$refs.fileInput.click()
     },
+
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Sat Feb 03 2024
+    //+-------------------------------------------------
     async handleFile(e) {
       const file = e.target.files[0]
       if (!file) return
       await this.selectAndImport(file)
     },
 
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Sat Feb 03 2024
+    //+-------------------------------------------------
     async selectAndImport(file) {
       try {
         const progressCallback = this.progressCallback
@@ -212,59 +198,6 @@ export default {
       } catch (error) {
         console.error('' + error)
       }
-    },
-
-    sort(direction, id) {
-      this.stateStore.sortState(direction, id)
-    },
-
-    edit(item) {
-      this.$refs.crud.edit(item)
-    },
-
-    remove(id) {
-      this.stateStore.delete(id)
-      this.$toast.success('The state has been deleted', {
-        description: 'Monday, January 3rd at 6:00pm',
-      })
-    },
-
-    async ins() {
-      await this.$db.config.put(
-        {
-          id: 5,
-          uuid: null,
-          steam: 76561198061541150,
-          gog: null,
-          epic: null,
-          name: 'Gaspar S.',
-          username: 'Gohrum',
-          slug: null,
-          email: null,
-          avatar:
-            'https://avatars.akamai.steamstatic.com/be9372d5ab3d163fd96fbe3e97b3330cc10c1165_medium.jpg',
-          created_at: '2022-04-29T12:36:13.000000Z',
-          updated_at: '2023-03-21T17:42:31.000000Z',
-        },
-        'me'
-      )
-      log('hey')
-    },
-
-    noti(a, b) {
-      console.log(a, b, this.user.username)
-    },
-
-    //+-------------------------------------------------
-    // function()
-    //
-    // -----
-    // Created on Mon Dec 18 2023
-    //+-------------------------------------------------
-    async update() {
-      this.$toast.success('Your data has been updated', {
-        description: 'Monday, January 3rd at 6:00pm',
-      })
     },
 
     async getData() {

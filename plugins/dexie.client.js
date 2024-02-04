@@ -1,41 +1,50 @@
+/* eslint-disable no-unused-vars */
+
 /*
  * @file:    \plugins\dexie.js
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Fri Feb 02 2024
+ * Modified: Sun Feb 04 2024
  */
 
 import Dexie from 'dexie'
+import Toolkit from '~/utils/dexieToolkit'
 import { DexieInstaller } from '~/utils/dexieInstaller'
-import Migrator from '~/utils/dexieMigrator'
-
 import { importDB, exportDB, importInto, peakImportFile } from 'dexie-export-import'
+
 //+-------------------------------------------------
-// Initialize stores
+// Define stores
 // Ref: https://dexie.org/docs/Version/Version.stores()
 //+-------------------------------------------------
+
 let db = new Dexie('backlog.rip')
-let schema = {
+
+let ver = 11
+let sch = {
   account: 'uuid',
   config: '&key',
-
   games: '&uuid,api_id,steam_id',
   buffer: '&uuid',
-
   states: '++id,order,name',
   journal: '++id,event,ref',
+
+  // Version 9
+  // account: 'uuid,steam',
+  // config: '&key,value',
+  // games: '&uuid,api_id,steam_id,name',
+  // states: '&id,order,name',
+  // journal: '++id,event,ref,created_at',
 }
 
-await db.open()
-if (db.verno == 9) {
-  await Migrator.migrate9to10(db)
-  db = await Migrator.restore(schema)
-}
+// db.version(9).stores({
+// })
 
-db.close()
-db = new Dexie('backlog.rip')
-db.version(11).stores(schema)
+db.version(ver).stores(sch)
+db.open().catch(async (e) => {
+  console.warn('checking database version ...')
+  Toolkit.checkDeepVersion(db)
+})
 
 //+-------------------------------------------------
 // check()
@@ -54,46 +63,25 @@ function check() {
 }
 
 //+-------------------------------------------------
-// initialize()
-// Check that indexxeddb is supported (it should be)
-// set a few values in the config store
-// and expose db to window
+// install()
+// Check that indexedDB is supported (it should be)
+// Then set a few values to db
 // -----
 // Created on Thu Nov 09 2023
 // Updated on Tue Nov 28 2023
 //+-------------------------------------------------
-function initialize() {
+function install() {
   if (check() === false) return
-  log('Using Dexie v' + Dexie.semVer, db.verno)
+  log('Using Dexie v' + Dexie.semVer)
 
   let installer = new DexieInstaller(db)
+
   installer.account()
-  installer.checkin()
-
   installer.states()
+  installer.checkin()
   installer.journal()
-}
 
-//+-------------------------------------------------
-// migrate()
-// Moves data between tables
-// -----
-// Created on Fri Feb 02 2024
-//+-------------------------------------------------
-async function migrate(db, tables, action) {
-  let backup = new Dexie('backlog.backup')
-
-  let dest = action === 'backup' ? 'x_' : ''
-  let source = action === 'backup' ? '' : 'x_'
-
-  for (const storeName of tables) {
-    try {
-      const items = await db.table(`${source}${storeName}`).toArray()
-      await db.table(`${dest}${storeName}`).bulkAdd(items)
-    } catch (error) {
-      console.error('Error migrating', storeName, error)
-    }
-  }
+  db.status = 'ready'
 }
 
 //+-------------------------------------------------
@@ -115,12 +103,16 @@ async function getValue(store, key) {
 // Created on Tue Nov 28 2023
 //+-------------------------------------------------
 export default defineNuxtPlugin((nuxtApp) => {
-  window.$db = db
-  initialize()
-
-  // extend dexie
   db.get = getValue
   db.value = getValue
+
+  db.sch = sch
+  db.ver = ver
+
+  db.status = db.status || null
+  window.$db = db
+
+  install()
 
   return {
     provide: {

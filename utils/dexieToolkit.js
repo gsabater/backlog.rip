@@ -8,9 +8,6 @@
 
 import Dexie from 'dexie'
 
-let $schema = null
-let $version = null
-
 export default {
   //+-------------------------------------------------
   // checkDeepVersion()
@@ -22,9 +19,6 @@ export default {
   //+-------------------------------------------------
   async checkDeepVersion(db) {
     db.close()
-
-    $schema = db.sch
-    $version = db.ver
 
     let checker = new Dexie('backlog.rip')
     await checker.open()
@@ -75,6 +69,9 @@ export default {
   },
 
   async update() {
+    let $version = window.$db.sch
+    let $schema = window.$db.ver
+
     log('🔸Update DB: Starting the process', $version, $schema)
     await Dexie.delete('backlog.rip')
 

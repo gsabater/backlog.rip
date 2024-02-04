@@ -69,17 +69,22 @@ export default {
   },
 
   async update() {
-    let $version = window.$db.sch
-    let $schema = window.$db.ver
-
-    log('🔸Update DB: Starting the process', $version, $schema)
+    log('🔸Update DB: Starting the process')
     await Dexie.delete('backlog.rip')
 
     let target = new Dexie('backlog.rip')
     let backup = new Dexie('backlog.backup')
 
-    target.version($version).stores($schema)
-    log('🔸Update DB: Target generated', $schema)
+    target.version(11).stores({
+      account: 'uuid',
+      config: '&key',
+      games: '&uuid,api_id,steam_id',
+      buffer: '&uuid',
+      states: '++id,order,name',
+      journal: '++id,event,ref',
+    })
+
+    log('🔸Update DB: Target generated')
 
     await target.open()
     await backup.open()

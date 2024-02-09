@@ -1,21 +1,26 @@
-// @import url('https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic');
-// @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
-// @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
 @font-face {
   font-family: Mackinac;
-  src: url("/fonts/P22MackinacPro-Medium_26.otf") format("opentype");
+  src: url('/fonts/P22MackinacPro-Medium_26.otf') format('opentype');
 }
 
 @font-face {
   font-family: Mackinac;
   font-weight: bold;
-  src: url("/fonts/P22MackinacPro-ExtraBold_12.otf") format("opentype");
+  src: url('/fonts/P22MackinacPro-ExtraBold_12.otf') format('opentype');
 }
 
-
-h1,h2,h3,h4,h5,h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: Mackinac, sans-serif;
+  letter-spacing: 1px !important;
   // font-family: 'Lora', serif;
   // font-family: 'DM Serif Display', serif;
   // font-family: 'Playfair Display', serif;
@@ -30,8 +35,6 @@ h1,h2,h3,h4,h5,h6 {
   // font-weight: 600;
 }
 
-
-
 // body{
 //   // background: linear-gradient(rgb(44, 45, 60) 0%, rgb(25, 26, 35) 50%);
 // }
@@ -41,11 +44,11 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 ::-webkit-scrollbar {
-  width: 6px; /* Adjust scrollbar width */
+  width: 5px; /* Adjust scrollbar width */
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent; /* Make scrollbar track transparent */
+  background: #191a22; // transparent; /* Make scrollbar track transparent */
 }
 
 ::-webkit-scrollbar-thumb {
@@ -60,9 +63,21 @@ h1,h2,h3,h4,h5,h6 {
 .ch {
   --geist-background: #151f2c;
   --gradient-from: 247 185 85;
-    --gradient-to: 255 0 128;
-  background: linear-gradient(to top,var(--geist-background) 0,hsla(0,0%,100%,0) 100%),linear-gradient(90deg,rgb(var(--gradient-from, 85 85 85)/.2) 0,rgb(var(--gradient-to, 85 85 85)/.2) 100%);
-  background-size: 100% 100%,100% 100%,1440px 1px;
+  --gradient-to: 255 0 128;
+  background: linear-gradient(
+      to top,
+      var(--geist-background) 0,
+      hsla(0, 0%, 100%, 0) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgb(var(--gradient-from, 85 85 85) / 0.2) 0,
+      rgb(var(--gradient-to, 85 85 85) / 0.2) 100%
+    );
+  background-size:
+    100% 100%,
+    100% 100%,
+    1440px 1px;
   background-position: bottom;
   background-repeat: no-repeat;
   width: 100%;

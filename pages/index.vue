@@ -1,20 +1,20 @@
 <template>
   <header class="hero pt-7 pb-9 md:pt-10 md:pb-13">
     <div class="container">
-      <img
+      <!-- <img
         src="/img/logo.png"
         width="130"
         alt="Backlog.rip"
         class="mb-3"
-        style="text-shadow: 4px black" />
+        style="text-shadow: 4px black" /> -->
 
       <h1 class="hero-title">Backlog.rip</h1>
       <p class="hero-description mt-4">
         Free and open source library manager for all your games.
         <br />
-        Runs only in your browser, without cookies or trackers.
+        Runs in your browser, without any cookies or trackers.
       </p>
-      <p class="hero-description mt-2">Organize and manage your games with ease.</p>
+      <p class="hero-description mt-2">Organize your library and games with ease.</p>
 
       <!-- <div class="my-7">
         <div class="text-muted h5">Available modules: </div>

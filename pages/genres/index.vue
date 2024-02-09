@@ -2,7 +2,7 @@
   <div class="page-body">
     <div class="container-xl">
       <div class="row justify-content-center">
-        <div class="col-6">
+        <div class="col-12 col-md-6">
           <h1>Video game genres</h1>
           <div style="display: flex; justify-content: space-evenly">
             <span>#</span>
@@ -501,7 +501,7 @@ import { useRepositoryStore } from '../../stores/RepositoryStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 15th January 2024
- * Modified: Tue Jan 16 2024
+ * Modified: Sun Feb 04 2024
  **/
 
 export default {

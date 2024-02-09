@@ -1,5 +1,71 @@
 <template>
-  <div
+  <tippy
+    ref="tippy"
+    tag="div"
+    content-tag="div"
+    :animate-fill="false"
+    :interactive="true"
+    :interactive-debounce="55"
+    noanimation="shift-away-subtle"
+    :duration="[50, 50]"
+    placement="right-start"
+    follow-cursor="initial"
+    trigger="click"
+    theme="dropdown">
+    <!-- <template #default="{ state }">
+      <div>
+        <h1>Tippy!</h1>
+        <p>{{ state }}</p>
+      </div>
+    </template> -->
+
+    <template #content="{ hide }">
+      <div class="card nope-card-stacked">
+        <!-- <button @click="hide()">close</button> -->
+
+        <div
+          class="dropdown-menu"
+          style="
+            display: inline-block;
+            width: 100%;
+            position: relative;
+            top: 0;
+            box-shadow: none;
+          ">
+          <!-- <div class="row m-0 mb-2">
+        <div class="text-center p-2 col-6 active">Status</div>
+        <div class="text-center p-2 col-6 active">Collections</div>
+      </div> -->
+          <!-- <div class="dropdown-item">
+            {{ appUUID }}
+          </div> -->
+          <label
+            v-for="(state, i) in states"
+            :key="'state' + i"
+            class="dropdown-item ps-1"
+            @click="doAction(state)">
+            <div class="d-flex justify-center" style="width: 30px">
+              <Icon v-if="isFav(state.name)" style="color: red; fill: pink">Heart</Icon>
+              <span
+                v-else
+                class="badge"
+                :style="{ 'background-color': state.color || '' }"></span>
+            </div>
+
+            <span class="pe-3">
+              {{ state.name }}
+            </span>
+            <tippy class="text-muted ms-auto cursor-help" :content="state.description">
+              <Icon>HelpCircleFilled</Icon>
+            </tippy>
+            <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
+          </label>
+        </div>
+      </div>
+    </template>
+  </tippy>
+
+  <!-- <div
     v-if="ui.show"
     class="card nope-card-stacked"
     style="position: fixed; z-index: 9999"
@@ -13,10 +79,13 @@
         top: 0;
         box-shadow: none;
       ">
-      <!-- <div class="row m-0 mb-2">
+      <div class="row m-0 mb-2">
         <div class="text-center p-2 col-6 active">Status</div>
         <div class="text-center p-2 col-6 active">Collections</div>
-      </div> -->
+      </div>
+      <div class="dropdown-item">
+        {{ appUUID }}
+      </div>
       <label
         v-for="(state, i) in states"
         :key="'state' + i"
@@ -36,10 +105,10 @@
         <tippy class="text-muted ms-auto cursor-help" :content="state.description">
           <Icon>HelpCircleFilled</Icon>
         </tippy>
-        <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
+        <span class="badge bg-primary text-primary-fg ms-auto">12</span>
       </label>
     </div>
-  </div>
+  </div> -->
   <div
     v-if="ui.show"
     class="dropdown-control"
@@ -56,7 +125,6 @@
     @click="hide"></div>
 
   <!-- prettier-ignore-start -->
-
   <!-- prettier-ignore-end -->
 
   <component :is="'style'" id="dynamic-state-vars" type="text/css">
@@ -80,7 +148,7 @@ import { useStateStore } from '../../stores/stateStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Sun Jan 21 2024
+ * Modified: Fri Feb 09 2024
  **/
 
 export default {
@@ -133,8 +201,29 @@ export default {
     // Displays the component on event position
     // -----
     // Created on Thu Jan 04 2024
+    // Updated on Tue Feb 06 2024 - move logic to tippy
     //+-------------------------------------------------
     show(event, app) {
+      this.$refs.tippy.setProps({
+        appendTo: () => document.body,
+
+        getReferenceClientRect: () => ({
+          width: 0,
+          height: 0,
+          top: event.clientY,
+          bottom: event.clientY,
+          left: event.clientX,
+          right: event.clientX,
+        }),
+
+        // popperOptions: {
+        //   strategy: 'fixed',
+        // },
+      })
+
+      // this.ui.show = true
+      // this.$refs.tippy.show()
+
       const elementWidth = 200 // replace with the actual width of the element
       const elementHeight = 300 // replace with the actual height of the element
 
@@ -156,10 +245,13 @@ export default {
       this.ui.top = `${y}px`
       this.ui.left = `${x}px`
       this.ui.show = true
+
+      this.$refs.tippy.show()
     },
 
     hide() {
       this.ui.show = false
+      this.$refs.tippy.hide()
     },
 
     isFav(state) {

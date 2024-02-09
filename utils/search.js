@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Sun Jan 28 2024
+ * Modified: Fri Feb 09 2024
  */
 
 export default {
@@ -36,10 +36,11 @@ export default {
       }
 
       // Filter: Backlog state
-      // Match with on app.state
+      // Match with app.state
       //+---------------------------------------
-      if (filters?.state) {
-        if (app.state !== filters.state) {
+      if (filters?.states?.length) {
+        if (!filters.states.includes(app.state)) {
+          // if (app.state !== filters.state) {
           if (logged > 0) {
             console.warn('🛑 Skipping as not in state', filters.state, app.name)
             logged--
@@ -133,9 +134,14 @@ export default {
       items[0],
       window.db?.d?.[items[0]]
     )
-    // this.stats.time = end - start
 
-    // log('🌈 Dropping stats', this.stats, filters)
+    log(
+      '🔸 Stats:',
+      {
+        time: end - start,
+      },
+      filters
+    )
 
     return this.sort(toSort, filters)
   },
@@ -148,7 +154,7 @@ export default {
   //+-------------------------------------------------
 
   sort(items, filters) {
-    log('💎 Search: Sorting', filters.sortBy)
+    log('🔸 Sorting results by', filters.sortBy)
 
     // SortBy: name
     // Using app.name

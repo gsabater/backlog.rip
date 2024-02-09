@@ -1,10 +1,47 @@
-.b-menu {
-  margin-top: 7px;
-  padding: 5px;
-  position: absolute;
+[data-theme='game-manager'],
+[data-theme='dropdown'],
+[data-theme='filters'] {
+  /* Might need to remove this */
+  // overflow-y: visible !important;
 
+  & .tippy-content {
+    padding: 0;
+  }
+
+  & .tippy-backdrop {
+    background-color: rgba(0, 0, 0, 0);
+  }
+}
+
+[data-theme='filters'] {
+  transform: translate(-3px, -50px);
+
+  & .dropdown-menu {
+    background-color: #2c2e3b !important;
+  }
+
+  & .dropdown-item .selection {
+    opacity: 0;
+  }
+
+  & .dropdown-item:hover .selection,
+  & .dropdown-item.selected .selection {
+    opacity: 1;
+  }
+}
+
+.b-menu {
   --tblr-dropdown-divider-margin-y: 0.4rem;
 
+  position: relative;
+  padding: 5px;
+  // margin-top: 7px;
+
+  backdrop-filter: blur(10px);
+  border-color: #38394c;
+
+  max-height: 55vh;
+  overflow-y: auto;
 }
 
 /*

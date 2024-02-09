@@ -7,16 +7,20 @@
 @import '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
 @import '../../node_modules/@tabler/core/dist/css/demo.css';
 @import 'extend';
+@import 'tabler_changes';
 
 @import 'base';
 @import 'colors';
 @import 'borders';
 
 // Import mixins
+@import 'mixins/cards';
 @import 'mixins/buttons';
 
 // Import layout
 @import 'partials/home';
+@import 'partials/search';
+
 @import 'partials/base/_menus';
 @import 'partials/base/_sidebar';
 @import 'partials/base/_lists';
@@ -27,6 +31,6 @@
 @import 'components/b-game';
 @import 'components/b-poster';
 @import 'components/b-game-details';
-
+@import 'components/b-game-manager';
 
 @import 'dev';

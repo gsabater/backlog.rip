@@ -21,17 +21,14 @@
                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                   <Icon>ChartBubble</Icon>
                 </span>
-                <span class="nav-link-title">Explore</span>
+                <span class="nav-link-title pe-2">Explore</span>
               </div>
-              <b-menu :arrow="false">
+              <b-dropdown>
                 <NuxtLink to="/games" class="dropdown-item">
                   <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
                     <Icon>Cards</Icon>
                   </span>
-                  <span class="nav-link-title">
-                    All games
-                    <!-- (drop> add a game, connect accounts) -->
-                  </span>
+                  <span class="nav-link-title">All games</span>
                 </NuxtLink>
 
                 <NuxtLink to="/genres" class="dropdown-item">
@@ -40,7 +37,10 @@
                   </span>
                   <span class="nav-link-title">Genres</span>
                 </NuxtLink>
-              </b-menu>
+              </b-dropdown>
+
+              <!-- <b-menu :arrow="false">
+              </b-menu> -->
             </li>
 
             <!-- <li class="nav-item">

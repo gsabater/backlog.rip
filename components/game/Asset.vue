@@ -8,11 +8,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Can be used as
- * <game-asset :app="app" show="logo" :priority="['steam', 'igdb']"></game-asset>
- * <game-asset :app="app" show="cover" :priority="['steam', 'igdb']"></game-asset>
+ * <game-asset :app="app" asset="logo" :priority="['steam', 'igdb']"></game-asset>
+ * <game-asset :app="app" asset="cover" :priority="['steam', 'igdb']"></game-asset>
+ * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Tue Jan 16 2024
+ * Modified: Tue Feb 06 2024
  **/
 
 export default {
@@ -85,15 +86,52 @@ export default {
       if (this.showing < this.assets.length - 1) this.showing++
     },
 
+    //+-------------------------------------------------
+    // assetUrl()
+    // From an array of assets (computed), returns the URL
+    // Tries multiple urls and updates on error.
+    // If the url is detected to be a banner, adapt the parent
+    // -----
+    // Created on Tue Feb 06 2024
+    //+-------------------------------------------------
     assetUrl(index) {
-      const item = this.assets[index]
+      const url = this.assets[index]
       const cover = this.app?.cover
 
-      if (item.includes('igdb/')) this.is = 'igdb'
-      else if (item.includes('steam/')) this.is = 'steam'
+      let theUrl = null
 
-      if (this.is == 'steam') return item.replace('%ID%', this.app.steam_id)
-      else if (this.is == 'igdb') return item.replace('%ID%', cover.igdb)
+      if (url.includes('igdb/')) this.is = 'igdb'
+      else if (url.includes('steam/')) this.is = 'steam'
+
+      if (this.is == 'steam') theUrl = url.replace('%ID%', this.app.steam_id)
+      else if (this.is == 'igdb') theUrl = url.replace('%ID%', cover.igdb)
+
+      if (this.asset == 'cover' && url.includes('header.')) {
+        this.adaptForBanner(theUrl)
+      }
+
+      if (this.asset == 'cover' && this.is == 'igdb') {
+        this.adaptForIGDB(theUrl)
+      }
+
+      return theUrl
+    },
+
+    //+-------------------------------------------------
+    // adaptForBanner()
+    // Adapts the parent container for a banner
+    // -----
+    // Created on Tue Feb 06 2024
+    //+-------------------------------------------------
+    adaptForBanner(url) {
+      if (!this.$el) return
+      this.$el.closest('.card-game__cover').classList.add('is-banner')
+      this.$el.closest('.card-game__cover').style.backgroundImage = `url(${url})`
+    },
+
+    adaptForIGDB(url) {
+      if (!this.$el) return
+      this.$el.style.backgroundSize = 'cover'
     },
 
     init() {

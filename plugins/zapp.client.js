@@ -5,8 +5,10 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Sun Feb 04 2024
+ * Modified: Fri Feb 09 2024
  */
+
+import { reactive } from 'vue'
 
 let $nuxt = null
 let $user = null
@@ -16,7 +18,7 @@ let $state = null
 let $repos = null
 
 let app = {
-  v: '0.7', //β
+  v: '0.8', //β
   key: 0,
   dev: false,
   env: 'production',
@@ -118,7 +120,10 @@ async function init() {
 export default defineNuxtPlugin(() => {
   init()
 
-  app.toggleSidebar = toggleSidebar
+  app = reactive({
+    toggleSidebar: toggleSidebar,
+    ...app,
+  })
 
   window.$app = app
   return {

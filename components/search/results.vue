@@ -1,8 +1,26 @@
 <template>
+  <pre
+    class="d-none my-3"
+    style="
+      position: fixed;
+      bottom: 10px;
+      left: 400px;
+      z-index: 9999;
+      max-height: 120vh;
+      overflow-y: scroll;
+      background: rgba(13, 12, 42, 0.5);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      width: auto;
+    "
+    >{{ filters }}
+</pre
+  >
   <div class="row row-deck row-cards row-games-list">
     <template v-for="(app, i) in items" :key="'card' + i">
-      <div class="col col-6 col-sm-4 col-md-3 col-lg-custom">
-        <b-game :key="app" :uuid="app"></b-game>
+      <div class="col col-6 col-sm-4 col-md-3 col-lg-custom px-2 py-1">
+        <b-game :key="app" :uuid="app" :body="false"></b-game>
       </div>
     </template>
   </div>
@@ -14,16 +32,18 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Feb 01 2024
+ * Modified: Fri Feb 09 2024
  **/
+
+// import { useThrottleFn } from '@vueuse/core'
 
 export default {
   name: 'SearchResults',
 
   props: {
     source: {
-      type: String,
-      default: 'all', // or 'library'
+      type: [String, Array],
+      default: 'all', // 'library', []
     },
 
     filters: {
@@ -76,16 +96,21 @@ export default {
   },
 
   watch: {
-    filters: {
-      handler() {
-        log('💎 Search: Watcher', JSON.stringify(this.filters))
-        this.search('watch')
-      },
-      deep: true,
-    },
+    // filters: {
+    //   handler() {
+    //     log('💎 Search: Watcher', JSON.stringify(this.filters))
+    //     this.search('watch')
+    //   },
+    //   deep: true,
+    // },
   },
 
   methods: {
+    _search() {
+      console.warn(1)
+      debounce(this.search, 1000)
+    },
+
     //+-------------------------------------------------
     // search()
     // Generates a hash from the filters
@@ -95,7 +120,7 @@ export default {
     // Updated on Tue Jan 09 2024
     //+-------------------------------------------------
     search(source = null) {
-      log('💎 Search: init from: ', source || 'direct run')
+      log('✨🔥 Search: init from: ', source || 'direct run')
 
       if (Object.keys(this.filters).length === 0) return
       // this.$emit('loading', false)
@@ -133,13 +158,13 @@ export default {
     filter() {
       if (!this.dataStore.isReady) return
 
+      let source = null
       // prettier-ignore
-      const source = (this.source == 'all')
-        ? this.dataStore.list()
-        : this.dataStore.library()
-
+      if (Array.isArray(this.source)) source = this.source
+      else source = this.source == 'all' ? this.dataStore.list() : this.dataStore.library()
       log('⚡ Search: Filter on ', this.source)
       log('⚡ Search: Amount of apps #', Object.keys(source).length)
+      if (this.source.length == 0) return
       log('⚡ Search: Filters: ', JSON.stringify(this.filters))
 
       const items = search.filter(source, this.filters, { source: this.source })
@@ -167,24 +192,6 @@ export default {
 
   mounted() {
     this.init()
-
-    this.$mitt.on('data:updated', () => {
-      log('💎 Search: event -> data:updated')
-      this.control.event = 'data:updated'
-      this.search('event')
-      // this.$emit('loading', false)
-    })
-
-    this.$mitt.on('data:ready', () => {
-      log('💎 Search: event -> data:ready')
-      this.control.event = 'data:ready'
-      this.search('event')
-    })
-  },
-
-  beforeUnmount() {
-    this.$mitt.off('data:ready')
-    this.$mitt.off('data:updated')
   },
 }
 </script>

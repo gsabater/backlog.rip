@@ -46,12 +46,10 @@
           <div
             v-if="ui.error == 'account:provider'"
             class="container container-tight py-4">
-            <div
-              class="card border-rainbow"
-              style="border-width: 1px; box-shadow: 1px 1px 3px 0px #36302a63">
+            <div class="card card-md">
               <div class="card-body text-center">
                 <div class="mb-4">
-                  <h2>You need to login</h2>
+                  <h2>You need to login first</h2>
                   <p class="text-secondary mb-4">
                     In order to get your Steam library, you have to login with your Steam
                     account. This is a safe process, and only your SteamID will be shared
@@ -619,7 +617,7 @@ IGNORE
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Tue Jan 30 2024
+ * Modified: Sun Feb 04 2024
  **/
 
 const importer = null
@@ -884,9 +882,14 @@ export default {
       if (type == 'error') {
         if (this.ui.knownErrors.includes(data)) {
           this.ui.error = data
-        } else {
-          this.ui.error = message
-          this.ui.showlogs = true
+        }
+        // else {
+        //   this.ui.error = message
+        //   this.ui.showlogs = true
+        // }
+
+        if (this.ui.error) {
+          this.ui.showlogs = false
         }
       }
     },

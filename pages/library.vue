@@ -8,7 +8,7 @@
         </div>
         <div class="col-auto ms-auto">
           <div class="text-secondary mt-1 text-right" style="text-align: right">
-            {{ source.count }} games
+            {{ source.count }} games - change to $app
             <!-- <br />
             <span class="text-muted" style="zoom: 0.8">(0.19 seconds)</span> -->
           </div>
@@ -30,7 +30,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th December 2023
- * Modified: Wed Jan 10 2024
+ * Modified: Thu Feb 08 2024
  **/
 
 export default {

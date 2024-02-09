@@ -2,37 +2,36 @@
   <div class="row">
     <div class="col-12">
       <pre
-        class="my-3"
+        class="d-none my-3"
         style="
           position: fixed;
           bottom: 10px;
-          right: 10px;
+          left: 10px;
           z-index: 9999;
-          max-height: 90vh;
+          max-height: 120vh;
           overflow-y: scroll;
           background: rgba(0, 0, 0, 0.5);
           color: white;
           padding: 10px;
           border-radius: 5px;
+          width: auto;
         "
         >{{ f }}
----
-{{ ui }}
----
-{{ $app }}
 </pre
       >
     </div>
+    <search-filters :filters="f" @update="onUpdate"></search-filters>
+
     <div class="col-12">
-      <div class="row mb-4 align-items-center">
+      <div v-if="false" class="row mb-4 align-items-center">
         <div class="col col-3">
           <div>
-            <b-input
+            <!-- <b-input
               v-model="f.string"
               placeholder="Filter..."
               clearable
               @tick="search"
-              @clear="search"></b-input>
+              @clear="search"></b-input> -->
           </div>
         </div>
         <div class="col col-6">
@@ -196,7 +195,7 @@
         @loading="onLoading"></search-results>
 
       <div class="pagination my-3">
-        <div class="btn" @click="f.show.page++">Show more</div>
+        <div class="btn" @click="addPage">Show more</div>
       </div>
     </div>
 
@@ -204,9 +203,6 @@
       show:
       <br />
       all games z-z only owned
-      <br />
-
-      <div></div>
     </div>
   </div>
 </template>
@@ -217,15 +213,15 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sun Jan 28 2024
+ * Modified: Fri Feb 09 2024
  **/
 
 export default {
   name: 'SearchInterface',
   props: {
     source: {
-      type: String,
-      default: 'all', // or 'library'
+      type: [String, Array],
+      default: 'all', // 'library', []
     },
 
     filters: {
@@ -250,13 +246,18 @@ export default {
         sortBy: 'score',
         sortDir: 'desc',
 
-        state: null,
+        states: [],
         genres: [],
 
+        modes: {
+          // states: 'any(of) // all(of) // not(of)'
+        },
+
         show: {
-          display: 'grid',
           page: 1,
-          perPage: 48,
+          perPage: 28,
+
+          display: 'grid',
         },
       },
 
@@ -278,6 +279,7 @@ export default {
       },
 
       ui: {
+        dirty: false,
         loading: false,
       },
     }
@@ -312,11 +314,28 @@ export default {
       console.warn('loading', loading)
     },
 
-    search() {
+    onUpdate(filters) {
+      this.f = filters
+
+      this.f.show.page = 1
+      this.ui.dirty = true
+
+      this.search('interface')
+      // console.warn('📒 updated', JSON.stringify(filters))
+      // this.$nextTick(() => {
+      //   console.warn('📒 updated 2', JSON.stringify(filters))
+      // })
+    },
+
+    addPage() {
+      this.f.show.page++
+      this.search('addPage')
+    },
+
+    search(by) {
+      // console.warn('📒 search')
       this.$nextTick(() => {
-        log('#️⃣ Search: Interface', JSON.stringify(this.f))
-        this.f.show.page = 1
-        this.$refs.results.search()
+        this.$refs.results.search(by)
       })
     },
 
@@ -342,6 +361,7 @@ export default {
         ...this.filters,
         ...loaded,
       }
+      // console.warn('📒 mounted filters')
     },
 
     async getData() {
@@ -363,11 +383,34 @@ export default {
     async init() {
       await this.getData()
       this.mergeFilters()
+      this.search('init')
     },
   },
 
   mounted() {
     this.init()
+
+    this.$mitt.on('data:updated', () => {
+      log('✨ Search: event -> data:updated')
+      // this.control.event = 'data:updated'
+      // if (this.ui.dirty) return
+
+      this.search('event')
+      // this.$emit('loading', false)
+    })
+
+    this.$mitt.on('data:ready', () => {
+      log('✨ Search: event -> data:ready')
+      // this.control.event = 'data:ready'
+      if (this.ui.dirty) return
+
+      this.search('event')
+    })
+  },
+
+  beforeUnmount() {
+    this.$mitt.off('data:ready')
+    this.$mitt.off('data:updated')
   },
 }
 </script>

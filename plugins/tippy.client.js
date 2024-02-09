@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th December 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Fri Feb 09 2024
  */
 
 import VueTippy, { roundArrow } from 'vue-tippy'
@@ -12,6 +12,11 @@ import 'tippy.js/dist/svg-arrow.css'
 import 'tippy.js/dist/backdrop.css'
 
 import 'tippy.js/animations/shift-away.css'
+import 'tippy.js/animations/shift-away-subtle.css'
+import 'tippy.js/animations/shift-away-extreme.css'
+import 'tippy.js/animations/scale.css'
+import 'tippy.js/animations/scale-subtle.css'
+import 'tippy.js/animations/scale-extreme.css'
 
 import 'tippy.js/themes/material.css'
 import 'tippy.js/themes/translucent.css'
@@ -21,7 +26,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     defaultProps: {
       arrow: false,
 
-      animateFill: true,
+      animateFill: false,
       theme: 'material',
       // theme: 'translucent',
 

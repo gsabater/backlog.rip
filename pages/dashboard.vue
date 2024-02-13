@@ -94,7 +94,7 @@
           games-list
         </div>
 
-        <div v-if="false" class="col-6">
+        <div v-if="$app.dev" class="col-12">
           <div class="card">
             <div class="card-body">
               <p class="mb-3">Games and backlog breakdown</p>
@@ -157,6 +157,19 @@
                   </span>
                 </div>
               </div>
+
+              <div class="row">
+                <div class="col-auto">
+                  <div class="btn btn-sm btn-secondary">View all</div>
+                </div>
+                <div class="col-12">
+                  <gameList
+                    v-if="latest.length"
+                    :apps="latest"
+                    cols="3"
+                    class="pt-3"></gameList>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -171,7 +184,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Mon Jan 22 2024
+ * Modified: Tue Feb 13 2024
  **/
 
 export default {
@@ -179,17 +192,20 @@ export default {
 
   data() {
     return {
-      db: {
-        states: [],
-      },
-
       ui: {},
     }
   },
 
   computed: {
-    ...mapStores(useDataStore, useStateStore),
-    ...mapState(useStateStore, ['states']),
+    // ...mapStores(useDataStore, useStateStore),
+    ...mapState(useDataStore, ['latestGames']),
+    ...mapState(useStateStore, {
+      states: 'list',
+    }),
+
+    latest() {
+      return this.latestGames.map((item) => item.uuid)
+    },
   },
 
   methods: {
@@ -198,7 +214,6 @@ export default {
 
   mounted() {
     this.init()
-    console.log(this, this.$app)
     // This is just a test, ensures that i can do both
     // this.userstore and this.$auth, and is reactive
     // ...mapStores(useUserStore),

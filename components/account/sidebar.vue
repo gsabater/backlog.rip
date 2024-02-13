@@ -18,7 +18,7 @@
     <li class="nav-item">
       <NuxtLink to="/account/me" class="nav-link">
         <Icon class="me-2">Fingerprint</Icon>
-        Preferences
+        Your profile
       </NuxtLink>
     </li>
 

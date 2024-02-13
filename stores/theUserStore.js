@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Sun Feb 04 2024
+ * Modified: Tue Feb 13 2024
  */
 
 let $nuxt = null
@@ -21,6 +21,16 @@ export const useUserStore = defineStore('user', {
     isChecked: false,
     redirectTo: null,
   }),
+
+  getters: {
+    doubleCount() {
+      return this.redirectTo + 'xxx' || 0
+    },
+
+    // upper() {
+    //   return this.message.toUpperCase();
+    // },
+  },
 
   actions: {
     //+-------------------------------------------------
@@ -184,16 +194,6 @@ export const useUserStore = defineStore('user', {
     //   useCookie('auth._token.local').value = null
     //   delete $nuxt.$axios.defaults.headers.common['Authorization']
     //   navigateTo('/login')
-    // },
-  },
-
-  getters: {
-    doubleCount() {
-      return this.redirectTo + 'xxx' || 0
-    },
-
-    // upper() {
-    //   return this.message.toUpperCase();
     // },
   },
 })

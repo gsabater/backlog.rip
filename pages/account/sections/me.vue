@@ -73,7 +73,7 @@
         </label> -->
       </div>
     </div>
-    <div class="card-footer">Registered {{ user.created_at }}</div>
+    <div class="card-footer">Registered {{ $moment(user.created_at).format('LL') }}</div>
   </div>
 </template>
 
@@ -83,7 +83,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Jan 25 2024
+ * Modified: Tue Feb 13 2024
  **/
 
 export default {

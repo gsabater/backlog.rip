@@ -32,7 +32,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Feb 09 2024
+ * Modified: Tue Feb 13 2024
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -156,9 +156,11 @@ export default {
     // Updated on Tue Jan 09 2024 - Included utils.search
     //+-------------------------------------------------
     filter() {
-      if (!this.dataStore.isReady) return
+      // do again?
+      // if (!this.dataStore.isReady) return
 
       let source = null
+
       // prettier-ignore
       if (Array.isArray(this.source)) source = this.source
       else source = this.source == 'all' ? this.dataStore.list() : this.dataStore.library()

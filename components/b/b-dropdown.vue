@@ -7,9 +7,9 @@
     :trigger="trigger"
     :placement="placement"
     :interactive="true"
-    :interactive-debounce="25"
+    :interactive-debounce="45"
     animation="shift-away-subtle"
-    :duration="[150, 250]"
+    :duration="[200, 250]"
     theme="dropdown">
     <!-- <template #default="{ state }">
       <div>{{ state }}</div>
@@ -29,7 +29,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Fri Feb 09 2024
+ * Modified: Tue Feb 13 2024
  **/
 
 export default {
@@ -50,7 +50,7 @@ export default {
     placement: {
       type: String,
       default: 'bottom-start',
-      options: ['start', 'end'],
+      options: ['start', 'end', 'right-start'],
     },
   },
 

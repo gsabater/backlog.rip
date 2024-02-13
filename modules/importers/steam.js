@@ -31,6 +31,13 @@ let $axios = null
 let $account = null
 
 export default {
+  //+-------------------------------------------------
+  // Module manifest
+  // ---
+  // This manifest is used to describe the module
+  // and its capabilities to the importer plugin
+  //+-------------------------------------------------
+
   manifest: {
     version: '1.1',
     name: 'Steam importer',
@@ -136,23 +143,54 @@ export default {
   // Updated on Mon Mar 13 2023
   //+-------------------------------------------------
   async getUserdata() {
-    let jxr = await $axios.get(
-      'https://api.backlog.rip/fetch/steam/userdata?steamid=' + $account.steam
-    )
+    let url = 'https://api.backlog.rip/fetch/steam/userdata'
+    let jxr = await $axios.get(url + '?steamid=' + $account.steam)
 
     if (jxr.data.status == 'success') {
       return jxr.data?.fetch?.data || {}
     }
   },
 
+  //+-------------------------------------------------
+  // getGames()
+  // Calls backend to retrieve user games
+  // -----
+  // Created on Thu Dec 08 2022
+  //+-------------------------------------------------
   async getGames() {
-    let jxr = await $axios.get(
-      'https://api.backlog.rip/fetch/steam/games?steamid=' + $account.steam
-    )
+    let url = 'https://api.backlog.rip/fetch/steam/games'
+    let jxr = await $axios.get(url + '?steamid=' + $account.steam)
 
     if (jxr.data.status == 'success') {
       // xDDDD
       return jxr.data?.fetch?.data?.games || {}
     }
+  },
+
+  //+-------------------------------------------------
+  // function()
+  //
+  // -----
+  // Created on Mon Feb 12 2024
+  //+-------------------------------------------------
+  async getSteamBacklog() {
+    let url = 'https://api.backlog.rip/fetch/steam-backlog'
+    let jxr = await $axios.get(url + '?steamid=' + $account.steam)
+
+    if (jxr.data.status == 'success') {
+      return jxr.data?.fetch || {}
+    }
+  },
+
+  //+-------------------------------------------------
+  // onScan()
+  // hook fired on the scan step.
+  // Receives data and instance
+  // -----
+  // Created on Mon Feb 12 2024
+  //+-------------------------------------------------
+  async onScan(data, x) {
+    data.backlog = await this.getSteamBacklog()
+    return data.backlog
   },
 }

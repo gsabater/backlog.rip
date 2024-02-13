@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Tue Jan 30 2024
+ * Modified: Tue Feb 13 2024
  */
 
 import axios from 'axios'
@@ -146,6 +146,12 @@ export default {
       user: {},
       games: [],
       library: [],
+
+      // TODO: things that will be imported
+      // states: [],
+      // collections: [],
+      // data.backlog will be defined as well from steam.onScan
+      steambacklog: {}, // quick dirty hack
     }
 
     try {
@@ -160,6 +166,12 @@ export default {
       x.log('Check 4.3: Get library')
       data.games = await steam.getGames()
       x.log(`🆗 Games loaded`)
+
+      if (steam.onScan !== undefined) {
+        x.log('Check 4.4: onScan hook')
+        data.steambacklog = await steam.onScan(data, x)
+        x.log(`🆗 onScan hook executed`)
+      }
 
       // this.data.wishlist = await steam.getWishlist()
       // x.log(`🎁 Wishlist received`)

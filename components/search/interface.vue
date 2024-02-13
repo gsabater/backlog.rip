@@ -160,7 +160,7 @@
             </label>
           </b-menu>
           <!-- <small class="text-muted">
-            Found {{ totalApiGames }} games,
+            Found {{  }} games,
             <br />
             666 in your library
           </small> -->
@@ -213,7 +213,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Feb 09 2024
+ * Modified: Mon Feb 12 2024
  **/
 
 export default {
@@ -293,10 +293,6 @@ export default {
       return this.source == 'library'
     },
 
-    totalApiGames() {
-      return this.$app?.api?.games?.total || 0
-    },
-
     // TODO: move to a helper
     sortToHuman() {
       return {
@@ -367,12 +363,11 @@ export default {
     async getData() {
       this.slug = this.$route.params?.slug || null
 
-      if (this.slug) await this.repositoryStore.getGenres()
-      else this.repositoryStore.getGenres()
+      // if (this.slug) await this.repositoryStore.getGenres()
+      // else this.repositoryStore.getGenres()
 
       if (this.isLibrary) return
 
-      this.dataStore.loadApiStatus()
       this.dataStore.getTop('popular')
 
       // this.db.states = this.dataStore

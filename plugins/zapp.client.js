@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Fri Feb 09 2024
+ * Modified: Tue Feb 13 2024
  */
 
 import { reactive } from 'vue'
@@ -18,8 +18,8 @@ let $state = null
 let $repos = null
 
 let app = {
-  v: '0.8', //β
-  key: 0,
+  v: '0.8.5', //β
+
   dev: false,
   env: 'production',
 
@@ -28,35 +28,47 @@ let app = {
   // like 'loading' , 'error' or 'update'
   // db: null,
 
-  api: {},
+  device: {
+    is: 'pc', // pc, mobile, deck
+    controller: false,
+  },
 
   layout: {
     sidebar: false,
   },
 
-  //+-------------------------------------------------
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Counters of data
-  // states are counted in stateStore
-  // count.api is the number of games available in the api
-  // count.data is the number of games in the database
-  // count.lib is the number of games in each library
-  // ---
-  // Maybe move this to libraryStore, or some other plugin
-  //+-------------------------------------------------
+  //
+  // count.api is the # of games available in the api
+  // count.data is the # of games in cache
+  // count.library is the # of games in local library
+  //
+  // states.backlog (and others) is the # of games in each state
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   count: {
     api: 0,
     data: 0,
-    lib: {
-      steam: 0,
-      gog: 0,
-      epic: 0,
+    library: 0,
+
+    states: {
+      backlog: 0,
     },
   },
 
-  // Global loading state
-  // Controls global nprogress bar
-  //+-----------------------------------------------
+  api: {},
+
+  // Global app state
+  // Controls modules boundaries
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ready: false,
   loading: false,
+
+  // Global log
+  // Has every message received from the app
+  // Used to debug and review messages
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  log: ['wip'],
 }
 
 //+-------------------------------------------------
@@ -66,7 +78,7 @@ let app = {
 //+-------------------------------------------------
 async function toggleSidebar($nuxt) {
   app.layout.sidebar = !app.layout.sidebar
-  $nuxt.$mitt.emit('app:render')
+  // $nuxt.$mitt.emit('app:render')
 }
 
 //+-------------------------------------------------
@@ -91,7 +103,7 @@ function detectEnvironment() {
 // Created on Sun Feb 04 2024
 //+-------------------------------------------------
 async function init() {
-  if (!$nuxt) $nuxt = useNuxtApp()
+  // if (!$nuxt) $nuxt = useNuxtApp()
   if (!$user) $user = useUserStore()
   if (!$data) $data = useDataStore()
   if (!$game) $game = useGameStore()
@@ -110,11 +122,14 @@ async function init() {
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Initialize stores
+  // Initialize only the stores that are needed
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   $data.init()
   $game.init()
   $state.init()
   $repos.init()
+  // this.dataStore.loadApiStatus()
 }
 
 export default defineNuxtPlugin(() => {

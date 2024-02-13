@@ -6,8 +6,8 @@
     :animate-fill="false"
     :interactive="true"
     :interactive-debounce="55"
-    noanimation="shift-away-subtle"
-    :duration="[50, 50]"
+    animation="shift-away-subtle"
+    :duration="[200, 250]"
     placement="right-start"
     follow-cursor="initial"
     trigger="click"
@@ -20,46 +20,102 @@
     </template> -->
 
     <template #content="{ hide }">
-      <div class="card nope-card-stacked">
-        <!-- <button @click="hide()">close</button> -->
-
-        <div
-          class="dropdown-menu"
-          style="
+      <!-- <div class="card nope-card-stacked"> -->
+      <!-- <button @click="hide()">close</button> -->
+      <div
+        class="b-menu dropdown-menu show"
+        style="overflow: visible"
+        ntyle="
             display: inline-block;
             width: 100%;
             position: relative;
             top: 0;
             box-shadow: none;
           ">
-          <!-- <div class="row m-0 mb-2">
+        <div class="dropdown-item">
+          <div style="width: 30px">
+            <Icon>Background</Icon>
+          </div>
+
+          <span>Assign a state</span>
+
+          <span class="text-muted ms-auto">
+            <Icon size="14">CaretRightFilled</Icon>
+          </span>
+          <b-dropdown placement="right-start">
+            <div
+              v-for="(state, i) in states"
+              :key="'state' + i"
+              class="dropdown-item px-2"
+              @click="doAction(state)">
+              <div
+                class="selection"
+                style="margin-right: 0.55rem"
+                @click="select(state, 'soft')">
+                <input
+                  type="radio"
+                  class="form-check-input"
+                  style="transform: scale(0.8)" />
+              </div>
+              <div
+                class="content d-flex align-items-center w-100"
+                @click="select(state, 'hard')">
+                <span
+                  class="badge me-2"
+                  :style="{ 'background-color': state.color || '' }"></span>
+
+                <span class="me-4">
+                  {{ state.name }}
+                </span>
+
+                <tippy
+                  class="text-muted ms-auto ms-1 cursor-help"
+                  :content="state.description">
+                  <Icon size="18" stroke="1">HelpCircleFilled</Icon>
+                </tippy>
+              </div>
+
+              <!-- <div class="d-flex justify-center" style="width: 30px">
+                <Icon v-if="isFav(state.name)" style="color: red; fill: pink">Heart</Icon>
+                <span
+                  v-else
+                  class="badge"
+                  :style="{ 'background-color': state.color || '' }"></span>
+              </div>
+
+              <span class="pe-3">
+                {{ state.name }}
+              </span>
+              <tippy class="text-muted ms-auto cursor-help" :content="state.description">
+                <Icon>HelpCircleFilled</Icon>
+              </tippy> -->
+              <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
+            </div>
+          </b-dropdown>
+        </div>
+
+        <!-- <div class="row m-0 mb-2">
         <div class="text-center p-2 col-6 active">Status</div>
         <div class="text-center p-2 col-6 active">Collections</div>
       </div> -->
-          <!-- <div class="dropdown-item">
+        <!-- <div class="dropdown-item">
             {{ appUUID }}
           </div> -->
-          <label
-            v-for="(state, i) in states"
-            :key="'state' + i"
-            class="dropdown-item ps-1"
-            @click="doAction(state)">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon v-if="isFav(state.name)" style="color: red; fill: pink">Heart</Icon>
-              <span
-                v-else
-                class="badge"
-                :style="{ 'background-color': state.color || '' }"></span>
-            </div>
 
-            <span class="pe-3">
-              {{ state.name }}
-            </span>
-            <tippy class="text-muted ms-auto cursor-help" :content="state.description">
-              <Icon>HelpCircleFilled</Icon>
-            </tippy>
-            <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
-          </label>
+        <div class="dropdown-divider"></div>
+
+        <div class="dropdown-item">
+          <div class="d-flex" style="width: 30px">
+            <Icon>PlaylistX</Icon>
+          </div>
+
+          <span>Delete</span>
+
+          <tippy
+            class="text-muted ms-auto cursor-help"
+            content="Delete this game from your library.<br>You might want to delete the game to fix duplicates or errors">
+            <Icon style="opacity: 0.6">HelpCircleFilled</Icon>
+          </tippy>
         </div>
       </div>
     </template>
@@ -148,7 +204,7 @@ import { useStateStore } from '../../stores/stateStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Fri Feb 09 2024
+ * Modified: Tue Feb 13 2024
  **/
 
 export default {

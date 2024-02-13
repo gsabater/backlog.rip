@@ -3,22 +3,29 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Sun Jan 28 2024
+ * Modified: Mon Feb 12 2024
  */
 
 let $nuxt = null
 
 export const useRepositoryStore = defineStore('repository', {
   state: () => ({
-    genres: [],
+    _genres: [],
 
     loaded: [],
   }),
 
   getters: {
-    // upper() {
-    //   return this.message.toUpperCase();
-    // },
+    //+-------------------------------------------------
+    // genres()
+    // Dynamically loads genres and returns data
+    // -----
+    // Created on Mon Feb 12 2024
+    //+-------------------------------------------------
+    genres() {
+      if (this._genres.length === 0) this.getGenres()
+      return this._genres
+    },
   },
 
   actions: {
@@ -33,15 +40,20 @@ export const useRepositoryStore = defineStore('repository', {
       const jxr = await $nuxt.$axios.get(`repository/genres.json`)
       if (jxr.status) {
         this.loaded.push('genres')
-        this.genres = jxr.data
+        this._genres = jxr.data
       }
+
+      log(
+        '❇️ Genres loaded',
+        `${jxr.data.length} genres loaded from API`,
+        jxr.data[Math.floor(Math.random() * jxr.data.length)]
+      )
 
       return true
     },
 
     //+-------------------------------------------------
     // getTop()
-    // NOTE: Belongs to a repository store
     // -----
     // Created on Wed Dec 20 2023
     //+-------------------------------------------------

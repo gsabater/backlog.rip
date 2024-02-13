@@ -3,7 +3,8 @@
     <div class="container-xl">
       <h2>&nbsp;</h2>
 
-      <div class="row"></div>
+      <div class="row">About ~{{ format.num($app.count.api) }} games</div>
+      <div class="row">About ~{{ format.num($app.count.library) }} games</div>
     </div>
   </div>
 </template>
@@ -30,7 +31,7 @@ export default {
 
   methods: {
     init() {
-      this.source.count = this.dataStore.count('library')
+      this.dataStore.loadApiStatus()
     },
   },
 

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Thu Jan 11 2024
+ * Modified: Mon Feb 12 2024
  */
 
 let $nuxt = null
@@ -15,7 +15,7 @@ export const useGameStore = defineStore('game', {
   state: () => ({
     app: {},
 
-    meta: {},
+    queue: [],
   }),
 
   //+-------------------------------------------------
@@ -57,8 +57,48 @@ export const useGameStore = defineStore('game', {
     //   await $nuxt.$db.states.delete(id)
     // },
 
+    //+-------------------------------------------------
+    // update()
+    // Updates data from the API when required
+    // To modify the data by the user, use modify()
+    // -----
+    // Created on Sun Feb 11 2024
+    //+-------------------------------------------------
+    async update(uuid, data) {
+      const game = $data.get(uuid)
+
+      if (!this.needsUpdate(game, data)) return
+
+      let item = { ...game, ...data }
+      item.uuid = game.uuid
+
+      if (item.api_id !== item.uuid) {
+        item.api_id = data.uuid
+      }
+
+      this.queue.push(data)
+    },
+
+    //+-------------------------------------------------
+    // needsUpdate()
+    // Checks if the app needs to be updated
+    // -----
+    // Created on Sun Feb 11 2024
+    //+-------------------------------------------------
+    needsUpdate(app, data) {
+      if (!app) return false
+
+      // app does not have api_id reference
+      if (!app.api_id && data.api_id) return true
+
+      // app has older updated_at than data
+      if (app.updated_at < data.updated_at) return true
+
+      return false
+    },
+
     async init() {
-      if (!$nuxt) $nuxt = useNuxtApp()
+      // if (!$nuxt) $nuxt = useNuxtApp()
       if (!$data) $data = useDataStore()
     },
   },

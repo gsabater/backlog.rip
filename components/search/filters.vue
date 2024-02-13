@@ -153,7 +153,7 @@ Selected
                         <tippy
                           class="text-muted ms-auto ms-2 cursor-help"
                           :content="param.description">
-                          <Icon size="14" stroke="1">HelpCircleFilled</Icon>
+                          <Icon size="16" stroke="1">HelpCircleFilled</Icon>
                         </tippy>
                       </template>
 
@@ -306,7 +306,7 @@ Selected
           </tippy>
         </div>
         <!-- <small class="text-muted">
-            Found {{ totalApiGames }} games,
+            Found {{  }} games,
             <br />
             666 in your library
           </small> -->
@@ -382,7 +382,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Fri Feb 09 2024
+ * Modified: Tue Feb 13 2024
  **/
 
 export default {

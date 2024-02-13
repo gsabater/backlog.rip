@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Tue Jan 30 2024
+ * Modified: Sat Feb 10 2024
  */
 
 import importer from '~/utils/importer'
@@ -244,7 +244,9 @@ function init(nuxt) {
 //+-------------------------------------------------
 export default defineNuxtPlugin((nuxtApp) => {
   window.$_sync = _sync
-  init(nuxtApp)
+
+  // Disabled temporarily
+  // init(nuxtApp)
 
   _sync.sync = sync
   _sync.scan = scan

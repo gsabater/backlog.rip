@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Fri Feb 09 2024
+ * Modified: Mon Feb 12 2024
  */
 
 export default {
@@ -29,7 +29,7 @@ export default {
       //+---------------------------------------
       if (app.is?.ignored) {
         if (logged > 0) {
-          console.warn('🛑 Skipping ignored app', app.name, app)
+          // console.warn('🛑 Skipping ignored app', app.name, app)
           logged--
         }
         continue
@@ -42,7 +42,7 @@ export default {
         if (!filters.states.includes(app.state)) {
           // if (app.state !== filters.state) {
           if (logged > 0) {
-            console.warn('🛑 Skipping as not in state', filters.state, app.name)
+            // console.warn('🛑 Skipping as not in state', filters.state, app.name)
             logged--
           }
 
@@ -77,11 +77,11 @@ export default {
           // data.hidden.string.push(steam_id)
 
           if (logged > 0) {
-            console.warn(
-              '🛑 Skipping: String not found in name',
-              filters.string,
-              app.name
-            )
+            // console.warn(
+            //   '🛑 Skipping: String not found in name',
+            //   filters.string,
+            //   app.name
+            // )
             logged--
           }
           continue
@@ -94,14 +94,15 @@ export default {
       if (filters?.genres?.length) {
         if (!app.genres?.some((item) => filters?.genres.includes(item))) {
           if (logged > 0) {
-            console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
+            // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
             logged--
           }
           continue
         }
       }
 
-      // Finally, add the app to items
+      // Finally,
+      // Modify and add the app to items
       //+---------------------------------------
       items.push(uuid)
 
@@ -113,7 +114,8 @@ export default {
       }
 
       if (filters?.sortBy == 'score') {
-        toSort.push({ uuid, score: app.score || 0 })
+        let underScore = this.underScore(app)
+        toSort.push({ uuid, score: underScore || 0 })
       }
 
       if (filters?.sortBy == 'playtime') {
@@ -147,12 +149,11 @@ export default {
   },
 
   //+-------------------------------------------------
-  // function()
-  //
+  // sort()
+  // Sorts the items based on the sortBy criteria
   // -----
   // Created on Wed Jan 10 2024
   //+-------------------------------------------------
-
   sort(items, filters) {
     log('🔸 Sorting results by', filters.sortBy)
 
@@ -190,5 +191,28 @@ export default {
     const start = (page - 1) * perPage
     const end = start + perPage
     return items.slice(0, end)
+  },
+
+  //+-------------------------------------------------
+  // underScore()
+  // Calculates a new underlying score based on the amount
+  // of reviews and the median score
+  // -----
+  // Created on Mon Feb 12 2024
+  //+-------------------------------------------------
+  underScore(app) {
+    let score = app.score || 0
+
+    // Reduce the final score there is not score count
+    // We cannot verify that the score is real
+    if (!app.scores) score = score - 30
+
+    // Reduce the final score if the amount of reviews is low
+    // if (app.scores?.steamCount < 100) score = score * 0.6
+    // else if (app.scores?.steamCount < 1000) score = score * 0.8
+
+    if (app.scores?.igdbCount < 100) score = score - 20
+
+    return score
   },
 }

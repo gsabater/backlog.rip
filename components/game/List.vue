@@ -53,7 +53,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th January 2024
- * Modified: Tue Jan 30 2024
+ * Modified: Tue Feb 13 2024
  **/
 
 export default {
@@ -62,6 +62,11 @@ export default {
     apps: {
       type: [String, Array],
       default: null,
+    },
+
+    cols: {
+      type: [Number, String],
+      default: 3,
     },
 
     max: {

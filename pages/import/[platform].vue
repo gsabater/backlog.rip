@@ -141,20 +141,157 @@
             </div>
           </div>
 
-          <div v-if="ui.step == 'review'">
-            <div class="row row-deck row-cards mb-5">
-              <!-- <div class="col-6">
-                <pre>
-IMPORT
-{{ appsToImport }}
-                </pre>
+          <!--
+            *+---------------------------------
+            *| Small review window
+            *| Shows overview of imported data
+            *+--------------------------------- -->
+          <div v-if="ui.step == 'review'" class="col-lg-8 mx-auto mt-4">
+            <div class="card">
+              <div class="card-body">
+                <h2>Data received successfully</h2>
+                <div class="row">
+                  <div class="col">
+                    <div class="card mb-2">
+                      <div class="card-body">
+                        <div class="d-flex align-items-center">
+                          <div class="subheader">New games found</div>
+                        </div>
+                        <div class="h2 mb-1 d-flex align-items-center">
+                          <Icon class="mr-2 text-muted mt-1">NewSection</Icon>
+                          {{ data.appsToReview.length }} new
+                          <br />
+                        </div>
+                        <!-- <b-btn block>Review</b-btn> -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col">
+                    <div class="card mb-3">
+                      <div class="card-body">
+                        <div class="d-flex align-items-center">
+                          <div class="subheader">Updated existing</div>
+                        </div>
+                        <div class="h2 mb-1 d-flex align-items-center">
+                          <Icon class="mr-2 text-muted mt-1">Refresh</Icon>
+                          {{ data.appsToUpdate.length }}
+                          <br />
+                        </div>
+                        <!-- <b-btn block>Review</b-btn> -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="data.steambacklog && data.steambacklog.account"
+                    class="col-12">
+                    <div class="card">
+                      <div class="card-body">
+                        <div class="d-flex align-items-center">
+                          <label class="form-label">
+                            Your steam-backlog.com account has been found
+                          </label>
+                        </div>
+
+                        <div class="mb-3">
+                          <div class="text-secondary mb-3">
+                            In future updates we will be able to import your old backlog
+                            account
+                          </div>
+
+                          <ul class="list-unstyled space-y">
+                            <li class="row g-2">
+                              <span class="col-auto">
+                                <Icon class="me-1 text-success">Check</Icon>
+                              </span>
+                              <span class="col">
+                                <strong class="d-block">
+                                  Backlog status on your library
+                                </strong>
+                                <span class="d-block text-secondary">
+                                  Your completed games, games to play and more
+                                </span>
+                              </span>
+                            </li>
+                            <li class="row g-2">
+                              <span class="col-auto">
+                                <Icon class="me-1 text-success">Check</Icon>
+                              </span>
+                              <span class="col">
+                                <strong class="d-block">
+                                  {{ data.steambacklog.collections.length }} collections
+                                </strong>
+                                <span class="d-block text-secondary">
+                                  Each collection with every game in it
+                                </span>
+                              </span>
+                            </li>
+                            <!-- <li class="row g-2">
+                              <span class="col-auto">
+                                <Icon class="me-1 text-success">Check</Icon>
+                              </span>
+                              <span class="col">
+                                <strong class="d-block">Personalize</strong>
+                                <span class="d-block text-secondary">
+                                  Choose your own style, watch what you like.
+                                </span>
+                              </span>
+                            </li> -->
+                          </ul>
+
+                          <label v-if="false" class="form-check">
+                            <input class="form-check-input" type="checkbox" />
+                            <span class="form-check-label">Import states</span>
+                            <!-- <span class="form-check-description">
+                              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                            </span> -->
+                          </label>
+                          <label v-if="false" class="form-check">
+                            <input class="form-check-input" type="checkbox" />
+                            <span class="form-check-label">Import collections</span>
+                            <!-- <span class="form-check-description">
+                              Ab alias aut, consequuntur cumque esse eveniet incidunt
+                              laborum minus molestiae.
+                            </span> -->
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-secondary p-2">
+                  <p>
+                    You can review the list and select which games you want to import or
+                    just import everything
+                  </p>
+                </div>
               </div>
-              <div class="col-6">
-                <pre>
-IGNORE
-{{ appsToIgnore }}
-                </pre>
-              </div> -->
+
+              <div class="card-footer">
+                <div class="w-100">
+                  <div class="row">
+                    <div class="col">
+                      <div class="btn w-100" @click="ui.step = 'review:plus'">
+                        Review your data
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="btn btn-success w-100">Update everything</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--
+            *+---------------------------------
+            *| Review interface
+            *| Can edit everything
+            *+--------------------------------- -->
+          <div v-if="ui.step == 'review:plus'">
+            <div class="row row-deck row-cards mb-5">
               <div class="col-sm-6 col-lg-4">
                 <div class="card">
                   <div class="card-body">
@@ -617,7 +754,7 @@ IGNORE
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Sun Feb 04 2024
+ * Modified: Tue Feb 13 2024
  **/
 
 const importer = null
@@ -634,6 +771,7 @@ export default {
         user: {}, // Raw of the imported userdata
         games: [], // Raw library games from the scan process
         library: [], // Preloaded content of user library
+        steambacklog: {},
 
         appsToReview: [], // Processed array of apps missing in library
         appsToUpdate: [], // Processed array of apps already in library, that needs to update fields
@@ -1160,6 +1298,7 @@ export default {
       this.data.user = data.data.user
       this.data.games = data.data.games
       this.data.library = data.data.library
+      this.data.steambacklog = data.data.steambacklog
 
       this.data.appsToReview = data.apps.toReview
       this.data.appsToUpdate = data.apps.toUpdate

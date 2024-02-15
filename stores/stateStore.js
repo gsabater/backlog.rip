@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Mon Feb 12 2024
+ * Modified: Wed Feb 14 2024
  */
 
 let $nuxt = null
@@ -17,11 +17,12 @@ export const useStateStore = defineStore('state', {
   state: () => ({
     states: [],
 
+    favs: [], // Holds index for special state 'favorites'
     index: [], // Holds index for every state keyed by state.id
+
     backlog: [], // Holds index for special state 'backlog'
     playing: [], // Holds index for special state 'playing'
     completed: [], // Holds index for special state 'completed'
-    favorites: [], // Holds index for special state 'favorites'
 
     meta: {
       loaded: false,
@@ -30,16 +31,16 @@ export const useStateStore = defineStore('state', {
   }),
 
   getters: {
-    //+-------------------------------------------------
-    // list()
-    // Returns the array of states
-    // -----
-    // Created on Fri Jan 12 2024
-    // Updated on Sat Feb 10 2024 - Made a getter
-    //+-------------------------------------------------
-    list() {
-      return this.states
-    },
+    // //+-------------------------------------------------
+    // // list()
+    // // Returns the array of states
+    // // -----
+    // // Created on Fri Jan 12 2024
+    // // Updated on Sat Feb 10 2024 - Made a getter
+    // //+-------------------------------------------------
+    // list() {
+    //   return this.states
+    // },
   },
 
   actions: {
@@ -154,10 +155,12 @@ export const useStateStore = defineStore('state', {
     // Created on Sat Jan 06 2024
     //+-------------------------------------------------
     async indexLibrary() {
-      let library = await $data.library('array')
+      let library = $data.library('array')
 
       this.states.forEach((state) => {
-        let apps = library.filter((app) => app.state === state.id).map((app) => app.uuid)
+        const apps = library
+          .filter((app) => app.state === state.id)
+          .map((app) => app.uuid)
 
         this.index[state.id] = apps
 
@@ -166,6 +169,8 @@ export const useStateStore = defineStore('state', {
           $nuxt.$app.count.states[state.key] = apps.length || 0
         }
       })
+
+      this.favs = library.filter((app) => app.is && app.is.fav)
     },
 
     //+-------------------------------------------------

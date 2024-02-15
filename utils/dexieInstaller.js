@@ -1,5 +1,14 @@
 export class DexieInstaller {
   defaultStates = [
+    // {
+    //   id: 4,
+    //   order: 0,
+    //   key: 'favorites',
+    //   color: '#ff3d5f',
+    //   name: 'Favorites',
+    //   description:
+    //     'A category for games that the user particularly enjoyed or would recommend. This is useful for revisiting or suggesting to others.',
+    // },
     {
       id: 1,
       order: 1,
@@ -7,7 +16,7 @@ export class DexieInstaller {
       color: '#ff0000',
       name: 'Backlog',
       description:
-        'For games that have been purchased or added to a collection but not yet started. This helps to keep track of games that the user intends to play.',
+        "Games you've bought or added to your collection but haven't started playing yet. This makes it easier for you to keep an eye on the games you plan to dive into",
     },
     {
       id: 2,
@@ -16,7 +25,7 @@ export class DexieInstaller {
       color: '#800080',
       name: 'Currently Playing',
       description:
-        'Games that are actively being played. This category helps users focus on their current engagements and track progress in these games.',
+        "Games you're currently playing. This category helps you stay focused on what you're actively engaged with and monitor your progress in these games.",
     },
     {
       id: 3,
@@ -25,17 +34,7 @@ export class DexieInstaller {
       color: '#249b25',
       name: 'Completed',
       description:
-        'For games that the user has finished. This can include reaching the end of the story, achieving all objectives, or simply reaching a point where the user feels they have experienced all they wanted from the game.',
-    },
-
-    {
-      id: 4,
-      order: 0,
-      key: 'favorites',
-      color: '#ff3d5f',
-      name: 'Favorites',
-      description:
-        'A category for games that the user particularly enjoyed or would recommend. This is useful for revisiting or suggesting to others.',
+        "For games you've completed. This covers everything from finishing the story, accomplishing all goals, or just reaching a point where you feel you've gotten everything you wanted out of the game.",
     },
 
     {
@@ -44,7 +43,7 @@ export class DexieInstaller {
       color: '#c76f1c',
       name: 'On-Hold',
       description:
-        "This category is for games that the user has paused playing but intends to return to. Different from 'Abandoned', as the intention to finish is still there.",
+        "This category is for games you've put on hold but plan to come back to. It's different from 'Abandoned' because you still intend to finish them.",
     },
 
     {
@@ -53,7 +52,7 @@ export class DexieInstaller {
       color: '#808080',
       name: 'Abandoned',
       description:
-        "Games that the user started but decided not to finish for various reasons like loss of interest, too difficult, etc. It's useful for understanding personal preferences and patterns in gaming choices.",
+        'Games you began but chose not to complete for various reasons, such as losing interest or finding them too challenging.',
     },
 
     {
@@ -62,7 +61,7 @@ export class DexieInstaller {
       color: '#8682dd',
       name: 'Replayable',
       description:
-        'Games that offer a significant replay value, either through different story paths, gameplay styles, or just personal preference for revisiting.',
+        'Games worth playing again and again. Either through different story paths, gameplay styles, or simply because you love revisiting them.',
     },
   ]
 

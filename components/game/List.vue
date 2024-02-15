@@ -6,24 +6,17 @@
       </div>
     </template>
 
-    <ul class="pagination justify-content-center">
+    <ul v-if="pages > 1" class="pagination justify-content-center">
       <li
         class="page-item cursor-pointer"
-        :class="{ disabled: page <= 1 }"
-        @click="page--">
+        :class="{ 'disabled cursor-default': page <= 1 }"
+        @click="setPage('--')">
         <div class="page-link">
           <Icon>ChevronLeft</Icon>
         </div>
       </li>
 
-      <!-- <li class="page-item active"><a class="page-link" >2</a></li> -->
-      <template v-if="pages <= 7">
-        <li v-for="i in pages" :key="i" class="page-item">
-          <a class="page-link">{{ i }}</a>
-        </li>
-      </template>
-
-      <template v-for="i in pages" v-else :key="i">
+      <template v-for="i in pages" :key="i">
         <li
           v-if="shouldShow(i)"
           class="page-item"
@@ -33,16 +26,20 @@
         </li>
       </template>
 
-      <li class="page-item cursor-pointer" @click="page++">
+      <li
+        class="page-item cursor-pointer"
+        :class="{ 'disabled cursor-default': page <= pages }"
+        @click="setPage('++')">
         <div class="page-link">
           <Icon>ChevronRight</Icon>
         </div>
       </li>
     </ul>
-    <b-btn class="mt-3">
+
+    <!-- <b-btn class="mt-3">
       <Icon class="text-secondary me-2">ArrowsMoveVertical</Icon>
       Show more
-    </b-btn>
+    </b-btn> -->
     <slot />
   </div>
 </template>
@@ -53,7 +50,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th January 2024
- * Modified: Tue Feb 13 2024
+ * Modified: Thu Feb 15 2024
  **/
 
 export default {
@@ -78,7 +75,7 @@ export default {
   data() {
     return {
       page: 1,
-      offset: 3,
+      offset: 4,
       perPage: 7,
     }
   },
@@ -101,11 +98,16 @@ export default {
   },
 
   methods: {
+    setPage(dir) {
+      if (this.page > 1 && dir === '--') this.page--
+      if (this.page < this.pages && dir === '++') this.page++
+    },
+
     shouldShow(i) {
-      if (this.page <= this.offset) return i <= this.offset * 2 + 1
-      if (this.page >= this.pages - this.offset)
-        return i >= this.pages - this.offset * 2 - 1
-      return i >= this.page - this.offset && i <= this.page + this.offset
+      if (this.pages <= this.offset * 2) return true
+
+      if (Math.abs(this.page - i) <= 2) return true
+      if (Math.abs(this.pages - i) <= 2) return true
     },
 
     init() {},

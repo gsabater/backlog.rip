@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Mon Feb 12 2024
+ * Modified: Thu Feb 15 2024
  */
 
 let $nuxt = null
@@ -31,6 +31,7 @@ export const useGameStore = defineStore('game', {
     //+-------------------------------------------------
     async load(uuid) {
       const game = $data.get(uuid)
+      game.needsUpdate = this.needsUpdate(game)
       this.app = game
     },
 
@@ -82,6 +83,7 @@ export const useGameStore = defineStore('game', {
     //+-------------------------------------------------
     // needsUpdate()
     // Checks if the app needs to be updated
+    // There is two types of updates: local and api
     // -----
     // Created on Sun Feb 11 2024
     //+-------------------------------------------------
@@ -89,10 +91,14 @@ export const useGameStore = defineStore('game', {
       if (!app) return false
 
       // app does not have api_id reference
-      if (!app.api_id && data.api_id) return true
+      if (!app.api_id && data?.api_id) return true
 
-      // app has older updated_at than data
-      if (app.updated_at < data.updated_at) return true
+      // app has older updated_at than api data
+      if (app.updated_at < data?.updated_at) return 'api1'
+
+      // App has never been updated from the API
+      if (!app.description) return 'api2'
+      if (!app.is?.updated) return 'api3'
 
       return false
     },

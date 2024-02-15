@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Mon Feb 12 2024
+ * Modified: Thu Feb 15 2024
  */
 
 export default {
@@ -14,12 +14,9 @@ export default {
   // Created on Tue Jan 09 2024
   //+-------------------------------------------------
   filter(source, filters, extra) {
-    let logged = 5
     let items = []
     let toSort = []
-
-    console.time('Filter')
-    const start = performance.now()
+    let filtered = []
 
     for (const uuid in source) {
       const app = source[uuid]
@@ -28,10 +25,9 @@ export default {
       // Remove any games ignored
       //+---------------------------------------
       if (app.is?.ignored) {
-        if (logged > 0) {
-          // console.warn('🛑 Skipping ignored app', app.name, app)
-          logged--
-        }
+        filtered.push(uuid)
+        // console.warn('🛑 Skipping ignored app', app.name, app)
+
         continue
       }
 
@@ -41,10 +37,8 @@ export default {
       if (filters?.states?.length) {
         if (!filters.states.includes(app.state)) {
           // if (app.state !== filters.state) {
-          if (logged > 0) {
-            // console.warn('🛑 Skipping as not in state', filters.state, app.name)
-            logged--
-          }
+          filtered.push(uuid)
+          // console.warn('🛑 Skipping as not in state', filters.state, app.name)
 
           continue
         }
@@ -76,14 +70,13 @@ export default {
           // counters.skip++
           // data.hidden.string.push(steam_id)
 
-          if (logged > 0) {
-            // console.warn(
-            //   '🛑 Skipping: String not found in name',
-            //   filters.string,
-            //   app.name
-            // )
-            logged--
-          }
+          filtered.push(uuid)
+          // console.warn(
+          //   '🛑 Skipping: String not found in name',
+          //   filters.string,
+          //   app.name
+          // )
+
           continue
         }
       }
@@ -93,10 +86,9 @@ export default {
       //+---------------------------------------
       if (filters?.genres?.length) {
         if (!app.genres?.some((item) => filters?.genres.includes(item))) {
-          if (logged > 0) {
-            // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
-            logged--
-          }
+          filtered.push(uuid)
+          // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
+
           continue
         }
       }
@@ -127,9 +119,6 @@ export default {
       }
     }
 
-    console.timeEnd('Filter')
-    const end = performance.now()
-
     log(
       '✅ Filter done (amount, first, data[first])',
       items.length,
@@ -137,15 +126,13 @@ export default {
       window.db?.d?.[items[0]]
     )
 
-    log(
-      '🔸 Stats:',
-      {
-        time: end - start,
-      },
-      filters
-    )
+    let sorted = this.sort(toSort, filters)
 
-    return this.sort(toSort, filters)
+    return {
+      items: sorted,
+      results: items.length,
+      filtered: filtered.length,
+    }
   },
 
   //+-------------------------------------------------

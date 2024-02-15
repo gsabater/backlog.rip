@@ -75,8 +75,8 @@
                           <Icon class="text-secondary" size="17">StepInto</Icon>
                           {{ _eventTitle(item) }}
                         </div>
-                        Your library has been updated with
-                        {{ item.data.games.length }} new games
+                        You have updated your library with
+                        {{ item.data.games.length }} games
 
                         <gameList
                           :apps="item.data.games"
@@ -85,7 +85,7 @@
                       </div>
 
                       <small class="text-secondary d-inline-block border-top pt-2 mt-2">
-                        Entry added {{ dates.format(item.created_at, 'DD-MM-YY h:m:s') }}
+                        Entry added {{ dates.format(item.created_at, 'LL h:m:s') }}
                       </small>
 
                       <!-- <ul
@@ -129,7 +129,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Tue Jan 30 2024
+ * Modified: Wed Feb 14 2024
  **/
 
 export default {

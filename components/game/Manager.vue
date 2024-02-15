@@ -12,13 +12,6 @@
     follow-cursor="initial"
     trigger="click"
     theme="dropdown">
-    <!-- <template #default="{ state }">
-      <div>
-        <h1>Tippy!</h1>
-        <p>{{ state }}</p>
-      </div>
-    </template> -->
-
     <template #content="{ hide }">
       <!-- <div class="card nope-card-stacked"> -->
       <!-- <button @click="hide()">close</button> -->
@@ -32,6 +25,29 @@
             top: 0;
             box-shadow: none;
           ">
+        <!--
+          *+---------------------------------
+          *| Favorites
+          *| Simple item
+          *+--------------------------------- -->
+        <!-- <div class="dropdown-item">
+          <div class="d-flex" style="width: 30px">
+            <Icon>Star</Icon>
+          </div>
+
+          <span>Add to favorites</span>
+        </div> -->
+
+        <!-- <div class="row m-0 mb-2">
+        <div class="text-center p-2 col-6 active">Status</div>
+        <div class="text-center p-2 col-6 active">Collections</div>
+      </div> -->
+
+        <!--
+          *+---------------------------------
+          *| States block
+          *| Inner dropdown with states
+          *+--------------------------------- -->
         <div class="dropdown-item">
           <div style="width: 30px">
             <Icon>Background</Icon>
@@ -94,17 +110,14 @@
           </b-dropdown>
         </div>
 
-        <!-- <div class="row m-0 mb-2">
-        <div class="text-center p-2 col-6 active">Status</div>
-        <div class="text-center p-2 col-6 active">Collections</div>
-      </div> -->
-        <!-- <div class="dropdown-item">
-            {{ appUUID }}
-          </div> -->
-
         <div class="dropdown-divider"></div>
 
-        <div class="dropdown-item">
+        <!--
+          *+---------------------------------
+          *| Delete this
+          *| Simple item
+          *+--------------------------------- -->
+        <div class="dropdown-item" @click="deleteme">
           <div class="d-flex" style="width: 30px">
             <Icon>PlaylistX</Icon>
           </div>
@@ -112,10 +125,39 @@
           <span>Delete</span>
 
           <tippy
+            :allow-h-t-m-l="true"
             class="text-muted ms-auto cursor-help"
             content="Delete this game from your library.<br>You might want to delete the game to fix duplicates or errors">
             <Icon style="opacity: 0.6">HelpCircleFilled</Icon>
           </tippy>
+        </div>
+
+        <div class="dropdown-divider"></div>
+
+        <!--
+          *+---------------------------------
+          *| DEV
+          *| xxx
+          *+--------------------------------- -->
+        <div class="dropdown-item">
+          <div style="width: 30px">
+            <Icon>Code</Icon>
+          </div>
+
+          <span>App</span>
+
+          <span class="text-muted ms-auto">
+            <Icon size="14">CaretRightFilled</Icon>
+          </span>
+          <b-dropdown placement="right-start">
+            <div class="dropdown-item px-2">
+              <pre
+                >{{ appUUID }}
+      {{ value }}
+      {{ item }}</pre
+              >
+            </div>
+          </b-dropdown>
         </div>
       </div>
     </template>
@@ -196,15 +238,12 @@
 </template>
 
 <script>
-import { useJournalStore } from '../../stores/journalStore'
-import { useStateStore } from '../../stores/stateStore'
-
 /**
  * @file:    \components\b\stateMenu.vue
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Tue Feb 13 2024
+ * Modified: Wed Feb 14 2024
  **/
 
 export default {
@@ -233,10 +272,6 @@ export default {
       appUUID: null,
       value: '',
       item: {},
-
-      db: {
-        states: [],
-      },
 
       ui: {
         top: '0px',
@@ -334,6 +369,10 @@ export default {
       this.$emit('change', this.value)
       this.$emit('update:modelValue', this.value)
       if (this.value == null) this.$emit('clear', null)
+    },
+
+    deleteme() {
+      this.dataStore.delete(this.appUUID)
     },
 
     // TODO: Move this to a store

@@ -816,7 +816,8 @@
 
   <game-details></game-details>
   <game-manager></game-manager>
-  <b-backdrop></b-backdrop>
+  <!-- <b-backdrop></b-backdrop> -->
+  <ModalsContainer />
 
   <Toaster
     position="bottom-right"
@@ -830,6 +831,7 @@
     }" />
 
   <SpeedInsights v-if="!$app.dev" />
+
   <component :is="'style'" id="dynamic-style" type="text/css">
     <template v-if="!$app.dev">pre{ display: none !important; }</template>
   </component>
@@ -915,24 +917,6 @@
     <slot />
     <AppFooter />
   </div> -->
-
-  <!-- <DialogRoot>
-    <DialogTrigger>Open</DialogTrigger>
-    <DialogPortal>
-      <DialogContent>Content</DialogContent>
-      <DialogOverlay />
-    </DialogPortal>
-  </DialogRoot> -->
-
-  <!-- <DrawerRoot>
-    <DrawerTrigger>Open</DrawerTrigger>
-    <DrawerPortal>
-      <DrawerOverlay />
-      <DrawerContent>
-        <p>Content</p>
-      </DrawerContent>
-    </DrawerPortal>
-  </DrawerRoot> -->
 </template>
 
 <script>
@@ -941,46 +925,15 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Tue Feb 13 2024
+ * Modified: Wed Feb 14 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'
-
-import {
-  DialogRoot,
-  DialogTrigger,
-  DialogPortal,
-  DialogOverlay,
-  DialogContent,
-} from 'aioli'
-
-import {
-  DrawerRoot,
-  DrawerTrigger,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerPortal,
-} from 'vaul-vue'
-
-// const app = useNuxtApp()
-// const $auth = useUserStore()
-// const repository = useRepositoryStore()
 
 export default {
   name: 'DefaultLayout',
   components: {
     SpeedInsights,
-    DialogRoot,
-    DialogTrigger,
-    DialogPortal,
-    DialogOverlay,
-    DialogContent,
-
-    DrawerRoot,
-    DrawerTrigger,
-    DrawerOverlay,
-    DrawerContent,
-    DrawerPortal,
   },
 
   setup() {

@@ -32,7 +32,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Feb 13 2024
+ * Modified: Thu Feb 15 2024
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -58,25 +58,19 @@ export default {
     return {
       items: [],
 
-      // base: {
-      //   string: '',
-      //   ready: true,
-      // },
-
       control: {
         hash: null,
         event: null,
         search: null,
       },
 
-      // stats: {
-      //   total: 0,
-      //   filtered: 0,
+      stats: {
+        amount: 0, // amount of apps as source
+        results: 0, // amount of apps after filtering
+        filtered: 0, // amount of apps filtered out
 
-      //   time: 0,
-      // },
-
-      // ui: {},
+        time: 0, // time it took to filter and sort
+      },
     }
   },
 
@@ -154,37 +148,44 @@ export default {
     // -----
     // Created on Thu Nov 23 2023
     // Updated on Tue Jan 09 2024 - Included utils.search
+    // Created on Thu Feb 15 2024 - Added stats
     //+-------------------------------------------------
     filter() {
       // do again?
       // if (!this.dataStore.isReady) return
 
       let source = null
+      const start = performance.now()
 
       // prettier-ignore
       if (Array.isArray(this.source)) source = this.source
-      else source = this.source == 'all' ? this.dataStore.list() : this.dataStore.library()
+      else source = this.source == 'all' ? this.dataStore.list() : this.dataStore.library('object')
+
       log('⚡ Search: Filter on ', this.source)
       log('⚡ Search: Amount of apps #', Object.keys(source).length)
+      this.stats.amount = Object.keys(source).length
+
       if (this.source.length == 0) return
+
       log('⚡ Search: Filters: ', JSON.stringify(this.filters))
 
-      const items = search.filter(source, this.filters, { source: this.source })
-      const paged = search.paginate(items, this.filters.show)
+      const searched = search.filter(source, this.filters, { source: this.source })
+      const paged = search.paginate(searched.items, this.filters.show)
+      const end = performance.now()
 
-      // this.items = sorted.slice(0, this.filters)
       this.items = paged
 
-      this.$forceUpdate()
-      return
+      this.stats.time = end - start
+      this.stats.results = searched.results
+      this.stats.filtered = searched.filtered || 0
 
       this.$forceUpdate()
     },
 
-    async loadRepositories() {
-      log('Loading repositories')
-      this.dataStore.init() // <- this should be some kind of event fired from the store
-    },
+    // async loadRepositories() {
+    //   log('Loading repositories')
+    //   this.dataStore.init() // <- this should be some kind of event fired from the store
+    // },
 
     init() {
       // this.loadRepositories()

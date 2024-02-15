@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12">
       <pre
-        class="d-none my-3"
+        class="my-3"
         style="
           position: fixed;
           bottom: 10px;
@@ -194,8 +194,21 @@
         :source="source"
         @loading="onLoading"></search-results>
 
-      <div class="pagination my-3">
+      <!-- <div class="pagination my-3">
         <div class="btn" @click="addPage">Show more</div>
+      </div> -->
+
+      <div
+        v-if="f && f.show && f.show.perPage"
+        class="d-flex mt-4"
+        style="flex-direction: column; align-items: center">
+        <div class="btn w-75 mb-3" @click="addPage">Show more</div>
+        <p class="text-muted text-center w-50">
+          <hr class="my-2" >
+          Showing 1-{{ 1 * f.show.perPage * f.show.page }} of {{ format.num(stats.results) }}
+          <div class="my-1"></div>
+          Filtered {{ format.num(stats.filtered) }} of {{ format.num(stats.amount) }} games
+        </p>
       </div>
     </div>
 
@@ -213,7 +226,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon Feb 12 2024
+ * Modified: Thu Feb 15 2024
  **/
 
 export default {
@@ -264,12 +277,6 @@ export default {
       table: {
         page: 1,
         perPage: 10,
-
-        filters: {
-          search: '',
-          played: true,
-          unplayed: true,
-        },
       },
 
       presets: {
@@ -301,6 +308,10 @@ export default {
         playtime: 'Playtime',
         hltb: 'How long to beat',
       }
+    },
+
+    stats() {
+      return this.$refs.results.stats || {}
     },
   },
 

@@ -4,12 +4,24 @@
     class="card-game"
     :class="app.state ? 'has-state' + app.state : ''">
     <div class="card-game__cover" @click.stop="showGameModal">
-      <BState :app="app.uuid" :state="app.state" :label="false"></BState>
-      <game-asset
-        ref="cover"
-        :app="app"
-        asset="cover"
-        :priority="['steam', 'igdb']"></game-asset>
+      <div
+        v-if="app.error"
+        style="
+          color: rgba(152, 75, 75, 0.716);
+          font-size: 1rem;
+          text-align: center;
+          z-index: 666;
+        ">
+        {{ app.error }}
+      </div>
+      <template v-else>
+        <BState :app="app.uuid" :state="app.state" :label="false"></BState>
+        <game-asset
+          ref="cover"
+          :app="app"
+          asset="cover"
+          :priority="['steam', 'igdb']"></game-asset>
+      </template>
     </div>
 
     <div v-if="body" class="card-body">
@@ -61,7 +73,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Jan 16 2024
+ * Modified: Thu Feb 15 2024
  **/
 
 export default {
@@ -92,7 +104,10 @@ export default {
 
   methods: {
     showGameModal() {
-      this.$mitt.emit('game:modal', this.app.uuid)
+      this.$mitt.emit('game:modal', {
+        uuid: this.app.uuid,
+        $list: this.$parent,
+      })
     },
 
     manage($event) {

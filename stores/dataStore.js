@@ -5,31 +5,28 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue Feb 13 2024
+ * Modified: Thu Feb 15 2024
  */
 
 let $nuxt = null
 let $game = null
 
 //+-------------------------------------------------
-// Data repositories
-// Those objects hold collections of games from multiple sources
-// Data is the complete list of games available to search
-// Data is updated every time a repository is loaded or a game is added
+// Data sources
 // ---
-// Buffer is a top-list of games that is refreshed from the api
+// Data is the complete list of games loaded by the app
+// Updated every time a repository is loaded or a game is added
 // ---
-// Library is loaded on init and updated when a game is added
+// Buffer is a top-list of games fetch from the api
 // ---
-// All elements are indexed by uuid
+// All items are indexed by uuid
 //+-------------------------------------------------
 
 let data = {}
 let buffer = {}
-let library = {}
 
 //+-------------------------------------------------
-// repos
+// Repos
 // Repositories are searches and preset filters
 // They are stored in the database and can be updated
 //+-------------------------------------------------
@@ -47,6 +44,7 @@ let search = {}
 
 let index = {
   ed: [],
+  lib: [],
 
   // api: {},
   // gog: {},
@@ -63,15 +61,13 @@ export const useDataStore = defineStore('data', {
   }),
 
   getters: {
-    latestGames() {
+    libLatest() {
       // let games = await $nuxt.$db.games
       //   .orderBy('created_at')
       //   .reverse()
       //   .limit(10)
       //   .toArray()
-      return Object.values(library)
-        .sort((a, b) => b.created_at - a.created_at)
-        .slice(0, 30)
+      return index.lib.sort((a, b) => b.created_at - a.created_at).slice(0, 30)
     },
   },
 
@@ -84,7 +80,6 @@ export const useDataStore = defineStore('data', {
   // * list()
   // * library()
   // * get()
-  // * count()
   //
   // Methods to Query the API
   // * search()
@@ -93,6 +88,7 @@ export const useDataStore = defineStore('data', {
   // Methods to persist data
   // * store() <-- Stores an array of items and updates indexes
   // * updateAndQueue() <-- updates local data and add it to queue
+  // * delete() <-- Deletes an item from the database
   //
   // Utilities to manage data
   // * prepareToStore()
@@ -114,7 +110,7 @@ export const useDataStore = defineStore('data', {
         // 'Api': JSON.stringify(this.api),
         'Data': Object.keys(data).length,
         // 'States': Object.keys(states).length,
-        'Library': Object.keys(library).length,
+        'Library': index.lib.length,
         // 'Wishlist': Object.keys(wishlist).length,
         '-- Repos --': '----',
         'Repos': Object.keys(repos).join(', '),
@@ -147,13 +143,21 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     // library()
     // Returns the library object
+    // TODO: work with array, should return array with data
     // -----
     // Created on Mon Dec 25 2023
+    // Updated on Wed Feb 14 2024 - Library is now an index
     //+-------------------------------------------------
-    library(as = 'object') {
-      if (as == 'array') return Object.values(library)
+    library(as = 'array') {
+      let library = [...index.lib]
 
-      return library
+      if (as == 'object') {
+        return Object.fromEntries(
+          library.filter((uuid) => Boolean(data[uuid])).map((uuid) => [uuid, data[uuid]])
+        )
+      }
+
+      return library.map((uuid) => data[uuid]).filter(Boolean)
     },
 
     //+-------------------------------------------------
@@ -163,20 +167,12 @@ export const useDataStore = defineStore('data', {
     // Created on Tue Nov 14 2023
     //+-------------------------------------------------
     get(uuid) {
-      return data[uuid]
-    },
-
-    //+-------------------------------------------------
-    // count()
-    // Returns the amount of elements in the source store
-    // -----
-    // Created on Wed Jan 10 2024
-    //+-------------------------------------------------
-    count(source) {
-      if (source == 'data') return Object.keys(data).length
-      if (source == 'library') return Object.keys(library).length
-
-      return 0
+      return (
+        data[uuid] || {
+          uuid: uuid,
+          error: 'missing',
+        }
+      )
     },
 
     //+-------------------------------------------------
@@ -350,6 +346,8 @@ export const useDataStore = defineStore('data', {
         if (item[prop]) delete item[prop]
       })
 
+      delete item.is.lib
+
       return item
     },
 
@@ -367,7 +365,7 @@ export const useDataStore = defineStore('data', {
         let prep = this.prepareToStore(item)
 
         data[item.uuid] = { ...prep }
-        library[item.uuid] = { ...prep }
+        // library[item.uuid] = { ...prep }
 
         this.toIndex(prep)
         return prep
@@ -380,7 +378,7 @@ export const useDataStore = defineStore('data', {
       // this.toData(items, 'library')
 
       log(
-        '🎴 Library updated',
+        '🎴 Data updated',
         `added ${items.length} apps`,
         items[Math.floor(Math.random() * items.length)]
       )
@@ -403,6 +401,33 @@ export const useDataStore = defineStore('data', {
 
     //   $nuxt.$db.games.put(_item)
     // },
+
+    //+-------------------------------------------------
+    // delete()
+    // deletes an item from the database
+    // -----
+    // Created on Wed Feb 14 2024
+    //+-------------------------------------------------
+    async delete(uuid) {
+      if (!uuid) return
+      let item = data[uuid]
+      console.warn('🔥 Deleting', uuid)
+
+      delete data[uuid]
+      $nuxt.$db.games.delete(uuid)
+
+      // Delete indexes
+      delete index.ed[index.ed.indexOf(uuid)]
+      delete index.lib[index.lib.indexOf(uuid)]
+      delete index.steam[item.steam_id]
+
+      // update counters
+      $nuxt.$app.count.data = Object.keys(data).length || 0
+      $nuxt.$app.count.library = index.lib.length || 0
+
+      // Emits event
+      $nuxt.$mitt.emit('data:deleted', uuid)
+    },
 
     //+-------------------------------------------------
     // toIndex()
@@ -511,12 +536,11 @@ export const useDataStore = defineStore('data', {
         // console.warn('✨ ', item)
         //   debugger
         // }
-
         let uuid = this.isIndexed(item)
-        if (uuid === true) return
 
-        if (uuid) $game.update(uuid, item)
-        else data[item.uuid] = { ...item, api_id: item.uuid }
+        if (item.is?.lib || !uuid) {
+          data[item.uuid] = { ...item }
+        } else $game.update(uuid, item)
 
         this.toIndex(item)
       })
@@ -662,18 +686,17 @@ export const useDataStore = defineStore('data', {
       if (this.loaded.includes('library')) return
 
       let games = await $nuxt.$db.games.toArray()
-      library = games.reduce((result, game) => {
-        result[game.uuid] = game
-        return result
-      }, {})
+      games = games.map((game) => {
+        game.is = game.is || {}
+        game.is.lib = true
+        return game
+      })
+
+      index.lib = games.map((game) => game.uuid)
 
       this.toData(games)
       this.loaded.push('library')
       $nuxt.$app.count.library = games.length || 0
-
-      // await delay(500, 'Loading library')
-      // console.warn('🌈 data:updated', games.length)
-      // $nuxt.$mitt.emit('data:updated', 'loaded')
 
       log(
         '🎴 Library loaded',
@@ -724,12 +747,7 @@ export const useDataStore = defineStore('data', {
       // Expose data to the window
       window.db = {
         d: data,
-        l: library,
-        o: {
-          index,
-          repos,
-          search,
-        },
+        index,
 
         get: this.get,
         api: this.search,
@@ -743,7 +761,7 @@ export const useDataStore = defineStore('data', {
 
       log('💽 Data is ready to use', {
         data: Object.keys(data).length,
-        library: Object.keys(library).length,
+        library: index.lib.length,
       })
     },
   },

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu Feb 15 2024
+ * Modified: Fri Feb 16 2024
  */
 
 let $nuxt = null
@@ -55,7 +55,6 @@ let index = {
 
 export const useDataStore = defineStore('data', {
   state: () => ({
-    queue: [],
     loaded: [],
     indexes: [],
   }),
@@ -87,14 +86,13 @@ export const useDataStore = defineStore('data', {
   //
   // Methods to persist data
   // * store() <-- Stores an array of items and updates indexes
-  // * updateAndQueue() <-- updates local data and add it to queue
   // * delete() <-- Deletes an item from the database
   //
   // Utilities to manage data
+  // * process()
   // * prepareToStore()
   // * toData()
   // * toIndex()
-  // * toQueue()
   // * isIndexed()
   //+-------------------------------------------------
 
@@ -123,8 +121,6 @@ export const useDataStore = defineStore('data', {
         // 'IGDB': Object.keys(index.igdb).length,
         // 'Epic': Object.keys(index.epic).length,
         'Steam': Object.keys(index.steam).length,
-        '-- Queue --': '----',
-        'Queue': this.queue.length,
       })
 
       console.warn(index['steam'][440], data[index['steam'][440]])
@@ -192,7 +188,7 @@ export const useDataStore = defineStore('data', {
       if (jxr.status) {
         log('Search', hash, jxr.data)
 
-        await this.toData(jxr.data, 'api')
+        await this.process(jxr.data, 'api')
       }
     },
 
@@ -208,9 +204,40 @@ export const useDataStore = defineStore('data', {
 
       const jxr = await $nuxt.$axios.get(`repository/top-${batch}.json`)
       if (jxr.status) {
-        this.toData(jxr.data, 'api')
+        this.process(jxr.data, 'api')
         this.loaded.push(`top:${batch}`)
       }
+    },
+
+    // NOTE: here
+    // NOTE: here
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Fri Feb 16 2024
+    //+-------------------------------------------------
+    async process(apps, context) {
+      if (!apps.length) apps = [apps]
+
+      apps.forEach((item) => {
+        // if (item.steam_id == '292030') {
+        // console.warn('✨ ', item)
+        //   debugger
+        // }
+
+        if (context == 'api') item.is_api = true
+
+        let uuid = this.isIndexed(item)
+
+        if (item.is?.lib || !uuid) this.toData(item)
+        else $game.update(uuid, item)
+      })
+
+      console.warn('🌈 data:updated', apps.length)
+
+      $nuxt.$mitt.emit('data:updated', 'loaded')
+      $nuxt.$app.count.data = Object.keys(data).length || 0
     },
 
     // //+-------------------------------------------------
@@ -361,27 +388,26 @@ export const useDataStore = defineStore('data', {
     store(items) {
       if (!items.length) items = [items]
 
-      items = items.map((item) => {
-        let prep = this.prepareToStore(item)
+      let prepared = []
+      items = items.forEach((uuid) => {
+        let prep = this.prepareToStore(data[uuid])
 
-        data[item.uuid] = { ...prep }
+        // data[item.uuid] = { ...prep }
         // library[item.uuid] = { ...prep }
 
-        this.toIndex(prep)
-        return prep
+        // this.toIndex(prep)
+        // return prep
+
+        prepared.push(prep)
       })
 
-      if (items.length == 1) $nuxt.$db.games.put(items[0])
-      else $nuxt.$db.games.bulkPut(items)
+      if (prepared.length == 1) $nuxt.$db.games.put(prepared[0])
+      else $nuxt.$db.games.bulkPut(prepared)
 
       // $nuxt.$db.games.bulkPut(items)
       // this.toData(items, 'library')
 
-      log(
-        '🎴 Data updated',
-        `added ${items.length} apps`,
-        items[Math.floor(Math.random() * items.length)]
-      )
+      log('🎴 updated games stored')
     },
 
     // //+-------------------------------------------------
@@ -521,69 +547,14 @@ export const useDataStore = defineStore('data', {
 
     //+-------------------------------------------------
     // toData()
-    // Adds apps to window.data
-    // Then adds the app to the indexes
+    // Adds apps to window.data and updates indexes
     // -----
     // Created on Tue Nov 21 2023
-    // Updated on Tue Jan 30 2024
+    // updated on Fri Feb 16 2024
     //+-------------------------------------------------
-    async toData(items) {
-      if (!items.length) items = [items]
-      console.warn('🆙🆙🆙 Adding toData', items.length)
-
-      items.forEach((item) => {
-        // if (item.steam_id == '292030') {
-        // console.warn('✨ ', item)
-        //   debugger
-        // }
-        let uuid = this.isIndexed(item)
-
-        if (item.is?.lib || !uuid) {
-          data[item.uuid] = { ...item }
-        } else $game.update(uuid, item)
-
-        this.toIndex(item)
-      })
-
-      console.warn('🌈 data:updated', items.length)
-
-      $nuxt.$mitt.emit('data:updated', 'loaded')
-      $nuxt.$app.count.data = Object.keys(data).length || 0
-
-      return
-      Object.values(items).forEach((item) => {
-        if (source == 'library') {
-          data[item.uuid] = item
-          this.toIndex(item, false)
-        }
-
-        if (source == 'api') {
-          this.update(item, 'add')
-        }
-        // let exists = false
-
-        // this.indexes.forEach((store) => {
-        //   if (item[store + '_id']) {
-        //     // If there is already an item indexed for that store
-        //     // Update the item with new data
-        //     // (shouldnt happen often,  only on api calls)
-        //     if (index[store][item[store + '_id']]) {
-        //       if (item.uuid == index[store][item[store + '_id']]) return
-
-        //       console.warn('Element is already indexed on', store, item)
-        //       console.warn(item.uuid, '(API) -> (L)', index[store][item[store + '_id']])
-        //       this.update(item, index[store][item[store + '_id']])
-        //       exists = true
-        //     }
-        //   }
-        // })
-
-        // if (exists == false) {
-        //   data[item.uuid] = item
-        // }
-      })
-
-      $nuxt.$mitt.emit('data:updated', 'loaded')
+    async toData(item) {
+      data[item.uuid] = { ...item }
+      this.toIndex(item)
     },
 
     // //+-------------------------------------------------
@@ -601,28 +572,28 @@ export const useDataStore = defineStore('data', {
     //   if (run) this.runQueue()
     // },
 
-    async runQueue() {
-      // Calls api to get the apps in queue
-      if (this.queue.length == 0) return
+    // async runQueue() {
+    //   // Calls api to get the apps in queue
+    //   if (this.queue.length == 0) return
 
-      setTimeout(async () => {
-        console.log('📦 Saving queue', this.queue.length)
+    //   setTimeout(async () => {
+    //     console.log('📦 Saving queue', this.queue.length)
 
-        let toSave = []
-        this.queue.forEach((uuid) => {
-          toSave.push(data[uuid])
-        })
+    //     let toSave = []
+    //     this.queue.forEach((uuid) => {
+    //       toSave.push(data[uuid])
+    //     })
 
-        if (this.queue.length < 4) console.log('📦 Queue: ', toSave)
+    //     if (this.queue.length < 4) console.log('📦 Queue: ', toSave)
 
-        await $nuxt.$db.games.bulkPut(toSave)
-        $nuxt.$toast.success('Saved queue of ' + this.queue.length, {
-          // description: 'Monday, January 3rd at 6:00pm',
-        })
+    //     await $nuxt.$db.games.bulkPut(toSave)
+    //     $nuxt.$toast.success('Saved queue of ' + this.queue.length, {
+    //       // description: 'Monday, January 3rd at 6:00pm',
+    //     })
 
-        this.queue = []
-      }, 5000)
-    },
+    //     this.queue = []
+    //   }, 5000)
+    // },
 
     //+-------------------------------------------------
     // updateMissing()
@@ -694,7 +665,7 @@ export const useDataStore = defineStore('data', {
 
       index.lib = games.map((game) => game.uuid)
 
-      this.toData(games)
+      this.process(games)
       this.loaded.push('library')
       $nuxt.$app.count.library = games.length || 0
 

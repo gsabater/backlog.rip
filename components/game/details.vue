@@ -22,17 +22,26 @@
   <VueFinalModal
     v-model="ui.dialog"
     class="details-modal"
-    content-class="details-modal-content movie_card"
+    content-class="details-modal-content movie_card "
     overlay-transition="vfm-fade"
-    content-transition="vfm-fade">
-    <Icon>ChevronRight</Icon>
+    :content-transition="{
+      'enter-active-class': 'hunaa-menu-enter-active',
+      'enter-from-class': 'hunaa-menu-y-0',
+      'enter-to-class': 'hunaa-menu-full',
+      'leave-active-class': 'hunaa-menu-leave-active',
+      'leave-to-class': 'hunaa-menu-y-0',
+      'leave-from-class': 'hunaa-menu-full',
+    }">
+    <div
+      v-if="$prev"
+      class="btn btn-ghost-secondary"
+      style="position: absolute; left: -77px; z-index: 9999">
+      <Icon size="50" width="2">ChevronLeft</Icon>
+    </div>
+
     <div class="modal-back"></div>
     <div class="info_section">
       <div class="movie_header">
-        <!-- <img
-          class="locandina"
-          src="https://mr.comingsoon.it/imgdb/locandine/235x336/53750.jpg" /> -->
-
         <game-asset
           ref="cover"
           :app="app"
@@ -65,6 +74,12 @@
     <div
       class="blur_back"
       :style="`background-image: url(https://cdn.akamai.steamstatic.com/steam/apps/${app.steam_id}/page.bg.jpg);`"></div>
+    <div
+      v-if="$next"
+      class="btn btn-ghost-secondary"
+      style="position: absolute; right: -77px; z-index: 9999">
+      <Icon size="50" width="2">ChevronRight</Icon>
+    </div>
   </VueFinalModal>
 
   <!-- <b-dialog v-model="ui.dialog" class="game-details">
@@ -106,7 +121,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Thu Feb 15 2024
+ * Modified: Fri Feb 16 2024
  **/
 
 export default {
@@ -143,7 +158,6 @@ export default {
 
     $next() {
       if (!this.app || !this.$data.$list || !this.$data.$list.items) return
-      console.warn(this.app.uuid, this.$data.$list.items[this.app.uuid])
 
       const index = this.$data.$list.items.indexOf(this.app.uuid)
       return this.$data.$list.items[index + 1]

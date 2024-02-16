@@ -48,8 +48,8 @@ export default defineNuxtConfig({
   },
 
   css: [
-    // '@tabler/core/dist/css/tabler.css', <-- imported via scss
     '@/assets/scss/main.scss',
+    'animate.css/animate.min.css',
   ],
 
 

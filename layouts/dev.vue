@@ -35,7 +35,7 @@
 
   <game-details></game-details>
   <game-manager></game-manager>
-  <b-backdrop></b-backdrop>
+  <ModalsContainer />
 
   <Toaster
     position="bottom-right"
@@ -94,7 +94,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Wed Feb 07 2024
+ * Modified: Wed Feb 14 2024
  **/
 
 export default {

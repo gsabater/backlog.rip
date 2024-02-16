@@ -5,6 +5,11 @@
 
       <div class="row">About ~{{ format.num($app.count.api) }} games</div>
       <div class="row">About ~{{ format.num($app.count.library) }} games</div>
+
+      <div class="btn" @click="show = true">xxx</div>
+      <b-modal v-model="show" title="Hello World!" @confirm="() => confirm()">
+        <p>VModel: The content of the modal</p>
+      </b-modal>
     </div>
   </div>
 </template>
@@ -21,6 +26,7 @@ export default {
 
   data() {
     return {
+      show: false,
       f: {},
     }
   },
@@ -30,6 +36,11 @@ export default {
   },
 
   methods: {
+    confirm() {
+      console.log('confirm✅✅✅✅')
+      this.show = false
+    },
+
     init() {
       this.dataStore.loadApiStatus()
     },

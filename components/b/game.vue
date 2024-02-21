@@ -24,14 +24,14 @@
       </template>
     </div>
 
-    <div v-if="body" class="card-body">
-      <span class="h5">
+    <div v-if="body" class="card-game__details">
+      <span class="details__name font-serif">
         {{ app.name }}
       </span>
-      <div class="text-muted">
-        halal
-        <!-- {{ uuid }} -->
-        <!-- {{ app.steam_id }} -->
+      <div v-if="$app.dev" class="details__secondary text-muted">
+        score: {{ app.score }} -- {{ app._.score }}
+        <br />
+        state: {{ app.state ?? '--' }}
       </div>
     </div>
     <!-- <div class="card-body">
@@ -73,7 +73,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Feb 15 2024
+ * Modified: Tue Feb 20 2024
  **/
 
 export default {
@@ -85,7 +85,7 @@ export default {
     },
 
     body: {
-      type: Boolean,
+      type: [Array, Boolean],
       default: false,
     },
   },

@@ -202,7 +202,7 @@
         v-if="f && f.show && f.show.perPage"
         class="d-flex mt-4"
         style="flex-direction: column; align-items: center">
-        <div class="btn w-75 mb-3" @click="addPage">Show more</div>
+        <div v-if="stats.results > f.show.perPage" class="btn w-75 mb-3" @click="addPage">Show more</div>
         <p class="text-muted text-center w-50">
           <hr class="my-2" >
           Showing 1-{{ 1 * f.show.perPage * f.show.page }} of {{ format.num(stats.results) }}
@@ -226,7 +226,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Feb 15 2024
+ * Modified: Wed Feb 21 2024
  **/
 
 export default {
@@ -315,6 +315,12 @@ export default {
     },
   },
 
+  watch: {
+    '$app.ready': function () {
+      this.init()
+    },
+  },
+
   methods: {
     onLoading(loading) {
       this.ui.loading = loading
@@ -387,6 +393,8 @@ export default {
     },
 
     async init() {
+      if(!this.$app.ready) return
+
       await this.getData()
       this.mergeFilters()
       this.search('init')
@@ -398,11 +406,7 @@ export default {
 
     this.$mitt.on('data:updated', () => {
       log('✨ Search: event -> data:updated')
-      // this.control.event = 'data:updated'
-      // if (this.ui.dirty) return
-
       this.search('event')
-      // this.$emit('loading', false)
     })
 
     this.$mitt.on('data:ready', () => {

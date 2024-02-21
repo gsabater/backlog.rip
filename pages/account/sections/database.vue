@@ -85,7 +85,7 @@
  * @desc:    https://dexie.org/docs/ExportImport/dexie-export-import
  * -------------------------------------------
  * Created Date: 18th January 2024
- * Modified: Sat Feb 03 2024
+ * Modified: Sat Feb 17 2024
  **/
 
 export default {
@@ -139,7 +139,7 @@ export default {
 
       try {
         const blob = await this.$db.export({ prettyJson: false, progressCallback })
-        this.download(blob, 'dexie-export.json', 'application/json')
+        this.download(blob, 'my.backlog', 'application/json')
       } catch (error) {
         console.error('' + error)
       }

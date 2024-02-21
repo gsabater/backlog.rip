@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Tue Feb 13 2024
+ * Modified: Wed Feb 21 2024
  */
 
 import { reactive } from 'vue'
@@ -18,7 +18,7 @@ let $state = null
 let $repos = null
 
 let app = {
-  v: '0.8.5', //β
+  v: '0.8.9', //β
 
   dev: false,
   env: 'production',
@@ -89,8 +89,11 @@ async function toggleSidebar($nuxt) {
 //+-------------------------------------------------
 function detectEnvironment() {
   if (window.location.hostname == 'localhost') {
-    app.dev = true
     app.env = 'local'
+  }
+
+  if ($nuxt.$auth.config.debug) {
+    app.dev = true
   }
 }
 
@@ -103,14 +106,12 @@ function detectEnvironment() {
 // Created on Sun Feb 04 2024
 //+-------------------------------------------------
 async function init() {
-  // if (!$nuxt) $nuxt = useNuxtApp()
+  if (!$nuxt) $nuxt = useNuxtApp()
   if (!$user) $user = useUserStore()
   if (!$data) $data = useDataStore()
   if (!$game) $game = useGameStore()
   if (!$state) $state = useStateStore()
   if (!$repos) $repos = useRepositoryStore()
-
-  detectEnvironment()
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Authenticate the user
@@ -125,11 +126,14 @@ async function init() {
   // Initialize only the stores that are needed
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  $data.init()
+  await $data.init()
   $game.init()
   $state.init()
   $repos.init()
   // this.dataStore.loadApiStatus()
+
+  app.ready = true
+  detectEnvironment()
 }
 
 export default defineNuxtPlugin(() => {

@@ -30,7 +30,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st November 2022
- * Modified: Mon Feb 12 2024
+ * Modified: Wed Feb 21 2024
  **/
 
 export default {
@@ -47,8 +47,15 @@ export default {
     ...mapStores(useDataStore),
   },
 
+  watch: {
+    '$app.ready': function () {
+      this.init()
+    },
+  },
+
   methods: {
     init() {
+      if (!this.$app.ready) return
       this.dataStore.loadApiStatus()
     },
   },

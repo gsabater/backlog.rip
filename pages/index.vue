@@ -9,12 +9,12 @@
         style="text-shadow: 4px black" /> -->
 
       <h1 class="hero-title">Backlog.rip</h1>
-      <p class="hero-description mt-4">
+      <p class="hero-description mt-3">
         Free and open source library manager for all your games.
         <br />
-        Runs in your browser, without any cookies or trackers.
+        All data is saved locally in your browser, without any cookies or trackers.
       </p>
-      <p class="hero-description mt-2">Organize your library and games with ease.</p>
+      <p class="hero-description mt-3">Organize your library and games with ease.</p>
 
       <!-- <div class="my-7">
         <div class="text-muted h5">Available modules: </div>

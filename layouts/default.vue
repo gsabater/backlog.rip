@@ -925,7 +925,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed Feb 14 2024
+ * Modified: Sat Feb 17 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'
@@ -959,6 +959,15 @@ export default {
       ],
 
       link: [],
+    })
+
+    useSeoMeta({
+      title: 'Backlog.rip',
+      ogTitle: 'Backlog.rip',
+      description: 'This is backlog.rip, a free site to organize your library',
+      ogDescription: 'This is backlog.rip, a free site to organize your library',
+      // ogImage: 'https://example.com/image.png',
+      // twitterCard: 'summary_large_image',
     })
 
     return {

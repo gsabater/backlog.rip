@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Fri Feb 16 2024
+ * Modified: Wed Feb 21 2024
  */
 
 let $nuxt = null
@@ -43,8 +43,11 @@ export const useGameStore = defineStore('game', {
     //+-------------------------------------------------
     async getFromAPI() {
       console.warn('🪝 Going to ask api for extended data')
+
       let app = this.app.uuid
       let api = this.app.api_id
+      if (this.app.is_api) api = this.app.uuid
+
       if (!api) {
         console.error('🪝 No API ID found')
         return
@@ -106,10 +109,12 @@ export const useGameStore = defineStore('game', {
 
       if (this.app.uuid === updated.uuid) this.app = updated
 
-      this.queue.push(uuid?.uuid || uuid)
-      this.storeQueue()
+      if (updated.is_api) return
 
+      this.queue.push(uuid?.uuid || uuid)
       console.warn('🪝 leaving a queue of', this.queue.length)
+
+      this.storeQueue()
     },
 
     //+-------------------------------------------------
@@ -120,7 +125,7 @@ export const useGameStore = defineStore('game', {
     // Created on Sun Feb 11 2024
     //+-------------------------------------------------
     needsUpdate(app, data) {
-      console.warn('🪝 should i update', app, data)
+      // console.warn('🪝 should i update', app, data)
       if (!app) return false
 
       // This block is only when comparing
@@ -141,7 +146,8 @@ export const useGameStore = defineStore('game', {
         // App has never been updated from the API
         if (!app.description) return 'update:api'
       }
-      console.warn("nah, don't update")
+
+      // console.warn("nah, don't update")
       return false
     },
 
@@ -161,6 +167,63 @@ export const useGameStore = defineStore('game', {
 
       await delay(1000, true)
       this.storeQueue()
+    },
+
+    //+-------------------------------------------------
+    // normalize()
+    // Initializes default data for a game
+    // -----
+    // Created on Tue Feb 20 2024
+    //+-------------------------------------------------
+    normalize(game) {
+      game.is = game.is || { in: {} }
+      game.is.in = game.is.in || {}
+      game.log = game.log || []
+
+      if (game.is_lib) {
+        game.playtime = game.playtime || {}
+        game.last_played = game.last_played || {}
+      }
+
+      if (game.is_api) {
+        game.api_id = game.uuid
+        game.uuid = game.api_id
+      }
+
+      game.updated_at = game.updated_at || 0
+
+      return game
+    },
+
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Tue Feb 20 2024
+    //+-------------------------------------------------
+    _score(app) {
+      let score = app.score || 0
+
+      // Avoid very high scores not verified
+      if (app.score > 96 && (!app.scores || !app.scores.igdbCount)) {
+        score = 60
+      }
+
+      // Reduce the final score there is not score count
+      // We cannot verify that the score is real
+      if (!app.scores) score = score - 10
+
+      // Reduce the final score if the amount of reviews is low
+      if (app.scores?.igdbCount < 100) score = score - 10
+      if (app.scores?.steamscore > 90 && app.scores?.steamCount < 100) score = score - 15
+      // if (app.scores?.steamCount < 100) score = score * 0.6
+      // else if (app.scores?.steamCount < 1000) score = score * 0.8
+
+      return score
+    },
+
+    _playtime(app) {
+      return 0
     },
 
     async init() {

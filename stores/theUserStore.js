@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Tue Feb 13 2024
+ * Modified: Tue Feb 20 2024
  */
 
 let $nuxt = null
@@ -22,16 +22,6 @@ export const useUserStore = defineStore('user', {
     redirectTo: null,
   }),
 
-  getters: {
-    doubleCount() {
-      return this.redirectTo + 'xxx' || 0
-    },
-
-    // upper() {
-    //   return this.message.toUpperCase();
-    // },
-  },
-
   actions: {
     //+-------------------------------------------------
     // authenticate()
@@ -45,7 +35,7 @@ export const useUserStore = defineStore('user', {
 
       if (!$nuxt) $nuxt = useNuxtApp()
 
-      await this.loadLocalData()
+      await this.loadLocal()
       // await this.getApiData()
 
       let me = { ...this.api, ...this.local }
@@ -93,12 +83,12 @@ export const useUserStore = defineStore('user', {
     },
 
     //+-------------------------------------------------
-    // loadLocalData()
+    // loadLocal()
     // Gets the local "account" database
     // -----
     // Created on Fri Nov 17 2023
     //+-------------------------------------------------
-    async loadLocalData() {
+    async loadLocal() {
       let config = await $nuxt.$db.config.toArray()
       this.local = await $nuxt.$db.account.get('me')
 
@@ -168,22 +158,34 @@ export const useUserStore = defineStore('user', {
     // },
 
     //+-------------------------------------------------
-    // update()
-    // Replaces a record in the journal
+    // updateAccount()
+    // updates $account store and this.local data
     // -----
     // Created on Fri Dec 29 2023
     //+-------------------------------------------------
-    async update(field, store) {
-      let me = { ...this.api, ...this.local }
-      this.user = { ...me }
+    async updateAccount(field) {
+      let account = await $nuxt.$db.account.get('me')
 
-      log('🥸 Local userdata has been updated', this.user)
+      let data = { ...account }
+      data[field] = this.local[field]
 
-      let json = JSON.parse(JSON.stringify(this[field]))
-      await $nuxt.$db[store].put({
-        ...json,
-        updated_at: dates.now(),
+      await $nuxt.$db.account.put(data)
+      this.user = { ...this.api, ...this.local }
+    },
+
+    //+-------------------------------------------------
+    // updateConfig()
+    // Updates $config store and this.config data
+    // -----
+    // Created on Sun Feb 18 2024
+    //+-------------------------------------------------
+    async updateConfig(field) {
+      await $nuxt.$db.config.put({
+        key: field,
+        value: this.config[field],
       })
+
+      $nuxt.$app.dev = this.config.debug
     },
 
     // logout() {

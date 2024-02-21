@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Thu Feb 15 2024
+ * Modified: Tue Feb 20 2024
  */
 
 export default {
@@ -106,8 +106,7 @@ export default {
       }
 
       if (filters?.sortBy == 'score') {
-        let underScore = this.underScore(app)
-        toSort.push({ uuid, score: underScore || 0 })
+        toSort.push({ uuid, score: app._?.score || 0 })
       }
 
       if (filters?.sortBy == 'playtime') {
@@ -188,17 +187,21 @@ export default {
   // Created on Mon Feb 12 2024
   //+-------------------------------------------------
   underScore(app) {
+    // TODO: use the method in $gameStore instead
     let score = app.score || 0
+
+    // Avoid very high scores not verified
+    if (app.score > 96 && !app.scores) score = 60
 
     // Reduce the final score there is not score count
     // We cannot verify that the score is real
-    if (!app.scores) score = score - 30
+    if (!app.scores) score = score - 10
 
     // Reduce the final score if the amount of reviews is low
     // if (app.scores?.steamCount < 100) score = score * 0.6
     // else if (app.scores?.steamCount < 1000) score = score * 0.8
 
-    if (app.scores?.igdbCount < 100) score = score - 20
+    if (app.scores?.igdbCount < 100) score = score - 10
 
     return score
   },

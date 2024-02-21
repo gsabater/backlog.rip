@@ -13,7 +13,7 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Tue Feb 06 2024
+ * Modified: Sat Feb 17 2024
  **/
 
 export default {
@@ -51,6 +51,9 @@ export default {
           cover: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/library_600x900.jpg',
           banner: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/header.jpg',
           icon: 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/%ID%/%ICON%.jpg',
+          gen: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/page_bg_generated_v6b.jpg',
+          background: 'https://cdn.akamai.steamstatic.com/steam/apps/%ID%/page.bg.jpg',
+          library: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/library_hero.jpg',
         },
 
         // prettier-ignore
@@ -77,7 +80,20 @@ export default {
         assets.push(this.resources.steam.banner)
       }
 
+      if (this.asset == 'background' && this.priority.includes('steam')) {
+        assets.push(this.resources.steam.library)
+        assets.push(this.resources.steam.gen)
+      }
+
       return assets
+    },
+  },
+
+  watch: {
+    app: {
+      handler() {
+        this.showing = 0
+      },
     },
   },
 
@@ -95,18 +111,18 @@ export default {
     // Created on Tue Feb 06 2024
     //+-------------------------------------------------
     assetUrl(index) {
-      const url = this.assets[index]
       const cover = this.app?.cover
+      const assets = this.assets[index]
 
       let theUrl = null
 
-      if (url.includes('igdb/')) this.is = 'igdb'
-      else if (url.includes('steam/')) this.is = 'steam'
+      if (assets.includes('igdb/')) this.is = 'igdb'
+      else if (assets.includes('steam/')) this.is = 'steam'
 
-      if (this.is == 'steam') theUrl = url.replace('%ID%', this.app.steam_id)
-      else if (this.is == 'igdb') theUrl = url.replace('%ID%', cover.igdb)
+      if (this.is == 'steam') theUrl = assets.replace('%ID%', this.app.steam_id)
+      else if (this.is == 'igdb') theUrl = assets.replace('%ID%', cover.igdb)
 
-      if (this.asset == 'cover' && url.includes('header.')) {
+      if (this.asset == 'cover' && assets.includes('header.')) {
         this.adaptForBanner(theUrl)
       }
 
@@ -125,8 +141,11 @@ export default {
     //+-------------------------------------------------
     adaptForBanner(url) {
       if (!this.$el) return
-      this.$el.closest('.card-game__cover').classList.add('is-banner')
-      this.$el.closest('.card-game__cover').style.backgroundImage = `url(${url})`
+      const container = this.$el.closest('div')
+      if (!container) return
+
+      container.classList.add('is-banner')
+      container.style.backgroundImage = `url(${url})`
     },
 
     adaptForIGDB(url) {

@@ -64,7 +64,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 2nd February 2024
- * Modified: Sat Feb 03 2024
+ * Modified: Sat Feb 17 2024
  **/
 
 import Dexie from 'dexie'
@@ -103,7 +103,7 @@ const download = (blob) => {
   const url = window.URL.createObjectURL(new Blob([blob], { type: 'application/json' }))
   const link = document.createElement('a')
   link.href = url
-  link.setAttribute('download', 'backup.json')
+  link.setAttribute('download', 'my.backlog')
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

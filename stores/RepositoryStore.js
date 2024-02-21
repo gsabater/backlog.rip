@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Mon Feb 12 2024
+ * Modified: Tue Feb 20 2024
  */
 
 let $nuxt = null
@@ -25,6 +25,15 @@ export const useRepositoryStore = defineStore('repository', {
     genres() {
       if (this._genres.length === 0) this.getGenres()
       return this._genres
+    },
+
+    keyedGenres() {
+      let keyed = this.genres.reduce((obj, genre) => {
+        obj[genre.id] = genre
+        return obj
+      }, {})
+
+      return keyed
     },
   },
 

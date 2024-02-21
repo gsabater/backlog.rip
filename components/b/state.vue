@@ -10,13 +10,13 @@
       v-if="from"
       :style="{ color: oldst.color + ' !important' }"
       style="font-size: 0.775rem">
-      {{ oldst.name || 'Add to your backlog' }}
+      {{ oldst.name || 'Not in your backlog' }}
       <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon>
     </span>
 
     <span class="status-dot" :class="{ 'status-dot-animated': pulse && state }"></span>
     <template v-if="label">
-      {{ st.name || 'Add to your backlog' }}
+      {{ st.name || 'Not in your backlog' }}
       <slot />
     </template>
   </div>
@@ -31,7 +31,7 @@
  * <BState :state="state"></BState>
  * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Fri Jan 12 2024
+ * Modified: Sun Feb 18 2024
  **/
 
 export default {

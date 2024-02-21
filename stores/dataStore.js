@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Fri Feb 16 2024
+ * Modified: Wed Feb 21 2024
  */
 
 let $nuxt = null
@@ -48,8 +48,7 @@ let index = {
 
   // api: {},
   // gog: {},
-  // epic: {},
-  // igdb: {},
+  // epic: {}
   steam: {},
 }
 
@@ -107,7 +106,6 @@ export const useDataStore = defineStore('data', {
         '-- Data --': '----',
         // 'Api': JSON.stringify(this.api),
         'Data': Object.keys(data).length,
-        // 'States': Object.keys(states).length,
         'Library': index.lib.length,
         // 'Wishlist': Object.keys(wishlist).length,
         '-- Repos --': '----',
@@ -158,11 +156,17 @@ export const useDataStore = defineStore('data', {
 
     //+-------------------------------------------------
     // get()
-    // Get an element by uuid
+    // Get an element by uuid Maybe move to a getter
     // -----
     // Created on Tue Nov 14 2023
     //+-------------------------------------------------
-    get(uuid) {
+    get(uuid, process = false) {
+      if (process) {
+        // $game.computed(data[uuid])
+        // compute: _playtime, _lastPlayed, _dateOwned, _score
+        // Sanitize: add .is={}
+      }
+
       return (
         data[uuid] || {
           uuid: uuid,
@@ -356,16 +360,9 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     prepareToStore(item, mode) {
       item.uuid = item.uuid || $nuxt.$uuid()
-      item.is = item.is || { in: {} }
-      item.is.in = item.is.in || {}
-      item.log = item.log || []
 
       if (mode !== 'toIgnore') {
         if (mode) item.is.in[mode] = dates.now()
-
-        item.playtime = item.playtime || {}
-        item.updated_at = item.updated_at || 0
-        item.last_played = item.last_played || {}
       }
 
       item.created_at = item.created_at || dates.now()
@@ -403,9 +400,6 @@ export const useDataStore = defineStore('data', {
 
       if (prepared.length == 1) $nuxt.$db.games.put(prepared[0])
       else $nuxt.$db.games.bulkPut(prepared)
-
-      // $nuxt.$db.games.bulkPut(items)
-      // this.toData(items, 'library')
 
       log('🎴 updated games stored')
     },
@@ -553,99 +547,17 @@ export const useDataStore = defineStore('data', {
     // updated on Fri Feb 16 2024
     //+-------------------------------------------------
     async toData(item) {
-      data[item.uuid] = { ...item }
+      let game = { ...item }
+
+      game = $game.normalize(game)
+      game._ = {
+        score: $game._score(game),
+        playtime: $game._playtime(game),
+      }
+
+      data[item.uuid] = game
       this.toIndex(item)
     },
-
-    // //+-------------------------------------------------
-    // // toQueue()
-    // // Thanks copilot
-    // // todo: This should be a debounced function
-    // // -----
-    // // Created on Wed Nov 29 2023
-    // //+-------------------------------------------------
-    // toQueue(app, run = true) {
-    //   if (this.queue.includes(app.uuid)) return
-
-    //   this.queue.push(app.uuid)
-
-    //   if (run) this.runQueue()
-    // },
-
-    // async runQueue() {
-    //   // Calls api to get the apps in queue
-    //   if (this.queue.length == 0) return
-
-    //   setTimeout(async () => {
-    //     console.log('📦 Saving queue', this.queue.length)
-
-    //     let toSave = []
-    //     this.queue.forEach((uuid) => {
-    //       toSave.push(data[uuid])
-    //     })
-
-    //     if (this.queue.length < 4) console.log('📦 Queue: ', toSave)
-
-    //     await $nuxt.$db.games.bulkPut(toSave)
-    //     $nuxt.$toast.success('Saved queue of ' + this.queue.length, {
-    //       // description: 'Monday, January 3rd at 6:00pm',
-    //     })
-
-    //     this.queue = []
-    //   }, 5000)
-    // },
-
-    //+-------------------------------------------------
-    // updateMissing()
-    // Search for apps without api_id and call the api
-    // to get the data and update the $db
-    // -----
-    // Created on Sat Nov 25 2023
-    //+-------------------------------------------------
-    async updateMissing() {
-      console.warn('WIP')
-      return
-      let missing = {}
-      let items = await $nuxt.$db.games
-        .filter((game) => game.api_id === undefined)
-        .toArray()
-
-      items.forEach((item) => {
-        this.indexes.forEach((store) => {
-          if (item[store + '_id']) {
-            if (missing[store] === undefined) missing[store] = []
-            missing[store].push(item[store + '_id'])
-          }
-        })
-      })
-
-      if (Object.keys(missing).length > 0) {
-        const jxr = await $nuxt.$axios.post(`get/batch`, missing)
-        if (jxr.status) return jxr.data.forEach((item) => this.update(item))
-      }
-    },
-
-    // 🔥 Moved to statesstore, delete this
-    // //+-------------------------------------------------
-    // // loadStates()
-    // // Loads the states from the database into memory
-    // // NOTE: Might be moved to stateStore
-    // // -----
-    // // Created on Mon Nov 27 2023
-    // //+-------------------------------------------------
-    // async loadStates() {
-    //   if (this.loaded.includes('states')) return
-
-    //   states = await $nuxt.$db.states.toArray()
-
-    //   this.loaded.push('states')
-
-    //   log(
-    //     '❇️ User states are ready',
-    //     `found ${states.length} states`,
-    //     states[Math.floor(Math.random() * states.length)]
-    //   )
-    // },
 
     //+-------------------------------------------------
     // loadLibrary()
@@ -658,8 +570,8 @@ export const useDataStore = defineStore('data', {
 
       let games = await $nuxt.$db.games.toArray()
       games = games.map((game) => {
-        game.is = game.is || {}
         game.is.lib = true
+
         return game
       })
 

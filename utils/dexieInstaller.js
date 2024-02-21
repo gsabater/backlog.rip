@@ -102,17 +102,18 @@ export class DexieInstaller {
   // Created on Thu Jan 25 2024
   //+-------------------------------------------------
   async checkin() {
-    const fields = {
+    const config = {
+      debug: false,
       created_at: dates.now(),
       autosync_steam: false,
     }
 
-    for (const [field, value] of Object.entries(fields)) {
-      let row = await this.$db.config.get(field)
+    for (const [option, value] of Object.entries(config)) {
+      let row = await this.$db.config.get(option)
 
       if (row === undefined) {
         this.$db.config.put({
-          key: field,
+          key: option,
           value: value,
         })
       }

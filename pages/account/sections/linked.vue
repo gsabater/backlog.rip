@@ -3,11 +3,11 @@
     <div class="card-body">
       <div>
         <div class="d-flex mb-3">
-          <h1 class="m-0">Linked accounts</h1>
+          <h1 class="m-0">Linked libraries</h1>
         </div>
       </div>
       <p>
-        Here you can link your accounts from other stores and platforms to your
+        Here you can link your profiles from other stores and platforms to your
         backlog.rip account.
       </p>
     </div>
@@ -54,7 +54,11 @@
       <div class="row align-items-center">
         <div class="col-auto">
           <label class="form-check form-switch m-0">
-            <input class="form-check-input position-static" type="checkbox" checked="" />
+            <input
+              v-model="$auth.config.autosync_steam"
+              class="form-check-input position-static"
+              type="checkbox"
+              @change="update('config', 'autosync_steam')" />
             <span class="form-check-label form-check-label-on">
               Auto updates are enabled
             </span>
@@ -262,7 +266,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Thu Jan 25 2024
+ * Modified: Tue Feb 20 2024
  **/
 
 export default {
@@ -275,6 +279,15 @@ export default {
   computed: {
     section() {
       return this.$route.params.section
+    },
+  },
+
+  methods: {
+    async update(store, field) {
+      if (store == 'config') this.$auth.updateConfig(field)
+      else this.$auth.updateAccount(field)
+
+      this.$toast.success('Your preferences have been updated')
     },
   },
 }

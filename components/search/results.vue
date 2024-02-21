@@ -19,8 +19,10 @@
   >
   <div class="row row-deck row-cards row-games-list">
     <template v-for="(app, i) in items" :key="'card' + i">
-      <div class="col col-6 col-sm-4 col-md-3 col-lg-custom px-2 py-1">
-        <b-game :key="app" :uuid="app" :body="false"></b-game>
+      <div
+        class="col col-6 col-sm-4 col-md-3 col-lg-custom pt-1 pb-3"
+        style="padding-left: 0.75rem; padding-right: 0.75rem">
+        <b-game :key="app" :uuid="app" :body="['name']"></b-game>
       </div>
     </template>
   </div>
@@ -32,7 +34,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Feb 15 2024
+ * Modified: Sat Feb 17 2024
  **/
 
 // import { useThrottleFn } from '@vueuse/core'

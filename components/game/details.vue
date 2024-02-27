@@ -105,8 +105,68 @@
           v-html="app.description || 'No description available'"></p>
       </div>
       <div class="col-5 px-3"></div>
+      <div class="row row-deck row-cards">
+        <div v-if="app.score" class="col-sm-6 col-lg-3">
+          <div class="card">
+            <div class="card-body" style="padding: 0.5rem 0.75rem">
+              <div class="d-flex align-items-center">
+                <div class="subheader">Median score</div>
 
-      <div v-if="ui.layout == 'full'" class="col-12 px-3">
+                <div class="ms-auto">
+                  <tippy class="text-muted ms-auto cursor-help" :content="'xxx'">
+                    <Icon>HelpCircleFilled</Icon>
+                  </tippy>
+                </div>
+              </div>
+              <div class="h1 mb-3">
+                {{ app.score }}
+                <span class="subheader">/100</span>
+                <!-- <br />
+                <span class="subheader">Overwhelmingly positive</span> -->
+              </div>
+
+              <div class="progress progress-sm" style="background-color: #25384f">
+                <div class="progress-bar bg-primary" :style="`width: ${app.score}%`">
+                  <span class="visually-hidden">{{ app.score }}% Complete</span>
+                </div>
+              </div>
+              <!-- <div class="d-flex mb-2">
+                <div class="subheader">125.000 votes on Steam</div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+        <div v-if="app.scores.metascore" class="col-sm-6 col-lg-3">
+          <div class="card">
+            <div class="card-body" style="padding: 0.5rem 0.75rem">
+              <div class="d-flex align-items-center">
+                <div class="subheader">Metacritic reviews</div>
+              </div>
+              <div class="h1 mb-3">
+                {{ app.scores.metascore }}
+                <span class="subheader">/100</span>
+                <!-- <br />
+                <span class="subheader">Overwhelmingly positive</span> -->
+              </div>
+
+              <div class="progress progress-sm" style="background-color: #25384f">
+                <div class="progress-bar bg-primary" :style="`width: ${app.score}%`">
+                  <span class="visually-hidden">{{ app.score }}% Complete</span>
+                </div>
+              </div>
+              <!-- <div class="d-flex mb-2">
+                <div class="subheader">125.000 votes on Steam</div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>95 /100 Median score</div>
+
+      <div>93 /100 Overwhelmingly positive Steam score 125.000 votes view on steam</div>
+
+      <div class="col-12 px-3">
         <div class="btn-list">
           <a v-tippy="'Open Steam store page'" href="#" class="btn btn-sm btn-icon">
             <Icon>BrandSteam</Icon>
@@ -116,7 +176,7 @@
           </a>
         </div>
 
-        <ul>
+        <ul v-if="ui.layout == 'full'">
           <li>
             <!-- <div class="btn btn-sm pe-3">
               <Icon size="14" class="mx-2">BrandSteam</Icon>
@@ -330,7 +390,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Wed Feb 21 2024
+ * Modified: Tue Feb 27 2024
  **/
 
 export default {

@@ -645,9 +645,10 @@
       class="navbar navbar-expand-md navbar-light d-print-none"
       style="max-height: 56px">
       <div class="container-xl">
-        <button class="navbar-toggler" @click="ui.showMobMenu = !ui.showMobMenu">
-          <span class="navbar-toggler-icon"></span>
+        <button class="d-md-none navbar-toggler" style="opacity: 0">
+          <Icon>MenuDeep</Icon>
         </button>
+
         <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pa-0">
           <NuxtLink to="/">
             <img
@@ -658,9 +659,77 @@
               class="navbar-brand-image d-none d-md-inline-block"
               style="height: auto; width: 100px; transform: translateY(15px)" />
           </NuxtLink>
+          <!-- <h1 data-heading="Backlog.rip">Backlog.rip</h1> -->
           <span>Backlog.rip</span>
         </h1>
-        <div class="navbar-nav flex-row order-md-last">
+
+        <button class="navbar-toggler" style="opacity: 0.8" @click="ui.dialog = true">
+          <Icon size="25">LayoutSidebarRightInactive</Icon>
+        </button>
+
+        <!-- :content-transition="{
+            'enter-active-class': 'hunaa-menu-enter-active',
+            'enter-from-class': 'hunaa-menu-y-0',
+            'enter-to-class': 'hunaa-menu-full',
+            'leave-active-class': 'hunaa-menu-leave-active',
+            'leave-to-class': 'hunaa-menu-y-0',
+            'leave-from-class': 'hunaa-menu-full',
+          }" -->
+        <client-only>
+          <VueFinalModal
+            v-model="ui.dialog"
+            class="h-100"
+            content-class="h-100 ms-6 py-3"
+            content-transition="vfm-slide-right"
+            overlay-transition="vfm-fade"
+            swipe-to-close="right">
+            <div class="card h-100">
+              <div class="row g-0">
+                <div class="col-12 col-md-3 border-end">
+                  <div class="card-body">
+                    <h4 class="subheader">Business settings</h4>
+                    <div class="list-group list-group-transparent">
+                      <a
+                        href="./settings.html"
+                        class="list-group-item list-group-item-action d-flex align-items-center active">
+                        My Account
+                      </a>
+                      <a
+                        href="#"
+                        class="list-group-item list-group-item-action d-flex align-items-center">
+                        My Notifications
+                      </a>
+                      <a
+                        href="#"
+                        class="list-group-item list-group-item-action d-flex align-items-center">
+                        Connected Apps
+                      </a>
+                      <a
+                        href="./settings-plan.html"
+                        class="list-group-item list-group-item-action d-flex align-items-center">
+                        Plans
+                      </a>
+                      <a
+                        href="#"
+                        class="list-group-item list-group-item-action d-flex align-items-center">
+                        Billing &amp; Invoices
+                      </a>
+                    </div>
+                    <h4 class="subheader mt-4">Experience</h4>
+                    <div class="list-group list-group-transparent">
+                      <a href="#" class="list-group-item list-group-item-action">
+                        Give Feedback
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </VueFinalModal>
+        </client-only>
+
+        <div
+          class="d-none d-md-flex navbar-nav flex-row order-md-last align-items-center">
           <!-- <div v-if="!$auth.isLogged" class="nav-item d-none d-md-flex me-3">
             <div class="btn-list">
               <NuxtLink to="/login" class="btn btn-purple">
@@ -670,26 +739,29 @@
             </div>
           </div> -->
 
-          <div class="d-none d-md-flex mx-3">
+          <div class="mx-3">
             <div
-              v-tippy="'Enable dark mode'"
+              xv-tippy="'Enable dark mode'"
               class="nav-link cursor-pointer px-0 hide-theme-dark"
               @click="changeTheme('dark')">
               <Icon>Moon</Icon>
             </div>
 
             <div
-              v-tippy="'Enable light mode'"
+              xv-tippy="'Enable light mode'"
               class="nav-link cursor-pointer px-0 hide-theme-light"
               @click="changeTheme('light')">
               <Icon>Sun</Icon>
             </div>
           </div>
-          <div class="nav-item dropdown d-block align-self-center">
+
+          <div class="d-none d-md-block nav-item dropdown align-self-center">
             <div class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
               <span
                 class="avatar avatar-sm"
-                :style="`background-image: url(${$auth.user.avatar})`">
+                :style="
+                  $auth.user.avatar ? `background-image: url(${$auth.user.avatar})` : ''
+                ">
                 {{ !$auth.user.avatar ? $auth.user.username[0] : '' }}
               </span>
               <div class="d-none d-xl-block ps-2">
@@ -814,27 +886,29 @@
     </div>
   </div>
 
-  <game-details></game-details>
-  <game-manager></game-manager>
-  <!-- <b-backdrop></b-backdrop> -->
-  <ModalsContainer />
+  <client-only>
+    <game-details></game-details>
+    <game-manager></game-manager>
+    <!-- <b-backdrop></b-backdrop> -->
+    <ModalsContainer />
 
-  <Toaster
-    position="bottom-right"
-    close-button
-    rich-colors
-    :theme="ui.theme"
-    nopetoast-options="{
+    <Toaster
+      position="bottom-right"
+      close-button
+      rich-colors
+      :theme="ui.theme"
+      nopetoast-options="{
       style: { background: '#fda4af' },
       className: 'card',
       descriptionClassName: 'my-toast-description',
     }" />
 
-  <SpeedInsights v-if="!$app.dev" />
+    <SpeedInsights v-if="!$app.dev" />
 
-  <component :is="'style'" id="dynamic-style" type="text/css">
-    <template v-if="!$app.dev">pre{ display: none !important; }</template>
-  </component>
+    <component :is="'style'" id="dynamic-style" type="text/css">
+      <template v-if="!$app.dev">pre{ display: none !important; }</template>
+    </component>
+  </client-only>
 
   <svg width="0" height="0" style="display: none">
     <filter id="grainy" x="0" y="0" width="100%" height="100%">
@@ -925,7 +999,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Sat Feb 17 2024
+ * Modified: Tue Feb 27 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'
@@ -936,62 +1010,45 @@ export default {
     SpeedInsights,
   },
 
-  setup() {
-    const ui = reactive({
-      theme: 'dark', // 'light',
-      dialog: false,
-      showMobMenu: false,
-    })
+  // setup() {
+  //   const ui = reactive({
+  //     theme: 'dark', // 'light',
+  //     dialog: false,
+  //     showMobMenu: false,
+  //   })
 
-    useHead({
-      title: 'Backlog.rip',
-      bodyAttrs: {
-        class: 'antialiased',
-      },
+  //   return {
+  //     ui,
+  //   }
+  // },
 
-      script: [
-        {
-          // src: "../node_modules/@tabler/core/dist/js/tabler.js",
-          // src: 'https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js',
-          // src: '../node_modules/@tabler/core/dist/tabler.js',
-          // body: true,
-        },
-      ],
-
-      link: [],
-    })
-
-    useSeoMeta({
-      title: 'Backlog.rip',
-      ogTitle: 'Backlog.rip',
-      description: 'This is backlog.rip, a free site to organize your library',
-      ogDescription: 'This is backlog.rip, a free site to organize your library',
-      // ogImage: 'https://example.com/image.png',
-      // twitterCard: 'summary_large_image',
-    })
-
-    return {
-      ui,
-    }
-  },
   data() {
-    return {}
+    return {
+      ui: {
+        theme: 'dark', // 'light',
+        dialog: false,
+        showMobMenu: false,
+      },
+    }
   },
 
   computed: {
-    ...mapStores(useDataStore),
+    // ...mapStores(useDataStore),
   },
 
   methods: {
     changeTheme(theme) {
       this.ui.theme = theme
-      document.body.setAttribute('data-bs-theme', theme)
+      if (document?.body) document.body.setAttribute('data-bs-theme', theme)
+    },
+
+    mobileMenu() {
+      this.ui.showMobMenu = !this.ui.showMobMenu
     },
   },
 
-  created() {
-    this.changeTheme(this.ui.theme)
-
+  mounted() {
+    this.$app.initClient()
     this.$mitt.on('*', (e, payload) => {
       log('🎆 Fired event', e, payload)
       // console.info(this.$mitt.all)
@@ -1002,11 +1059,6 @@ export default {
     })
   },
 }
-
-// function changeTheme(theme) {
-//   ui.theme = theme
-//   document.body.setAttribute('data-bs-theme', theme)
-// }
 
 // onMounted(() => {
 //   // getDB('top-games')

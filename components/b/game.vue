@@ -2,7 +2,8 @@
   <div
     v-if="app && app.uuid"
     class="card-game"
-    :class="app.state ? 'has-state' + app.state : ''">
+    :class="app.state ? 'has-state' + app.state : ''"
+    :uuid="app.uuid">
     <div class="card-game__cover" @click.stop="showGameModal">
       <div
         v-if="app.error"
@@ -73,7 +74,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Feb 20 2024
+ * Modified: Thu Feb 22 2024
  **/
 
 export default {

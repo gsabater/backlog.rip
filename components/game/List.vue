@@ -1,7 +1,9 @@
 <template>
-  <div class="row row-deck row-cards" v-bind="$attrs">
+  <div class="row row-deck row-cards row-games-list" v-bind="$attrs">
     <template v-for="(app, i) in items" :key="'card' + i">
-      <div class="col col-2">
+      <div
+        class="col col-6 col-sm-4 col-md-3 col-lg-custom pt-1 pb-3"
+        style="padding-left: 0.75rem; padding-right: 0.75rem">
         <b-game :key="app" :uuid="app" :body="false"></b-game>
       </div>
     </template>
@@ -50,7 +52,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th January 2024
- * Modified: Thu Feb 15 2024
+ * Modified: Tue Feb 27 2024
  **/
 
 export default {

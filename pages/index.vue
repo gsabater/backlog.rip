@@ -9,6 +9,7 @@
         style="text-shadow: 4px black" /> -->
 
       <h1 class="hero-title">Backlog.rip</h1>
+
       <p class="hero-description mt-3">
         Free and open source library manager for all your games.
         <br />

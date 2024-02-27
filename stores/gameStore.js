@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Wed Feb 21 2024
+ * Modified: Tue Feb 27 2024
  */
 
 let $nuxt = null
@@ -14,14 +14,25 @@ let $data = null
 export const useGameStore = defineStore('game', {
   state: () => ({
     app: {},
-
-    queue: [],
   }),
+
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Index of methods
+  //
+  // Retrieve data
+  // * load()
+  // * getFromAPI()
+  //
+  // Modify data
+  // * update()
+  //
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   actions: {
     //+-------------------------------------------------
     // load()
-    // Loads an item from datastore and sets to this
+    // Loads an item from datastore and sets this.app
+    // Calls update() to check if the app needs to be updated
     // -----
     // Created on Thu Jan 11 2024
     //+-------------------------------------------------
@@ -30,19 +41,16 @@ export const useGameStore = defineStore('game', {
 
       this.app = game
       this.update(game)
-
-      // game.needsUpdate = this.needsUpdate(game)
-      // if (game.needsUpdate) this.getFromAPI()
     },
 
     //+-------------------------------------------------
     // getFromAPI()
-    // Gets data from the API
+    // Gets more data from the API
     // -----
     // Created on Fri Feb 16 2024
     //+-------------------------------------------------
     async getFromAPI() {
-      console.warn('🪝 Going to ask api for extended data')
+      console.warn('🪝 Going to ask api for more data')
 
       let app = this.app.uuid
       let api = this.app.api_id
@@ -83,19 +91,28 @@ export const useGameStore = defineStore('game', {
     //+-------------------------------------------------
     async update(uuid, data) {
       let game = null
-
+      if (uuid === true || game === true) {
+        console.error('🔥', uuid, data)
+      }
+      // Load the game by reference
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (typeof uuid !== 'string') game = uuid
       else game = $data.get(uuid)
 
       const update = this.needsUpdate(game, data)
-
       if (!update) return false
 
-      if (!data && update === 'update:api') {
+      console.warn('🪝 updating by', game, data, update)
+
+      // Update the game with the new data from the API
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (!data && update.indexOf(':api') > -1) {
         data = await this.getFromAPI()
         if (!data) return
       }
 
+      // Create the new object with the updated data
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let updated = { ...game, ...data }
       updated.uuid = game.uuid
 
@@ -105,27 +122,23 @@ export const useGameStore = defineStore('game', {
 
       // TODO: Add entry in app log
 
-      $data.toData(updated)
-
-      if (this.app.uuid === updated.uuid) this.app = updated
-
-      if (updated.is_api) return
-
-      this.queue.push(uuid?.uuid || uuid)
-      console.warn('🪝 leaving a queue of', this.queue.length)
-
-      this.storeQueue()
+      // Update local data, store and indexes
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      $data.process(updated, update)
+      if (this.app.uuid == updated.uuid) this.app = updated
     },
 
     //+-------------------------------------------------
     // needsUpdate()
     // Checks if the app needs to be updated
-    // There is two types of updates: local and api
+    // There are three possible outcomes
+    // - false if update is not required
+    // - true or update:field to get data from the api
+    // - store:db if the app needs to be added to the store
     // -----
     // Created on Sun Feb 11 2024
     //+-------------------------------------------------
     needsUpdate(app, data) {
-      // console.warn('🪝 should i update', app, data)
       if (!app) return false
 
       // This block is only when comparing
@@ -133,40 +146,27 @@ export const useGameStore = defineStore('game', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (data) {
         // app does not have api_id reference
-        if (!app.api_id && data?.api_id) return true
+        if (!app.api_id && data?.api_id) return 'update:uuids'
 
         // app has older updated_at than api data
-        if (app.updated_at < data?.updated_at) return 'update:updated_at'
+        if (app.updated_at < data?.updated_at) return 'update:refresh'
       }
 
-      // This block is only when the app is loaded
-      // Usually when opening the game modal
+      // This block is only when checking app data
+      // without a new object
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (!data) {
         // App has never been updated from the API
         if (!app.description) return 'update:api'
       }
 
-      // console.warn("nah, don't update")
+      // For internal updates like changing data
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // nunca ocurre
+      // if (app.state !== data.state) return 'update:state'
+      if (app?.is?.dirty || data?.is?.dirty) return 'store:db'
+
       return false
-    },
-
-    async storeQueue() {
-      await delay(3000, true)
-
-      let amount = this.queue.length
-      if (!amount) return
-
-      console.warn('🪝 Storing', amount, 'games')
-
-      $nuxt.$toast.success('Updated data on ' + this.queue.length + ' games', {
-        // description: 'Monday, January 3rd at 6:00pm',
-      })
-      $data.store(this.queue)
-      this.queue = []
-
-      await delay(1000, true)
-      this.storeQueue()
     },
 
     //+-------------------------------------------------
@@ -196,8 +196,8 @@ export const useGameStore = defineStore('game', {
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // _score()
+    // Generates a new score by taking context into account
     // -----
     // Created on Tue Feb 20 2024
     //+-------------------------------------------------
@@ -205,17 +205,25 @@ export const useGameStore = defineStore('game', {
       let score = app.score || 0
 
       // Avoid very high scores not verified
-      if (app.score > 96 && (!app.scores || !app.scores.igdbCount)) {
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (!app.scores) score = score - 10
+      if (app.score >= 96 && !app.scores) {
         score = 60
       }
 
-      // Reduce the final score there is not score count
-      // We cannot verify that the score is real
-      if (!app.scores) score = score - 10
-
       // Reduce the final score if the amount of reviews is low
-      if (app.scores?.igdbCount < 100) score = score - 10
-      if (app.scores?.steamscore > 90 && app.scores?.steamCount < 100) score = score - 15
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (app.score > 90 && app.scores?.steamCount < 100) score *= 0.8
+      if (app.score > 95 && app.scores?.steamCount < 3000) score *= 0.8
+
+      if (app.scores?.igdbCount < 90) score *= 0.9
+
+      // Only when there is only igdb
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (app.scores && !app.scores?.steamCount) {
+        if (app.scores?.igdb >= 90 && !app.scores.igdbCount) score *= 0.8
+      }
+
       // if (app.scores?.steamCount < 100) score = score * 0.6
       // else if (app.scores?.steamCount < 1000) score = score * 0.8
 

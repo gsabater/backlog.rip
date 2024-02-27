@@ -129,7 +129,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Wed Feb 14 2024
+ * Modified: Fri Feb 23 2024
  **/
 
 export default {
@@ -149,6 +149,12 @@ export default {
   computed: {
     ...mapStores(useDataStore, useJournalStore),
     ...mapState(useStateStore, ['states']),
+  },
+
+  watch: {
+    '$app.ready': function () {
+      this.init()
+    },
   },
 
   methods: {
@@ -258,6 +264,8 @@ export default {
     },
 
     async init() {
+      if (!this.$app.ready) return
+
       await this.getData()
       this.groupByDay()
     },

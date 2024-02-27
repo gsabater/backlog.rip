@@ -17,11 +17,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const stateStore = useStateStore()
   const repositoryStore = useRepositoryStore()
 
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Authenticate the user
   // Tries to determinate if the user has an account
   // either locally or online
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   if (!nuxtApp.$db.isOpen() || !nuxtApp.$db.isReady) {
     console.warn('db is closed or not ready', nuxtApp.$db)
@@ -36,9 +36,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     await userStore.authenticate()
   }
 
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Preload
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   else {
     // move to a plugin to run once
     dataStore.init()

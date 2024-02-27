@@ -3,15 +3,20 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Tue Jan 30 2024
+ * Modified: Mon Feb 26 2024
  */
 
 let $nuxt = null
 
 export default {
+  stamp() {
+    return Math.floor(Date.now() / 1000)
+  },
+
   //+-------------------------------------------------
   // now()
   // returns a date string, mainly used to store
+  // '2024-02-26T16:06:34.933Z'
   // -----
   // Created on Fri Jan 12 2024
   //+-------------------------------------------------

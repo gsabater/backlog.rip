@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Wed Feb 14 2024
+ * Modified: Mon Feb 26 2024
  */
 
 let $nuxt = null
@@ -15,6 +15,7 @@ let $journal = null
 
 export const useStateStore = defineStore('state', {
   state: () => ({
+    keyed: {},
     states: [],
 
     favs: [], // Holds index for special state 'favorites'
@@ -111,6 +112,7 @@ export const useStateStore = defineStore('state', {
     // set()
     // Sets a state to an app and also
     // - ✅ updates the app's state in library
+    // - ✅ updates the app's states timestamp
     // - ✅ updates the state's index array
     // - ✅ logs the change in the journal
     // - ✅ emits a state change event
@@ -118,13 +120,20 @@ export const useStateStore = defineStore('state', {
     // Created on Sat Jan 06 2024
     //+-------------------------------------------------
     set(uuid, state) {
-      $game.app.state = state
-
+      let obj = this.keyed[state]
       let app = $data.get(uuid)
       let old = app.state || null
 
+      // Update the state
+      // on $game and $data
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       app.state = state
-      $data.store(app)
+      app.is.dirty = true
+      app.is.state = app.is.state || {}
+      app.is.state[obj.key] = dates.stamp()
+
+      $game.app.state = state
+      $game.update(uuid, { ...app })
 
       $journal.add({
         event: 'state',
@@ -140,8 +149,8 @@ export const useStateStore = defineStore('state', {
         state: state,
       })
 
-      $nuxt.$toast.success('Added to ' + app.state, {
-        description: 'Monday, January 3rd at 6:00pm',
+      $nuxt.$toast.success('Added to ' + obj.name, {
+        // description: 'Monday, January 3rd at 6:00pm',
       })
 
       this.indexLibrary()
@@ -185,6 +194,11 @@ export const useStateStore = defineStore('state', {
       const states = await $nuxt.$db.states.toArray()
 
       this.states = states.sort((a, b) => a.order - b.order)
+      this.keyed = states.reduce((obj, state) => {
+        obj[state.id] = state
+        return obj
+      }, {})
+
       this.meta.loaded = true
 
       log(

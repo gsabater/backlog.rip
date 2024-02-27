@@ -11,7 +11,8 @@
     placement="right-start"
     follow-cursor="initial"
     trigger="click"
-    theme="dropdown">
+    theme="dropdown"
+    :on-hide="hideBackdrop">
     <template #content="{ hide }">
       <!-- <div class="card nope-card-stacked"> -->
       <!-- <button @click="hide()">close</button> -->
@@ -25,19 +26,6 @@
             top: 0;
             box-shadow: none;
           ">
-        <!--
-          *+---------------------------------
-          *| Favorites
-          *| Simple item
-          *+--------------------------------- -->
-        <!-- <div class="dropdown-item">
-          <div class="d-flex" style="width: 30px">
-            <Icon>Star</Icon>
-          </div>
-
-          <span>Add to favorites</span>
-        </div> -->
-
         <!-- <div class="row m-0 mb-2">
         <div class="text-center p-2 col-6 active">Status</div>
         <div class="text-center p-2 col-6 active">Collections</div>
@@ -63,22 +51,30 @@
               v-for="(state, i) in states"
               :key="'state' + i"
               class="dropdown-item px-2"
-              @click="doAction(state)">
+              :class="{ active: app.state == state.id }"
+              @click="setState(state)">
               <div
+                v-if="app.state"
                 class="selection"
-                style="margin-right: 0.55rem"
-                @click="select(state, 'soft')">
-                <input
-                  type="radio"
+                style="margin-right: 0.55rem; transform: translateY(-1px)">
+                <!-- <input
+                  type="checkbox"
                   class="form-check-input"
-                  style="transform: scale(0.8)" />
+                  style="transform: scale(0.8)" /> -->
+                <Icon v-if="app.state == state.id" style="color: var(--tblr-primary)">
+                  SquareCheck
+                </Icon>
+                <Icon v-else style="color: #666">Square</Icon>
               </div>
-              <div
-                class="content d-flex align-items-center w-100"
-                @click="select(state, 'hard')">
-                <span
+              <div class="content d-flex align-items-center w-100 px-1">
+                <!-- <span
                   class="badge me-2"
-                  :style="{ 'background-color': state.color || '' }"></span>
+                  :style="{ 'background-color': state.color || '' }"></span> -->
+
+                <span
+                  class="status-dot me-2"
+                  :style="{ 'background-color': state.color || '' }"
+                  :class="{ 'status-dot-animated': app.state == state.id }"></span>
 
                 <span class="me-4">
                   {{ state.name }}
@@ -110,6 +106,19 @@
           </b-dropdown>
         </div>
 
+        <!--
+          *+---------------------------------
+          *| Favorites
+          *| Simple item
+          *+--------------------------------- -->
+        <div class="dropdown-item">
+          <div class="d-flex" style="width: 30px">
+            <Icon>Star</Icon>
+          </div>
+
+          <span>Add to favorites</span>
+        </div>
+
         <div class="dropdown-divider"></div>
 
         <!--
@@ -132,33 +141,35 @@
           </tippy>
         </div>
 
-        <div class="dropdown-divider"></div>
+        <template v-if="$app.dev">
+          <div class="dropdown-divider"></div>
 
-        <!--
+          <!--
           *+---------------------------------
           *| DEV
           *| xxx
           *+--------------------------------- -->
-        <div class="dropdown-item">
-          <div style="width: 30px">
-            <Icon>Code</Icon>
-          </div>
-
-          <span>App</span>
-
-          <span class="text-muted ms-auto">
-            <Icon size="14">CaretRightFilled</Icon>
-          </span>
-          <b-dropdown placement="right-start">
-            <div class="dropdown-item px-2">
-              <pre
-                >{{ appUUID }}
-      {{ value }}
-      {{ item }}</pre
-              >
+          <div class="dropdown-item">
+            <div style="width: 30px">
+              <Icon>Code</Icon>
             </div>
-          </b-dropdown>
-        </div>
+
+            <span>App</span>
+
+            <span class="text-muted ms-auto">
+              <Icon size="14">CaretRightFilled</Icon>
+            </span>
+            <b-dropdown placement="right-start">
+              <div
+                class="d-flex"
+                style="flex-direction: column; text-align: center; align-items: center">
+                <h5>{{ appUUID }}</h5>
+                <h4>{{ app.name }}</h4>
+                <pre style="text-align: left">{{ app }}</pre>
+              </div>
+            </b-dropdown>
+          </div>
+        </template>
       </div>
     </template>
   </tippy>
@@ -188,7 +199,7 @@
         v-for="(state, i) in states"
         :key="'state' + i"
         class="dropdown-item ps-1"
-        @click="doAction(state)">
+        @click="setState(state)">
         <div class="d-flex justify-center" style="width: 30px">
           <Icon v-if="isFav(state.name)" style="color: red; fill: pink">Heart</Icon>
           <span
@@ -220,7 +231,7 @@
       z-index: 9998;
       backdrop-filter: blur(0.5px);
     "
-    @click="hide"></div>
+    click="hide"></div>
 
   <!-- prettier-ignore-start -->
   <!-- prettier-ignore-end -->
@@ -243,35 +254,17 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Wed Feb 14 2024
+ * Modified: Sun Feb 25 2024
  **/
 
 export default {
   name: 'GameManager',
-  props: {
-    modelValue: {
-      type: [String, Number],
-      default: '',
-    },
-
-    app: {
-      type: String,
-      default: null,
-    },
-
-    clearable: {
-      type: Boolean,
-      default: false,
-    },
-  },
-
-  emits: ['set', 'clear', 'change', 'update:modelValue'],
+  props: {},
 
   data() {
     return {
       appUUID: null,
-      value: '',
-      item: {},
+      app: {},
 
       ui: {
         top: '0px',
@@ -282,7 +275,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useDataStore, useJournalStore, useStateStore),
+    ...mapStores(useDataStore, useStateStore),
     ...mapState(useStateStore, ['states']),
   },
 
@@ -315,26 +308,8 @@ export default {
       // this.ui.show = true
       // this.$refs.tippy.show()
 
-      const elementWidth = 200 // replace with the actual width of the element
-      const elementHeight = 300 // replace with the actual height of the element
-
-      const maxX = window.innerWidth - elementWidth
-      const maxY = window.innerHeight - elementHeight
-
-      let x = event.clientX - 10
-      let y = event.clientY - 10
-
-      // Correct x and y if needed
-      if (x > maxX) {
-        x = maxX
-      }
-      if (y > maxY) {
-        y = maxY
-      }
-
       this.appUUID = app
-      this.ui.top = `${y}px`
-      this.ui.left = `${x}px`
+      this.app = this.dataStore.get(app)
       this.ui.show = true
 
       this.$refs.tippy.show()
@@ -345,31 +320,35 @@ export default {
       this.$refs.tippy.hide()
     },
 
-    isFav(state) {
-      const favs = ['favorite', 'favourite', 'fav', 'favourites', 'favorites']
-      return favs.includes(state.toLowerCase())
+    hideBackdrop() {
+      this.ui.show = false
     },
 
+    // isFav(state) {
+    //   const favs = ['favorite', 'favourite', 'fav', 'favourites', 'favorites']
+    //   return favs.includes(state.toLowerCase())
+    // },
+
     //+-------------------------------------------------
-    // doAction()
+    // setState()
     // Performs action when an item is clicked
     // -----
     // Created on Sat Jan 06 2024
     //+-------------------------------------------------
-    doAction(state) {
+    setState(state) {
       this.value = state?.id || null
       this.stateStore.set(this.appUUID, state.id)
 
-      this.onChange(state)
+      // this.onChange(state)
       this.hide()
     },
 
-    onChange() {
-      // console.warn('onChange', value, this.modelValue)
-      this.$emit('change', this.value)
-      this.$emit('update:modelValue', this.value)
-      if (this.value == null) this.$emit('clear', null)
-    },
+    // onChange() {
+    //   // console.warn('onChange', value, this.modelValue)
+    //   this.$emit('change', this.value)
+    //   this.$emit('update:modelValue', this.value)
+    //   if (this.value == null) this.$emit('clear', null)
+    // },
 
     deleteme() {
       this.dataStore.delete(this.appUUID)
@@ -387,13 +366,7 @@ export default {
 
     // },
 
-    getData() {
-      // this.db.states = this.dataStore.states()
-    },
-
-    init() {
-      this.getData()
-    },
+    init() {},
   },
 
   mounted() {

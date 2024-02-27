@@ -34,7 +34,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat Feb 17 2024
+ * Modified: Tue Feb 27 2024
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -196,28 +196,8 @@ export default {
   },
 
   mounted() {
+    window.$results = this
     this.init()
   },
 }
 </script>
-
-<style>
-@media (min-width: 992px) {
-  .col-lg-25 {
-    flex: 0 0 auto;
-    width: 20%;
-  }
-
-  .col-lg-custom {
-    flex: 0 0 auto;
-    width: 14.285%;
-    /* width: 12.5%; 7 columns */
-    /* width: 12.5%; 8 columns */
-  }
-}
-
-.col-25 {
-  flex: 0 0 auto;
-  width: 20%;
-}
-</style>

@@ -77,8 +77,8 @@ Selected
           Filter by
           <tippy
             ref="tippyFilter"
-            tag="div"
             to="parent"
+            tag="div"
             content-tag="div"
             :animate-fill="true"
             :interactive="true"
@@ -382,7 +382,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Tue Feb 13 2024
+ * Modified: Sat Feb 24 2024
  **/
 
 export default {

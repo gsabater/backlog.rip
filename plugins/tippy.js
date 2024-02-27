@@ -3,10 +3,10 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th December 2023
- * Modified: Fri Feb 09 2024
+ * Modified: Tue Feb 27 2024
  */
 
-import VueTippy, { roundArrow } from 'vue-tippy'
+import VueTippy from 'vue-tippy'
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/dist/svg-arrow.css'
 import 'tippy.js/dist/backdrop.css'

@@ -11,7 +11,7 @@
 // import { mapState } from "pinia";
 
 export default defineNuxtConfig({
-  ssr: false,
+  // ssr: false,
 
   experimental: {
     payloadExtraction: false,
@@ -28,6 +28,7 @@ export default defineNuxtConfig({
     // '@nuxt/image',
     '@nuxt/content',
     '@nuxt/devtools',
+    '@nuxtjs/seo',
     '@vueuse/nuxt',
 
     '@pinia/nuxt',
@@ -54,13 +55,51 @@ export default defineNuxtConfig({
 
 
   build: {
-    transpile: ['vue-sonner']
+    transpile: ['vue-sonner', "rxjs"]
     // transpile: ['element-plus/es'],
   },
 
   content: {
     // ... options
   },
+
+  app: {
+    head: {
+      bodyAttrs: {
+        class: 'antialiased',
+        'data-bs-theme': 'dark'
+      },
+    },
+  },
+
+  //+-------------------------------------------------
+  // Seo Modules and configuration
+  //+-------------------------------------------------
+  site: {
+    url: 'https://backlog.rip',
+    name: 'Backlog.rip',
+    description: 'Free and open source library manager for all your games.',
+    defaultLocale: 'en', // not needed if you have @nuxtjs/i18n installed
+  },
+
+  // ogImage: {
+  //   enabled: false
+  // },
+  sitemap: {
+    enabled: true
+  },
+  // robots: {
+  //   enabled: false
+  // },
+  // seoExperiments: {
+  //   enabled: false
+  // },
+  schemaOrg: {
+    enabled: true
+  },
+  // linkChecker: {
+  //   enabled: false
+  // },
 
   webpack: {
     extractCSS: true,

@@ -90,8 +90,13 @@
         </div>
 
         <div class="col-12">
-          <h2>Continue playing</h2>
-          games-list
+          <h2>Currently playing</h2>
+
+          <!-- <gameList :apps="item.data.games" cols="3" class="pt-3"></gameList> -->
+        </div>
+        <div v-if="db.recent.length" class="col-12">
+          <h2>Latest games in your library</h2>
+          <gameList :apps="db.recent" cols="3" class="pt-3"></gameList>
         </div>
 
         <div v-if="$app.dev" class="col-12">
@@ -184,7 +189,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Tue Feb 13 2024
+ * Modified: Tue Feb 27 2024
  **/
 
 export default {
@@ -192,34 +197,47 @@ export default {
 
   data() {
     return {
+      db: {
+        recent: [],
+      },
+
       ui: {},
     }
   },
 
   computed: {
-    // ...mapStores(useDataStore, useStateStore),
-    ...mapState(useDataStore, ['latestGames']),
+    ...mapStores(useDataStore),
+    // ...mapState(useDataStore, ['recentlyAdded']),
     ...mapState(useStateStore, {
       states: 'list',
     }),
 
     latest() {
-      return this.latestGames.map((item) => item.uuid)
+      // return this.latestGames.map((item) => item.uuid)
+      return []
+    },
+  },
+
+  watch: {
+    '$app.ready': function () {
+      this.init()
     },
   },
 
   methods: {
-    init() {},
+    async getData() {
+      this.db.recent = this.dataStore.getRecentlyAdded(7)
+    },
+
+    init() {
+      if (!this.$app.ready) return
+
+      this.getData()
+    },
   },
 
   mounted() {
     this.init()
-    // This is just a test, ensures that i can do both
-    // this.userstore and this.$auth, and is reactive
-    // ...mapStores(useUserStore),
-    // this.userStore.isChecked = 'pepe'
-    // this.$auth.redirectTo = 'pepes'
-    // console.warn(JSON.stringify(this.userStore), JSON.stringify(this.$auth))
   },
 }
 </script>

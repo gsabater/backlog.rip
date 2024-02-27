@@ -130,11 +130,16 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 19th January 2024
- * Modified: Sun Feb 04 2024
+ * Modified: Tue Feb 27 2024
  **/
 
 export default {
   name: 'Onboarding',
+  setup() {
+    definePageMeta({
+      title: 'Welcome to Backlog.rip',
+    })
+  },
   data() {
     return {
       step: 0,

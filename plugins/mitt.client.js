@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Wed Feb 21 2024
+ * Modified: Tue Feb 27 2024
  */
 
 //+-------------------------------------------------
@@ -28,10 +28,10 @@ export default defineNuxtPlugin(() => {
   const emitter = mitt()
   window.$mitt = emitter
 
-  emitter.on('event', (e) => {
-    console.log('event', e)
-    console.log(emitter.all())
-  })
+  // emitter.on('event', (e) => {
+  //   console.log('event', e)
+  //   console.log(emitter.all())
+  // })
 
   return {
     provide: {

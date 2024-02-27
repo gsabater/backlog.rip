@@ -3,36 +3,82 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Wed Dec 20 2023
+ * Modified: Tue Feb 20 2024
  */
 
-let app = null
+let $nuxt = null
 
 export const useRepositoryStore = defineStore('repository', {
   state: () => ({
-    items: [],
+    _genres: [],
 
-    meta: {
-      time: 0,
-      timeout: 5 * 60 * 1000,
-      loading: false,
-    },
+    loaded: [],
   }),
 
   getters: {
-    // upper() {
-    //   return this.message.toUpperCase();
-    // },
+    //+-------------------------------------------------
+    // genres()
+    // Dynamically loads genres and returns data
+    // -----
+    // Created on Mon Feb 12 2024
+    //+-------------------------------------------------
+    genres() {
+      if (this._genres.length === 0) this.getGenres()
+      return this._genres
+    },
+
+    keyedGenres() {
+      let keyed = this.genres.reduce((obj, genre) => {
+        obj[genre.id] = genre
+        return obj
+      }, {})
+
+      return keyed
+    },
   },
 
   actions: {
     //+-------------------------------------------------
-    // topGames()
-    // Created on Wed Apr 26 2023
+    // getGenres()
+    // -----
+    // Created on Mon Jan 15 2024
     //+-------------------------------------------------
-    async topGames(params) {
-      const jxr = await app.$axios.get(`repository/top-games`)
-      if (jxr.status) return jxr.data
+    async getGenres() {
+      if (this.loaded.includes('genres')) return
+
+      const jxr = await $nuxt.$axios.get(`repository/genres.json`)
+      if (jxr.status) {
+        this.loaded.push('genres')
+        this._genres = jxr.data
+      }
+
+      log(
+        '❇️ Genres loaded',
+        `${jxr.data.length} genres loaded from API`,
+        jxr.data[Math.floor(Math.random() * jxr.data.length)]
+      )
+
+      return true
+    },
+
+    //+-------------------------------------------------
+    // getTop()
+    // -----
+    // Created on Wed Dec 20 2023
+    //+-------------------------------------------------
+    async getTop(batch) {
+      if (!batch) return
+      if (this.loaded.includes(`top:${batch}`)) return
+
+      const jxr = await $nuxt.$axios.get(`repository/top-${batch}.json`)
+      if (jxr.status) {
+        this.toData(jxr.data, 'api')
+        this.loaded.push(`top:${batch}`)
+      }
+    },
+
+    async init() {
+      if (!$nuxt) $nuxt = useNuxtApp()
     },
   },
 })

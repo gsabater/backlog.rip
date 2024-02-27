@@ -1,7 +1,7 @@
 <template>
   <div class="row g-2 align-items-center">
     <div class="col">
-      <h3>Account and settings</h3>
+      <h3>Preferences and account libraries</h3>
     </div>
   </div>
 
@@ -18,23 +18,23 @@
     <li class="nav-item">
       <NuxtLink to="/account/me" class="nav-link">
         <Icon class="me-2">Fingerprint</Icon>
-        Account settings
+        Your account
       </NuxtLink>
     </li>
 
     <li class="nav-item">
-      <NuxtLink to="/account/connected" class="nav-link">
-        <Icon class="me-2">UserCircle</Icon>
-        Connected accounts
+      <NuxtLink to="/account/linked" class="nav-link">
+        <Icon class="me-2">LayersLinked</Icon>
+        Linked libraries
       </NuxtLink>
     </li>
 
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <NuxtLink to="/account/history" class="nav-link">
         <Icon class="me-2">Clock</Icon>
         history
       </NuxtLink>
-    </li>
+    </li> -->
   </ul>
 
   <div class="hr-text">※※※</div>
@@ -49,6 +49,13 @@
       <NuxtLink to="/account/states" class="nav-link">
         <Icon class="me-2">Background</Icon>
         States
+      </NuxtLink>
+    </li>
+
+    <li class="nav-item">
+      <NuxtLink to="/account/database" class="nav-link">
+        <Icon class="me-2">Database</Icon>
+        Database
       </NuxtLink>
     </li>
     <!-- <li class="nav-item">

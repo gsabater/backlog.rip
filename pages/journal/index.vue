@@ -2,9 +2,19 @@
   <div class="page-body">
     <div class="container-xl">
       <div class="row justify-content-center">
-        <div class="col-6">
-          <h1>Journal</h1>
+        <div class="col-7">
+          <div class="row g-0">
+            <div class="col-6">
+              <h1>Journal</h1>
+            </div>
+            <div class="col-6 d-flex justify-content-end">
+              <div class="btn" @click="$refs.crud.create()">Add a new entry</div>
+            </div>
+          </div>
           <template v-for="(events, day) in journal" :key="'journal' + day">
+            <h2 v-if="events[0] && events[0].newMonth" class="capitalize">
+              {{ $moment(day).format('MMMM') }}
+            </h2>
             <div class="card mb-3">
               <div class="card-body">
                 <h3 class="card-title">{{ $moment(day).format('LL') }}</h3>
@@ -12,7 +22,7 @@
                   <template v-for="(item, i) in events" :key="'event' + i">
                     <li v-if="item" class="step-item">
                       <div v-if="item.event == 'log'">
-                        <div class="h4 m-0">
+                        <div class="h4 mb-1">
                           {{ _eventTitle(item) }}
                         </div>
                         <div class="text-secondary">
@@ -21,12 +31,18 @@
                       </div>
 
                       <div v-if="item.event == 'note'">
-                        <div class="h4 m-0">
-                          <Icon class="text-secondary" size="17">Note</Icon>
+                        <div class="h4 mb-1">
+                          <span
+                            style="transform: translateY(-1px); display: inline-block">
+                            <Icon class="text-secondary mr-1" size="18">Note</Icon>
+                          </span>
                           {{ _eventTitle(item) }}
                         </div>
-                        A note has been added for
-                        <GameChip :app="item.ref"></GameChip>
+                        <template v-if="item.ref">
+                          A note has been added for
+                          <GameChip :app="item.ref"></GameChip>
+                        </template>
+
                         <div v-if="item.data?.note" class="text-secondary">
                           <Icon>Quote</Icon>
                           {{ item.data.note }}
@@ -35,13 +51,17 @@
 
                       <div v-if="item.event == 'state'">
                         <div class="h4 mb-2">
-                          <Icon class="text-secondary" size="17">Background</Icon>
+                          <span
+                            style="transform: translateY(-1px); display: inline-block">
+                            <Icon class="text-secondary mr-1" size="18">Background</Icon>
+                          </span>
+
                           {{ _eventTitle(item) }}
                         </div>
 
                         <GameChip :app="item.ref"></GameChip>
 
-                        {{ item.data.old ? 'changed state from' : 'has been added to' }}
+                        {{ item.data.old ? 'changed state' : 'has been added to' }}
 
                         <BState
                           :state="item.data.state"
@@ -51,33 +71,21 @@
                       </div>
 
                       <div v-if="item.event == 'added'">
-                        <div class="h4 m-0">
+                        <div class="h4 mb-1">
                           <Icon class="text-secondary" size="17">StepInto</Icon>
                           {{ _eventTitle(item) }}
                         </div>
-                        Your library has been updated with
-                        {{ item.data.games.length }} new games
+                        You have updated your library with
+                        {{ item.data.games.length }} games
 
                         <gameList
                           :apps="item.data.games"
                           cols="3"
-                          max="12"
                           class="pt-3"></gameList>
-
-                        <div v-if="item.data.games.length > 12">
-                          <div class="text-secondary">
-                            <b-btn class="my-1">
-                              <Icon class="text-secondary me-2" size="12">
-                                PlusCircled
-                              </Icon>
-                              Show {{ item.data.games.length - 12 }} more
-                            </b-btn>
-                          </div>
-                        </div>
                       </div>
 
                       <small class="text-secondary d-inline-block border-top pt-2 mt-2">
-                        Entry added {{ item.created_at }}
+                        Entry added {{ dates.format(item.created_at, 'LL h:m:s') }}
                       </small>
 
                       <!-- <ul
@@ -111,6 +119,8 @@
       </div>
     </div>
   </div>
+
+  <journal-crud-dialog ref="crud" @stored="onStored" />
 </template>
 
 <script>
@@ -119,7 +129,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Mon Jan 08 2024
+ * Modified: Fri Feb 23 2024
  **/
 
 export default {
@@ -141,7 +151,17 @@ export default {
     ...mapState(useStateStore, ['states']),
   },
 
+  watch: {
+    '$app.ready': function () {
+      this.init()
+    },
+  },
+
   methods: {
+    onStored() {
+      this.init()
+    },
+
     get(uuid) {
       if (this.db.apps[uuid]) return this.db.apps[uuid]
 
@@ -163,6 +183,7 @@ export default {
       }
 
       if (item.event == 'note') {
+        if (item.data?.title) return item.data.title
         // const app = this.dataStore.get(item.ref)
         return `Note added`
       }
@@ -180,9 +201,12 @@ export default {
       const grouped = {}
 
       let prev = null
+      let prevMonth = null
+
       this.db.data.reverse().forEach((entry) => {
         // Extract the date part from the 'created_at' field
         const day = entry.created_at.split(' ')[0]
+        const month = entry.created_at.split('-')[1]
 
         // Initialize the array if this is the first entry for the day
         if (!grouped[day]) {
@@ -190,7 +214,12 @@ export default {
         }
 
         // Control duplicated
-        if (prev && prev.event == entry.event && prev.ref == entry.ref) {
+        if (
+          entry.event == 'state' &&
+          prev &&
+          prev.event == entry.event &&
+          prev.ref == entry.ref
+        ) {
           //take the previous item in the grouped[day] and update it
           const previous = grouped[day].pop()
 
@@ -209,9 +238,18 @@ export default {
           }
         }
 
+        if (entry.event == 'added') {
+          entry.show = 12
+        }
+
         // Add the entry to the appropriate day
         // entry.prev = prev
         grouped[day].push(entry)
+
+        if (prevMonth !== month) {
+          entry.newMonth = true
+          prevMonth = month
+        }
 
         prev = { ...entry }
         if (prev.prev) delete prev.prev
@@ -226,8 +264,9 @@ export default {
     },
 
     async init() {
-      await this.getData()
+      if (!this.$app.ready) return
 
+      await this.getData()
       this.groupByDay()
     },
   },

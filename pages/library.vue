@@ -8,7 +8,7 @@
         </div>
         <div class="col-auto ms-auto">
           <div class="text-secondary mt-1 text-right" style="text-align: right">
-            {{ source.count }} games
+            {{ format.num($app.count.library) }} games
             <!-- <br />
             <span class="text-muted" style="zoom: 0.8">(0.19 seconds)</span> -->
           </div>
@@ -30,7 +30,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th December 2023
- * Modified: Wed Jan 10 2024
+ * Modified: Mon Feb 12 2024
  **/
 
 export default {
@@ -38,7 +38,6 @@ export default {
     return {
       source: {
         is: 'library',
-        count: 0,
       },
     }
   },
@@ -48,9 +47,7 @@ export default {
   },
 
   methods: {
-    init() {
-      this.source.count = this.dataStore.count('library')
-    },
+    init() {},
   },
 
   mounted() {

@@ -6,3 +6,9 @@ node_modules
 .output
 .env
 dist
+
+.assets/P22 Mackinac.zip
+.assets/exports/*
+.assets/Mackinac/*
+pages/dev/wip.vue
+pages/dev/wip.vue

@@ -6,9 +6,9 @@
           <div class="page-pretitle">Browsing</div>
           <h2 class="page-title">All games</h2>
         </div>
-        <div v-if="source.count > 0" class="col-auto ms-auto">
+        <div class="col-auto ms-auto">
           <div class="text-secondary mt-1 text-right" style="text-align: right">
-            About ~{{ format.num(source.count) }} games
+            About ~{{ format.num($app.count.api) }} games
             <!-- <br />
             <span class="text-muted" style="zoom: 0.8">(0.19 seconds)</span> -->
           </div>
@@ -30,7 +30,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st November 2022
- * Modified: Wed Jan 10 2024
+ * Modified: Wed Feb 21 2024
  **/
 
 export default {
@@ -44,14 +44,19 @@ export default {
   },
 
   computed: {
-    // ...mapStores(useDataStore),
+    ...mapStores(useDataStore),
+  },
+
+  watch: {
+    '$app.ready': function () {
+      this.init()
+    },
   },
 
   methods: {
     init() {
-      window.setTimeout(() => {
-        this.source.count = this.$app.api?.games?.total
-      }, 1000)
+      if (!this.$app.ready) return
+      this.dataStore.loadApiStatus()
     },
   },
 

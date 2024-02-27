@@ -2,8 +2,8 @@
   <div
     v-if="!ui.isReady || (ui.isReady && ui.show)"
     ref="dropdown"
-    class="b-menu dropdown-menu dropdown-menu-arrow show"
-    :class="{ 'dropdown-menu-end': position == 'end' }"
+    class="b-menu dropdown-menu show"
+    :class="{ 'dropdown-menu-arrow': arrow, 'dropdown-menu-end': position == 'end' }"
     style="opacity: 0"
     :style="
       offsetX && opacity == 1
@@ -37,7 +37,7 @@
  * @desc:    https://preview.tabler.io/dropdowns.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Sat Jan 06 2024
+ * Modified: Tue Jan 16 2024
  **/
 
 export default {
@@ -70,6 +70,11 @@ export default {
       type: String,
       default: 'start',
       options: ['start', 'end'],
+    },
+
+    arrow: {
+      type: [Boolean, String],
+      default: true,
     },
   },
 
@@ -108,7 +113,7 @@ export default {
       if (this.position == 'start') {
         if (parent.x !== dropdown.x) {
           anchorX = parent.x - dropdown.x
-          // console.warn(parent.x, dropdown.x, anchorX, this.offsetX)
+          console.warn(parent.x, dropdown.x, anchorX, this.offsetX)
         } else {
           anchorX = 1
         }
@@ -117,7 +122,7 @@ export default {
       if (this.position == 'end') {
         if (parent.right !== dropdown.right) {
           anchorX = parent.right - dropdown.right
-          // console.warn(parent.right, dropdown.right, anchorX, this.offsetX)
+          console.warn(parent.right, dropdown.right, anchorX, this.offsetX)
         }
       }
 

@@ -1,3 +1,28 @@
 .modal-blur{
   background: -webkit-radial-gradient( 50% top,rgba(34,15,51,0.67) 0,rgba(20,24,31,0.92) 80% ),0 0;
+  backdrop-filter: blur(2px);
+}
+
+.modal-header{
+  border-bottom: none;
+  min-height: 2rem;
+  padding-top: 15px;
+
+  & .modal-title{
+    font-size: 1.2rem;
+  }
+
+}
+
+.modal-content{
+  background-color: #20212d;
+  // outline: 1px solid #54545f;
+  outline: 1px solid #353849;
+  outline-offset: -1px;
+}
+
+.modal-footer{
+  border-top: none;
+  padding-top: 0;
+  background-color: inherit;
 }

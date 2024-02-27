@@ -1,5 +1,23 @@
 <template>
   <div class="page">
+    <pre
+      v-if="$app.dev"
+      style="
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        z-index: 9999;
+        max-height: 90vh;
+        overflow-y: scroll;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+      "
+      @click="$app.dev = false"
+      >{{ $app }}</pre
+    >
+
     <!-- Sidebar -->
     <aside
       v-if="$app.layout.sidebar"
@@ -624,12 +642,13 @@
     <!-- Navbar -->
     <!-- <div class="sticky-top"> -->
     <header
-      class="navbar navbar-expand-md navbar-light none-sticky-top d-print-none"
+      class="navbar navbar-expand-md navbar-light d-print-none"
       style="max-height: 56px">
       <div class="container-xl">
-        <button class="navbar-toggler" @click="ui.showMobMenu = !ui.showMobMenu">
-          <span class="navbar-toggler-icon"></span>
+        <button class="d-md-none navbar-toggler" style="opacity: 0">
+          <Icon>MenuDeep</Icon>
         </button>
+
         <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pa-0">
           <NuxtLink to="/">
             <img
@@ -640,9 +659,77 @@
               class="navbar-brand-image d-none d-md-inline-block"
               style="height: auto; width: 100px; transform: translateY(15px)" />
           </NuxtLink>
-          <span nopestyle="transform: translate(-10px, 7px)">Backlog.rip</span>
+          <!-- <h1 data-heading="Backlog.rip">Backlog.rip</h1> -->
+          <span>Backlog.rip</span>
         </h1>
-        <div class="navbar-nav flex-row order-md-last">
+
+        <button class="navbar-toggler" style="opacity: 0.8" @click="ui.dialog = true">
+          <Icon size="25">LayoutSidebarRightInactive</Icon>
+        </button>
+
+        <!-- :content-transition="{
+            'enter-active-class': 'hunaa-menu-enter-active',
+            'enter-from-class': 'hunaa-menu-y-0',
+            'enter-to-class': 'hunaa-menu-full',
+            'leave-active-class': 'hunaa-menu-leave-active',
+            'leave-to-class': 'hunaa-menu-y-0',
+            'leave-from-class': 'hunaa-menu-full',
+          }" -->
+        <client-only>
+          <VueFinalModal
+            v-model="ui.dialog"
+            class="h-100"
+            content-class="h-100 ms-6 py-3"
+            content-transition="vfm-slide-right"
+            overlay-transition="vfm-fade"
+            swipe-to-close="right">
+            <div class="card h-100">
+              <div class="row g-0">
+                <div class="col-12 col-md-3 border-end">
+                  <div class="card-body">
+                    <h4 class="subheader">Business settings</h4>
+                    <div class="list-group list-group-transparent">
+                      <a
+                        href="./settings.html"
+                        class="list-group-item list-group-item-action d-flex align-items-center active">
+                        My Account
+                      </a>
+                      <a
+                        href="#"
+                        class="list-group-item list-group-item-action d-flex align-items-center">
+                        My Notifications
+                      </a>
+                      <a
+                        href="#"
+                        class="list-group-item list-group-item-action d-flex align-items-center">
+                        Connected Apps
+                      </a>
+                      <a
+                        href="./settings-plan.html"
+                        class="list-group-item list-group-item-action d-flex align-items-center">
+                        Plans
+                      </a>
+                      <a
+                        href="#"
+                        class="list-group-item list-group-item-action d-flex align-items-center">
+                        Billing &amp; Invoices
+                      </a>
+                    </div>
+                    <h4 class="subheader mt-4">Experience</h4>
+                    <div class="list-group list-group-transparent">
+                      <a href="#" class="list-group-item list-group-item-action">
+                        Give Feedback
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </VueFinalModal>
+        </client-only>
+
+        <div
+          class="d-none d-md-flex navbar-nav flex-row order-md-last align-items-center">
           <!-- <div v-if="!$auth.isLogged" class="nav-item d-none d-md-flex me-3">
             <div class="btn-list">
               <NuxtLink to="/login" class="btn btn-purple">
@@ -652,282 +739,73 @@
             </div>
           </div> -->
 
-          <div class="d-none d-md-flex mx-3">
+          <div class="mx-3">
             <div
-              v-tippy="'Enable dark mode'"
-              class="nav-link px-0 hide-theme-dark"
+              xv-tippy="'Enable dark mode'"
+              class="nav-link cursor-pointer px-0 hide-theme-dark"
               @click="changeTheme('dark')">
               <Icon>Moon</Icon>
             </div>
 
             <div
-              v-tippy="'Enable light mode'"
-              class="nav-link px-0 hide-theme-light"
+              xv-tippy="'Enable light mode'"
+              class="nav-link cursor-pointer px-0 hide-theme-light"
               @click="changeTheme('light')">
               <Icon>Sun</Icon>
             </div>
-
-            <div class="nav-item dropdown me-3 d-none noped-md-flex">
-              <a
-                href="#"
-                class="nav-link px-0"
-                data-bs-toggle="dropdown"
-                tabindex="-1"
-                aria-label="Show notifications">
-                <Icon>Bell</Icon>
-                <!-- Download SVG icon from http://tabler-icons.io/i/bell -->
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="icon"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                  stroke="currentColor"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round">
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path
-                    d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
-                  <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
-                </svg>
-                <span class="badge bg-red"></span>
-              </a>
-              <div
-                class="dropdown-menu dropdown-menu-arrow dropdown-menu-end dropdown-menu-card">
-                <div class="card">
-                  <div class="card-header">
-                    <h3 class="card-title">Last updates</h3>
-                  </div>
-                  <div class="list-group list-group-flush list-group-hoverable">
-                    <div class="list-group-item">
-                      <div class="row align-items-center">
-                        <div class="col-auto">
-                          <span
-                            class="status-dot status-dot-animated bg-red d-block"></span>
-                        </div>
-                        <div class="col text-truncate">
-                          <a href="#" class="text-body d-block">Example 1</a>
-                          <div class="d-block text-muted text-truncate mt-n1">
-                            Change deprecated html tags to text decoration classes
-                            (#29604)
-                          </div>
-                        </div>
-                        <div class="col-auto">
-                          <a href="#" class="list-group-item-actions">
-                            <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="icon text-muted"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              stroke-width="2"
-                              stroke="currentColor"
-                              fill="none"
-                              stroke-linecap="round"
-                              stroke-linejoin="round">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                              <path
-                                d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
-                            </svg>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="list-group-item">
-                      <div class="row align-items-center">
-                        <div class="col-auto">
-                          <span class="status-dot d-block"></span>
-                        </div>
-                        <div class="col text-truncate">
-                          <a href="#" class="text-body d-block">Example 2</a>
-                          <div class="d-block text-muted text-truncate mt-n1">
-                            justify-content:between ⇒ justify-content:space-between
-                            (#29734)
-                          </div>
-                        </div>
-                        <div class="col-auto">
-                          <a href="#" class="list-group-item-actions show">
-                            <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="icon text-yellow"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              stroke-width="2"
-                              stroke="currentColor"
-                              fill="none"
-                              stroke-linecap="round"
-                              stroke-linejoin="round">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                              <path
-                                d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
-                            </svg>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="list-group-item">
-                      <div class="row align-items-center">
-                        <div class="col-auto">
-                          <span class="status-dot d-block"></span>
-                        </div>
-                        <div class="col text-truncate">
-                          <a href="#" class="text-body d-block">Example 3</a>
-                          <div class="d-block text-muted text-truncate mt-n1">
-                            Update change-version.js (#29736)
-                          </div>
-                        </div>
-                        <div class="col-auto">
-                          <a href="#" class="list-group-item-actions">
-                            <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="icon text-muted"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              stroke-width="2"
-                              stroke="currentColor"
-                              fill="none"
-                              stroke-linecap="round"
-                              stroke-linejoin="round">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                              <path
-                                d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
-                            </svg>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="list-group-item">
-                      <div class="row align-items-center">
-                        <div class="col-auto">
-                          <span
-                            class="status-dot status-dot-animated bg-green d-block"></span>
-                        </div>
-                        <div class="col text-truncate">
-                          <a href="#" class="text-body d-block">Example 4</a>
-                          <div class="d-block text-muted text-truncate mt-n1">
-                            Regenerate package-lock.json (#29730)
-                          </div>
-                        </div>
-                        <div class="col-auto">
-                          <a href="#" class="list-group-item-actions">
-                            <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="icon text-muted"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              stroke-width="2"
-                              stroke="currentColor"
-                              fill="none"
-                              stroke-linecap="round"
-                              stroke-linejoin="round">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                              <path
-                                d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
-                            </svg>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- <div
-              class="nav-link px-0 hide-theme-dark"
-              data-bs-toggle="tooltip"
-              data-bs-placement="bottom"
-              aria-label="Enable dark mode"
-              data-bs-original-title="Enable dark mode">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon icon-tabler icon-tabler-brand-discord-filled"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path
-                  d="M14.983 3l.123 .006c2.014 .214 3.527 .672 4.966 1.673a1 1 0 0 1 .371 .488c1.876 5.315 2.373 9.987 1.451 12.28c-1.003 2.005 -2.606 3.553 -4.394 3.553c-.732 0 -1.693 -.968 -2.328 -2.045a21.512 21.512 0 0 0 2.103 -.493a1 1 0 1 0 -.55 -1.924c-3.32 .95 -6.13 .95 -9.45 0a1 1 0 0 0 -.55 1.924c.717 .204 1.416 .37 2.103 .494c-.635 1.075 -1.596 2.044 -2.328 2.044c-1.788 0 -3.391 -1.548 -4.428 -3.629c-.888 -2.217 -.39 -6.89 1.485 -12.204a1 1 0 0 1 .371 -.488c1.439 -1.001 2.952 -1.459 4.966 -1.673a1 1 0 0 1 .935 .435l.063 .107l.651 1.285l.137 -.016a12.97 12.97 0 0 1 2.643 0l.134 .016l.65 -1.284a1 1 0 0 1 .754 -.54l.122 -.009zm-5.983 7a2 2 0 0 0 -1.977 1.697l-.018 .154l-.005 .149l.005 .15a2 2 0 1 0 1.995 -2.15zm6 0a2 2 0 0 0 -1.977 1.697l-.018 .154l-.005 .149l.005 .15a2 2 0 1 0 1.995 -2.15z"
-                  stroke-width="0"
-                  fill="currentColor"></path>
-              </svg>
-            </div> -->
           </div>
 
-          <div class="nav-item dropdown d-none">
+          <div class="d-none d-md-block nav-item dropdown align-self-center">
             <div class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
               <span
                 class="avatar avatar-sm"
-                :style="`background-image: url(${$auth.user.avatar})`">
+                :style="
+                  $auth.user.avatar ? `background-image: url(${$auth.user.avatar})` : ''
+                ">
                 {{ !$auth.user.avatar ? $auth.user.username[0] : '' }}
               </span>
               <div class="d-none d-xl-block ps-2">
                 <div>{{ $auth.user.username }}</div>
-                <div class="mt-1 small text-muted">UI Designer</div>
               </div>
+              <b-dropdown placement="bottom-end">
+                <NuxtLink to="/library" class="dropdown-item">
+                  Library
+                  <span class="badge ms-auto me-0">
+                    {{ $app.count.library }}
+                  </span>
+                </NuxtLink>
+                <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
+                <div class="dropdown-divider"></div>
+                <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
+              </b-dropdown>
             </div>
-            <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-              <a href="#" class="dropdown-item">Status</a>
-              <a href="#" class="dropdown-item">Profile</a>
-              <a href="#" class="dropdown-item">Feedback</a>
+            <!-- <b-menu ref="menu" position="end">
+              <a href="./sign-in.html" class="dropdown-item">Logout</a>
               <div class="dropdown-divider"></div>
-              <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
-
-              <!-- <a href="./sign-in.html" class="dropdown-item">Logout</a> -->
-            </div>
-          </div>
-
-          <div class="nav-item dropdown d-block align-self-center">
-            <div class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
-              <span
-                class="avatar avatar-sm"
-                :style="`background-image: url(${$auth.user.avatar})`">
-                {{ !$auth.user.avatar ? $auth.user.username[0] : '' }}
-              </span>
-              <div class="d-none d-xl-block ps-2">
-                <div>{{ $auth.user.username }}</div>
-                <!-- <div class="mt-1 small text-muted">UI Designer</div> -->
-              </div>
-            </div>
-            <b-menu ref="menu" position="end">
-              <div class="dropdown-item">
-                Library
-                <span class="badge bg-primary text-primary-fg ms-auto">12</span>
-              </div>
-              <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
-              <div class="dropdown-divider"></div>
-              <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
-              <!-- <a href="./sign-in.html" class="dropdown-item">Logout</a> -->
-              <!-- <div class="dropdown-divider"></div>
-              <div class="dropdown-item">Upgrade to Pro</div> -->
-            </b-menu>
-            <!-- <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-
-            </div> -->
+              <div class="dropdown-item">Upgrade to Pro</div>
+            </b-menu> -->
           </div>
         </div>
       </div>
     </header>
+
     <Navigation :show-mob-menu="ui.showMobMenu"></Navigation>
+
     <!-- </div> -->
     <div class="page-wrapper">
       <NuxtLoadingIndicator />
       <!-- <div class="ch"></div> -->
+      <div id="detailPage" class="hide-theme-light">
+        <div id="detailCanvas" class="">
+          <div class="bg_gradient_body">
+            <div class="bg_gradient_large"></div>
+            <div class="bg_gradient_small"></div>
+          </div>
+        </div>
+      </div>
+
       <slot />
+
       <footer class="footer footer-transparent d-print-none">
         <div class="container-xl">
           <div class="row text-center align-items-center flex-row-reverse">
@@ -1008,11 +886,84 @@
     </div>
   </div>
 
-  <game-details></game-details>
-  <game-manager></game-manager>
-  <b-backdrop></b-backdrop>
-  <Toaster position="top-right" />
-  <SpeedInsights />
+  <client-only>
+    <game-details></game-details>
+    <game-manager></game-manager>
+    <!-- <b-backdrop></b-backdrop> -->
+    <ModalsContainer />
+
+    <Toaster
+      position="bottom-right"
+      close-button
+      rich-colors
+      :theme="ui.theme"
+      nopetoast-options="{
+      style: { background: '#fda4af' },
+      className: 'card',
+      descriptionClassName: 'my-toast-description',
+    }" />
+
+    <SpeedInsights v-if="!$app.dev" />
+
+    <component :is="'style'" id="dynamic-style" type="text/css">
+      <template v-if="!$app.dev">pre{ display: none !important; }</template>
+    </component>
+  </client-only>
+
+  <svg width="0" height="0" style="display: none">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".837"></feTurbulence>
+      <feColorMatrix type="saturate" values="0"></feColorMatrix>
+      <feBlend mode="multiply" in="SourceGraphic"></feBlend>
+    </filter>
+  </svg>
+
+  <div
+    class="btn"
+    style="
+      position: fixed;
+      bottom: 18px;
+      left: 18px;
+      padding: 16px;
+      /* background: #ffffff14; */
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-family: cursive;
+      box-shadow: 0px 0px 7px 1px #00000029;
+    ">
+    ?
+    <b-dropdown placement="top-start">
+      <a class="dropdown-item" href="https://discord.gg/F2sPE5B" target="_blank">
+        <svg
+          class="me-2"
+          width="18"
+          height="18"
+          viewBox="0 -28.5 256 256"
+          version="1.1"
+          preserveAspectRatio="xMidYMid">
+          <g>
+            <path
+              d="M216.856339,16.5966031 C200.285002,8.84328665 182.566144,3.2084988 164.041564,0 C161.766523,4.11318106 159.108624,9.64549908 157.276099,14.0464379 C137.583995,11.0849896 118.072967,11.0849896 98.7430163,14.0464379 C96.9108417,9.64549908 94.1925838,4.11318106 91.8971895,0 C73.3526068,3.2084988 55.6133949,8.86399117 39.0420583,16.6376612 C5.61752293,67.146514 -3.4433191,116.400813 1.08711069,164.955721 C23.2560196,181.510915 44.7403634,191.567697 65.8621325,198.148576 C71.0772151,190.971126 75.7283628,183.341335 79.7352139,175.300261 C72.104019,172.400575 64.7949724,168.822202 57.8887866,164.667963 C59.7209612,163.310589 61.5131304,161.891452 63.2445898,160.431257 C105.36741,180.133187 151.134928,180.133187 192.754523,160.431257 C194.506336,161.891452 196.298154,163.310589 198.110326,164.667963 C191.183787,168.842556 183.854737,172.420929 176.223542,175.320965 C180.230393,183.341335 184.861538,190.991831 190.096624,198.16893 C211.238746,191.588051 232.743023,181.531619 254.911949,164.955721 C260.227747,108.668201 245.831087,59.8662432 216.856339,16.5966031 Z M85.4738752,135.09489 C72.8290281,135.09489 62.4592217,123.290155 62.4592217,108.914901 C62.4592217,94.5396472 72.607595,82.7145587 85.4738752,82.7145587 C98.3405064,82.7145587 108.709962,94.5189427 108.488529,108.914901 C108.508531,123.290155 98.3405064,135.09489 85.4738752,135.09489 Z M170.525237,135.09489 C157.88039,135.09489 147.510584,123.290155 147.510584,108.914901 C147.510584,94.5396472 157.658606,82.7145587 170.525237,82.7145587 C183.391518,82.7145587 193.761324,94.5189427 193.539891,108.914901 C193.539891,123.290155 183.391518,135.09489 170.525237,135.09489 Z"
+              fill="#5865F2"
+              fill-rule="nonzero"></path>
+          </g>
+        </svg>
+        Discord
+      </a>
+      <a
+        href="https://github.com/gsabater/backlog.rip"
+        class="dropdown-item"
+        target="_blank">
+        <Icon size="18" class="me-2">BrandGithub</Icon>
+        Code on Github
+      </a>
+    </b-dropdown>
+  </div>
 
   <!-- <div>
     <nav>
@@ -1048,14 +999,10 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed Jan 10 2024
+ * Modified: Tue Feb 27 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'
-
-// const app = useNuxtApp()
-// const $auth = useUserStore()
-// const repository = useRepositoryStore()
 
 export default {
   name: 'DefaultLayout',
@@ -1063,56 +1010,48 @@ export default {
     SpeedInsights,
   },
 
-  setup() {
-    const ui = reactive({
-      theme: 'light',
-      dialog: false,
-      showMobMenu: false,
-    })
+  // setup() {
+  //   const ui = reactive({
+  //     theme: 'dark', // 'light',
+  //     dialog: false,
+  //     showMobMenu: false,
+  //   })
 
-    useHead({
-      title: 'Backlog.rip',
+  //   return {
+  //     ui,
+  //   }
+  // },
 
-      bodyAttrs: {
-        'class': 'antialiased',
-        'data-bs-theme': ui.theme.value,
-      },
-
-      script: [
-        {
-          // src: "../node_modules/@tabler/core/dist/js/tabler.js",
-          // src: 'https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js',
-          // src: '../node_modules/@tabler/core/dist/tabler.js',
-          // body: true,
-        },
-      ],
-
-      link: [],
-    })
-
-    return {
-      ui,
-    }
-  },
   data() {
-    return {}
+    return {
+      ui: {
+        theme: 'dark', // 'light',
+        dialog: false,
+        showMobMenu: false,
+      },
+    }
   },
 
   computed: {
-    ...mapStores(useDataStore),
+    // ...mapStores(useDataStore),
   },
 
   methods: {
     changeTheme(theme) {
       this.ui.theme = theme
-      document.body.setAttribute('data-bs-theme', theme)
+      if (document?.body) document.body.setAttribute('data-bs-theme', theme)
+    },
+
+    mobileMenu() {
+      this.ui.showMobMenu = !this.ui.showMobMenu
     },
   },
 
-  created() {
+  mounted() {
+    this.$app.initClient()
     this.$mitt.on('*', (e, payload) => {
       log('🎆 Fired event', e, payload)
-      console.info(this.$mitt.all)
+      // console.info(this.$mitt.all)
     })
 
     this.$mitt.on('app:render', () => {
@@ -1121,12 +1060,76 @@ export default {
   },
 }
 
-// function changeTheme(theme) {
-//   ui.theme = theme
-//   document.body.setAttribute('data-bs-theme', theme)
-// }
-
 // onMounted(() => {
 //   // getDB('top-games')
 // })
 </script>
+
+<style>
+[aioli-drawer],
+[vaul-drawer] {
+  position: fixed;
+  background-color: white;
+  /*
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(229 231 235);
+  pointer-events: auto; */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  max-height: 93%;
+  margin: 0 -1px;
+}
+
+[aioli-drawer] {
+  touch-action: none;
+  transform: translate3d(0, 100%, 0);
+  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+[aioli-drawer][aioli-visible='true'] {
+  transform: translateZ(0);
+  transform: translate3d(0, var(--snap-point-height, 0), 0);
+}
+
+[aioli-overlay] {
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+[aioli-overlay] {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.4);
+  inset: 0;
+}
+
+.aioli-dragging .aioli-scrollable {
+  overflow-y: hidden !important;
+}
+
+[aioli-overlay][aioli-visible='true'] {
+  opacity: 1;
+  opacity: var(--drag-percent, 1);
+}
+
+[aioli-drawer]:after {
+  background: inherit;
+  background-color: inherit;
+  content: '';
+  height: 200%;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 100%;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [aioli-drawer] {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+}
+</style>

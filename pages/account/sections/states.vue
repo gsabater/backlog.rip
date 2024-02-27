@@ -1,93 +1,32 @@
 <template>
-  <div class="card">
+  <div class="card mb-3" style="padding: 1rem">
     <div class="card-body">
-      <h2 class="mb-4">Account</h2>
-      <!-- <p>This is your information and personal settings</p> -->
-      <!-- <h3 class="card-title">Profile Details</h3> -->
-      <!-- <div class="row align-items-center">
-        <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url(./static/avatars/000m.jpg)"></span>
-        </div>
-        <div class="col-auto"><a href="#" class="btn">
-            Change avatar
-          </a></div>
-        <div class="col-auto"><a href="#" class="btn btn-ghost-danger">
-            Delete avatar
-          </a></div>
-      </div> -->
-      <!-- <h3 class="card-title mt-4">Business Profile</h3> -->
-      <div class="row g-3">
-        <div class="col-md nope-col-lg-8">
-          <!-- <div class="form-label">Username</div> -->
-          <h3 class="card-title my-1">Username</h3>
-          <!-- <b-input
-            v-model="user.username"
-            hint="This is only your preferred profile name"
-            @change="update" /> -->
-        </div>
-
-        <!-- <div class="col-12">
-          <b-btn @click="ins">Update profile</b-btn>
-          <pre>
-            {{ user }}
-          </pre>
-        </div> -->
-        <!-- </div>
-      <h3 class="card-title mt-4">Email</h3>
-      <p class="card-subtitle">
-        This contact will be shown to others publicly, so choose it carefully.
-      </p>
       <div>
-        <div class="row g-2">
-          <div class="col-auto">
-            <input
-              type="text"
-              class="form-control w-auto"
-              value="paweluna@howstuffworks.com" />
-          </div>
-          <div class="col-auto"><a href="#" class="btn">Change</a></div>
+        <div class="d-flex mb-3">
+          <h1 class="m-0">Your states</h1>
         </div>
       </div>
-      <h3 class="card-title mt-4">Password</h3>
-      <p class="card-subtitle">
-        You can set a permanent password if you don't want to use temporary login codes.
+      <p>
+        Here you can manage the states used to categorize your games. You can create new
+        states, edit existing ones, and delete them. You can also change the order in
+        which they appear in the dropdown menu.
       </p>
-      13956300
-      <div>
-        <a href="#" class="btn">Set new password</a>
-      </div>
-      <h3 class="card-title mt-4">Public profile</h3>
-      <p class="card-subtitle">
-        Making your profile public means that anyone on the Dashkit network will be able
-        to find you.
+      <p>
+        Some States are special and cannot be deleted. These are the states that are used
+        to generate personalized recommendations and statistics.
       </p>
-      <div>
-        <label class="form-check form-switch form-switch-lg">
-          <input class="form-check-input" type="checkbox" />
-          <span class="form-check-label form-check-label-on">
-            You're currently visible
-          </span>
-          <span class="form-check-label form-check-label-off">
-            You're currently invisible
-          </span>
-        </label> -->
+      <div class="mt-2">
+        <a class="btn btn-primary px-5" @click="$refs.crud.create()">
+          Create a new state
+        </a>
       </div>
-    </div>
-    <div class="card-footer">
-      Last updated { { user.updated_at } }
-      <br />
-      Reset defaults
     </div>
   </div>
 
-  <pre v-if="$states.value">
-    {{ $states.value[0] }}
-  </pre>
   <div class="card">
     <div class="card-body">
-      <div v-if="$states.value">
-        <div
-          v-for="item in $states.value.sort((a, b) => a.order - b.order)"
-          :key="item.id">
+      <div v-if="states.length">
+        <div v-for="(item, i) in states" :key="item.id">
           <div v-if="item" class="row">
             <div class="col-auto">
               <!-- <span class="form-colorinput-color bg-lime"></span>
@@ -102,11 +41,14 @@
               </div>
               <div class="text-secondary">
                 {{ item.description }}
-                <span v-if="item.key" class="badge">This is your {{ key }}</span>
+                <span v-if="item.key" class="badge">
+                  This is your {{ item.key }}. It represents a unique state utilized for
+                  generating personalized recommendations and statistics.
+                </span>
               </div>
             </div>
             <div class="col-auto align-self-center">
-              <div>
+              <!-- <div>
                 <b-btn class="p-2 me-2">
                   <Icon>Pencil</Icon>
                 </b-btn>
@@ -118,23 +60,45 @@
                 <b-btn class="p-2">
                   <Icon>ChevronDown</Icon>
                 </b-btn>
-              </div>
+              </div> -->
               <div>
                 <div class="d-flex">
-                  <a v-tippy="'Move upwards'" href="#" class="btn-action">
+                  <span
+                    v-tippy="'Move upwards'"
+                    class="btn-action cursor-pointer"
+                    @click="sort('up', item.id)">
                     <Icon class="icon">ChevronUp</Icon>
-                  </a>
-                  <a v-tippy="'Move downwards'" href="#" class="btn-action">
+                  </span>
+                  <span
+                    v-tippy="'Move downwards'"
+                    class="btn-action cursor-pointer"
+                    @click="sort('down', item.id)">
                     <Icon class="icon">ChevronDown</Icon>
-                  </a>
+                  </span>
 
-                  <a v-tippy="'Edit this state'" href="#" class="btn-action">
+                  <span
+                    v-tippy="'Edit this state'"
+                    class="btn-action cursor-pointer"
+                    :class="{ disabled: item.key }"
+                    @click="edit(item)">
                     <Icon class="icon">Pencil</Icon>
-                  </a>
+                  </span>
 
-                  <a v-tippy="'Delete'" href="#" class="btn-action">
-                    <Icon class="icon" color="red">Trash</Icon>
-                  </a>
+                  <template v-if="item.key">
+                    <span v-tippy="'This state cannot be deleted'" class="btn-action">
+                      <Icon class="icon" color="red">TrashOff</Icon>
+                    </span>
+                  </template>
+
+                  <template v-else>
+                    <span
+                      v-tippy="'Delete'"
+                      class="btn-action cursor-pointer"
+                      :class="{ disabled: item.key }"
+                      @click="remove(item.id)">
+                      <Icon class="icon" color="red">Trash</Icon>
+                    </span>
+                  </template>
                 </div>
               </div>
             </div>
@@ -144,6 +108,12 @@
       </div>
     </div>
   </div>
+
+  <states-crud-dialog
+    ref="crud"
+    @close="selected = null"
+    @stored="$forceUpdate()"
+    @deleted="$forceUpdate()" />
 </template>
 
 <script>
@@ -152,37 +122,51 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Wed Jan 03 2024
+ * Modified: Thu Jan 18 2024
  **/
 
-import { liveQuery } from 'dexie'
-import { useObservable } from '@vueuse/rxjs'
+// import { liveQuery } from 'dexie'
+// import { useObservable } from '@vueuse/rxjs'
 
 export default {
   name: 'AccountStates',
 
   data() {
-    return {
-      // db: {
-      //   states: [],
-      // },
-    }
+    return {}
   },
 
   computed: {
-    //+-------------------------------------------------
-    // $states
-    // Live query of Dexie states table.
-    // -----
-    // Created on Wed Jan 03 2024
-    //+-------------------------------------------------
-    $states() {
-      if (!this.$db?.states) return []
-      return useObservable(liveQuery(() => this.$db.states.toArray()))
-    },
+    ...mapStores(useStateStore),
+    ...mapState(useStateStore, ['states']),
+
+    // //+-------------------------------------------------
+    // // $states
+    // // Live query of Dexie states table.
+    // // -----
+    // // Created on Wed Jan 03 2024
+    // //+-------------------------------------------------
+    // $states() {
+    //   if (!this.$db?.states) return []
+    //   return useObservable(liveQuery(() => this.$db.states.toArray()))
+    // },
   },
 
   methods: {
+    sort(direction, id) {
+      this.stateStore.sortState(direction, id)
+    },
+
+    edit(item) {
+      this.$refs.crud.edit(item)
+    },
+
+    remove(id) {
+      this.stateStore.delete(id)
+      this.$toast.success('The state has been deleted', {
+        description: 'Monday, January 3rd at 6:00pm',
+      })
+    },
+
     async ins() {
       await this.$db.config.put(
         {

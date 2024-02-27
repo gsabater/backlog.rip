@@ -1,2 +1,21 @@
-$primary: #49240f;
-$secondary: #e4a79d;
+body {
+}
+
+[data-bs-theme='dark'] {
+  --tblr-primary: rgb(124, 58, 237);
+
+  --tblr-body-bg: #191a22;
+
+  --tblr-bg-surface: #2c2e3bef;
+  --tblr-bg-surface-tertiary: #202231ef;
+
+  --tblr-bg-forms: #191a22;
+  --tblr-border-color: #2a2d39;
+
+  --tblr-active-bg: rgb(13 6 24 / 17%);
+  --tblr-link-hover-color: var(--tblr-primary);
+}
+
+::root {
+  --tblr-scrollbar-color: #e9ecef;
+}

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Wed Jan 10 2024
+ * Modified: Tue Feb 20 2024
  */
 
 export default {
@@ -13,13 +13,10 @@ export default {
   // -----
   // Created on Tue Jan 09 2024
   //+-------------------------------------------------
-  filter(source, filters) {
-    let logged = 5
+  filter(source, filters, extra) {
     let items = []
     let toSort = []
-
-    console.time('Filter')
-    const start = performance.now()
+    let filtered = []
 
     for (const uuid in source) {
       const app = source[uuid]
@@ -28,26 +25,36 @@ export default {
       // Remove any games ignored
       //+---------------------------------------
       if (app.is?.ignored) {
-        if (logged > 0) {
-          console.warn('🛑 Skipping ignored app', app.name, app)
-          logged--
-        }
+        filtered.push(uuid)
+        // console.warn('🛑 Skipping ignored app', app.name, app)
+
         continue
       }
 
       // Filter: Backlog state
-      // Match with on app.state
+      // Match with app.state
       //+---------------------------------------
-      if (filters?.state) {
-        if (app.state !== filters.state) {
-          if (logged > 0) {
-            console.warn('🛑 Skipping as not in state', filters.state, app.name)
-            logged--
-          }
+      if (filters?.states?.length) {
+        if (!filters.states.includes(app.state)) {
+          // if (app.state !== filters.state) {
+          filtered.push(uuid)
+          // console.warn('🛑 Skipping as not in state', filters.state, app.name)
 
           continue
         }
       }
+
+      // This should be a check "Show only owned games"
+      // if (extra?.source == 'library' && filters?.state == null) {
+      //   if (!app.is?.owned) {
+      //     if (logged > 0) {
+      //       console.warn('🛑 Skipping because game is not owned', app.name)
+      //       logged--
+      //     }
+
+      //     continue
+      //   }
+      // }
 
       // Filter: Name
       // Match with on app.name and steam_id
@@ -58,24 +65,36 @@ export default {
 
         if (
           appName.indexOf(filters.string) === -1 &&
-          app.steam_id.toString() !== filters.string
+          app.steam_id?.toString() !== filters.string
         ) {
           // counters.skip++
           // data.hidden.string.push(steam_id)
 
-          if (logged > 0) {
-            console.warn(
-              '🛑 Skipping: String not found in name',
-              filters.string,
-              app.name
-            )
-            logged--
-          }
+          filtered.push(uuid)
+          // console.warn(
+          //   '🛑 Skipping: String not found in name',
+          //   filters.string,
+          //   app.name
+          // )
+
           continue
         }
       }
 
-      // Finally, add the app to items
+      // Filter: Genres
+      // Include only apps with genres
+      //+---------------------------------------
+      if (filters?.genres?.length) {
+        if (!app.genres?.some((item) => filters?.genres.includes(item))) {
+          filtered.push(uuid)
+          // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
+
+          continue
+        }
+      }
+
+      // Finally,
+      // Modify and add the app to items
       //+---------------------------------------
       items.push(uuid)
 
@@ -87,7 +106,7 @@ export default {
       }
 
       if (filters?.sortBy == 'score') {
-        toSort.push({ uuid, score: app.score || 0 })
+        toSort.push({ uuid, score: app._?.score || 0 })
       }
 
       if (filters?.sortBy == 'playtime') {
@@ -99,31 +118,30 @@ export default {
       }
     }
 
-    console.timeEnd('Filter')
-    const end = performance.now()
-
     log(
       '✅ Filter done (amount, first, data[first])',
       items.length,
       items[0],
       window.db?.d?.[items[0]]
     )
-    // this.stats.time = end - start
 
-    // log('🌈 Dropping stats', this.stats, filters)
+    let sorted = this.sort(toSort, filters)
 
-    return this.sort(toSort, filters)
+    return {
+      items: sorted,
+      results: items.length,
+      filtered: filtered.length,
+    }
   },
 
   //+-------------------------------------------------
-  // function()
-  //
+  // sort()
+  // Sorts the items based on the sortBy criteria
   // -----
   // Created on Wed Jan 10 2024
   //+-------------------------------------------------
-
   sort(items, filters) {
-    log('💎 Search: Sorting', filters.sortBy)
+    log('🔸 Sorting results by', filters.sortBy)
 
     // SortBy: name
     // Using app.name
@@ -159,5 +177,32 @@ export default {
     const start = (page - 1) * perPage
     const end = start + perPage
     return items.slice(0, end)
+  },
+
+  //+-------------------------------------------------
+  // underScore()
+  // Calculates a new underlying score based on the amount
+  // of reviews and the median score
+  // -----
+  // Created on Mon Feb 12 2024
+  //+-------------------------------------------------
+  underScore(app) {
+    // TODO: use the method in $gameStore instead
+    let score = app.score || 0
+
+    // Avoid very high scores not verified
+    if (app.score > 96 && !app.scores) score = 60
+
+    // Reduce the final score there is not score count
+    // We cannot verify that the score is real
+    if (!app.scores) score = score - 10
+
+    // Reduce the final score if the amount of reviews is low
+    // if (app.scores?.steamCount < 100) score = score * 0.6
+    // else if (app.scores?.steamCount < 1000) score = score * 0.8
+
+    if (app.scores?.igdbCount < 100) score = score - 10
+
+    return score
   },
 }

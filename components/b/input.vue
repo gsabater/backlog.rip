@@ -1,8 +1,9 @@
 <template>
-  <pre v-if="false">
+  <!-- <pre>
   layout: {{ layout }}
   Attrs: {{ $attrs }}
-  </pre>
+  vuelidate: {{ v$ }}
+  </pre> -->
 
   <!--
     Default layout
@@ -22,9 +23,11 @@
       nupdate:modelValue="notify"
       @input="onChange" />
 
-    <div v-if="hint" class="small text-secondary">
+    <small v-if="hint" class="form-hint">
       {{ hint }}
-    </div>
+    </small>
+
+    <div v-if="hasErrors" class="invalid-feedback">{{ errorMessage }}</div>
   </template>
 
   <!--
@@ -100,7 +103,7 @@
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Thu Jan 25 2024
  **/
 
 export default {
@@ -135,6 +138,11 @@ export default {
     hint: {
       type: String,
       default: '',
+    },
+
+    v$: {
+      type: Object,
+      default: null,
     },
 
     required: {
@@ -199,7 +207,16 @@ export default {
     colorAndVariant() {
       let className = 'form-control'
       if (this.size !== 'regular') className += ` form-control-${this.size}`
+      if (this.hasErrors) className += ' is-invalid'
       return className
+    },
+
+    hasErrors() {
+      return this.v$?.$errors?.length || this.v$?.$silentErrors?.length
+    },
+
+    errorMessage() {
+      return this.v$?.$errors?.[0]?.$message || this.v$?.$silentErrors?.[0]?.$message
     },
   },
 
@@ -210,6 +227,10 @@ export default {
   // },
 
   methods: {
+    touch() {
+      if (this.v$) this.v$.$touch()
+    },
+
     //+-------------------------------------------------
     // onChange()
     // Emits 'update:modelValue' that updates the v-model

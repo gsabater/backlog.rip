@@ -43,7 +43,7 @@ import { useJournalStore } from '../../stores/journalStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Sun Jan 07 2024
+ * Modified: Fri Feb 23 2024
  **/
 
 export default {
@@ -103,25 +103,7 @@ export default {
       if (this.value == null) this.$emit('clear', null)
     },
 
-    // TODO: Move this to a store
-    // setState(state) {
-    //   this.$emit('set', state)
-    //   // this.$parent.app.state = state.id
-    //   // this.dataStore.update(this.$parent.app, 'state')
-
-    //   this.$toast.success('Added to ' + state.name, {
-    //     description: 'Monday, January 3rd at 6:00pm',
-    //   })
-
-    // },
-
-    getData() {
-      // this.db.states = this.dataStore.states()
-    },
-
-    init() {
-      this.getData()
-    },
+    init() {},
   },
 
   mounted() {

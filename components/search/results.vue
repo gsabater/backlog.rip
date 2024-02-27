@@ -1,18 +1,28 @@
 <template>
-  <div class="row">
-    <div class="col">
-      <pre>
-items: {{ items.length }}
---
-{{ control }}
+  <pre
+    class="d-none my-3"
+    style="
+      position: fixed;
+      bottom: 10px;
+      left: 400px;
+      z-index: 9999;
+      max-height: 120vh;
+      overflow-y: scroll;
+      background: rgba(13, 12, 42, 0.5);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      width: auto;
+    "
+    >{{ filters }}
 </pre
-      >
-    </div>
-  </div>
-  <div class="row row-deck row-cards">
+  >
+  <div class="row row-deck row-cards row-games-list">
     <template v-for="(app, i) in items" :key="'card' + i">
-      <div class="col col-6 col-lg-2">
-        <b-game :key="app" :appid="app"></b-game>
+      <div
+        class="col col-6 col-sm-4 col-md-3 col-lg-custom pt-1 pb-3"
+        style="padding-left: 0.75rem; padding-right: 0.75rem">
+        <b-game :key="app" :uuid="app" :body="['name']"></b-game>
       </div>
     </template>
   </div>
@@ -24,17 +34,18 @@ items: {{ items.length }}
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Jan 10 2024
+ * Modified: Tue Feb 27 2024
  **/
+
+// import { useThrottleFn } from '@vueuse/core'
 
 export default {
   name: 'SearchResults',
-  components: {},
 
   props: {
     source: {
-      type: String,
-      default: 'all', // or 'library'
+      type: [String, Array],
+      default: 'all', // 'library', []
     },
 
     filters: {
@@ -43,14 +54,11 @@ export default {
     },
   },
 
+  emits: ['loading'],
+
   data() {
     return {
       items: [],
-
-      // base: {
-      //   string: '',
-      //   ready: true,
-      // },
 
       control: {
         hash: null,
@@ -58,14 +66,13 @@ export default {
         search: null,
       },
 
-      // stats: {
-      //   total: 0,
-      //   filtered: 0,
+      stats: {
+        amount: 0, // amount of apps as source
+        results: 0, // amount of apps after filtering
+        filtered: 0, // amount of apps filtered out
 
-      //   time: 0,
-      // },
-
-      // ui: {},
+        time: 0, // time it took to filter and sort
+      },
     }
   },
 
@@ -85,16 +92,21 @@ export default {
   },
 
   watch: {
-    filters: {
-      handler() {
-        log('💎 Search: Watcher', JSON.stringify(this.filters))
-        this.search('watch')
-      },
-      deep: true,
-    },
+    // filters: {
+    //   handler() {
+    //     log('💎 Search: Watcher', JSON.stringify(this.filters))
+    //     this.search('watch')
+    //   },
+    //   deep: true,
+    // },
   },
 
   methods: {
+    _search() {
+      console.warn(1)
+      debounce(this.search, 1000)
+    },
+
     //+-------------------------------------------------
     // search()
     // Generates a hash from the filters
@@ -104,9 +116,10 @@ export default {
     // Updated on Tue Jan 09 2024
     //+-------------------------------------------------
     search(source = null) {
-      log('💎 Search: init from: ', source || 'direct run')
+      log('✨🔥 Search: init from: ', source || 'direct run')
 
       if (Object.keys(this.filters).length === 0) return
+      // this.$emit('loading', false)
 
       const control = { ...this.filters }
       delete control.state
@@ -126,6 +139,7 @@ export default {
       if (this.source == 'all') {
         if (!this.filters?.string || this.filters?.string?.length < 3) return
         this.dataStore.search(hash)
+        // this.$emit('loading', true)
       }
     },
 
@@ -136,35 +150,44 @@ export default {
     // -----
     // Created on Thu Nov 23 2023
     // Updated on Tue Jan 09 2024 - Included utils.search
+    // Created on Thu Feb 15 2024 - Added stats
     //+-------------------------------------------------
     filter() {
-      if (!this.dataStore.isReady) return
+      // do again?
+      // if (!this.dataStore.isReady) return
+
+      let source = null
+      const start = performance.now()
 
       // prettier-ignore
-      const source = (this.source == 'all')
-        ? this.dataStore.list()
-        : this.dataStore.library()
+      if (Array.isArray(this.source)) source = this.source
+      else source = this.source == 'all' ? this.dataStore.list() : this.dataStore.library('object')
 
       log('⚡ Search: Filter on ', this.source)
       log('⚡ Search: Amount of apps #', Object.keys(source).length)
+      this.stats.amount = Object.keys(source).length
+
+      if (this.source.length == 0) return
+
       log('⚡ Search: Filters: ', JSON.stringify(this.filters))
 
-      const items = search.filter(source, this.filters)
-      const paged = search.paginate(items, this.filters.show)
+      const searched = search.filter(source, this.filters, { source: this.source })
+      const paged = search.paginate(searched.items, this.filters.show)
+      const end = performance.now()
 
-      // this.items = sorted.slice(0, this.filters)
       this.items = paged
 
-      this.$forceUpdate()
-      return
+      this.stats.time = end - start
+      this.stats.results = searched.results
+      this.stats.filtered = searched.filtered || 0
 
       this.$forceUpdate()
     },
 
-    async loadRepositories() {
-      log('Loading repositories')
-      this.dataStore.init() // <- this should be some kind of event fired from the store
-    },
+    // async loadRepositories() {
+    //   log('Loading repositories')
+    //   this.dataStore.init() // <- this should be some kind of event fired from the store
+    // },
 
     init() {
       // this.loadRepositories()
@@ -173,38 +196,8 @@ export default {
   },
 
   mounted() {
+    window.$results = this
     this.init()
-
-    this.$mitt.on('data:updated', () => {
-      log('💎 Search: event -> data:updated')
-      this.control.event = 'data:updated'
-      this.search('event')
-    })
-
-    this.$mitt.on('data:ready', () => {
-      log('💎 Search: event -> data:ready')
-      this.control.event = 'data:ready'
-      this.search('event')
-    })
-  },
-
-  unmounted() {
-    this.$mitt.off('data:ready')
-    this.$mitt.off('data:updated')
   },
 }
 </script>
-
-<style>
-@media (min-width: 992px) {
-  .col-lg-25 {
-    flex: 0 0 auto;
-    width: 20%;
-  }
-}
-
-.col-25 {
-  flex: 0 0 auto;
-  width: 20%;
-}
-</style>

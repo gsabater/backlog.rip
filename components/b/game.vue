@@ -2,33 +2,37 @@
   <div
     v-if="app && app.uuid"
     class="card-game"
-    :class="app.state ? ' has-state-' + app.state : ''"
-    @mouseenter="ui.showStates = true"
-    @mouseleave="ui.showStates = false">
-    <div
-      class="cover"
-      :class="{
-        'is-header': iPoster == 1,
-      }"
-      @click="showGameModal">
-      <img
-        loading="lazy"
-        class="b-cover"
-        :src="poster"
-        :alt="app.steam_id"
-        @error="iPoster++" />
+    :class="app.state ? 'has-state' + app.state : ''"
+    :uuid="app.uuid">
+    <div class="card-game__cover" @click.stop="showGameModal">
+      <div
+        v-if="app.error"
+        style="
+          color: rgba(152, 75, 75, 0.716);
+          font-size: 1rem;
+          text-align: center;
+          z-index: 666;
+        ">
+        {{ app.error }}
+      </div>
+      <template v-else>
+        <BState :app="app.uuid" :state="app.state" :label="false"></BState>
+        <game-asset
+          ref="cover"
+          :app="app"
+          asset="cover"
+          :priority="['steam', 'igdb']"></game-asset>
+      </template>
     </div>
 
-    <div v-if="body" class="card-body">
-      <BState :app="app.uuid" :state="app.state" :label="false"></BState>
-
-      <div class="h5">
-        <!-- <BState v-if="app.state" :state="app.state" :label="false"></BState> -->
+    <div v-if="body" class="card-game__details">
+      <span class="details__name font-serif">
         {{ app.name }}
-      </div>
-      <div class="text-muted">
-        <!-- {{ appid }} -->
-        <!-- {{ app.steam_id }} -->
+      </span>
+      <div v-if="$app.dev" class="details__secondary text-muted">
+        score: {{ app.score }} -- {{ app._.score }}
+        <br />
+        state: {{ app.state ?? '--' }}
       </div>
     </div>
     <!-- <div class="card-body">
@@ -70,79 +74,64 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Jan 09 2024
+ * Modified: Thu Feb 22 2024
  **/
 
 export default {
   name: 'Game',
   props: {
-    appid: {
+    uuid: {
       type: String,
       default: null,
     },
 
     body: {
-      type: Boolean,
+      type: [Array, Boolean],
       default: false,
     },
   },
 
-  //  {
-  //   app: {
-  //     type: Object,
-  //     required: true,
-  //   },
-  // },
   data() {
     return {
       app: {},
-      iPoster: 0,
 
-      ui: {
-        showStates: false,
-      },
+      ui: {},
     }
   },
 
   computed: {
     ...mapStores(useDataStore),
-
-    poster() {
-      const ID = this.app.steam_id || null
-      if (!ID) return
-
-      const posters = [
-        `https://steamcdn-a.akamaihd.net/steam/apps/${ID}/library_600x900.jpg`,
-        `https://cdn.akamai.steamstatic.com/steam/apps/${ID}/header.jpg`,
-      ]
-
-      const poster = posters[this.iPoster]
-      // this.$mitt.emit('poster:hold', poster)
-      return poster
-    },
   },
 
   methods: {
     showGameModal() {
-      this.$mitt.emit('game:modal', this.app.uuid)
+      this.$mitt.emit('game:modal', {
+        uuid: this.app.uuid,
+        $list: this.$parent,
+      })
     },
 
     manage($event) {
       this.$mitt.emit('game:manager', $event, this.app.uuid)
     },
 
-    setState(state) {
-      // this.app.state = state.id
-    },
-
     async getData() {
-      this.app = this.dataStore.get(this.appid)
+      this.app = this.dataStore.get(this.uuid)
     },
   },
 
   mounted() {
     this.getData()
-    // console.warn('⚓', this.appid)
+
+    this.$mitt.on('state:change', (payload) => {
+      if (payload.uuid != this.app.uuid) return
+      this.app.state = payload.state
+      this.$forceUpdate()
+    })
+  },
+
+  beforeUnmount() {
+    this.$mitt.off('state:change')
   },
 }
 </script>

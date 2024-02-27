@@ -13,20 +13,49 @@
                 <Icon>LayoutSidebarInactive</Icon>
               </span>
             </li>
+
             <li v-if="false" style="border-right: 1px dashed #ccc; margin: 10px"></li>
-            <li class="nav-item">
+
+            <li class="nav-item dropdown">
+              <div class="nav-link dropdown-toggle cursor-pointer">
+                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                  <Icon>ChartBubble</Icon>
+                </span>
+                <span class="nav-link-title pe-2">Explore</span>
+              </div>
+              <b-dropdown>
+                <NuxtLink to="/games" class="dropdown-item">
+                  <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                    <Icon>Cards</Icon>
+                  </span>
+                  <span class="nav-link-title">All games</span>
+                </NuxtLink>
+
+                <NuxtLink to="/genres" class="dropdown-item">
+                  <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                    <Icon>Triangles</Icon>
+                  </span>
+                  <span class="nav-link-title">Genres</span>
+                </NuxtLink>
+              </b-dropdown>
+
+              <!-- <b-menu :arrow="false">
+              </b-menu> -->
+            </li>
+
+            <!-- <li class="nav-item">
               <NuxtLink to="/games" class="nav-link">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
                   <Icon>Cards</Icon>
                 </span>
                 <span class="nav-link-title">
                   Browse games
-                  <!-- (drop> add a game, connect accounts) -->
                 </span>
               </NuxtLink>
-            </li>
+            </li> -->
 
             <li style="border-right: 1px dashed #ccc; margin: 10px"></li>
+            <!-- (drop> add a game, connect accounts) -->
 
             <li class="nav-item">
               <NuxtLink to="/dashboard" class="nav-link">
@@ -39,7 +68,7 @@
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
                   <Icon>Apps</Icon>
                 </span>
-                <span class="nav-link-title">My Library and backlog</span>
+                <span class="nav-link-title">Library and backlog</span>
               </NuxtLink>
             </li>
 
@@ -48,7 +77,7 @@
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
                   <Icon>Notebook</Icon>
                 </span>
-                <span class="nav-link-title">My gaming journal</span>
+                <span class="nav-link-title">Journal</span>
               </NuxtLink>
             </li>
 
@@ -89,12 +118,51 @@
               <NuxtLink to="/import/steam" class="nav-link">
                 <span class="nav-link-title text-orange">
                   <Icon>StepInto</Icon>
-                  Import games
+                  Import library
+                </span>
+              </NuxtLink>
+            </li>
+
+            <li v-if="$app.dev" class="nav-item">
+              <NuxtLink to="/welcome" class="nav-link">
+                <span class="nav-link-title text-yellow">
+                  <Icon>Subtask</Icon>
+                  Onboarding
+                </span>
+              </NuxtLink>
+            </li>
+
+            <li v-if="$app.dev" class="nav-item">
+              <NuxtLink to="/docs" class="nav-link">
+                <span class="nav-link-title text-purple">
+                  <Icon>Note</Icon>
+                  Documentation
                 </span>
               </NuxtLink>
             </li>
           </ul>
           <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
+            <!-- <div class="input-icon">
+              <div
+                class="progress progress-sm"
+                style="position: absolute; height: 0.15rem">
+                <div class="progress-bar progress-bar-indeterminate"></div>
+              </div>
+              <span class="input-icon-addon">
+                <Icon class="mx-2">CloudDown</Icon>
+              </span>
+              <input
+                type="text"
+                value="Importing Steam library…"
+                class="form-control"
+                disabled />
+              <span class="input-icon-addon">
+                <div
+                  class="spinner-border spinner-border-sm text-secondary"
+                  role="status"></div>
+              </span>
+            </div> -->
+
             <!-- <form action="./" method="get" autocomplete="off" novalidate>
               <div class="input-icon">
                 <span class="input-icon-addon">

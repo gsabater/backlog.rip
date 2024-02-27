@@ -1,0 +1,113 @@
+// https://unused-css.com/tools/border-gradient-generator
+.border-rainbow{
+  // background-color: #241d33;
+  // background-color: #302244;
+
+  // border: 5px solid transparent;
+  // border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
+  // border-image-slice: 1;
+  --border:4px;
+  border: var(--border) solid transparent;
+  background: linear-gradient(#fff, #fff), linear-gradient( to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%) center center /calc(100% + (var(--border) * 2)) calc(100% + (var(--border) * 2));
+  background-clip: content-box, border-box;
+  border-radius: 5px;
+}
+
+//+-------------------------------------------------
+// .gradient-border
+// https://codepen.io/alphardex/pen/vYEYGzp
+// -----
+// Created on Fri Jan 12 2024
+//+-------------------------------------------------
+
+.gradient-border {
+  --border-width: 3px;
+
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 300px;
+  height: 200px;
+  font-family: Lato, sans-serif;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  color: white;
+  background: #222;
+  border-radius: var(--border-width);
+
+  &::after {
+    position: absolute;
+    content: "";
+    top: calc(-1 * var(--border-width));
+    left: calc(-1 * var(--border-width));
+    z-index: -1;
+    width: calc(100% + var(--border-width) * 2);
+    height: calc(100% + var(--border-width) * 2);
+    background: linear-gradient(
+      60deg,
+      hsl(224, 85%, 66%),
+      hsl(269, 85%, 66%),
+      hsl(314, 85%, 66%),
+      hsl(359, 85%, 66%),
+      hsl(44, 85%, 66%),
+      hsl(89, 85%, 66%),
+      hsl(134, 85%, 66%),
+      hsl(179, 85%, 66%)
+    );
+    background-size: 300% 300%;
+    background-position: 0 50%;
+    border-radius: calc(2 * var(--border-width));
+    animation: moveGradient 4s alternate infinite;
+  }
+}
+
+@keyframes moveGradient {
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+//+-------------------------------------------------
+// .border-glow
+// https://codepen.io/Huhtamaki/pen/GPzwPY
+// -----
+// Created on Fri Jan 12 2024
+//+-------------------------------------------------
+.border-glow {
+	position: relative;
+	margin: 300px auto 0;
+	width: 500px;
+	height: 250px;
+	background: linear-gradient(0deg, #000, #272727);
+}
+
+.border-glow:before, .border-glow:after {
+	content: '';
+	position: absolute;
+	left: -2px;
+	top: -2px;
+	background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00,#ffff00, #ff0000, #fb0094,
+		#0000ff, #00ff00,#ffff00, #ff0000);
+	background-size: 400%;
+	width: calc(100% + 4px);
+	height: calc(100% + 4px);
+	z-index: -1;
+	animation: steam 100s linear infinite;
+}
+
+@keyframes steam {
+	0% {
+		background-position: 0 0;
+	}
+	50% {
+		background-position: 400% 0;
+	}
+	100% {
+		background-position: 0 0;
+	}
+}
+
+.border-glow:after {
+	filter: blur(50px);
+}

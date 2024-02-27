@@ -26,16 +26,18 @@
 <script>
 import me from './sections/me'
 import states from './sections/states'
+import linked from './sections/linked'
 import history from './sections/history'
-import connected from './sections/connected'
+import database from './sections/database'
 
 export default {
   name: 'AccountSection',
   components: {
     me,
     states,
+    linked,
     history,
-    connected,
+    database,
   },
 
   data() {

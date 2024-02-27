@@ -1,8 +1,40 @@
 <template>
   <div class="row">
-    <div class="col-9">
-      <div class="row mb-4 align-items-center">
-        <div class="col col-4">
+    <div class="col-12">
+      <pre
+        class="my-3"
+        style="
+          position: fixed;
+          bottom: 10px;
+          left: 10px;
+          z-index: 9999;
+          max-height: 120vh;
+          overflow-y: scroll;
+          background: rgba(0, 0, 0, 0.5);
+          color: white;
+          padding: 10px;
+          border-radius: 5px;
+          width: auto;
+        "
+        >{{ f }}
+</pre
+      >
+    </div>
+    <search-filters :filters="f" @update="onUpdate"></search-filters>
+
+    <div class="col-12">
+      <div v-if="false" class="row mb-4 align-items-center">
+        <div class="col col-3">
+          <div>
+            <!-- <b-input
+              v-model="f.string"
+              placeholder="Filter..."
+              clearable
+              @tick="search"
+              @clear="search"></b-input> -->
+          </div>
+        </div>
+        <div class="col col-6">
           <button
             v-tippy="'Filter by game state'"
             :class="'btn py-2 ps-3 ' + (f.state ? 'pe-2' : 'pe-3')"
@@ -128,7 +160,7 @@
             </label>
           </b-menu>
           <!-- <small class="text-muted">
-            Found {{ totalApiGames }} games,
+            Found {{  }} games,
             <br />
             666 in your library
           </small> -->
@@ -156,40 +188,34 @@
         </div>
       </div>
 
-      <search-results ref="results" :filters="f" :source="source"></search-results>
+      <search-results
+        ref="results"
+        :filters="f"
+        :source="source"
+        @loading="onLoading"></search-results>
 
-      <div class="pagination my-3">
-        <div class="btn" @click="f.show.page++">Show more</div>
+      <!-- <div class="pagination my-3">
+        <div class="btn" @click="addPage">Show more</div>
+      </div> -->
+
+      <div
+        v-if="f && f.show && f.show.perPage"
+        class="d-flex mt-4"
+        style="flex-direction: column; align-items: center">
+        <div v-if="stats.results > f.show.perPage" class="btn w-75 mb-3" @click="addPage">Show more</div>
+        <p class="text-muted text-center w-50">
+          <hr class="my-2" >
+          Showing 1-{{ 1 * f.show.perPage * f.show.page }} of {{ format.num(stats.results) }}
+          <div class="my-1"></div>
+          Filtered {{ format.num(stats.filtered) }} of {{ format.num(stats.amount) }} games
+        </p>
       </div>
     </div>
 
-    <div class="col-3">
-      <div style="transform: scale(0.9)">
-        <b-input
-          v-model="f.string"
-          placeholder="Filter..."
-          clearable
-          @tick="search"
-          @clear="search"></b-input>
-      </div>
-
+    <div v-if="false" class="col-3">
       show:
       <br />
       all games z-z only owned
-      <br />
-
-      <div>
-        <pre class="my-3" style="transform: scale(0.9)"
-          >{{ f }}
----
-{{ ui }}
----
-{{ $app }}
---
-{{ $auth.config }}
-</pre
-        >
-      </div>
     </div>
   </div>
 </template>
@@ -200,15 +226,15 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Jan 10 2024
+ * Modified: Wed Feb 21 2024
  **/
 
 export default {
   name: 'SearchInterface',
   props: {
     source: {
-      type: String,
-      default: 'all', // or 'library'
+      type: [String, Array],
+      default: 'all', // 'library', []
     },
 
     filters: {
@@ -225,30 +251,32 @@ export default {
   data() {
     return {
       f: {},
+      slug: null,
 
       base: {
         string: '',
+
         sortBy: 'score',
         sortDir: 'desc',
-        state: null,
+
+        states: [],
+        genres: [],
+
+        modes: {
+          // states: 'any(of) // all(of) // not(of)'
+        },
 
         show: {
-          display: 'grid',
           page: 1,
-          limit: 10,
-          perPage: 10,
+          perPage: 28,
+
+          display: 'grid',
         },
       },
 
       table: {
         page: 1,
         perPage: 10,
-
-        filters: {
-          search: '',
-          played: true,
-          unplayed: true,
-        },
       },
 
       presets: {
@@ -257,23 +285,19 @@ export default {
         },
       },
 
-      db: {
-        states: [],
+      ui: {
+        dirty: false,
+        loading: false,
       },
-
-      ui: {},
     }
   },
 
   computed: {
-    ...mapStores(useDataStore),
+    ...mapStores(useDataStore, useRepositoryStore),
+    ...mapState(useRepositoryStore, ['genres']),
 
     isLibrary() {
       return this.source == 'library'
-    },
-
-    totalApiGames() {
-      return this.$app?.api?.games?.total || 0
     },
 
     // TODO: move to a helper
@@ -285,13 +309,46 @@ export default {
         hltb: 'How long to beat',
       }
     },
+
+    stats() {
+      return this.$refs.results.stats || {}
+    },
+  },
+
+  watch: {
+    '$app.ready': function () {
+      this.init()
+    },
   },
 
   methods: {
-    search() {
+    onLoading(loading) {
+      this.ui.loading = loading
+      console.warn('loading', loading)
+    },
+
+    onUpdate(filters) {
+      this.f = filters
+
+      this.f.show.page = 1
+      this.ui.dirty = true
+
+      this.search('interface')
+      // console.warn('📒 updated', JSON.stringify(filters))
+      // this.$nextTick(() => {
+      //   console.warn('📒 updated 2', JSON.stringify(filters))
+      // })
+    },
+
+    addPage() {
+      this.f.show.page++
+      this.search('addPage')
+    },
+
+    search(by) {
+      // console.warn('📒 search')
       this.$nextTick(() => {
-        log('#️⃣ Search: Interface', JSON.stringify(this.f))
-        this.$refs.results.search()
+        this.$refs.results.search(by)
       })
     },
 
@@ -301,19 +358,33 @@ export default {
     // With values from props and presets
     // -----
     // Created on Tue Nov 14 2023
+    // Updated on Sun Jan 28 2024 - Added slug param
     //+-------------------------------------------------
     mergeFilters() {
+      const loaded = {}
+
+      if (this.slug && this.genres.length) {
+        const genre = this.genres.find((g) => g.slug == this.slug)
+        loaded.genres = [genre.id]
+      }
+
       this.f = {
         ...this.base,
         ...(this.preset ? this.presets[this.preset] : {}),
         ...this.filters,
+        ...loaded,
       }
+      // console.warn('📒 mounted filters')
     },
 
     async getData() {
+      this.slug = this.$route.params?.slug || null
+
+      // if (this.slug) await this.repositoryStore.getGenres()
+      // else this.repositoryStore.getGenres()
+
       if (this.isLibrary) return
 
-      this.dataStore.loadApiStatus()
       this.dataStore.getTop('popular')
 
       // this.db.states = this.dataStore
@@ -321,14 +392,35 @@ export default {
       //   .reduce((obj, item) => ({ ...obj, [item.id]: item }), {})
     },
 
-    init() {
-      this.getData()
+    async init() {
+      if(!this.$app.ready) return
+
+      await this.getData()
       this.mergeFilters()
+      this.search('init')
     },
   },
 
   mounted() {
     this.init()
+
+    this.$mitt.on('data:updated', () => {
+      log('✨ Search: event -> data:updated')
+      this.search('event')
+    })
+
+    this.$mitt.on('data:ready', () => {
+      log('✨ Search: event -> data:ready')
+      // this.control.event = 'data:ready'
+      if (this.ui.dirty) return
+
+      this.search('event')
+    })
+  },
+
+  beforeUnmount() {
+    this.$mitt.off('data:ready')
+    this.$mitt.off('data:updated')
   },
 }
 </script>

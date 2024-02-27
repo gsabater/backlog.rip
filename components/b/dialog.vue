@@ -9,29 +9,46 @@
     v-if="show"
     class="modal modal-blur fade d-block"
     :class="{ show: display }"
-    @click.self="hide">
+    @mousedown.self="hide">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
-        <div v-if="title" class="modal-header">
-          <h5 class="modal-title">{{ title }}</h5>
+        <div v-if="loading" class="progress progress-sm">
+          <div class="progress-bar progress-bar-indeterminate"></div>
+        </div>
+
+        <!-- Modal header -->
+        <div v-if="title && header" class="modal-header">
+          <div>
+            <h5 class="modal-title mb-1">{{ title }}</h5>
+            <p class="text-muted mb-1">{{ subtitle }}</p>
+          </div>
           <button
             type="button"
             class="btn-close"
-            data-bs-dismiss="modal"
             aria-label="Close"
             @click="hide"></button>
         </div>
+
+        <!-- Modal body -->
         <div class="modal-body">
           <slot />
         </div>
-        <!-- <div class="modal-footer">
-          <button type="button" class="btn me-auto" data-bs-dismiss="modal" @click="hide">
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn me-auto" data-bs-dismiss="modal" @click="hide">
             Close
+          </button> -->
+
+          <button
+            type="button"
+            class="btn px-5"
+            :class="{ disabled: loading }"
+            @click="$emit('save')">
+            Save
           </button>
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-            Save changes
-          </button>
-        </div> -->
+          <slot name="footer"></slot>
+        </div>
       </div>
     </div>
   </div>
@@ -43,23 +60,48 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 30th November 2023
- * Modified: Thu Dec 21 2023
+ * Modified: Sun Jan 28 2024
  **/
 
 export default {
   name: 'TablerDialog',
   props: {
+    // width: {
+    //   type: String,
+    //   default: '500px',
+    // },
+
+    header: {
+      type: Boolean,
+      default: true,
+    },
+
     title: {
       type: String,
       default: null,
+    },
+
+    subtitle: {
+      type: String,
+      default: null,
+    },
+
+    footer: {
+      type: [Boolean, Array],
+      default: () => ['close', 'save'],
     },
 
     persistent: {
       type: Boolean,
       default: false,
     },
+
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['update:model-value'],
+  emits: ['update:model-value', 'save'],
 
   data() {
     return {

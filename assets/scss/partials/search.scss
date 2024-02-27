@@ -1,0 +1,8 @@
+.filters-bar {
+  & .btn.disabled {
+    background-color: var(--tblr-btn-bg);
+    font-weight: 100;
+    opacity: 0.7;
+    border-color: var(--tblr-btn-border-color);
+  }
+}

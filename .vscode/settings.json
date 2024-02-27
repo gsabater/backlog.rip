@@ -25,6 +25,11 @@
     // "editor.defaultFormatter": "octref.vetur",
   },
 
+  "[scss]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
   "actionButtons": {
     "loadNpmCommands":false,
     // "reloadButton":"♻️",

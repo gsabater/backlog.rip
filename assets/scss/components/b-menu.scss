@@ -1,0 +1,109 @@
+[data-theme='game-manager'],
+[data-theme='dropdown'],
+[data-theme='filters'],
+[data-theme='mobile-menu'] {
+  /* Might need to remove this */
+  // overflow-y: visible !important;
+
+  & .tippy-content {
+    padding: 0;
+  }
+
+  & .tippy-backdrop {
+    background-color: rgba(0, 0, 0, 0);
+  }
+}
+
+[data-theme='filters'] {
+  transform: translate(-3px, -50px);
+
+  & .dropdown-menu {
+    background-color: #2c2e3b !important;
+  }
+
+  & .dropdown-item .selection {
+    opacity: 0;
+  }
+
+  & .dropdown-item:hover .selection,
+  & .dropdown-item.selected .selection {
+    opacity: 1;
+  }
+}
+
+header div.container-xl > [data-tippy-root] {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6784313725);
+  pointer-events: none;
+}
+
+[data-theme='mobile-menu'] {
+  & .dropdown-menu {
+    background-color: #2c2e3b !important;
+    pointer-events: all;
+  }
+
+  & .dropdown-item .selection {
+    opacity: 0;
+  }
+
+  & .dropdown-item:hover .selection,
+  & .dropdown-item.selected .selection {
+    opacity: 1;
+  }
+}
+
+.b-menu {
+  --tblr-dropdown-divider-margin-y: 0.4rem;
+
+  position: relative;
+  padding: 5px;
+  // margin-top: 7px;
+
+  backdrop-filter: blur(10px);
+  border-color: #38394c;
+
+  max-height: 55vh;
+  overflow-y: auto;
+}
+
+.mobile-menu {
+  /* --tblr-dropdown-divider-margin-y: 0.4rem; */
+  /* position: relative; */
+  -webkit-backdrop-filter: blur(10px);
+  /* border-color: #38394c; */
+  /* max-height: 55vh; */
+  /* overflow-y: auto; */
+  /* text-align: center; */
+  justify-content: space-between;
+  border: 3px solid #ffffff69;
+  border-radius: 4px;
+}
+
+.mobile-menu .dropdown-item {
+  justify-content: center;
+  font-size: 1.5rem;
+  padding: 1rem 3rem;
+}
+
+/*
+  Fix the dropdown position on menu
+*/
+.nav-item .b-menu {
+  top: 100%;
+}
+
+.b-menu .dropdown-item {
+  border-radius: 5px;
+  cursor: pointer;
+}

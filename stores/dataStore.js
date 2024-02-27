@@ -259,7 +259,7 @@ export const useDataStore = defineStore('data', {
         if (
           context?.includes(':db') ||
           context?.includes(':refresh') ||
-          context?.includes(':state')
+          context?.includes(':api')
         ) {
           item.is.dirty = true
           this.toData(item)

@@ -2,7 +2,7 @@ repo_name: gsabater/backlog.rip
 report_id: f1393ef0cb60fc0f95ead8b65fe34fc7
 version: 0.1
 repo_type: Public
-timestamp: '2024-01-31T09:16:44+00:00'
+timestamp: '2024-02-29T19:44:17+00:00'
 requested_by: gsabater
 provider: github
 branch: master
@@ -107,7 +107,7 @@ tools:
   detection_source_url: https://github.com/gsabater/backlog.rip
   detection_source: Repo Metadata
 - name: Prettier
-  description: 'Prettier is an opinionated code formatter. '
+  description: Prettier is an opinionated code formatter.
   website_url: https://prettier.io/
   version: 3.1.1
   license: MIT

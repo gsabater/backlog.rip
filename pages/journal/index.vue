@@ -129,7 +129,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Fri Feb 23 2024
+ * Modified: Fri Mar 08 2024
  **/
 
 export default {
@@ -222,18 +222,19 @@ export default {
         ) {
           //take the previous item in the grouped[day] and update it
           const previous = grouped[day].pop()
+          if (previous) {
+            if (entry.event == 'state' && entry.data.old) {
+              previous.data.old = entry.data.old
+            }
 
-          if (entry.event == 'state' && entry.data.old) {
-            previous.data.old = entry.data.old
+            grouped[day].push(previous)
+            return
           }
-
-          grouped[day].push(previous)
-          return
         }
 
         // control possible mistakes
         if (entry.event == 'state') {
-          if (entry.data?.old == entry.data?.state) {
+          if (entry.data && entry.data?.old == entry.data?.state) {
             delete entry.data.old
           }
         }

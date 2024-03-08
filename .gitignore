@@ -10,5 +10,6 @@ dist
 .assets/P22 Mackinac.zip
 .assets/exports/*
 .assets/Mackinac/*
-pages/dev/wip.vue
-pages/dev/wip.vue
+.assets/bruno-postman/*
+.bruno/*
+pages/dev/*

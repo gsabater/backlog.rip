@@ -3,6 +3,7 @@ body {
 
 [data-bs-theme='dark'] {
   --tblr-primary: rgb(124, 58, 237);
+  --tblr-primary-rgb: 124, 58, 237;
 
   --tblr-body-bg: #191a22;
 
@@ -14,6 +15,10 @@ body {
 
   --tblr-active-bg: rgb(13 6 24 / 17%);
   --tblr-link-hover-color: var(--tblr-primary);
+
+  .status {
+    --tblr-status-color: #dce1e7;
+  }
 }
 
 ::root {

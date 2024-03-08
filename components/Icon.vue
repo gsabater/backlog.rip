@@ -1,5 +1,10 @@
 <template>
-  <component :is="theIcon" v-bind="$attrs" :size="size" :stroke-width="width" />
+  <component
+    :is="theIcon"
+    v-bind="$attrs"
+    :size="size"
+    :stroke-width="width"
+    :class="{ 'icon-pulse': loader }" />
   <!-- <pre>{{ theIcon }}</pre> -->
 </template>
 
@@ -12,7 +17,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon Jan 22 2024
+ * Modified: Thu Mar 07 2024
  **/
 
 // import {
@@ -69,17 +74,24 @@ export default {
   computed: {
     theIcon() {
       let icon = this.icon || this.slotIcon
-      if (!icon) return TablerIcons.IconFaceIdError
-      if (icon?.startsWith('Icon')) icon.replace('Icon', '')
+      if (!icon) return TablerIcons.IconPoint
 
+      if (icon?.startsWith('Icon')) icon.replace('Icon', '')
       icon = icon.replace(/\n/g, '').trim()
       icon = icon.replace(/\s*[\r\n]\s*/g, '').trim()
       icon = icon.replace(/^\s+|\s+$/g, '')
       // console.warn(icon)
 
-      return TablerIcons[`Icon${icon}`] || TablerIcons.IconFaceIdError
+      return TablerIcons[`Icon${icon}`] || TablerIcons.IconCircuitSwitchOpen
       // return () => import(`@tabler/icons-vue/Icon${this.icon || this.slotIcon}`)
       // return 'Icon' + (this.icon || this.slotIcon)
+    },
+
+    loader() {
+      return (
+        this.theIcon === TablerIcons.IconPoint ||
+        this.theIcon === TablerIcons.IconCircuitSwitchOpen
+      )
     },
   },
 

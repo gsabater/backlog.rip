@@ -1,6 +1,13 @@
-.btn-sm, .btn-group-sm > .btn {
+.btn-sm,
+.btn-group-sm > .btn {
   --tblr-btn-padding-y: 0.25rem;
-  --tblr-btn-padding-x: 0.5rem;
+  --tblr-btn-padding-x: 0.685rem;
   --tblr-btn-font-size: 0.875rem;
   --tblr-btn-border-radius: 0.25rem;
+  padding-bottom: 0.375rem;
+  font-weight: 400;
+}
+
+.btn-ghost-secondary {
+  --tblr-btn-bg: #46484e40;
 }

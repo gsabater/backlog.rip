@@ -640,158 +640,178 @@
     </aside>
 
     <!-- Navbar -->
-    <!-- <div class="sticky-top"> -->
-    <header
-      class="navbar navbar-expand-md navbar-light d-print-none"
-      style="max-height: 56px">
-      <div class="container-xl">
-        <button class="d-md-none navbar-toggler" style="opacity: 0">
-          <Icon>MenuDeep</Icon>
-        </button>
-
-        <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pa-0">
-          <NuxtLink to="/">
+    <div class="sticky-top">
+      <header
+        class="navbar navbar-expand-md navbar-light d-print-none pb-0"
+        style="max-height: 56px">
+        <div class="container-xl" style="position: relative; padding-left: 60px">
+          <NuxtLink
+            to="/"
+            style="position: absolute; top: -7px; z-index: 999; left: -50px">
             <img
               src="/img/logo.png"
-              width="110"
-              height="32"
               alt="Backlog.rip"
               class="navbar-brand-image d-none d-md-inline-block"
-              style="height: auto; width: 100px; transform: translateY(15px)" />
+              nstyle="height: auto; width: 100px; transform: translateY(15px)"
+              style="
+                height: 115px;
+                width: auto;
+                filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+              " />
           </NuxtLink>
-          <!-- <h1 data-heading="Backlog.rip">Backlog.rip</h1> -->
-          <span>Backlog.rip</span>
-        </h1>
 
-        <button class="navbar-toggler" style="opacity: 0.8" @click="ui.dialog = true">
-          <Icon size="25">LayoutSidebarRightInactive</Icon>
-        </button>
+          <button class="d-md-none navbar-toggler" style="opacity: 0">
+            <Icon>MenuDeep</Icon>
+          </button>
 
-        <!-- :content-transition="{
-            'enter-active-class': 'hunaa-menu-enter-active',
-            'enter-from-class': 'hunaa-menu-y-0',
-            'enter-to-class': 'hunaa-menu-full',
-            'leave-active-class': 'hunaa-menu-leave-active',
-            'leave-to-class': 'hunaa-menu-y-0',
-            'leave-from-class': 'hunaa-menu-full',
-          }" -->
-        <client-only>
-          <VueFinalModal
-            v-model="ui.dialog"
-            class="h-100"
-            content-class="h-100 ms-6 py-3"
-            content-transition="vfm-slide-right"
-            overlay-transition="vfm-fade"
-            swipe-to-close="right">
-            <div class="card h-100">
-              <div class="row g-0">
-                <div class="col-12 col-md-3 border-end">
-                  <div class="card-body">
-                    <h4 class="subheader">Business settings</h4>
-                    <div class="list-group list-group-transparent">
-                      <a
-                        href="./settings.html"
-                        class="list-group-item list-group-item-action d-flex align-items-center active">
-                        My Account
-                      </a>
-                      <a
-                        href="#"
-                        class="list-group-item list-group-item-action d-flex align-items-center">
-                        My Notifications
-                      </a>
-                      <a
-                        href="#"
-                        class="list-group-item list-group-item-action d-flex align-items-center">
-                        Connected Apps
-                      </a>
-                      <a
-                        href="./settings-plan.html"
-                        class="list-group-item list-group-item-action d-flex align-items-center">
-                        Plans
-                      </a>
-                      <a
-                        href="#"
-                        class="list-group-item list-group-item-action d-flex align-items-center">
-                        Billing &amp; Invoices
-                      </a>
-                    </div>
-                    <h4 class="subheader mt-4">Experience</h4>
-                    <div class="list-group list-group-transparent">
-                      <a href="#" class="list-group-item list-group-item-action">
-                        Give Feedback
-                      </a>
+          <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pa-0">
+            <!-- <h1 data-heading="Backlog.rip">Backlog.rip</h1> -->
+            <span>Backlog.rip</span>
+          </h1>
+
+          <button class="navbar-toggler" style="opacity: 0.8" @click="showMobileMenu">
+            <Icon size="25">LayoutSidebarRightInactive</Icon>
+          </button>
+
+          <!-- :content-transition="{
+              'enter-active-class': 'hunaa-menu-enter-active',
+              'enter-from-class': 'hunaa-menu-y-0',
+              'enter-to-class': 'hunaa-menu-full',
+              'leave-active-class': 'hunaa-menu-leave-active',
+              'leave-to-class': 'hunaa-menu-y-0',
+              'leave-from-class': 'hunaa-menu-full',
+            }" -->
+          <client-only>
+            <VueFinalModal
+              v-model="ui.mobileMenu"
+              class="h-100"
+              content-class="h-100 ms-6 py-3"
+              content-transition="vfm-slide-right"
+              overlay-transition="vfm-fade"
+              swipe-to-close="right">
+              <div class="card h-100">
+                <div class="row g-0">
+                  <div class="col-12 col-md-3 border-end">
+                    <div id="mobile-menu" class="card-body" @click="closeMobileMenu">
+                      <!-- <h3>subir velocidad de slide</h3> -->
+                      <h4 class="subheader">Explore</h4>
+                      <div class="list-group list-group-transparent">
+                        <NuxtLink
+                          to="/games"
+                          class="list-group-item list-group-item-action d-flex align-items-center">
+                          <span class="nav-link-icon">
+                            <Icon>Cards</Icon>
+                          </span>
+                          <span class="nav-link-title">All games</span>
+                        </NuxtLink>
+
+                        <NuxtLink
+                          to="/genres"
+                          class="list-group-item list-group-item-action d-flex align-items-center">
+                          <span class="nav-link-icon">
+                            <Icon>Triangles</Icon>
+                          </span>
+                          <span class="nav-link-title">Genres</span>
+                        </NuxtLink>
+                      </div>
+                      <h4 class="subheader mt-4">Your data</h4>
+                      <div class="list-group list-group-transparent">
+                        <NuxtLink
+                          to="/dashboard"
+                          class="list-group-item list-group-item-action d-flex align-items-center">
+                          <span class="nav-link-title">Dashboard</span>
+                        </NuxtLink>
+
+                        <NuxtLink
+                          to="/library"
+                          class="list-group-item list-group-item-action d-flex align-items-center">
+                          <span class="nav-link-title">Library and backlog</span>
+                        </NuxtLink>
+
+                        <NuxtLink
+                          to="/journal"
+                          class="list-group-item list-group-item-action d-flex align-items-center">
+                          <span class="nav-link-title">Journal</span>
+                        </NuxtLink>
+
+                        <NuxtLink
+                          to="/import/steam"
+                          class="list-group-item list-group-item-action d-flex align-items-center">
+                          <span class="nav-link-title">Import your library</span>
+                        </NuxtLink>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </VueFinalModal>
-        </client-only>
+            </VueFinalModal>
+          </client-only>
 
-        <div
-          class="d-none d-md-flex navbar-nav flex-row order-md-last align-items-center">
-          <!-- <div v-if="!$auth.isLogged" class="nav-item d-none d-md-flex me-3">
-            <div class="btn-list">
-              <NuxtLink to="/login" class="btn btn-purple">
-                <Icon class="me-2">Login</Icon>
-                Sign in
-              </NuxtLink>
-            </div>
-          </div> -->
-
-          <div class="mx-3">
-            <div
-              xv-tippy="'Enable dark mode'"
-              class="nav-link cursor-pointer px-0 hide-theme-dark"
-              @click="changeTheme('dark')">
-              <Icon>Moon</Icon>
-            </div>
-
-            <div
-              xv-tippy="'Enable light mode'"
-              class="nav-link cursor-pointer px-0 hide-theme-light"
-              @click="changeTheme('light')">
-              <Icon>Sun</Icon>
-            </div>
-          </div>
-
-          <div class="d-none d-md-block nav-item dropdown align-self-center">
-            <div class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
-              <span
-                class="avatar avatar-sm"
-                :style="
-                  $auth.user.avatar ? `background-image: url(${$auth.user.avatar})` : ''
-                ">
-                {{ !$auth.user.avatar ? $auth.user.username[0] : '' }}
-              </span>
-              <div class="d-none d-xl-block ps-2">
-                <div>{{ $auth.user.username }}</div>
-              </div>
-              <b-dropdown placement="bottom-end">
-                <NuxtLink to="/library" class="dropdown-item">
-                  Library
-                  <span class="badge ms-auto me-0">
-                    {{ $app.count.library }}
-                  </span>
+          <div
+            class="d-none d-md-flex navbar-nav flex-row order-md-last align-items-center">
+            <!-- <div v-if="!$auth.isLogged" class="nav-item d-none d-md-flex me-3">
+              <div class="btn-list">
+                <NuxtLink to="/login" class="btn btn-purple">
+                  <Icon class="me-2">Login</Icon>
+                  Sign in
                 </NuxtLink>
-                <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
-                <div class="dropdown-divider"></div>
-                <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
-              </b-dropdown>
+              </div>
+            </div> -->
+
+            <div class="mx-3">
+              <div
+                xv-tippy="'Enable dark mode'"
+                class="nav-link cursor-pointer px-0 hide-theme-dark"
+                @click="changeTheme('dark')">
+                <Icon>Moon</Icon>
+              </div>
+
+              <div
+                xv-tippy="'Enable light mode'"
+                class="nav-link cursor-pointer px-0 hide-theme-light"
+                @click="changeTheme('light')">
+                <Icon>Sun</Icon>
+              </div>
             </div>
-            <!-- <b-menu ref="menu" position="end">
-              <a href="./sign-in.html" class="dropdown-item">Logout</a>
-              <div class="dropdown-divider"></div>
-              <div class="dropdown-item">Upgrade to Pro</div>
-            </b-menu> -->
+
+            <div class="d-none d-md-block nav-item dropdown align-self-center">
+              <div
+                class="nav-link d-flex lh-1 text-reset p-0"
+                aria-label="Open user menu">
+                <span
+                  class="avatar avatar-sm"
+                  :style="
+                    $auth.user.avatar ? `background-image: url(${$auth.user.avatar})` : ''
+                  ">
+                  {{ !$auth.user.avatar ? $auth.user.username[0] : '' }}
+                </span>
+                <div class="d-none d-xl-block ps-2">
+                  <div>{{ $auth.user.username }}</div>
+                </div>
+                <b-dropdown placement="bottom-end">
+                  <NuxtLink to="/library" class="dropdown-item">
+                    Library
+                    <span class="badge ms-auto me-0">
+                      {{ $app.count.library }}
+                    </span>
+                  </NuxtLink>
+                  <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
+                  <div class="dropdown-divider"></div>
+                  <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
+                </b-dropdown>
+              </div>
+              <!-- <b-menu ref="menu" position="end">
+                <a href="./sign-in.html" class="dropdown-item">Logout</a>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item">Upgrade to Pro</div>
+              </b-menu> -->
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
 
-    <Navigation :show-mob-menu="ui.showMobMenu"></Navigation>
-
-    <!-- </div> -->
+      <Navigation :show-mob-menu="ui.showMobMenu"></Navigation>
+    </div>
     <div class="page-wrapper">
       <NuxtLoadingIndicator />
       <!-- <div class="ch"></div> -->
@@ -991,6 +1011,16 @@
     <slot />
     <AppFooter />
   </div> -->
+
+  <DrawerRoot>
+    <DrawerTrigger>Open</DrawerTrigger>
+    <DrawerPortal>
+      <DrawerOverlay />
+      <DrawerContent>
+        <p>Content</p>
+      </DrawerContent>
+    </DrawerPortal>
+  </DrawerRoot>
 </template>
 
 <script>
@@ -999,15 +1029,29 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Tue Feb 27 2024
+ * Modified: Fri Mar 08 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'
+
+import {
+  DrawerRoot,
+  DrawerTrigger,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerPortal,
+} from 'vaul-vue'
 
 export default {
   name: 'DefaultLayout',
   components: {
     SpeedInsights,
+
+    DrawerRoot,
+    DrawerTrigger,
+    DrawerOverlay,
+    DrawerContent,
+    DrawerPortal,
   },
 
   // setup() {
@@ -1026,8 +1070,8 @@ export default {
     return {
       ui: {
         theme: 'dark', // 'light',
-        dialog: false,
-        showMobMenu: false,
+
+        mobileMenu: false,
       },
     }
   },
@@ -1042,17 +1086,17 @@ export default {
       if (document?.body) document.body.setAttribute('data-bs-theme', theme)
     },
 
-    mobileMenu() {
-      this.ui.showMobMenu = !this.ui.showMobMenu
+    showMobileMenu() {
+      this.ui.mobileMenu = !this.ui.mobileMenu
+    },
+
+    closeMobileMenu() {
+      this.ui.mobileMenu = false
     },
   },
 
   mounted() {
     this.$app.initClient()
-    this.$mitt.on('*', (e, payload) => {
-      log('🎆 Fired event', e, payload)
-      // console.info(this.$mitt.all)
-    })
 
     this.$mitt.on('app:render', () => {
       this.$forceUpdate()

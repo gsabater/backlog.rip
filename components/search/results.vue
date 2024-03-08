@@ -34,7 +34,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Feb 27 2024
+ * Modified: Wed Mar 06 2024
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -162,6 +162,7 @@ export default {
       // prettier-ignore
       if (Array.isArray(this.source)) source = this.source
       else source = this.source == 'all' ? this.dataStore.list() : this.dataStore.library('object')
+      this.stats.source = this.source
 
       log('⚡ Search: Filter on ', this.source)
       log('⚡ Search: Amount of apps #', Object.keys(source).length)

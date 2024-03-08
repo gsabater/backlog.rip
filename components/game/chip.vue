@@ -1,7 +1,7 @@
 <template>
   <span
     v-tippy="manager ? 'Click to change' : ''"
-    class="status text-black"
+    class="status"
     :class="{ 'cursor-pointer': manager }"
     style="border-radius: 4px"
     @click="manage($event)">
@@ -19,7 +19,7 @@
  * <GameChip :state="state"></GameChip>
  * -------------------------------------------
  * Created Date: 7th January 2024
- * Modified: Fri Jan 12 2024
+ * Modified: Fri Mar 08 2024
  **/
 
 export default {

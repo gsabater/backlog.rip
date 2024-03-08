@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd February 2024
- * Modified: Sat Feb 24 2024
+ * Modified: Tue Mar 05 2024
  */
 
 import { reactive } from 'vue'
@@ -22,9 +22,7 @@ async function met() {}
 
 async function init() {
   if (!$nuxt) $nuxt = useNuxtApp()
-  console.log('eventListener.client.js: init()')
-  // let data = await $nuxt.$store.dispatch('fetch', 'games')
-  // console.log('eventListener.client.js: init() data:', data)
+  log('🔅 listening to events')
 
   document.addEventListener('contextmenu', function (event) {
     console.log('Right-clicked ', event)

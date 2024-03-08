@@ -13,7 +13,7 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Sat Feb 17 2024
+ * Modified: Tue Mar 05 2024
  **/
 
 export default {
@@ -98,6 +98,10 @@ export default {
   },
 
   methods: {
+    fadeOut() {
+      this.$el.classList.add('animate__animated animate__fadeOut animate__faster')
+    },
+
     showAnother() {
       if (this.showing < this.assets.length - 1) this.showing++
     },

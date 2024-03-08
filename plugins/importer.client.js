@@ -1,9 +1,9 @@
 /*
- * @file:    \plugins\_sync.js
+ * @file:    \plugins\importer.client.js
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Sat Feb 10 2024
+ * Modified: Thu Mar 07 2024
  */
 
 import importer from '~/utils/importer'
@@ -70,6 +70,8 @@ function autoSync() {
 // Created on Mon Jan 22 2024
 //+-------------------------------------------------
 async function sync(options = {}) {
+  // if (!$nuxt) $nuxt = nuxt
+
   _sync.enabled = true
   _sync.background = options.background ?? false
 
@@ -217,8 +219,8 @@ function notify() {
   importer.wrap(_sync.x)
 
   $nuxt.$toast.dismiss($toast)
-  $nuxt.$toast.info('Your Steam library has been updated', {
-    description: 'Monday, January 3rd at 6:00pm',
+  $nuxt.$toast.info('Your ' + _sync.x.source + ' library has been updated', {
+    description: 'Added ' + _sync.x.apps.stored.length + ' new games.',
   })
 }
 
@@ -229,8 +231,6 @@ function notify() {
 // Created on Mon Jan 22 2024
 //+-------------------------------------------------
 function init(nuxt) {
-  if (!$nuxt) $nuxt = nuxt
-
   window.setTimeout(() => {
     autoSync()
   }, 1000)
@@ -243,6 +243,8 @@ function init(nuxt) {
 // Created on Mon Jan 22 2024
 //+-------------------------------------------------
 export default defineNuxtPlugin((nuxtApp) => {
+  if (!$nuxt) $nuxt = nuxtApp
+
   window.$_sync = _sync
 
   // Disabled temporarily

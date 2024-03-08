@@ -58,10 +58,7 @@
             <BState :app="app.uuid" :state="app.state"></BState>
           </div>
           <div>
-            <div
-              v-tippy="{ content: 'Click to change', placement: 'bottom' }"
-              class="status my-2"
-              style="border-radius: 4px">
+            <div class="status my-2" style="border-radius: 4px">
               <span style="font-size: 0.775rem">
                 Played
                 <!-- <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon> -->
@@ -87,10 +84,47 @@
           </button> -->
 
           <!-- <h4>xxxxx{{ app.released_at }}, xxxx{{ app.developer }}</h4> -->
-          <span v-if="$app.dev" class="minutes">125 min</span>
+          <!-- <span v-if="$app.dev" class="minutes">125 min</span> -->
         </div>
-        <div v-if="ui.layout == 'full'" class="col">ddd</div>
+        <div v-if="ui.layout == 'full'" class="col col-md-3">ddd</div>
       </div>
+
+      <div class="col-12 px-3 my-2">
+        <div class="btn-list">
+          <!-- <a
+            v-tippy="'Open Steam store page'"
+            :href="'https://store.steampowered.com/app/' + app.steam_id"
+            class="btn btn-sm btn-icon"
+            target="_blank">
+            <Icon>BrandSteam</Icon>
+            Steam page
+          </a> -->
+
+          <a
+            v-tippy="'Open Steam store page'"
+            :href="'https://store.steampowered.com/app/' + app.steam_id"
+            class="btn btn-sm"
+            target="_blank">
+            <Icon size="15" class="me-2">BrandSteam</Icon>
+            Steam page
+          </a>
+          <!-- <a v-tippy="'Open on Steam'" href="#" class="btn btn-icon btn-sm">
+            <Icon>GitMerge</Icon>
+          </a> -->
+        </div>
+
+        <ul v-if="ui.layout == 'full'">
+          <li>
+            <!-- <div class="btn btn-sm pe-3">
+              <Icon size="14" class="mx-2">BrandSteam</Icon>
+              On Steam
+            </div> -->
+          </li>
+          <li><Icon>Clock</Icon></li>
+          <li><Icon>Note</Icon></li>
+        </ul>
+      </div>
+
       <div class="col-12 col-md-7 px-3">
         <p
           class="text"
@@ -105,55 +139,85 @@
           v-html="app.description || 'No description available'"></p>
       </div>
       <div class="col-5 px-3"></div>
-      <div class="row row-deck row-cards">
-        <div v-if="app.score" class="col-sm-6 col-lg-3">
+
+      <div class="row row-deck row-cards m-0">
+        <div v-if="app.score" class="col col-md-3">
           <div class="card">
             <div class="card-body" style="padding: 0.5rem 0.75rem">
               <div class="d-flex align-items-center">
                 <div class="subheader">Median score</div>
 
-                <div class="ms-auto">
+                <!-- <div class="ms-auto">
                   <tippy class="text-muted ms-auto cursor-help" :content="'xxx'">
                     <Icon>HelpCircleFilled</Icon>
                   </tippy>
-                </div>
+                </div> -->
               </div>
-              <div class="h1 mb-3">
+              <div class="h1 mt-2 mb-0">
                 {{ app.score }}
                 <span class="subheader">/100</span>
                 <!-- <br />
                 <span class="subheader">Overwhelmingly positive</span> -->
               </div>
 
-              <div class="progress progress-sm" style="background-color: #25384f">
+              <!-- <div class="progress progress-sm" style="background-color: #25384f">
                 <div class="progress-bar bg-primary" :style="`width: ${app.score}%`">
                   <span class="visually-hidden">{{ app.score }}% Complete</span>
                 </div>
-              </div>
+              </div> -->
               <!-- <div class="d-flex mb-2">
                 <div class="subheader">125.000 votes on Steam</div>
               </div> -->
             </div>
           </div>
         </div>
-        <div v-if="app.scores.metascore" class="col-sm-6 col-lg-3">
-          <div class="card">
+
+        <div v-if="app.scores.steamscore" class="col col-md-3">
+          <div class="card" style="border: 2px solid rgb(102, 192, 244)">
+            <div class="card-body" style="padding: 0.5rem 0.75rem">
+              <div class="d-flex align-items-center">
+                <div class="subheader">Steam reviews</div>
+
+                <!-- <div class="ms-auto">{{ app.scores.steamCount }} reviews on steam</div> -->
+              </div>
+              <div class="h1 mt-2 mb-0">
+                {{ app.scores.steamscore }}
+                <span class="subheader">/100</span>
+                <span class="d-block subheader">
+                  {{ app.scores.steamscoreAlt }}
+                </span>
+              </div>
+
+              <!-- <div class="progress progress-sm" style="background-color: #25384f">
+                <div class="progress-bar bg-primary" :style="`width: ${app.score}%`">
+                  <span class="visually-hidden">{{ app.score }}% Complete</span>
+                </div>
+              </div> -->
+              <!-- <div class="d-flex mb-2">
+                <div class="subheader">125.000 votes on Steam</div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+
+        <div v-if="false && app.scores.metascore" class="col col-md-3">
+          <div class="card" style="border: 2px solid rgb(84, 167, 43)">
             <div class="card-body" style="padding: 0.5rem 0.75rem">
               <div class="d-flex align-items-center">
                 <div class="subheader">Metacritic reviews</div>
               </div>
-              <div class="h1 mb-3">
+              <div class="h1 mb-0">
                 {{ app.scores.metascore }}
                 <span class="subheader">/100</span>
                 <!-- <br />
                 <span class="subheader">Overwhelmingly positive</span> -->
               </div>
 
-              <div class="progress progress-sm" style="background-color: #25384f">
+              <!-- <div class="progress progress-sm" style="background-color: #25384f">
                 <div class="progress-bar bg-primary" :style="`width: ${app.score}%`">
                   <span class="visually-hidden">{{ app.score }}% Complete</span>
                 </div>
-              </div>
+              </div> -->
               <!-- <div class="d-flex mb-2">
                 <div class="subheader">125.000 votes on Steam</div>
               </div> -->
@@ -162,31 +226,9 @@
         </div>
       </div>
 
-      <div>95 /100 Median score</div>
+      <!-- <div>95 /100 Median score</div>
 
-      <div>93 /100 Overwhelmingly positive Steam score 125.000 votes view on steam</div>
-
-      <div class="col-12 px-3">
-        <div class="btn-list">
-          <a v-tippy="'Open Steam store page'" href="#" class="btn btn-sm btn-icon">
-            <Icon>BrandSteam</Icon>
-          </a>
-          <a v-tippy="'Open on Steam'" href="#" class="btn btn-icon btn-sm">
-            <Icon>GitMerge</Icon>
-          </a>
-        </div>
-
-        <ul v-if="ui.layout == 'full'">
-          <li>
-            <!-- <div class="btn btn-sm pe-3">
-              <Icon size="14" class="mx-2">BrandSteam</Icon>
-              On Steam
-            </div> -->
-          </li>
-          <li><Icon>Clock</Icon></li>
-          <li><Icon>Note</Icon></li>
-        </ul>
-      </div>
+      <div>93 /100 Overwhelmingly positive Steam score 125.000 votes view on steam</div> -->
 
       <div v-if="ui.layout == 'full'" class="col-12 p-3">
         <div class="datagrid">
@@ -296,7 +338,7 @@
         </div>
       </div>
       <div class="col-12 col-md-6" style="display: flex; align-items: flex-end">
-        <small class="text-muted">
+        <small v-if="app._.date_owned" class="text-muted" :title="app._.date_owned">
           <Icon
             v-tippy="'In Backlog.rip since ' + $moment(app.created_at).format('LL')"
             size="16"
@@ -305,7 +347,8 @@
             Calendar
           </Icon>
           In your library since
-          {{ $moment(app._dateOwned).format('LL') }}
+
+          {{ $moment(app._.date_owned).format('LL') }}
         </small>
       </div>
       <div
@@ -323,7 +366,7 @@
           <Icon>BrandSteam</Icon>
         </small>
       </div>
-      <div v-if="ui.layout == 'full'" class="col">
+      <div v-if="ui.layout == 'full'" class="col col-md-3">
         You played: {{ app._playtime }} last played: {{ app._last_played }}
         <br />
         scores: {{ app.scores }}
@@ -331,7 +374,7 @@
         hltb: {{ app.hltb }}
       </div>
 
-      <!-- <div v-if="$app.dev" class="col">
+      <!-- <div v-if="$app.dev" class="col col-md-3">
         owned: {{ app.is.owned }}
         <div v-tippy="'View history log of changes'"><Icon>Paper</Icon></div>
       </div> -->
@@ -390,7 +433,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Tue Feb 27 2024
+ * Modified: Thu Mar 07 2024
  **/
 
 export default {
@@ -448,7 +491,13 @@ export default {
 
     listOfGenres(app) {
       if (!app.genres) return
-      return app.genres.map((id) => this._genres[id].name).join(', ')
+
+      return app.genres
+        .map((id) => (this._genres[id] ? this._genres[id].name : undefined))
+        .filter(Boolean)
+        .join(', ')
+
+      return app.genres.map((id) => this._genres[id]?.name).join(', ')
     },
 
     confirm() {
@@ -473,19 +522,6 @@ export default {
       // this.evaluate()
 
       this.show()
-    },
-
-    //+-------------------------------------------------
-    // evaluate()
-    // Evaluates the status of the loaded data
-    // And determines if it needs to be updated and more
-    // -----
-    // Created on Tue Dec 12 2023
-    //+-------------------------------------------------
-    evaluate() {
-      if (!this.app.api_id) {
-        this.status.needs_update = true
-      }
     },
 
     //+-------------------------------------------------

@@ -1,8 +1,8 @@
 <template>
   <div class="navbar-expand-md">
     <div id="navbar-menu" class="collapse navbar-collapse" :class="{ show: showMobMenu }">
-      <div class="navbar navbar-light">
-        <div class="container-xl">
+      <div class="navbar navbar-light p-0">
+        <div class="container-xl" style="padding-left: 60px">
           <ul class="navbar-nav">
             <li
               v-if="false"
@@ -17,7 +17,7 @@
             <li v-if="false" style="border-right: 1px dashed #ccc; margin: 10px"></li>
 
             <li class="nav-item dropdown">
-              <div class="nav-link dropdown-toggle cursor-pointer">
+              <div class="nav-link dropdown-toggle cursor-pointer ps-0">
                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                   <Icon>ChartBubble</Icon>
                 </span>

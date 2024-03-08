@@ -111,22 +111,24 @@
           *| Favorites
           *| Simple item
           *+--------------------------------- -->
-        <div class="dropdown-item">
-          <div class="d-flex" style="width: 30px">
-            <Icon>Star</Icon>
+        <template v-if="false">
+          <div class="dropdown-item">
+            <div class="d-flex" style="width: 30px">
+              <Icon>Star</Icon>
+            </div>
+
+            <span>Add to favorites</span>
           </div>
-
-          <span>Add to favorites</span>
-        </div>
-
-        <div class="dropdown-divider"></div>
+        </template>
 
         <!--
           *+---------------------------------
           *| Delete this
           *| Simple item
           *+--------------------------------- -->
-        <div class="dropdown-item" @click="deleteme">
+        <div v-if="app.is && app.is.lib" class="dropdown-item" @click="deleteme">
+          <div class="dropdown-divider"></div>
+
           <div class="d-flex" style="width: 30px">
             <Icon>PlaylistX</Icon>
           </div>
@@ -163,9 +165,9 @@
               <div
                 class="d-flex"
                 style="flex-direction: column; text-align: center; align-items: center">
-                <h5>{{ appUUID }}</h5>
                 <h4>{{ app.name }}</h4>
-                <pre style="text-align: left">{{ app }}</pre>
+                <h5>{{ appUUID }}</h5>
+                <pre style="text-align: left; max-width: 100%">{{ app }}</pre>
               </div>
             </b-dropdown>
           </div>
@@ -254,7 +256,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Sun Feb 25 2024
+ * Modified: Wed Mar 06 2024
  **/
 
 export default {

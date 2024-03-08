@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Tue Feb 13 2024
+ * Modified: Thu Mar 07 2024
  */
 
 import axios from 'axios'
@@ -270,23 +270,30 @@ export default {
     let uuids = []
     const items = []
 
-    x.log('Check 6.1: Storing the array of new apps')
+    x.log('Check 6.1: Processing the array of new apps')
     x.apps.toImport.forEach((el) => {
       let app = { ...el }
-      app = $data.prepareToStore(app)
+      // app = $data.prepareToStore(app)
       app = steam.prepareToStore(app)
 
       items.push(app)
       uuids.push(app.uuid)
     })
 
-    $data.store(items)
+    x.log('Check 6.2: Storing apps')
+    $data.process(items, 'import')
 
     return {
       uuids: uuids,
     }
   },
 
+  //+-------------------------------------------------
+  // wrap()
+  //
+  // -----
+  // Created on Wed Jan 24 2024
+  //+-------------------------------------------------
   wrap(x = {}) {
     x.log('💠 Importer(7): Wrapping up ...')
     if (!$nuxt) $nuxt = useNuxtApp()
@@ -305,6 +312,6 @@ export default {
 
     x.log('7.2: Updating user data')
     $nuxt.$auth.local.steam_updated_at = dates.now()
-    $nuxt.$auth.update('user', 'account')
+    $nuxt.$auth.updateAccount('steam_updated_at')
   },
 }

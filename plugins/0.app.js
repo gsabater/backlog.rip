@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Tue Feb 27 2024
+ * Modified: Sun Mar 03 2024
  */
 
 import { reactive } from 'vue'
@@ -142,8 +142,8 @@ async function initClient() {
   // Initialize only the stores that are needed
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  $state.init()
   await $data.init()
+  $state.init()
 
   app.ready = true
   detectEnvironment()

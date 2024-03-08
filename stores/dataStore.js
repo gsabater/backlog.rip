@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue Feb 27 2024
+ * Modified: Fri Mar 08 2024
  */
 
 let $nuxt = null
@@ -235,18 +235,37 @@ export const useDataStore = defineStore('data', {
       if (!apps.length) apps = [apps]
 
       apps.forEach((item) => {
-        if (item === true) {
+        if (item === true || (Array.isArray(item) && item.length === 0)) {
           console.error('🔥', item, context)
+          return
         }
+
+        // Debug on elden ring
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (item.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') {
           // if (item.steam_id == '292030') {
           // if (context) {
-          console.warn('✨ ', item, context)
+          console.warn('✨ ELDEN RING', item, context)
           //   debugger
         }
 
-        if (context == 'api') item.is_api = true
+        // Flag games coming from API as is_api
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (context == 'api') {
+          item.is_api = true
+          item.api_id = item.api_id || item.uuid
+        }
+
+        // Process games coming from the library
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (context == 'library') {
+          this.toData(item)
+          return
+        }
+
+        // Process importing games
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (context == 'import') {
           this.toData(item)
           return
         }
@@ -256,24 +275,22 @@ export const useDataStore = defineStore('data', {
           debugger
         }
 
-        if (
-          context?.includes(':db') ||
-          context?.includes(':refresh') ||
-          context?.includes(':api')
-        ) {
+        if (context?.includes('update:') || context?.includes('store:')) {
           item.is.dirty = true
           this.toData(item)
           return
         }
 
-        if (item.deb) {
-          console.log('this shouldnt happen, delete deb here and under', item)
+        if (item.trigger) {
+          console.log('this shouldnt happen, delete trigger here and under', item)
           debugger
         }
 
         let uuid = this.isIndexed(item)
+
+        if (uuid === true) return
         if (!uuid) this.toData(item)
-        else $game.update(uuid, { ...item, deb: true })
+        else $game.update(uuid, { ...item, trigger: true })
       })
 
       $nuxt.$app.count.data = Object.keys(data).length || 0
@@ -285,20 +302,47 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
+    // prepareToData()
+    // Prepares an item before adding it to data
+    // -----
+    // Created on Thu Mar 07 2024
+    //+-------------------------------------------------
+    prepareToData(item) {
+      item = $game.normalize(item)
+
+      item._ = {
+        score: $game._score(item),
+        playtime: $game._playtime(item),
+        date_owned: $game._dateOwned(item),
+      }
+
+      if (item.is?.dirty) {
+        item.uuid = item.uuid || $nuxt.$uuid()
+      }
+
+      return item
+    },
+
+    //+-------------------------------------------------
     // prepareToStore()
-    // to ensureconsistency, add base values to the item
+    // to ensure consistency, add base values to the item
     // and remove unwanted values before returning back
     // -----
     // Created on Thu Dec 14 2023
     // Updated on Tue Feb 27 2024
     //+-------------------------------------------------
-    prepareToStore(item, platform) {
+    prepareToStore(item) {
+      if (!item) {
+        console.error('🔥 Called prepareToStore without item', item)
+        return
+      }
+
       item.uuid = item.uuid || $nuxt.$uuid()
 
       item.is = item.is || {}
       item.is.lib = item.is.lib || dates.stamp()
 
-      if (platform) item.is.in[platform] = dates.stamp()
+      item.log = item.log || []
 
       // Default created at timestamp, should come from api
       // But sometimes it doesn't or the game is created locally
@@ -314,6 +358,10 @@ export const useDataStore = defineStore('data', {
       delete item.is_api
       delete item.is.dirty
 
+      delete item._
+      delete item.data
+      delete item.source
+
       return item
     },
 
@@ -328,15 +376,33 @@ export const useDataStore = defineStore('data', {
       if (!items.length) items = [items]
 
       let prepared = []
-      items = items.forEach((uuid) => {
-        let prep = this.prepareToStore(data[uuid])
+      items = items.forEach((item) => {
+        let prep = null
+
+        // if (typeof item == 'string') {
+        //   prep = this.prepareToStore(data[item])
+        // }
+
+        // if (typeof item == 'object') {
+        //   prep = this.prepareToStore(item)
+        // }
+
+        // prettier-ignore
+        prep = this.prepareToStore(
+          typeof item == 'string'
+          ? {...data[item]}
+          : item)
+
         prepared.push(prep)
       })
 
       if (prepared.length == 1) $nuxt.$db.games.put(prepared[0])
       else $nuxt.$db.games.bulkPut(prepared)
 
-      log('🎴 updated games stored')
+      log(
+        '🎴 updated games stored',
+        prepared[Math.floor(Math.random() * prepared.length)]
+      )
     },
 
     //+-------------------------------------------------
@@ -474,19 +540,16 @@ export const useDataStore = defineStore('data', {
     // Created on Sun Feb 25 2024 - Adds to queue
     //+-------------------------------------------------
     async toData(item) {
-      let game = { ...item }
+      let game = this.prepareToData({ ...item })
 
-      game = $game.normalize(game)
-      game._ = {
-        score: $game._score(game),
-        playtime: $game._playtime(game),
-      }
+      data[game.uuid] = game
+      this.toIndex(game)
 
-      data[item.uuid] = game
-      this.toIndex(item)
+      if (game.is?.dirty) {
+        delete game.is.dirty
+        this.queue.push(game.uuid)
 
-      if (item.is?.dirty) {
-        this.queue.push(item.uuid)
+        console.warn('🔥 Queueing', game.uuid, 'to be stored, having ', this.queue.length)
         this.storeQueue()
       }
     },

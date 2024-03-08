@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev --port=1337 --host",
+    "dev": "nuxt dev --port=1337 --host ",
     "host": "NOTE: add --host to dev",
     "devOnNewNode": "set NODE_OPTIONS=--openssl-legacy-provider && dev",
     "generate": "nuxt generate",
@@ -29,7 +29,7 @@
     "sass-loader": "^14.1.1"
   },
   "dependencies": {
-    "@nuxt/content": "^2.12.0",
+    "@nuxt/content": "^2.12.1",
     "@pinia/nuxt": "^0.5",
     "@tabler/core": "^1.0.0-beta20",
     "@tabler/icons-vue": "^2.47.0",
@@ -40,7 +40,7 @@
     "animate.css": "^4.1.1",
     "axios": "^1.6.7",
     "dayjs": "^1.11.7",
-    "dexie": "^3.2.5",
+    "dexie": "^3.2.6",
     "dexie-export-import": "^4.1.1",
     "mitt": "^3.0.0",
     "nprogress": "^0.2.0",
@@ -49,9 +49,9 @@
     "rxjs": "^7.8.1",
     "tom-select": "^2.3.1",
     "uuid": "^9.0.0",
-    "vaul-vue": "^0.0.3",
+    "vaul-vue": "^0.1.0",
     "vue-final-modal": "^4.5.4",
-    "vue-sonner": "^1.0.3",
+    "vue-sonner": "^1.1.2",
     "vue-tippy": "^6.4.1"
   }
 }

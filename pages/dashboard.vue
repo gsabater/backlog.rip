@@ -27,6 +27,10 @@
                   <h4 class="card-title m-0">
                     <a href="#">{{ $auth.user.username }}</a>
                   </h4>
+                  <div class="subheader">Steam library</div>
+                  <div class="h3 m-0">
+                    Last sync, {{ dates.timeAgo($auth.user.steam_updated_at) }}
+                  </div>
                   <!-- <div class="text-muted">Working in Kare</div> -->
                 </div>
                 <!-- <div class="col-auto">
@@ -69,37 +73,17 @@
           </div>
         </div>
 
-        <div class="col-md-4">
-          <div class="card">
-            <div class="card-body">
-              <div class="subheader">Currently playing</div>
-              <div class="h3 m-0">3 games</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card">
-            <div class="card-body">
-              <div class="subheader">Steam library</div>
-              <div class="h3 m-0">
-                Last sync, {{ dates.timeAgo($auth.user.steam_updated_at) }}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12">
-          <h2>Currently playing</h2>
-
-          <!-- <gameList :apps="item.data.games" cols="3" class="pt-3"></gameList> -->
-        </div>
         <div v-if="db.recent.length" class="col-12">
-          <h2>Latest games in your library</h2>
+          <h2 class="pb-0 mb-0">Currently playing</h2>
+          <gameList :apps="playing" cols="3" class="pt-3"></gameList>
+        </div>
+
+        <div v-if="db.recent.length" class="col-12">
+          <h2 class="pb-0 mb-0">Latest games in your library</h2>
           <gameList :apps="db.recent" cols="3" class="pt-3"></gameList>
         </div>
 
-        <div v-if="$app.dev" class="col-12">
+        <div v-if="false && $app.dev" class="col-12">
           <div class="card">
             <div class="card-body">
               <p class="mb-3">Games and backlog breakdown</p>
@@ -189,7 +173,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Tue Feb 27 2024
+ * Modified: Sun Mar 03 2024
  **/
 
 export default {
@@ -210,6 +194,7 @@ export default {
     // ...mapState(useDataStore, ['recentlyAdded']),
     ...mapState(useStateStore, {
       states: 'list',
+      playing: 'playing',
     }),
 
     latest() {
@@ -227,6 +212,7 @@ export default {
   methods: {
     async getData() {
       this.db.recent = this.dataStore.getRecentlyAdded(7)
+      this.db.playing = this.playing
     },
 
     init() {

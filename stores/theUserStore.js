@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Tue Feb 20 2024
+ * Modified: Tue Mar 05 2024
  */
 
 let $nuxt = null
@@ -13,12 +13,16 @@ export const useUserStore = defineStore('user', {
     user: { username: 'Traveler' },
     bearer: null,
 
+    is: {
+      guest: false,
+      logged: false,
+      checked: false,
+    },
+
     api: {},
     local: {},
     config: {},
 
-    isLogged: false,
-    isChecked: false,
     redirectTo: null,
   }),
 
@@ -49,8 +53,8 @@ export const useUserStore = defineStore('user', {
       log('🥸 User is authenticated as ' + this.user.username, this.user)
       if (this.user.username == 'Traveler') log('🥸 Traveler user', this.user)
 
-      this.isChecked = true
-      if (this.bearer) this.isLogged = true
+      this.is.checked = true
+      if (this.bearer) this.is.logged = true
 
       return true
     },

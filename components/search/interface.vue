@@ -17,6 +17,8 @@
           width: auto;
         "
         >{{ f }}
+--
+{{ stats }}
 </pre
       >
     </div>
@@ -194,28 +196,44 @@
         :source="source"
         @loading="onLoading"></search-results>
 
-      <!-- <div class="pagination my-3">
-        <div class="btn" @click="addPage">Show more</div>
-      </div> -->
+      <template v-if="stats.amount == 0 && source == 'library'">
+        <!-- <b-empty preset='empty-library'></b-empty> -->
+        <div class="empty" style="border: 1px dashed #cccccc73; border-radius: 4px">
+          <p class="empty-title">Your library is empty</p>
+          <p class="empty-subtitle text-secondary">
+            You don't have any games in your library.
+            <br />
+            Try importing your Steam games or add any game you want from games page.
+          </p>
+          <div class="empty-action">
+            <b-btn to="import/steam" color="primary" size="sm" class="me-3">
+              <!-- <Icon>StepInto</Icon> -->
+              Import your library
+            </b-btn>
+
+            <b-btn to="games" variant="ghost" size="sm" color="secondary">
+              Browse games
+            </b-btn>
+          </div>
+        </div>
+      </template>
 
       <div
-        v-if="f && f.show && f.show.perPage"
+        v-if="f && f.show && f.show.perPage && stats.amount > 0"
         class="d-flex mt-4"
         style="flex-direction: column; align-items: center">
-        <div v-if="stats.results > f.show.perPage" class="btn w-75 mb-3" @click="addPage">Show more</div>
+        <div v-if="stats.results > f.show.perPage" class="btn w-75 mb-3" @click="addPage">
+          Show more
+        </div>
         <p class="text-muted text-center w-50">
-          <hr class="my-2" >
-          Showing 1-{{ 1 * f.show.perPage * f.show.page }} of {{ format.num(stats.results) }}
-          <div class="my-1"></div>
-          Filtered {{ format.num(stats.filtered) }} of {{ format.num(stats.amount) }} games
+          <!-- <hr class="my-2" > -->
+          Showing 1-{{ 1 * f.show.perPage * f.show.page }} of
+          {{ format.num(stats.results) }}
+          <!-- <div class="my-1"></div> -->
+          Filtered {{ format.num(stats.filtered) }} of
+          {{ format.num(stats.amount) }} games
         </p>
       </div>
-    </div>
-
-    <div v-if="false" class="col-3">
-      show:
-      <br />
-      all games z-z only owned
     </div>
   </div>
 </template>
@@ -226,7 +244,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Feb 21 2024
+ * Modified: Wed Mar 06 2024
  **/
 
 export default {
@@ -287,6 +305,7 @@ export default {
 
       ui: {
         dirty: false,
+        ready: false,
         loading: false,
       },
     }
@@ -311,7 +330,8 @@ export default {
     },
 
     stats() {
-      return this.$refs.results.stats || {}
+      if (!this.ui.ready) return {}
+      return this.$refs?.results?.stats || {}
     },
   },
 
@@ -393,11 +413,13 @@ export default {
     },
 
     async init() {
-      if(!this.$app.ready) return
+      if (!this.$app.ready) return
 
       await this.getData()
       this.mergeFilters()
       this.search('init')
+
+      this.ui.ready = true
     },
   },
 

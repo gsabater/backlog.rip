@@ -90,13 +90,21 @@ export default {
   // Gets an app and appends data to it
   // -----
   // Created on Sun Dec 24 2023
+  // Updated on Tue Mar 05 2024 - New item properties
   //+-------------------------------------------------
   prepareToStore(app) {
     if (!app.data) console.warn('prepareToStore() called without data', app)
 
+    app.is.dirty = true
+
+    app.is.in = app.is.in || {}
+    app.is.in.steam = dates.stamp()
+
+    app.playtime = app.playtime || {}
     app.playtime.steam = app.data.playtime_forever
+
+    app.last_played = app.last_played || {}
     app.last_played.steam = app.data.rtime_last_played
-    delete app.data
 
     return app
   },

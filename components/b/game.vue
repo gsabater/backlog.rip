@@ -33,6 +33,8 @@
         score: {{ app.score }} -- {{ app._.score }}
         <br />
         state: {{ app.state ?? '--' }}
+        <br />
+        lib: {{ app.is.lib ?? '--' }}
       </div>
     </div>
     <!-- <div class="card-body">
@@ -74,7 +76,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Feb 22 2024
+ * Modified: Tue Mar 05 2024
  **/
 
 export default {

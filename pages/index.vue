@@ -65,14 +65,16 @@
         <div class="row g-3 justify-center">
           <div class="col-auto">&nbsp;</div>
           <div class="col-auto">
-            <b-btn to="import/steam" variant="outline" color="orange">
-              <Icon>StepInto</Icon>
+            <b-btn to="import/steam" color="purple" size="sm">
+              <!-- <Icon>StepInto</Icon> -->
               Import your library
             </b-btn>
           </div>
 
           <div class="col-auto">
-            <b-btn to="games" variant="ghost" color="secondary">Browse games</b-btn>
+            <b-btn to="games" variant="ghost" size="sm" color="secondary">
+              Browse games
+            </b-btn>
           </div>
           <!-- <div class="col-auto">
             <a

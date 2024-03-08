@@ -146,7 +146,7 @@
             *| Small review window
             *| Shows overview of imported data
             *+--------------------------------- -->
-          <div v-if="ui.step == 'review'" class="col-lg-8 mx-auto mt-4">
+          <div v-if="ui.step == 'review'" class="col-lg-9 mx-auto mt-2">
             <div class="card">
               <div class="card-body">
                 <h2>Data received successfully</h2>
@@ -720,11 +720,13 @@
                   </li>
                 </ul> -->
             </div>
-            <div v-if="['review', 'complete'].includes(ui.step)" class="card-body">
+            <div
+              v-if="['review', 'review:plus', 'complete'].includes(ui.step)"
+              class="card-body pt-0">
               <b-btn
                 block
-                :color="ui.step !== 'review' ? 'secondary' : 'success'"
-                :disabled="ui.step !== 'review'"
+                :color="ui.step.indexOf('review') == -1 ? 'secondary' : 'success'"
+                :disabled="ui.step.indexOf('review') == -1"
                 @click="store">
                 Save your library
               </b-btn>
@@ -754,7 +756,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Tue Feb 27 2024
+ * Modified: Fri Mar 08 2024
  **/
 
 const importer = null
@@ -992,6 +994,12 @@ export default {
         })
 
       return items
+    },
+  },
+
+  watch: {
+    '$app.ready': function () {
+      this.init()
     },
   },
 
@@ -1350,6 +1358,8 @@ export default {
     },
 
     async init() {
+      if (!this.$app.ready) return
+
       console.clear()
       this._log('✨ Initializing the importer')
       this.detectAndConnect()

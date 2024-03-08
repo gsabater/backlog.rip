@@ -86,7 +86,14 @@ export default defineNuxtConfig({
   //   enabled: false
   // },
   sitemap: {
-    enabled: true
+    enabled: true,
+    exclude: ['/tabler*', '/account/**'],
+
+    urls: async () => {
+      // fetch your URLs from a database or other source
+      const urls = await fetch('https://example.com/api/urls')
+      return urls
+    }
   },
   // robots: {
   //   enabled: false

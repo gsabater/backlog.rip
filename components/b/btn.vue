@@ -14,7 +14,7 @@
  * @desc:    https://preview.tabler.io/buttons.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Thu Jan 04 2024
+ * Modified: Wed Mar 06 2024
  **/
 import { NuxtLink } from '#components'
 
@@ -22,6 +22,12 @@ export default {
   name: 'TablerBtn',
 
   props: {
+    size: {
+      type: String,
+      default: '',
+      options: ['sm', 'lg'],
+    },
+
     variant: {
       type: String,
       default: '',
@@ -53,6 +59,7 @@ export default {
 
       if (this.variant) className += ` btn-${this.variant}-${this.color}`
       if (this.color) className += ` btn-${this.color}`
+      if (this.size) className += ` btn-${this.size}`
 
       if (this.disabled === true) className += ` disabled`
       if (Object.prototype.hasOwnProperty.call(this.$attrs, 'block'))

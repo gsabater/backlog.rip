@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Mon Feb 26 2024
+ * Modified: Sun Mar 03 2024
  */
 
 let $nuxt = null
@@ -32,6 +32,17 @@ export const useStateStore = defineStore('state', {
   }),
 
   getters: {
+    //+-------------------------------------------------
+    // function()
+    // TODO: load the games and sort them by added to playing
+    // or maybe do it at games-list
+    // -----
+    // Created on Sun Mar 03 2024
+    //+-------------------------------------------------
+    getCurrentlyPlaying() {
+      return this.playing
+    },
+
     // //+-------------------------------------------------
     // // list()
     // // Returns the array of states

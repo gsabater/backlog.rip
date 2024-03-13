@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Fri Mar 08 2024
+ * Modified: Mon Mar 11 2024
  */
 
 let $nuxt = null
@@ -275,7 +275,13 @@ export const useDataStore = defineStore('data', {
           debugger
         }
 
-        if (context?.includes('update:') || context?.includes('store:')) {
+        if (context?.includes('update:')) {
+          if (item.is.lib) item.is.dirty = true
+          this.toData(item)
+          return
+        }
+
+        if (context?.includes('store:')) {
           item.is.dirty = true
           this.toData(item)
           return
@@ -412,7 +418,7 @@ export const useDataStore = defineStore('data', {
     // Created on Sun Feb 25 2024
     //+-------------------------------------------------
     async storeQueue() {
-      await delay(3000, true)
+      await delay(4000, true)
 
       let amount = this.queue.length
       if (!amount) return

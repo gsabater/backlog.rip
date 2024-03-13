@@ -12,13 +12,14 @@ body {
 
   --tblr-bg-forms: #191a22;
   --tblr-border-color: #2a2d39;
+  --tblr-status-color: #667382;
 
   --tblr-active-bg: rgb(13 6 24 / 17%);
   --tblr-link-hover-color: var(--tblr-primary);
 
-  .status {
-    --tblr-status-color: #dce1e7;
-  }
+  // .status {
+  //   --tblr-status-color: #dce1e7;
+  // }
 }
 
 ::root {

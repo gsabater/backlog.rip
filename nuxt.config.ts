@@ -87,23 +87,26 @@ export default defineNuxtConfig({
   // },
   sitemap: {
     enabled: true,
-    exclude: ['/tabler*', '/account/**'],
+    exclude: ['/tabler*', '/account/**', '/dev/**'],
 
     urls: async () => {
-      // fetch your URLs from a database or other source
-      const urls = await fetch('https://example.com/api/urls')
+      const urls = await fetch('https://api.backlog.rip/dev/sitemap')
       return urls
     }
   },
+
   // robots: {
   //   enabled: false
   // },
+
   // seoExperiments: {
   //   enabled: false
   // },
+
   schemaOrg: {
     enabled: true
   },
+
   // linkChecker: {
   //   enabled: false
   // },

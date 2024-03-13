@@ -1,7 +1,7 @@
 <template>
   <div
     v-tippy="manager ? 'Click to change' : ''"
-    class="status"
+    class="status small"
     :class="{ 'cursor-pointer': manager }"
     style="border-radius: 4px"
     :style="{ '--tblr-status-color': st.color }"
@@ -31,7 +31,7 @@
  * <BState :state="state"></BState>
  * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Sun Feb 18 2024
+ * Modified: Mon Mar 11 2024
  **/
 
 export default {
@@ -108,17 +108,11 @@ export default {
       })
     },
 
-    getData() {
-      // this.states = this.dataStore.states()
-    },
-
-    init() {
-      this.getData()
-    },
+    init() {},
   },
 
   mounted() {
-    this.init()
+    // this.init()
   },
 }
 </script>

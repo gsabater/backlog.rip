@@ -640,7 +640,7 @@
     </aside>
 
     <!-- Navbar -->
-    <div class="sticky-top">
+    <div class="sticky-top" style="z-index: 999">
       <header
         class="navbar navbar-expand-md navbar-light d-print-none pb-0"
         style="max-height: 56px">
@@ -982,6 +982,17 @@
         <Icon size="18" class="me-2">BrandGithub</Icon>
         Code on Github
       </a>
+
+      <NuxtLink to="/changelog" class="dropdown-item">
+        <Icon size="18" class="me-2">Broadcast</Icon>
+        Changelog
+      </NuxtLink>
+      <span class="dropdown-header">
+        <span class="text-muted my-4">
+          Version
+          {{ $app.v }}
+        </span>
+      </span>
     </b-dropdown>
   </div>
 
@@ -1012,7 +1023,7 @@
     <AppFooter />
   </div> -->
 
-  <DrawerRoot>
+  <!-- <DrawerRoot>
     <DrawerTrigger>Open</DrawerTrigger>
     <DrawerPortal>
       <DrawerOverlay />
@@ -1020,7 +1031,7 @@
         <p>Content</p>
       </DrawerContent>
     </DrawerPortal>
-  </DrawerRoot>
+  </DrawerRoot> -->
 </template>
 
 <script>
@@ -1029,7 +1040,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Fri Mar 08 2024
+ * Modified: Wed Mar 13 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'

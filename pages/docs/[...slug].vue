@@ -13,6 +13,7 @@
     <div class="container-xl">
       <div class="row gx-lg-5">
         <div class="d-none d-lg-block col-lg-3">
+          ABC
           <pre>
             {{ navigation }}
           </pre>
@@ -30,6 +31,7 @@
           <account-sidebar></account-sidebar>
         </div>
         <div class="col-lg-7">
+          123
           <ContentDoc />
 
           <ContentList v-slot="{ list }" path="/docs/articles">
@@ -44,6 +46,7 @@
           </div>
         </div>
         <div class="d-none d-lg-block col-lg-2">
+          ¿?=
           <h3>Table of contents</h3>
           <hr />
           <h3>Community</h3>
@@ -60,7 +63,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Tue Jan 16 2024
+ * Modified: Tue Mar 12 2024
  **/
 export default {
   data() {

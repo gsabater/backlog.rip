@@ -1,48 +1,98 @@
 <template>
-  <!-- <pre
-    v-if="ui.dialog"
-    class="my-3"
-    style="
-      position: fixed;
-      bottom: 10px;
-      left: 200px;
-      z-index: 9999;
-      max-height: 120vh;
-      overflow-y: scroll;
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      width: auto;
-    "
-    >{{ app }}
-</pre> -->
-
   <VueFinalModal
     v-model="ui.dialog"
-    class="details-modal"
-    content-class="details-modal-content movie_card "
+    class="game-details"
+    content-class="game-details-content game-card"
     overlay-transition="vfm-fade"
+    swipe-to-close="up"
     :content-transition="{
-      'enter-active-class': 'hunaa-menu-enter-active',
-      'enter-from-class': 'hunaa-menu-y-0',
+      'enter-from-class': 'details-modal-out',
       'enter-to-class': 'hunaa-menu-full',
-      'leave-active-class': 'hunaa-menu-leave-active',
-      'leave-to-class': 'hunaa-menu-y-0',
+      'enter-active-class': 'hunaa-menu-enter-active',
       'leave-from-class': 'hunaa-menu-full',
+      'leave-to-class': 'details-modal-out',
+      'leave-active-class': 'hunaa-menu-leave-active',
     }">
-    <div
-      v-if="$prev"
-      class="btn btn-ghost-secondary"
-      style="position: absolute; left: -77px; z-index: 9999"
-      @click="changeTo($prev)">
-      <Icon size="50" width="2">ChevronLeft</Icon>
-    </div>
+    <div class="row w-100 h-100 g-0 m-0">
+      <div
+        class="d-none d-md-flex col"
+        style="
+          max-width: 430px;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        ">
+        <div
+          v-if="ui.layout == 'full'"
+          style="max-width: 400px; max-height: 500px; z-index: 1; overflow: scroll">
+          <pre>
+          {{ app }}
+        </pre
+          >
+        </div>
 
-    <div class="modal-back"></div>
-    <div class="info_section row">
-      <div class="col-12 row">
-        <div class="movie_header">
+        <game-asset
+          v-else
+          ref="logo"
+          :app="app"
+          asset="logo"
+          :priority="['steam']"
+          style="
+            max-width: 250px;
+            z-index: 1;
+            filter: drop-shadow(2px 3px 9px black);
+          "></game-asset>
+        <div class="blur_back" style="">
+          <game-asset
+            ref="background"
+            :app="app"
+            asset="background"
+            :priority="['steam']"></game-asset>
+        </div>
+
+        <div
+          style="
+            position: absolute;
+            bottom: 0px;
+            text-align: center;
+            width: 100%;
+            background: linear-gradient(0deg, #0000005c, transparent);
+            padding: 10px 0;
+          ">
+          <small class="text-muted" style="font-size: 12px; display: block">
+            <span v-tippy="'Added to database ' + $moment(app.created_at).format('LL')">
+              Updated {{ $moment(app.updated_at * 1000).format('LL') }}
+            </span>
+            <br />
+            Data provided by
+            <img
+              class="px-1"
+              src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNCIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDM0IDE2IiBmaWxsPSJub25lIj4KICAgIDxwYXRoCiAgICAgICAgZD0iTTYuNzE2ODVlLTA1IDAuMDAwOTExNDY4QzExLjMzMzEgMC4wMDA2ODM4MjMgMjIuNjY2NSAwLjAwMjUwNDA5IDMzLjk5OTggMEMzNCA1LjMzMzI2IDM0LjAwMDIgMTAuNjY2NyAzMy45OTk1IDE2QzMxLjc5MzcgMTUuNjUyNCAyOS41Nzc5IDE1LjM2MTIgMjcuMzU0IDE1LjE0ODJDMTkuMzI5MSAxNC4zNjg1IDExLjIxMjIgMTQuNDk5MSAzLjIxNzc4IDE1LjUzNjdDMi4xNDI1NyAxNS42NzMxIDEuMDcxMDkgMTUuODM1OSA2LjcxNjg1ZS0wNSAxNS45OTkzQy0wLjAwMDE2NTUxIDEwLjY2NjUgMC4wMDAyOTk4NDcgNS4zMzM3MSA2LjcxNjg1ZS0wNSAwLjAwMDkxMTQ2OFpNMS4wMDA4MiAwLjk4MDIzOEMxLjAwMTI4IDUuNjA1NzUgMS4wMDA4MiAxMC4yMzE1IDEuMDAwODIgMTQuODU3QzExLjU4NDcgMTMuMjcyMSAyMi40MTU0IDEzLjI3MDggMzIuOTk5IDE0Ljg1NzVDMzIuOTk5NyAxMC4yMzE1IDMyLjk5OTIgNS42MDU1MiAzMi45OTkyIDAuOTc5NTU1QzIyLjMzMyAwLjk4MTE0OSAxMS42NjY4IDAuOTgwMDEgMS4wMDA4MiAwLjk4MDIzOFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNOC4zMTkyNiA0LjYxOEM5LjAxMjg3IDMuOTU3MzcgOS45ODU5NCAzLjYwNTQ0IDEwLjk0OTcgMy42MjAyM0MxMS42MDc3IDMuNjE3OTYgMTIuMjc5NCAzLjcxODggMTIuODcxMiA0LjAxMjY5QzEzLjE3NjIgNC4xNjE1NyAxMy40NTQ5IDQuMzU2ODkgMTMuNzE1MSA0LjU3MTU2QzEzLjM4NzcgNC45NTgzMyAxMy4wNTc1IDUuMzQyNTkgMTIuNzMzOSA1LjczMjA5QzEyLjUzOTEgNS41ODkzNiAxMi4zNDk3IDUuNDM3MDYgMTIuMTM0MyA1LjMyNDE1QzExLjcwMTcgNS4wODUzNSAxMS4xOTIxIDUuMDAyNzIgMTAuNzAwNSA1LjAzNzc4QzEwLjA5ODggNS4wODgwOCA5LjU0ODI3IDUuNDQyOTggOS4yMjIyOCA1LjkzNDQ3QzguODAyMDcgNi41NTE4NCA4LjczNjY4IDcuMzY0MyA4Ljk5MTIzIDguMDU1NjZDOS4xNDUyNyA4LjQ3NTY2IDkuNDM5MzcgOC44NDgzMiA5LjgyNjc4IDkuMDg2MjFDMTAuMjEyMSA5LjMyODQyIDEwLjY4IDkuNDI1NjIgMTEuMTM0MiA5LjM5ODk5QzExLjYgOS4zODE0NiAxMi4wNzQyIDkuMjU3MTcgMTIuNDUzNSA4Ljk4NDY4QzEyLjQ0OTggOC42NTY4NyAxMi40NTM1IDguMzI4ODMgMTIuNDUxNiA4LjAwMTAyQzExLjkyOTcgOC4wMDIzOSAxMS40MDc2IDguMDAwNTcgMTAuODg1NyA4LjAwMTk0QzEwLjg4NDUgNy41NjIxMyAxMC44ODg1IDcuMTIyMzIgMTAuODgzOCA2LjY4MjczQzExLjkxMDQgNi42NzYzNiAxMi45MzcyIDYuNjg1MDEgMTMuOTYzOCA2LjY3ODQxQzEzLjk3MDEgNy42ODI1NSAxMy45NjMxIDguNjg2OTIgMTMuOTY3MyA5LjY5MTA2QzEzLjI2MDcgMTAuMjg3OSAxMi4zNjg4IDEwLjY3OTUgMTEuNDM3NCAxMC43Njg1QzEwLjUyODEgMTAuODY2MiA5LjU2OTQ0IDEwLjcwMjUgOC43OTQzOSAxMC4yMTE5QzguMTczMzcgOS44MjQ2OCA3LjY5MzU5IDkuMjMwNzYgNy40NDI1MyA4LjU1NDJDNy4xOTQ3MiA3Ljg4ODU3IDcuMTQ1ODYgNy4xNTUxIDcuMjg1IDYuNDYxMjRDNy40Mjk5NiA1Ljc2MzczIDcuNzkyNDcgNS4xMDk3MSA4LjMxOTI2IDQuNjE4WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+CiAgICA8cGF0aAogICAgICAgIGQ9Ik0zLjc4NzYxIDMuNzM5NTJDNC4zMDgxMSAzLjc0MDY2IDQuODI4NjEgMy43Mzg2MSA1LjM0OTEyIDMuNzQwNjZDNS4zNDc5NSA2LjA1MDc5IDUuMzQ5MTIgOC4zNjExNiA1LjM0ODY1IDEwLjY3MTVDNC44MjgzOCAxMC42NzEzIDQuMzA4MTEgMTAuNjcwNiAzLjc4Nzg0IDEwLjY3MThDMy43ODc2MSA4LjM2MTE2IDMuNzg4MDggNi4wNTAzNCAzLjc4NzYxIDMuNzM5NTJaIgogICAgICAgIGZpbGw9IndoaXRlIgogICAgLz4KICAgIDxwYXRoCiAgICAgICAgZD0iTTE1Ljg2NDMgMy43Mzk3NUMxNi44MTY1IDMuNzM5OTcgMTcuNzY4NiAzLjczOTc1IDE4LjcyMDcgMy43Mzk5N0MxOS41ODYzIDMuNzQ5MzEgMjAuNDYyOCA0LjAxMjAxIDIxLjE0MDEgNC41NDkwMkMyMS43MzIzIDUuMDEyMjggMjIuMTUyMiA1LjY3ODYgMjIuMzEyMyA2LjQwMzY0QzIyLjUwNjEgNy4yNzkxNiAyMi4zNzk4IDguMjMzOTEgMjEuODk5MyA5LjAwNDAzQzIxLjUxOCA5LjYyNDgxIDIwLjkxOSAxMC4xMDgxIDIwLjIzNDUgMTAuMzc5MkMxOS43NTQ5IDEwLjU2OTggMTkuMjM3NyAxMC42Njk5IDE4LjcyIDEwLjY3MTNDMTcuNzY4MyAxMC42NzEzIDE2LjgxNjUgMTAuNjcwOCAxNS44NjQ2IDEwLjY3MTVDMTUuODY0NiA4LjM2MDkzIDE1Ljg2NSA2LjA1MDM0IDE1Ljg2NDMgMy43Mzk3NVpNMTcuNDMwMyA1LjExNjU0QzE3LjQyNzkgNi41MDkyNyAxNy40MzA1IDcuOTAyIDE3LjQyODkgOS4yOTQ5NkMxNy43Mjc2IDkuMjk0NSAxOC4wMjY2IDkuMjk0NzMgMTguMzI1NCA5LjI5NDczQzE4LjU2NiA5LjI5MjkxIDE4LjgwODYgOS4zMDU4OCAxOS4wNDY5IDkuMjYyNjNDMTkuNTEzOSA5LjE5MTYxIDE5Ljk2MzkgOC45NzE5MyAyMC4yNzI3IDguNjE3NDlDMjAuNTQyNiA4LjMxMzgxIDIwLjY5OTQgNy45MjQzMSAyMC43NDY2IDcuNTI3MDdDMjAuNzkwNiA3LjEyMzY4IDIwLjc1NTcgNi43MDU3MyAyMC41OTU4IDYuMzI4NzVDMjAuNDMxMyA1LjkyODA5IDIwLjEyMzcgNS41ODUyNiAxOS43MzUyIDUuMzc5N0MxOS4zODQzIDUuMTg4NDggMTguOTc5IDUuMTE2MzEgMTguNTgwNiA1LjExNjA5QzE4LjE5NzIgNS4xMTcgMTcuODEzNyA1LjExNjA4IDE3LjQzMDMgNS4xMTY1NFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNMjQuMTgzOCAzLjc0NDA3QzI1LjE0NTkgMy43MzQwNiAyNi4xMDg5IDMuNzQyNzEgMjcuMDcxMyAzLjczOTc1QzI3LjMzNTYgMy43NDMzOSAyNy42MDA2IDMuNzI5MDUgMjcuODY0IDMuNzU1NjhDMjguMzMxOSAzLjc5ODI1IDI4LjgwNjEgMy45MzE4OCAyOS4xODA1IDQuMjE5MzlDMjkuNTA2IDQuNDY1MDIgMjkuNzM0NSA0LjgzMTc2IDI5Ljc5NzYgNS4yMzAzNkMyOS44NDMyIDUuNjA3MzQgMjkuODIyIDYuMDA4OTEgMjkuNjMyNCA2LjM0ODc4QzI5LjQ3MTEgNi42NTM2IDI5LjE5MzMgNi44Nzk4OCAyOC44OTQ2IDcuMDQ5N0MyOS4yOTI3IDcuMTk2MyAyOS42ODY0IDcuNDEyNTYgMjkuOTM0MiA3Ljc2MTMxQzMwLjE2NTIgOC4wODM0MyAzMC4yMzI3IDguNDkwNDYgMzAuMjEwMSA4Ljg3NjU1QzMwLjIwMDggOS4yNjkwMSAzMC4wNTQgOS42NjI2IDI5Ljc3OTIgOS45NTE5NEMyOS41MDE2IDEwLjI0ODYgMjkuMTIgMTAuNDMwOSAyOC43Mjg0IDEwLjUzNjhDMjguNDAxMSAxMC42MjMgMjguMDYyNSAxMC42Njc0IDI3LjcyMzcgMTAuNjcwNkMyNi41NDQ1IDEwLjY3MTUgMjUuMzY1MyAxMC42NzE4IDI0LjE4NjEgMTAuNjcwNkMyNC4xODQyIDguMzYxNjEgMjQuMTg4NiA2LjA1Mjg0IDI0LjE4MzggMy43NDQwN1pNMjUuNzA3OCA1LjA4MDM1QzI1LjcwOTQgNS41Njc1IDI1LjcwNjQgNi4wNTQ4OSAyNS43MDkyIDYuNTQyMjhDMjYuMjI1NyA2LjUzOTA5IDI2Ljc0MjMgNi41NDI5NiAyNy4yNTg4IDYuNTQwMjNDMjcuNDkzMSA2LjUyNzk0IDI3LjczNTggNi40OTUzOCAyNy45NDI5IDYuMzc5NzRDMjguMTA2NSA2LjI4OTE0IDI4LjIzMDcgNi4xMjY4MyAyOC4yNTUyIDUuOTQyNDRDMjguMjg5NiA1LjczNDYgMjguMjUzMSA1LjUwMTI2IDI4LjA5NzkgNS4zNDU3OEMyNy45MTEzIDUuMTU3NzQgMjcuNjMzIDUuMDk3NjUgMjcuMzc0OSA1LjA4MjYyQzI2LjgxOTMgNS4wNzgwNyAyNi4yNjM0IDUuMDgyNjIgMjUuNzA3OCA1LjA4MDM1Wk0yNS43MDc2IDcuODE1MjdDMjUuNzA4MyA4LjMyMTMyIDI1LjcwOSA4LjgyNzgzIDI1LjcwNzEgOS4zMzQxMUMyNi4yMDExIDkuMzM4NjcgMjYuNjk1MyA5LjMzNDU3IDI3LjE4OTUgOS4zMzU5M0MyNy40MzYxIDkuMzMyOTcgMjcuNjg1MyA5LjM0OTM2IDI3LjkyOTYgOS4zMDYzNEMyOC4xNDM3IDkuMjcyNjUgMjguMzY0NSA5LjE5Mzg4IDI4LjUwOSA5LjAyODYxQzI4LjY1NDcgOC44NjMxMSAyOC42ODUyIDguNjI3NzMgMjguNjQ4NiA4LjQxODk4QzI4LjYxOTUgOC4yNDE4NyAyOC41MDU4IDguMDgyNzUgMjguMzQ4NSA3Ljk5MTQ2QzI4LjEzNTEgNy44NjQ0NCAyNy44Nzk2IDcuODI0MzcgMjcuNjMzNCA3LjgxNjE4QzI2Ljk5MTUgNy44MTQzNiAyNi4zNDk1IDcuODE2MTggMjUuNzA3NiA3LjgxNTI3WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+Cjwvc3ZnPgo="
+              alt="" />
+            and
+            <span class="cursor-pointer">other sources (view)</span>
+          </small>
+
+          <div
+            v-if="ui.layout == 'full'"
+            style="background-color: #0000005c; margin: 5px; padding: 10px">
+            <ul style="list-style-type: none">
+              <li>Data from IGDB and Steam Store</li>
+              <li>Metacritic score from metacritic.com</li>
+              <li>Opencritic score from opencritic.com</li>
+              <li>HowLongToBeat data from howlongtobeat.com</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!--
+        information column
+      -->
+      <div class="col info_section">
+        <div class="info-header">
           <game-asset
             ref="cover"
             :app="app"
@@ -54,25 +104,27 @@
           <h2>
             {{ app.name }}
           </h2>
-          <div>
-            <BState :app="app.uuid" :state="app.state"></BState>
-          </div>
-          <div>
-            <div class="status my-2" style="border-radius: 4px">
+
+          <BState :app="app.uuid" :state="app.state"></BState>
+
+          <!--
+            *+---------------------------------
+            *| Playtime pill
+            *| If this shit is repeated, make a component
+            *+--------------------------------- -->
+          <div v-if="app.is.lib">
+            <div class="status small my-2" style="border-radius: 4px">
               <span style="font-size: 0.775rem">
-                Played
-                <!-- <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon> -->
-                {{ dates.minToHours(app._.playtime) }}
+                <template v-if="app._.playtime == 0">Not played</template>
+                <template v-else>
+                  Played
+                  <!-- <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon> -->
+                  {{ dates.minToHours(app._.playtime, 'Not played') }}
+                  {{ dates.timeAgo(app.last_played.steam * 1000) }}
+                </template>
               </span>
             </div>
           </div>
-          <p class="type" style="margin-left: 0; font-size: 13px">
-            {{ listOfGenres(app) }}
-          </p>
-          <!-- <div class="status my-2" style="border-radius: 4px; font-size: 0.775rem">
-            hey
-            <span class="badge bg-blue-lt">Blue</span>
-          </div> -->
 
           <!-- <button
             v-tippy="'Filter by game state'"
@@ -82,52 +134,10 @@
             <div class="pe-2 me-2 border-end">State</div>
             <BState :state="3" :label="true" :pulse="false"></BState>
           </button> -->
-
-          <!-- <h4>xxxxx{{ app.released_at }}, xxxx{{ app.developer }}</h4> -->
-          <!-- <span v-if="$app.dev" class="minutes">125 min</span> -->
-        </div>
-        <div v-if="ui.layout == 'full'" class="col col-md-3">ddd</div>
-      </div>
-
-      <div class="col-12 px-3 my-2">
-        <div class="btn-list">
-          <!-- <a
-            v-tippy="'Open Steam store page'"
-            :href="'https://store.steampowered.com/app/' + app.steam_id"
-            class="btn btn-sm btn-icon"
-            target="_blank">
-            <Icon>BrandSteam</Icon>
-            Steam page
-          </a> -->
-
-          <a
-            v-tippy="'Open Steam store page'"
-            :href="'https://store.steampowered.com/app/' + app.steam_id"
-            class="btn btn-sm"
-            target="_blank">
-            <Icon size="15" class="me-2">BrandSteam</Icon>
-            Steam page
-          </a>
-          <!-- <a v-tippy="'Open on Steam'" href="#" class="btn btn-icon btn-sm">
-            <Icon>GitMerge</Icon>
-          </a> -->
         </div>
 
-        <ul v-if="ui.layout == 'full'">
-          <li>
-            <!-- <div class="btn btn-sm pe-3">
-              <Icon size="14" class="mx-2">BrandSteam</Icon>
-              On Steam
-            </div> -->
-          </li>
-          <li><Icon>Clock</Icon></li>
-          <li><Icon>Note</Icon></li>
-        </ul>
-      </div>
-
-      <div class="col-12 col-md-7 px-3">
         <p
-          class="text"
+          class="text mt-3 mb-2"
           style="
             text-align: justify;
             display: -webkit-box;
@@ -136,10 +146,209 @@
             overflow: hidden;
             text-overflow: ellipsis;
           "
-          v-html="app.description || 'No description available'"></p>
-      </div>
-      <div class="col-5 px-3"></div>
+          v-html="app.description || 'No description'"></p>
 
+        <div v-if="app.genres" class="my-2">
+          <h5>General details</h5>
+
+          <small style="font-size: 13px">{{ listOfGenres(app) }}</small>
+          <small v-if="app.released_at" style="font-size: 13px">
+            First released on {{ app.released_at }}
+          </small>
+        </div>
+
+        <!--
+          *+---------------------------------
+          *| Scores block
+          *|
+          *+--------------------------------- -->
+        <div v-if="app.score" class="my-2">
+          <h5>Scores</h5>
+          <div class="d-flex align-items-center">
+            <div
+              v-tippy="'Median score'"
+              class="d-flex align-items-center text-muted small me-5">
+              <Icon size="16" width="1.8" class="me-1">Universe</Icon>
+
+              {{ app.score }}
+            </div>
+
+            <!--
+              *+---------------------------------
+              *| Steam score
+              *+---------------------------------
+            -->
+            <div
+              v-if="app.scores.steamscoreAlt"
+              v-tippy="'Reviews on Steam'"
+              class="d-flex align-items-center text-muted small me-4">
+              <Icon size="16" width="1.8" class="me-1">DiscountCheck</Icon>
+              {{ app.scores.steamscoreAlt }}
+              <!-- <br />
+              <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
+            </div>
+
+            <!--
+              *+---------------------------------
+              *| Metacritic
+              *+---------------------------------
+            -->
+            <div class="d-flex align-items-center text-muted small me-4">
+              <div
+                v-tippy="'Metacritic'"
+                class="text-muted"
+                style="
+                  display: flex;
+                  width: 23px;
+                  height: 23px;
+                  border-radius: 3px;
+                  align-items: center;
+                  justify-content: center;
+                  color: black !important;
+                "
+                :style="{
+                  'background-color': format.scoreToHuman(
+                    app.scores.metascore,
+                    'meta',
+                    'color'
+                  ),
+                }">
+                {{ app.scores.metascore }}
+              </div>
+            </div>
+
+            <div
+              v-if="app.scores.userscore"
+              class="d-flex align-items-center text-muted small me-4">
+              <small
+                v-tippy="'Metacritic users'"
+                class="text-muted"
+                style="
+                  display: flex;
+                  width: 23px;
+                  height: 23px;
+                  border-radius: 3px;
+                  align-items: center;
+                  color: black;
+                  justify-content: center;
+                "
+                :style="{
+                  'background-color': format.scoreToHuman(
+                    app.scores.usercore,
+                    'meta',
+                    'color'
+                  ),
+                }">
+                {{ app.scores.userscore }} -
+                {{ format.scoreToHuman(app.scores.userscore, 'meta', 'color') }}
+              </small>
+            </div>
+            <div
+              v-if="app.scores.oc"
+              v-tippy="'Opencritic'"
+              class="d-flex align-items-center text-muted small">
+              <img
+                :src="
+                  'https://steam-backlog.com/images/' +
+                  format.scoreToHuman(app.scores.oc, 'oc', 'label') +
+                  '-head.png'
+                "
+                style="max-width: 20px; max-height: 20px; margin-right: 5px" />
+
+              {{ app.scores.oc }}
+            </div>
+          </div>
+        </div>
+
+        <div v-if="app.hltb && app.hltb.main" class="my-2">
+          <h5>Time to beat</h5>
+          <small v-tippy="'Main game'" class="text-muted me-5">
+            <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
+              SquareRoundedCheck
+            </Icon>
+
+            {{ dates.minToHours(app.hltb.main / 60) }}
+          </small>
+          <small v-tippy="'Main game with extras'" class="text-muted me-5">
+            <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
+              DiscountCheck
+            </Icon>
+            {{ dates.minToHours(app.hltb.extras / 60) }}
+          </small>
+          <small v-tippy="'Completionist'" class="text-muted me-5">
+            <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
+              Trophy
+            </Icon>
+            {{ dates.minToHours(app.hltb.comp / 60) }}
+          </small>
+          <small v-tippy="'Completionist'" class="text-muted me-5">
+            <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
+              Radar
+            </Icon>
+            From HLTB
+          </small>
+        </div>
+
+        <div class="my-2">
+          <div class="btn-list">
+            <!-- <a
+            v-tippy="'Open Steam store page'"
+            :href="'https://store.steampowered.com/app/' + app.steam_id"
+            class="btn btn-sm btn-icon"
+            target="_blank">
+            <Icon>BrandSteam</Icon>
+            Steam page
+          </a> -->
+
+            <a
+              v-tippy="'Open Steam store page'"
+              :href="'https://store.steampowered.com/app/' + app.steam_id"
+              class="btn btn-ghost-secondary btn-secondary btn-sm"
+              target="_blank">
+              <Icon size="15" class="me-2">BrandSteam</Icon>
+              Steam page
+            </a>
+
+            <!-- <a
+              v-tippy="'Open Xbox store page'"
+              :href="'https://store.steampowered.com/app/' + app.xbox_id"
+              class="btn btn-ghost-secondary btn-secondary btn-sm"
+              target="_blank">
+              <Icon size="15" class="me-2">BrandXbox</Icon>
+              Xbox store
+            </a> -->
+            <!-- <a v-tippy="'Open on Steam'" href="#" class="btn btn-icon btn-sm">
+            <Icon>GitMerge</Icon>
+          </a> -->
+          </div>
+        </div>
+
+        <div class="my-2">
+          <small v-if="app._.date_owned" class="text-muted" :title="app._.date_owned">
+            <Icon
+              v-tippy="'In Backlog.rip since ' + $moment(app.created_at).format('LL')"
+              size="16"
+              style="transform: translateY(-2px)"
+              class="me-1">
+              Calendar
+            </Icon>
+            In your library since {{ app._.date_owned }} -
+
+            {{ $moment(app._.date_owned).format('LL') }}
+          </small>
+        </div>
+      </div>
+    </div>
+    <!-- <div
+      v-if="$prev"
+      class="btn btn-ghost-secondary"
+      style="position: absolute; left: -77px; z-index: 9999"
+      @click="changeTo($prev)">
+      <Icon size="50" width="2">ChevronLeft</Icon>
+    </div> -->
+
+    <!-- <div class="modal-back"></div> -->
+    <div v-if="false" class="info_section row">
       <div class="row row-deck row-cards m-0">
         <div v-if="app.score" class="col col-md-3">
           <div class="card">
@@ -337,41 +546,10 @@
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-6" style="display: flex; align-items: flex-end">
-        <small v-if="app._.date_owned" class="text-muted" :title="app._.date_owned">
-          <Icon
-            v-tippy="'In Backlog.rip since ' + $moment(app.created_at).format('LL')"
-            size="16"
-            style="transform: translateY(-2px)"
-            class="me-1">
-            Calendar
-          </Icon>
-          In your library since
 
-          {{ $moment(app._.date_owned).format('LL') }}
-        </small>
-      </div>
-      <div
-        class="col-12 col-md-6 text-end"
-        style="display: flex; align-items: flex-end; justify-content: flex-end">
-        <small class="text-muted">
-          Data updated {{ $moment(app.updated_at).format('LL') }}
-          <br />
-          Game data provided by
-          <img
-            class="px-1"
-            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNCIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDM0IDE2IiBmaWxsPSJub25lIj4KICAgIDxwYXRoCiAgICAgICAgZD0iTTYuNzE2ODVlLTA1IDAuMDAwOTExNDY4QzExLjMzMzEgMC4wMDA2ODM4MjMgMjIuNjY2NSAwLjAwMjUwNDA5IDMzLjk5OTggMEMzNCA1LjMzMzI2IDM0LjAwMDIgMTAuNjY2NyAzMy45OTk1IDE2QzMxLjc5MzcgMTUuNjUyNCAyOS41Nzc5IDE1LjM2MTIgMjcuMzU0IDE1LjE0ODJDMTkuMzI5MSAxNC4zNjg1IDExLjIxMjIgMTQuNDk5MSAzLjIxNzc4IDE1LjUzNjdDMi4xNDI1NyAxNS42NzMxIDEuMDcxMDkgMTUuODM1OSA2LjcxNjg1ZS0wNSAxNS45OTkzQy0wLjAwMDE2NTUxIDEwLjY2NjUgMC4wMDAyOTk4NDcgNS4zMzM3MSA2LjcxNjg1ZS0wNSAwLjAwMDkxMTQ2OFpNMS4wMDA4MiAwLjk4MDIzOEMxLjAwMTI4IDUuNjA1NzUgMS4wMDA4MiAxMC4yMzE1IDEuMDAwODIgMTQuODU3QzExLjU4NDcgMTMuMjcyMSAyMi40MTU0IDEzLjI3MDggMzIuOTk5IDE0Ljg1NzVDMzIuOTk5NyAxMC4yMzE1IDMyLjk5OTIgNS42MDU1MiAzMi45OTkyIDAuOTc5NTU1QzIyLjMzMyAwLjk4MTE0OSAxMS42NjY4IDAuOTgwMDEgMS4wMDA4MiAwLjk4MDIzOFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNOC4zMTkyNiA0LjYxOEM5LjAxMjg3IDMuOTU3MzcgOS45ODU5NCAzLjYwNTQ0IDEwLjk0OTcgMy42MjAyM0MxMS42MDc3IDMuNjE3OTYgMTIuMjc5NCAzLjcxODggMTIuODcxMiA0LjAxMjY5QzEzLjE3NjIgNC4xNjE1NyAxMy40NTQ5IDQuMzU2ODkgMTMuNzE1MSA0LjU3MTU2QzEzLjM4NzcgNC45NTgzMyAxMy4wNTc1IDUuMzQyNTkgMTIuNzMzOSA1LjczMjA5QzEyLjUzOTEgNS41ODkzNiAxMi4zNDk3IDUuNDM3MDYgMTIuMTM0MyA1LjMyNDE1QzExLjcwMTcgNS4wODUzNSAxMS4xOTIxIDUuMDAyNzIgMTAuNzAwNSA1LjAzNzc4QzEwLjA5ODggNS4wODgwOCA5LjU0ODI3IDUuNDQyOTggOS4yMjIyOCA1LjkzNDQ3QzguODAyMDcgNi41NTE4NCA4LjczNjY4IDcuMzY0MyA4Ljk5MTIzIDguMDU1NjZDOS4xNDUyNyA4LjQ3NTY2IDkuNDM5MzcgOC44NDgzMiA5LjgyNjc4IDkuMDg2MjFDMTAuMjEyMSA5LjMyODQyIDEwLjY4IDkuNDI1NjIgMTEuMTM0MiA5LjM5ODk5QzExLjYgOS4zODE0NiAxMi4wNzQyIDkuMjU3MTcgMTIuNDUzNSA4Ljk4NDY4QzEyLjQ0OTggOC42NTY4NyAxMi40NTM1IDguMzI4ODMgMTIuNDUxNiA4LjAwMTAyQzExLjkyOTcgOC4wMDIzOSAxMS40MDc2IDguMDAwNTcgMTAuODg1NyA4LjAwMTk0QzEwLjg4NDUgNy41NjIxMyAxMC44ODg1IDcuMTIyMzIgMTAuODgzOCA2LjY4MjczQzExLjkxMDQgNi42NzYzNiAxMi45MzcyIDYuNjg1MDEgMTMuOTYzOCA2LjY3ODQxQzEzLjk3MDEgNy42ODI1NSAxMy45NjMxIDguNjg2OTIgMTMuOTY3MyA5LjY5MTA2QzEzLjI2MDcgMTAuMjg3OSAxMi4zNjg4IDEwLjY3OTUgMTEuNDM3NCAxMC43Njg1QzEwLjUyODEgMTAuODY2MiA5LjU2OTQ0IDEwLjcwMjUgOC43OTQzOSAxMC4yMTE5QzguMTczMzcgOS44MjQ2OCA3LjY5MzU5IDkuMjMwNzYgNy40NDI1MyA4LjU1NDJDNy4xOTQ3MiA3Ljg4ODU3IDcuMTQ1ODYgNy4xNTUxIDcuMjg1IDYuNDYxMjRDNy40Mjk5NiA1Ljc2MzczIDcuNzkyNDcgNS4xMDk3MSA4LjMxOTI2IDQuNjE4WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+CiAgICA8cGF0aAogICAgICAgIGQ9Ik0zLjc4NzYxIDMuNzM5NTJDNC4zMDgxMSAzLjc0MDY2IDQuODI4NjEgMy43Mzg2MSA1LjM0OTEyIDMuNzQwNjZDNS4zNDc5NSA2LjA1MDc5IDUuMzQ5MTIgOC4zNjExNiA1LjM0ODY1IDEwLjY3MTVDNC44MjgzOCAxMC42NzEzIDQuMzA4MTEgMTAuNjcwNiAzLjc4Nzg0IDEwLjY3MThDMy43ODc2MSA4LjM2MTE2IDMuNzg4MDggNi4wNTAzNCAzLjc4NzYxIDMuNzM5NTJaIgogICAgICAgIGZpbGw9IndoaXRlIgogICAgLz4KICAgIDxwYXRoCiAgICAgICAgZD0iTTE1Ljg2NDMgMy43Mzk3NUMxNi44MTY1IDMuNzM5OTcgMTcuNzY4NiAzLjczOTc1IDE4LjcyMDcgMy43Mzk5N0MxOS41ODYzIDMuNzQ5MzEgMjAuNDYyOCA0LjAxMjAxIDIxLjE0MDEgNC41NDkwMkMyMS43MzIzIDUuMDEyMjggMjIuMTUyMiA1LjY3ODYgMjIuMzEyMyA2LjQwMzY0QzIyLjUwNjEgNy4yNzkxNiAyMi4zNzk4IDguMjMzOTEgMjEuODk5MyA5LjAwNDAzQzIxLjUxOCA5LjYyNDgxIDIwLjkxOSAxMC4xMDgxIDIwLjIzNDUgMTAuMzc5MkMxOS43NTQ5IDEwLjU2OTggMTkuMjM3NyAxMC42Njk5IDE4LjcyIDEwLjY3MTNDMTcuNzY4MyAxMC42NzEzIDE2LjgxNjUgMTAuNjcwOCAxNS44NjQ2IDEwLjY3MTVDMTUuODY0NiA4LjM2MDkzIDE1Ljg2NSA2LjA1MDM0IDE1Ljg2NDMgMy43Mzk3NVpNMTcuNDMwMyA1LjExNjU0QzE3LjQyNzkgNi41MDkyNyAxNy40MzA1IDcuOTAyIDE3LjQyODkgOS4yOTQ5NkMxNy43Mjc2IDkuMjk0NSAxOC4wMjY2IDkuMjk0NzMgMTguMzI1NCA5LjI5NDczQzE4LjU2NiA5LjI5MjkxIDE4LjgwODYgOS4zMDU4OCAxOS4wNDY5IDkuMjYyNjNDMTkuNTEzOSA5LjE5MTYxIDE5Ljk2MzkgOC45NzE5MyAyMC4yNzI3IDguNjE3NDlDMjAuNTQyNiA4LjMxMzgxIDIwLjY5OTQgNy45MjQzMSAyMC43NDY2IDcuNTI3MDdDMjAuNzkwNiA3LjEyMzY4IDIwLjc1NTcgNi43MDU3MyAyMC41OTU4IDYuMzI4NzVDMjAuNDMxMyA1LjkyODA5IDIwLjEyMzcgNS41ODUyNiAxOS43MzUyIDUuMzc5N0MxOS4zODQzIDUuMTg4NDggMTguOTc5IDUuMTE2MzEgMTguNTgwNiA1LjExNjA5QzE4LjE5NzIgNS4xMTcgMTcuODEzNyA1LjExNjA4IDE3LjQzMDMgNS4xMTY1NFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNMjQuMTgzOCAzLjc0NDA3QzI1LjE0NTkgMy43MzQwNiAyNi4xMDg5IDMuNzQyNzEgMjcuMDcxMyAzLjczOTc1QzI3LjMzNTYgMy43NDMzOSAyNy42MDA2IDMuNzI5MDUgMjcuODY0IDMuNzU1NjhDMjguMzMxOSAzLjc5ODI1IDI4LjgwNjEgMy45MzE4OCAyOS4xODA1IDQuMjE5MzlDMjkuNTA2IDQuNDY1MDIgMjkuNzM0NSA0LjgzMTc2IDI5Ljc5NzYgNS4yMzAzNkMyOS44NDMyIDUuNjA3MzQgMjkuODIyIDYuMDA4OTEgMjkuNjMyNCA2LjM0ODc4QzI5LjQ3MTEgNi42NTM2IDI5LjE5MzMgNi44Nzk4OCAyOC44OTQ2IDcuMDQ5N0MyOS4yOTI3IDcuMTk2MyAyOS42ODY0IDcuNDEyNTYgMjkuOTM0MiA3Ljc2MTMxQzMwLjE2NTIgOC4wODM0MyAzMC4yMzI3IDguNDkwNDYgMzAuMjEwMSA4Ljg3NjU1QzMwLjIwMDggOS4yNjkwMSAzMC4wNTQgOS42NjI2IDI5Ljc3OTIgOS45NTE5NEMyOS41MDE2IDEwLjI0ODYgMjkuMTIgMTAuNDMwOSAyOC43Mjg0IDEwLjUzNjhDMjguNDAxMSAxMC42MjMgMjguMDYyNSAxMC42Njc0IDI3LjcyMzcgMTAuNjcwNkMyNi41NDQ1IDEwLjY3MTUgMjUuMzY1MyAxMC42NzE4IDI0LjE4NjEgMTAuNjcwNkMyNC4xODQyIDguMzYxNjEgMjQuMTg4NiA2LjA1Mjg0IDI0LjE4MzggMy43NDQwN1pNMjUuNzA3OCA1LjA4MDM1QzI1LjcwOTQgNS41Njc1IDI1LjcwNjQgNi4wNTQ4OSAyNS43MDkyIDYuNTQyMjhDMjYuMjI1NyA2LjUzOTA5IDI2Ljc0MjMgNi41NDI5NiAyNy4yNTg4IDYuNTQwMjNDMjcuNDkzMSA2LjUyNzk0IDI3LjczNTggNi40OTUzOCAyNy45NDI5IDYuMzc5NzRDMjguMTA2NSA2LjI4OTE0IDI4LjIzMDcgNi4xMjY4MyAyOC4yNTUyIDUuOTQyNDRDMjguMjg5NiA1LjczNDYgMjguMjUzMSA1LjUwMTI2IDI4LjA5NzkgNS4zNDU3OEMyNy45MTEzIDUuMTU3NzQgMjcuNjMzIDUuMDk3NjUgMjcuMzc0OSA1LjA4MjYyQzI2LjgxOTMgNS4wNzgwNyAyNi4yNjM0IDUuMDgyNjIgMjUuNzA3OCA1LjA4MDM1Wk0yNS43MDc2IDcuODE1MjdDMjUuNzA4MyA4LjMyMTMyIDI1LjcwOSA4LjgyNzgzIDI1LjcwNzEgOS4zMzQxMUMyNi4yMDExIDkuMzM4NjcgMjYuNjk1MyA5LjMzNDU3IDI3LjE4OTUgOS4zMzU5M0MyNy40MzYxIDkuMzMyOTcgMjcuNjg1MyA5LjM0OTM2IDI3LjkyOTYgOS4zMDYzNEMyOC4xNDM3IDkuMjcyNjUgMjguMzY0NSA5LjE5Mzg4IDI4LjUwOSA5LjAyODYxQzI4LjY1NDcgOC44NjMxMSAyOC42ODUyIDguNjI3NzMgMjguNjQ4NiA4LjQxODk4QzI4LjYxOTUgOC4yNDE4NyAyOC41MDU4IDguMDgyNzUgMjguMzQ4NSA3Ljk5MTQ2QzI4LjEzNTEgNy44NjQ0NCAyNy44Nzk2IDcuODI0MzcgMjcuNjMzNCA3LjgxNjE4QzI2Ljk5MTUgNy44MTQzNiAyNi4zNDk1IDcuODE2MTggMjUuNzA3NiA3LjgxNTI3WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+Cjwvc3ZnPgo="
-            alt="" />
-          and
-          <Icon>BrandSteam</Icon>
-        </small>
-      </div>
       <div v-if="ui.layout == 'full'" class="col col-md-3">
         You played: {{ app._playtime }} last played: {{ app._last_played }}
         <br />
-        scores: {{ app.scores }}
-        <br />
-        hltb: {{ app.hltb }}
       </div>
 
       <!-- <div v-if="$app.dev" class="col col-md-3">
@@ -379,61 +557,32 @@
         <div v-tippy="'View history log of changes'"><Icon>Paper</Icon></div>
       </div> -->
     </div>
-    <div class="blur_back">
+    <!-- <div class="blur_back">
       <game-asset
         ref="background"
         :app="app"
         asset="background"
         :priority="['steam']"></game-asset>
-    </div>
-    <div
+    </div> -->
+    <!-- <div
       v-if="$next"
       class="btn btn-ghost-secondary"
       style="position: absolute; right: -77px; z-index: 9999"
       @click="changeTo($next)">
       <Icon size="50" width="2">ChevronRight</Icon>
-    </div>
+    </div> -->
   </VueFinalModal>
-
-  <!-- <b-dialog v-model="ui.dialog" class="game-details">
-    <div class="row">
-      <div class="col-4 details-sidebar" style="position: relative">
-        <game-asset :app="app" asset="logo" :priority="['steam', 'igdb']"></game-asset>
-      </div>
-      <div class="col-8 details-content">
-        <h1>{{ app.name }}</h1>
-
-        <pre>{{ app }}</pre>
-        <pre>{{ timeline }}</pre>
-        <ul>
-          <li>
-            {{ app.updated_at }}
-          </li>
-          <li>
-
-          </li>
-        </ul>
-        <textarea
-          v-model="status.note"
-          class="form-control"
-          name="note"
-          rows="2"
-          @blur="setNote"></textarea>
-        <span v-if="status.noteObject" class="d-block text-muted">
-          Note created at {{ status.noteObject.created_at }}
-        </span>
-      </div>
-    </div>
-  </b-dialog> -->
 </template>
 
 <script>
+import format from '../../utils/format'
+
 /**
  * @file:    \components\b\details.vue
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Thu Mar 07 2024
+ * Modified: Mon Mar 11 2024
  **/
 
 export default {

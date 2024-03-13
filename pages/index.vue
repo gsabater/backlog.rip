@@ -103,20 +103,24 @@
 
         <p class="text-muted my-4">
           Version
-          <span style="font-size: 20px">α</span>
+          <span style="font-size: 10px">β</span>
           {{ $app.v }}
-          <span class="px-2">·</span>
+          <span class="px-3">·</span>
           <!-- <a href="/docs/5.3/getting-started/download/" class="link-secondary">
             Changelog
           </a> -->
 
-          <a href="https://discord.gg/F2sPE5B" class="link-secondary" target="_blank">
+          <a
+            href="https://discord.gg/F2sPE5B"
+            class="link-secondary link-underline-opacity-0"
+            target="_blank">
             <svg
-              class="me-1"
-              width="18"
-              height="18"
+              class="me-0"
+              width="16"
+              height="16"
               viewBox="0 -28.5 256 256"
               version="1.1"
+              style="transform: translateY(-1px)"
               preserveAspectRatio="xMidYMid">
               <g>
                 <path
@@ -128,12 +132,14 @@
             Get involved in the development!
           </a>
 
-          <span class="px-2">·</span>
+          <span class="px-3">·</span>
           <a
             href="https://github.com/gsabater/backlog.rip"
-            class="link-secondary"
+            class="link-secondary link-underline-opacity-0"
             target="_blank">
-            <Icon class="me-1">BrandGithub</Icon>
+            <Icon size="14" class="me-0" style="transform: translateY(-1px)">
+              BrandGithub
+            </Icon>
             Source code on Github
           </a>
         </p>

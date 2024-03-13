@@ -22,6 +22,10 @@ Start the development server on http://localhost:1337
 npm run dev
 ```
 
+### Project health
+
+https://repobeats.axiom.co/api/embed/8ad80c908f2c331683b4aa34bb542501b3332bb5.svg
+
 ### Emoji Cheat Sheet
 
 ⚡ - General backlog logs

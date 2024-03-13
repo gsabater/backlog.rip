@@ -1,3 +1,3 @@
-# Documentation
+# Documentation title in index.md
 
-ddd
+Documentation index

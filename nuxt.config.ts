@@ -88,11 +88,19 @@ export default defineNuxtConfig({
   sitemap: {
     enabled: true,
     exclude: ['/tabler*', '/account/**', '/dev/**'],
+    cacheMaxAgeSeconds: 3600 * 24,
 
-    urls: async () => {
-      const urls = await fetch('https://api.backlog.rip/dev/sitemap')
-      return urls
-    }
+    sources: [
+      // fetch from an unauthenticated endpoint
+      'https://api.backlog.rip/dev/sitemap',
+    ],
+
+    // urls: async () => {
+    //   const response = await fetch('https://api.backlog.rip/dev/sitemap')
+    //   const urls = await response.json()
+    //   console.warn('urls', urls)
+    //   return urls
+    // }
   },
 
   // robots: {

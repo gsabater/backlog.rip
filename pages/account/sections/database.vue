@@ -60,17 +60,29 @@
       </div>
     </div>
     <div class="col-6">
-      <pre @click="ui.dialog = true">
+      <!-- <pre v-if="log">
         {{ log }}
-      </pre>
-      <div class="card">
-        Export
-        <b-btn @click="exportAndDownload">do</b-btn>
-      </div>
-      <div class="card">
-        Import
+      </pre> -->
 
-        <div @click="openFileDialog">
+      <div
+        class="mb-3"
+        style="border: 2px solid purple; padding: 10px; border-radius: 4px">
+        <h3>Export</h3>
+        <p>
+          You can export all your data into a single file to use it on another device, or
+          to keep it as a backup.
+        </p>
+        <b-btn block @click="exportAndDownload">Export all your data</b-btn>
+      </div>
+
+      <div style="border: 2px solid purple; padding: 10px; border-radius: 4px">
+        <h3>Import</h3>
+        <p>
+          Import a save file to replace your current database. This will delete all your
+          games and states, and replace them with the ones in the file.
+        </p>
+        <b-btn block @click="openFileDialog">Import file</b-btn>
+        <div class="d-none" @click="openFileDialog">
           Click to select a file
           <input ref="fileInput" type="file" style="display: none" @change="handleFile" />
         </div>
@@ -85,7 +97,7 @@
  * @desc:    https://dexie.org/docs/ExportImport/dexie-export-import
  * -------------------------------------------
  * Created Date: 18th January 2024
- * Modified: Sat Feb 17 2024
+ * Modified: Thu Mar 14 2024
  **/
 
 export default {
@@ -93,7 +105,7 @@ export default {
 
   data() {
     return {
-      log: [],
+      log: '',
       db: {
         tables: [],
       },
@@ -158,7 +170,8 @@ export default {
     },
 
     progressCallback({ totalRows, completedRows }) {
-      this.log.push(`Progress: ${completedRows} of ${totalRows} rows completed`)
+      this.log = `Progress: ${completedRows} of ${totalRows} rows completed`
+      // this.log.push(`Progress: ${completedRows} of ${totalRows} rows completed`)
     },
 
     openFileDialog() {
@@ -195,6 +208,7 @@ export default {
           progressCallback,
         })
         console.log('Import complete')
+        window.location.reload()
       } catch (error) {
         console.error('' + error)
       }

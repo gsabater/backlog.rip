@@ -148,7 +148,7 @@
           "
           v-html="app.description || 'No description'"></p>
 
-        <div v-if="app.genres" class="my-2">
+        <div v-if="app.genres.length || app.released_at" class="my-2">
           <h5>General details</h5>
 
           <small style="font-size: 13px">{{ listOfGenres(app) }}</small>
@@ -167,10 +167,20 @@
           <div class="d-flex align-items-center">
             <div
               v-tippy="'Median score'"
-              class="d-flex align-items-center text-muted small me-5">
+              class="d-flex align-items-center text-muted small me-4">
               <Icon size="16" width="1.8" class="me-1">Universe</Icon>
 
               {{ app.score }}
+            </div>
+
+            <div
+              v-if="app.scores.igdb"
+              v-tippy="'Aggregate reviews from multiple sources'"
+              class="d-flex align-items-center text-muted small me-3">
+              <Icon size="16" width="1.8" class="me-1">Stack2</Icon>
+              {{ app.scores.igdb }}%
+              <!-- <br />
+              <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
             </div>
 
             <!--
@@ -181,9 +191,9 @@
             <div
               v-if="app.scores.steamscoreAlt"
               v-tippy="'Reviews on Steam'"
-              class="d-flex align-items-center text-muted small me-4">
+              class="d-flex align-items-center text-muted small me-3">
               <Icon size="16" width="1.8" class="me-1">DiscountCheck</Icon>
-              {{ app.scores.steamscoreAlt }}
+              {{ app.scores.steamscore }}%, {{ app.scores.steamscoreAlt }}
               <!-- <br />
               <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
             </div>
@@ -193,7 +203,9 @@
               *| Metacritic
               *+---------------------------------
             -->
-            <div class="d-flex align-items-center text-muted small me-4">
+            <div
+              v-if="app.scores.metascore"
+              class="d-flex align-items-center text-muted small me-3">
               <div
                 v-tippy="'Metacritic'"
                 class="text-muted"
@@ -217,10 +229,15 @@
               </div>
             </div>
 
+            <!--
+              *+---------------------------------
+              *| Metacritic
+              *+---------------------------------
+            -->
             <div
               v-if="app.scores.userscore"
-              class="d-flex align-items-center text-muted small me-4">
-              <small
+              class="d-flex align-items-center text-muted small me-3">
+              <div
                 v-tippy="'Metacritic users'"
                 class="text-muted"
                 style="
@@ -229,31 +246,37 @@
                   height: 23px;
                   border-radius: 3px;
                   align-items: center;
-                  color: black;
                   justify-content: center;
+                  color: black !important;
                 "
                 :style="{
                   'background-color': format.scoreToHuman(
-                    app.scores.usercore,
+                    app.scores.userscore,
                     'meta',
                     'color'
                   ),
                 }">
-                {{ app.scores.userscore }} -
-                {{ format.scoreToHuman(app.scores.userscore, 'meta', 'color') }}
-              </small>
+                {{ app.scores.userscore }}
+              </div>
             </div>
+
+            <!--
+              *+---------------------------------
+              *| Opencritic
+              *+---------------------------------
+            -->
             <div
               v-if="app.scores.oc"
               v-tippy="'Opencritic'"
-              class="d-flex align-items-center text-muted small">
+              class="d-flex align-items-center small"
+              style="color: black">
               <img
                 :src="
                   'https://steam-backlog.com/images/' +
                   format.scoreToHuman(app.scores.oc, 'oc', 'label') +
                   '-head.png'
                 "
-                style="max-width: 20px; max-height: 20px; margin-right: 5px" />
+                style="max-width: 20px; max-height: 20px; margin-right: 3px" />
 
               {{ app.scores.oc }}
             </div>
@@ -281,15 +304,21 @@
             </Icon>
             {{ dates.minToHours(app.hltb.comp / 60) }}
           </small>
-          <small v-tippy="'Completionist'" class="text-muted me-5">
+
+          <a
+            v-if="hltbSource"
+            v-tippy="'Click to open'"
+            :href="hltbSource"
+            target="_blank"
+            class="text-muted me-5">
             <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
               Radar
             </Icon>
             From HLTB
-          </small>
+          </a>
         </div>
 
-        <div class="my-2">
+        <div class="my-3">
           <div class="btn-list">
             <!-- <a
             v-tippy="'Open Steam store page'"
@@ -300,13 +329,44 @@
             Steam page
           </a> -->
 
-            <a
+            <!-- <a
               v-tippy="'Open Steam store page'"
               :href="'https://store.steampowered.com/app/' + app.steam_id"
               class="btn btn-ghost-secondary btn-secondary btn-sm"
               target="_blank">
               <Icon size="15" class="me-2">BrandSteam</Icon>
               Steam page
+            </a> -->
+
+            <div class="btn-group btn-group-sm" role="group">
+              <a
+                v-tippy="'Open Steam store page'"
+                :href="'https://store.steampowered.com/app/' + app.steam_id"
+                class="btn btn-ghost-secondary btn-secondary btn-sm"
+                style="border: 0"
+                target="_blank">
+                <Icon size="15" class="me-2">BrandSteam</Icon>
+                Steam page
+              </a>
+              <a
+                v-if="app._.date_owned"
+                v-tippy="'Run or install the game through Steam'"
+                :href="'steam://run/' + app.steam_id"
+                class="btn btn-ghost-secondary btn-secondary btn-sm m-0"
+                style="border: 0"
+                target="_blank">
+                ⚡
+              </a>
+            </div>
+
+            <a
+              v-if="app.has_demo"
+              v-tippy="'Download free demo on Steam'"
+              :href="'https://store.steampowered.com/app/' + app.steam_id"
+              class="btn btn-ghost-secondary btn-secondary btn-sm"
+              target="_blank">
+              <Icon size="15" class="me-1">FreeRights</Icon>
+              Demo
             </a>
 
             <!-- <a
@@ -336,6 +396,35 @@
 
             {{ $moment(app._.date_owned).format('LL') }}
           </small>
+        </div>
+
+        <div
+          v-if="$next"
+          style="
+            position: absolute;
+            right: -15px;
+            bottom: -10px;
+            z-index: 9999;
+            background-color: rgb(55, 49, 49);
+            cursor: pointer;
+            padding: 15px 20px;
+            color: white;
+            box-shadow: black 2px 2px 0px 0px;
+            display: flex;
+            align-items: center;
+          "
+          @click="changeTo($next)">
+          <h4
+            class="m-0"
+            style="  font-weight: 500;
+  margin-bottom: 8px;
+  letter-spacing: normal;
+  letter-spacing: 2px !important;
+  text-transform: uppercase;
+}">
+            Next
+          </h4>
+          <Icon size="18" width="2">ChevronRight</Icon>
         </div>
       </div>
     </div>
@@ -564,13 +653,6 @@
         asset="background"
         :priority="['steam']"></game-asset>
     </div> -->
-    <!-- <div
-      v-if="$next"
-      class="btn btn-ghost-secondary"
-      style="position: absolute; right: -77px; z-index: 9999"
-      @click="changeTo($next)">
-      <Icon size="50" width="2">ChevronRight</Icon>
-    </div> -->
   </VueFinalModal>
 </template>
 
@@ -582,7 +664,7 @@ import format from '../../utils/format'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Mon Mar 11 2024
+ * Modified: Thu Mar 14 2024
  **/
 
 export default {
@@ -626,6 +708,12 @@ export default {
 
       const index = this.$data.$list.items.indexOf(this.app.uuid)
       return this.$data.$list.items[index + 1]
+    },
+
+    hltbSource() {
+      if (!this.app?.source?.providers?.hltb) return false
+
+      return 'https://howlongtobeat.com/game/' + this.app.source.providers.hltb
     },
   },
 

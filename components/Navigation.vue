@@ -18,9 +18,9 @@
 
             <li class="nav-item dropdown">
               <div class="nav-link dropdown-toggle cursor-pointer ps-0">
-                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                <!-- <span class="nav-link-icon d-md-none d-lg-inline-block">
                   <Icon>ChartBubble</Icon>
-                </span>
+                </span> -->
                 <span class="nav-link-title pe-2">Explore</span>
               </div>
               <b-dropdown>
@@ -54,11 +54,14 @@
               </NuxtLink>
             </li> -->
 
-            <li style="border-right: 1px dashed #ccc; margin: 10px"></li>
+            <!-- <li style="border-right: 1px dashed #ccc; margin: 10px"></li> -->
             <!-- (drop> add a game, connect accounts) -->
 
             <li class="nav-item">
               <NuxtLink to="/dashboard" class="nav-link">
+                <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                  <Icon>LayoutDashboard</Icon>
+                </span>
                 <span class="nav-link-title">Dashboard</span>
               </NuxtLink>
             </li>

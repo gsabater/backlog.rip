@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Mon Mar 11 2024
+ * Modified: Thu Mar 14 2024
  */
 
 let $nuxt = null
@@ -137,6 +137,9 @@ export const useGameStore = defineStore('game', {
       if (!data) {
         // App has never been updated from the API
         if (!app.description) return 'update:api'
+        if (!app.providers) {
+          console.warn('should update and save providers')
+        }
       }
 
       // For internal updates like changing data
@@ -190,6 +193,7 @@ export const useGameStore = defineStore('game', {
 
       game.log = game.log || []
       game.scores = game.scores || {}
+      game.genres = game.genres || []
 
       if (game.is_lib) {
         game.playtime = game.playtime || {}
@@ -227,7 +231,9 @@ export const useGameStore = defineStore('game', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (app.score > 90 && app.scores?.steamCount < 100) score *= 0.8
       if (app.score > 93 && app.scores?.steamCount < 3000) score *= 0.8
-      if (app.score > 95 && app.scores?.steamCount < 5000) score *= 0.8
+
+      if (app.score >= 95 && app.scores?.steamCount < 1000) score *= 0.8
+      if (app.score >= 95 && app.scores?.steamCount < 15000) score *= 0.8
 
       if (app.scores?.igdbCount < 90) score *= 0.9
 

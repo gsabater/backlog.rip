@@ -1040,7 +1040,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed Mar 13 2024
+ * Modified: Thu Mar 14 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'

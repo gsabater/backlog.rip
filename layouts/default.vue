@@ -15,8 +15,10 @@
         border-radius: 5px;
       "
       @click="$app.dev = false"
-      >{{ $app }}</pre
-    >
+      >{{ $app.v }}
+---
+{{ $app }}
+    </pre>
 
     <!-- Sidebar -->
     <aside
@@ -669,9 +671,18 @@
             <span>Backlog.rip</span>
           </h1>
 
-          <button class="navbar-toggler" style="opacity: 0.8" @click="showMobileMenu">
-            <Icon size="25">LayoutSidebarRightInactive</Icon>
-          </button>
+          <div class="d-flex">
+            <button
+              class="navbar-toggler"
+              style="opacity: 0.8"
+              @click="$mitt.emit('search:palette')">
+              <Icon size="25">ListSearch</Icon>
+            </button>
+
+            <button class="navbar-toggler" style="opacity: 0.8" @click="showMobileMenu">
+              <Icon size="25">LayoutSidebarRightInactive</Icon>
+            </button>
+          </div>
 
           <!-- :content-transition="{
               'enter-active-class': 'hunaa-menu-enter-active',
@@ -909,6 +920,7 @@
   <client-only>
     <game-details></game-details>
     <game-manager></game-manager>
+    <search-palette></search-palette>
     <!-- <b-backdrop></b-backdrop> -->
     <ModalsContainer />
 
@@ -1040,7 +1052,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu Mar 14 2024
+ * Modified: Sun Mar 24 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'

@@ -1,0 +1,55 @@
+<template>
+  <div class="p-2">
+    <div class="empty" style="border: 1px dashed #cccccc73; border-radius: 4px">
+      <p class="empty-title">Your library is empty</p>
+      <p class="empty-subtitle text-secondary">
+        You don't have any games in your library.
+        <br />
+        Try importing your Steam games or add any game you want from games page.
+      </p>
+      <div class="empty-action">
+        <b-btn to="import/steam" color="primary" size="sm" class="me-3">
+          <!-- <Icon>StepInto</Icon> -->
+          Import your library
+        </b-btn>
+
+        <b-btn to="games" variant="ghost" size="sm" color="secondary">Browse games</b-btn>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+/**
+ * @file:    \components\search\empty.vue
+ * @desc:    ...
+ * -------------------------------------------
+ * Created Date: 15th March 2024
+ * Modified: Fri Mar 15 2024
+ **/
+
+export default {
+  name: 'SearchEmpty',
+  props: {
+    preset: {
+      type: [String, Boolean],
+      default: null,
+    },
+
+    title: {
+      type: String,
+      default: 'Your library is empty',
+    },
+  },
+
+  data() {
+    return {
+      ui: {},
+    }
+  },
+
+  methods: {},
+
+  mounted() {},
+}
+</script>

@@ -3,11 +3,13 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Tue Mar 05 2024
+ * Modified: Tue Mar 26 2024
  */
 
 //+-------------------------------------------------
 // Codex: List of events
+// ⚡ search:palette
+//
 // ⚡ game:modal
 // ⚡ game:manager
 //
@@ -29,7 +31,7 @@ export default defineNuxtPlugin(() => {
   window.$mitt = emitter
 
   emitter.on('*', (e, payload) => {
-    log('⚡ event -> ' + e, payload)
+    log('🔔 ev: ' + e, payload)
     // console.info(emitter.all)
   })
 

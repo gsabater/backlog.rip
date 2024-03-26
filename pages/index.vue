@@ -102,13 +102,12 @@
         </div>
 
         <p class="text-muted my-4">
-          Version
-          <span style="font-size: 10px">β</span>
-          {{ $app.v }}
-          <span class="px-3">·</span>
-          <!-- <a href="/docs/5.3/getting-started/download/" class="link-secondary">
-            Changelog
-          </a> -->
+          <NuxtLink to="/changelog" class="link-secondary link-underline-opacity-0">
+            Version
+            <!-- <Icon size="16" width="1.8" style="transform: translateY(-1px)">Beta</Icon> -->
+            {{ $app.v }}
+            <span class="px-3">·</span>
+          </NuxtLink>
 
           <a
             href="https://discord.gg/F2sPE5B"

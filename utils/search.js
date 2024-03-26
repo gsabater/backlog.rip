@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Tue Feb 20 2024
+ * Modified: Mon Mar 25 2024
  */
 
 export default {
@@ -17,6 +17,9 @@ export default {
     let items = []
     let toSort = []
     let filtered = []
+
+    let re = /(?:^|[ ]):([a-zA-Z]+)/gm
+    let searchString = filters?.string?.toLowerCase().replace(re, '').trim()
 
     for (const uuid in source) {
       const app = source[uuid]
@@ -57,15 +60,15 @@ export default {
       // }
 
       // Filter: Name
-      // Match with on app.name and steam_id
+      // Match with on app.name and store_ids
       //+---------------------------------------
       if (filters?.string?.length > 0) {
         let appName = app.name ? app.name : ''
         appName = appName.toString().toLowerCase()
 
         if (
-          appName.indexOf(filters.string) === -1 &&
-          app.steam_id?.toString() !== filters.string
+          appName.indexOf(searchString) === -1 &&
+          app.steam_id?.toString() !== searchString
         ) {
           // counters.skip++
           // data.hidden.string.push(steam_id)
@@ -73,7 +76,7 @@ export default {
           filtered.push(uuid)
           // console.warn(
           //   '🛑 Skipping: String not found in name',
-          //   filters.string,
+          //   searchString,
           //   app.name
           // )
 
@@ -113,8 +116,8 @@ export default {
         toSort.push({ uuid, playtime: app.playtime?.steam || 0 })
       }
 
-      if (filters?.sortBy == 'random') {
-        toSort.push({ uuid, random: Math.random() })
+      if (filters?.sortBy == 'rand') {
+        toSort.push({ uuid, rand: Math.random() })
       }
     }
 
@@ -157,9 +160,13 @@ export default {
     }
 
     // SortBy: numeric value
-    // Using app.playtime // score
+    // Using app.playtime // score // rand
     //+---------------------------------------
-    if (filters?.sortBy == 'playtime' || filters?.sortBy == 'score') {
+    if (
+      filters?.sortBy == 'rand' ||
+      filters?.sortBy == 'score' ||
+      filters?.sortBy == 'playtime'
+    ) {
       const field = filters?.sortBy
 
       return items
@@ -170,12 +177,18 @@ export default {
         })
         .map((item) => item.uuid)
     }
+
+    // Left as a helper
+    debugger
   },
 
   paginate(items, options) {
+    if (!items || items.length == 0) return []
+
     const { page, perPage } = options
     const start = (page - 1) * perPage
     const end = start + perPage
+
     return items.slice(0, end)
   },
 

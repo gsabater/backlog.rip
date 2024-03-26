@@ -4,9 +4,10 @@
  * @desc:    https://nuxt.com/docs/api/configuration/nuxt-config
  *           https://codybontecou.com/how-to-use-vuetify-with-nuxt-3.html
  * -------------------------------------------
- * Created Date: 16th November 2022
+ * Created Date: 26th October 2023
  * Modified:
  */
+
 
 // import { mapState } from "pinia";
 
@@ -48,14 +49,10 @@ export default defineNuxtConfig({
     ],
   },
 
-  css: [
-    '@/assets/scss/main.scss',
-    'animate.css/animate.min.css',
-  ],
-
+  css: ['@/assets/scss/main.scss', 'animate.css/animate.min.css'],
 
   build: {
-    transpile: ['vue-sonner', "rxjs"]
+    transpile: ['vue-sonner', 'rxjs'],
     // transpile: ['element-plus/es'],
   },
 
@@ -66,8 +63,8 @@ export default defineNuxtConfig({
   app: {
     head: {
       bodyAttrs: {
-        class: 'antialiased',
-        'data-bs-theme': 'dark'
+        'class': 'antialiased',
+        'data-bs-theme': 'dark',
       },
     },
   },
@@ -112,7 +109,7 @@ export default defineNuxtConfig({
   // },
 
   schemaOrg: {
-    enabled: true
+    enabled: true,
   },
 
   // linkChecker: {
@@ -131,17 +128,24 @@ export default defineNuxtConfig({
     css: {},
 
     plugins: [],
+
+    // vue: {
+    //   template: {
+    //     compilerOptions: {
+    //       isCustomElement: (tag) => ['ninja-keys'].includes(tag),
+    //     },
+    //   },
+    // },
   },
 
-  sourcemap: { server: false, client: false },
+  sourcemap: { server: false, client: true },
 
   devtools: {
-    enabled: true,
-    // VS Code Server options
-    vscode: {},
+    enabled: false,
 
+    vscode: {},
     timeline: {
-      enabled: true,
+      enabled: false,
     },
   },
 })

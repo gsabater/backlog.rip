@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Mon Mar 11 2024
+ * Modified: Tue Mar 26 2024
  */
 
 let $nuxt = null
@@ -82,7 +82,6 @@ export const useDataStore = defineStore('data', {
   //
   // Methods to Query the API
   // * search()
-  // * getTop() <-- belongs to a repository store
   //
   // Methods to persist data
   // * store() <-- Stores an array of items and updates indexes
@@ -90,7 +89,7 @@ export const useDataStore = defineStore('data', {
   // * delete() <-- Deletes an item from the database
   //
   // Utilities to manage data
-  // * process()
+  // * process() <- entry point for new data
   // * prepareToStore()
   // * toData()
   // * toIndex()
@@ -195,33 +194,16 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     async search(hash) {
       if (search[hash]) {
-        log('🛑 Search', hash, 'already done to the api')
+        log('🛑 Search', hash, 'already done')
         return
       }
 
       search[hash] = true
       const jxr = await $nuxt.$axios.get(`repository/${hash}.json`)
       if (jxr.status) {
-        log('Search', hash, jxr.data)
+        log('🪂 Data from API', jxr.data)
 
         await this.process(jxr.data, 'api')
-      }
-    },
-
-    //+-------------------------------------------------
-    // getTop()
-    // NOTE: Belongs to a repository store
-    // -----
-    // Created on Wed Dec 20 2023
-    //+-------------------------------------------------
-    async getTop(batch) {
-      if (!batch) return
-      if (this.loaded.includes(`top:${batch}`)) return
-
-      const jxr = await $nuxt.$axios.get(`repository/top-${batch}.json`)
-      if (jxr.status) {
-        this.process(jxr.data, 'api')
-        this.loaded.push(`top:${batch}`)
       }
     },
 
@@ -303,8 +285,8 @@ export const useDataStore = defineStore('data', {
       $nuxt.$app.count.library = index.lib.length || 0
 
       if (context.includes('update:')) return
-      console.warn('🌈 data:updated', apps.length)
-      $nuxt.$mitt.emit('data:updated', 'loaded')
+      // console.warn('🌈 data:updated', apps.length)
+      $nuxt.$mitt.emit('data:updated', 'loaded:' + apps.length)
     },
 
     //+-------------------------------------------------
@@ -616,6 +598,7 @@ export const useDataStore = defineStore('data', {
 
       // Load and index local library
       await this.loadLibrary()
+      await this.loadApiStatus()
 
       // Expose data to the window
       window.db = {
@@ -626,11 +609,10 @@ export const useDataStore = defineStore('data', {
         get: this.get,
         api: this.search,
         status: this.status,
-        getTop: this.getTop,
       }
 
       // Finally, data is ready
-      console.warn('🌈 data:ready')
+      // console.warn('🌈 data:ready')
       $nuxt.$mitt.emit('data:ready')
 
       log('💽 Data is ready to use', {

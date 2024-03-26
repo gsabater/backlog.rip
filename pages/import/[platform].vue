@@ -365,7 +365,7 @@
               </div>
             </div>
 
-            <div class="row mb-3 align-items-center" style="zoom: 0.9">
+            <div class="row mb-3 align-items-center">
               <div class="col-4">
                 <b-input
                   v-model="table.filters.search"
@@ -472,51 +472,29 @@
                 </b-btn> -->
               </div>
               <div class="col text-end">
-                <button class="btn dropdown-toggle pe-2">
-                  <span class="badge text-blue me-2">
+                <button class="btn dropdown-toggle">
+                  <span class="badge text-primary me-2">
                     {{ tabs[ui.tab].count }}
                   </span>
-                  {{ tabs[ui.tab].label }}
+                  <span class="me-2">
+                    {{ tabs[ui.tab].label }}
+                  </span>
+                  <b-dropdown placement="bottom-end">
+                    <template v-for="(tab, i) in tabs" :key="'tab' + i">
+                      <label class="dropdown-item" @click="ui.tab = i">
+                        {{ tab.label }}
+                        <span class="badge text-primary ms-auto">
+                          {{ tab.count }}
+                        </span>
+                      </label>
+                    </template>
+                  </b-dropdown>
                 </button>
-                <b-menu position="end">
-                  <template v-for="(tab, i) in tabs" :key="'tab' + i">
-                    <label class="dropdown-item" @click="ui.tab = i">
-                      <!-- <input class="form-check-input m-0 me-2" type="checkbox" /> -->
-                      {{ tab.label }}
-                      <span class="badge text-blue ms-auto">
-                        {{ tab.count }}
-                      </span>
-                    </label>
-                  </template>
-                </b-menu>
               </div>
             </div>
-            <div class="card">
-              <div v-if="false" class="card-footer py-3">
-                <div class="row g-4 align-items-center">
-                  <div v-if="ui.tab == 'appsToReview'" class="col-1">
-                    <input disabled type="checkbox" class="form-check-input disabled" />
-                  </div>
-                  <div class="col-auto"></div>
-                  <div class="col"></div>
-                  <div class="col-auto text-end">
-                    <small class="text-muted">
-                      {{
-                        table.perPage < data.games.length
-                          ? table.perPage
-                          : data.games.length
-                      }}
-                      of {{ data.games.length }}
-                    </small>
+            <search-empty></search-empty>
 
-                    <small class="text-muted">
-                      Found {{ data.appsToReview.length }} new games
-                      <br />
-                      of {{ data.games.length }} in your {{ module.store }} library
-                    </small>
-                  </div>
-                </div>
-              </div>
+            <div class="card">
               <div class="list-group card-list-group list-group-hoverable">
                 <div
                   v-for="(app, i) in loopToReview"
@@ -735,7 +713,9 @@
             <div class="card-footer text-muted">
               This module is open source. If you want to know more about the code or
               review your privacy and security, you can
-              <a href="https://github.com/gsabater/modules.backlog.rip" target="_blank">
+              <a
+                href="https://github.com/gsabater/backlog.rip/tree/master/modules"
+                target="_blank">
                 check the code on Github.
               </a>
             </div>
@@ -756,7 +736,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Wed Mar 06 2024
+ * Modified: Tue Mar 26 2024
  **/
 
 const importer = null
@@ -815,21 +795,6 @@ export default {
   },
 
   computed: {
-    // ...mapStores(useDataStore, useJournalStore),
-
-    // watchToHuman() {
-    //   if (this.process.time === 0) return '0s'
-    //   // return tools.secondsToHuman(this.process.time)
-
-    //   if (this.process.time < 60) return `${this.process.time} seconds`
-    //   if (this.process.time < 60 && this.process.time > 3600)
-    //     return `${Math.floor(this.process.time / 60)} minute`
-    //   if (this.process.time < 3600 * 2)
-    //     return `${Math.floor(this.process.time / 60)} minutes`
-
-    //   return ''
-    // },
-
     platform() {
       return this.$route.params?.platform || null
     },
@@ -1077,118 +1042,6 @@ export default {
       }
     },
 
-    // controlApp(item) {
-    //   this.data.games[item.index].will_import = !item.will_import
-    // },
-
-    // //+-------------------------------------------------
-    // // import()
-    // // Main call that will execute the importing methods
-    // // available on the module
-    // // -----
-    // // Created on Thu Dec 01 2022
-    // //+-------------------------------------------------
-    // async OLDscan() {
-    //   log(`🧶 Starting data import...`)
-    //   this.ui.loading = true
-    //   this.ui.step = 'games'
-
-    //   try {
-    //     this.data.library = await this.$db.games.where('steam_id').above(0).toArray()
-    //     this._log(`📚 Library loaded`)
-
-    //     this.data.user = await steam.getUserdata()
-    //     this._log(`👩‍🚀 Account store userdata received`)
-
-    //     this.data.games = await steam.getGames()
-    //     this._log(`🎮 Games received`)
-
-    //     // this.data.wishlist = await steam.getWishlist()
-    //     // this._log(`🎁 Wishlist received`)
-    //   } catch (e) {
-    //     this._log('Error getting user data', 'error', e)
-    //     return false
-    //   }
-
-    //   console.warn(this.data)
-    //   this.ui.loading = false
-
-    //   this.review()
-    // },
-
-    // //+-------------------------------------------------
-    // // review()
-    // // Generate helper arrays with prepared data
-    // // -----
-    // // Created on Mon Nov 20 2023
-    // //+-------------------------------------------------
-    // review() {
-    //   this.ui.step = 'review'
-
-    //   this.data.libIDs = this.data.library.reduce((acc, el) => {
-    //     acc[el.steam_id] = el
-    //     return acc
-    //   }, {})
-    //   // console.warn(this.data.libIDs)
-
-    //   //+-------------------------------------------------
-    //   // Categorize found games with the library
-    //   // And create two new groups: review and update
-    //   //+-------------------------------------------------
-    //   this.data.games.forEach((app) => {
-    //     if (app.appid in this.data.libIDs) {
-    //       // <- match by store_id instead of appid
-    //       let add = false
-    //       const lib = this.data.libIDs[app.appid]
-
-    //       app.toUpdate = {}
-
-    //       if (!lib.is?.owned) {
-    //         add = true
-    //         app.toUpdate.owned = true
-    //       }
-
-    //       if (lib.playtime?.steam !== app.playtime_forever) {
-    //         add = true
-    //         app.toUpdate.playtime = {
-    //           from: lib.playtime?.steam,
-    //           to: app.playtime_forever,
-    //         }
-    //       }
-
-    //       if (lib.last_played?.steam !== app.rtime_last_played) {
-    //         add = true
-    //         app.toUpdate.last_played = {
-    //           from: lib.last_played?.steam,
-    //           to: app.rtime_last_played,
-    //         }
-    //       }
-
-    //       if (add) this.data.appsToUpdate.push(app)
-    //     } else {
-    //       app.will_import = true
-    //       app.will_ignore = false
-
-    //       this.data.appsToReview.push(app)
-    //     }
-    //   })
-
-    //   this.data.appsToReview.sort((a, b) => {
-    //     // Primary sort by 'playtime_forever'
-    //     const diff = b.playtime_forever - a.playtime_forever
-    //     if (diff !== 0) return diff
-
-    //     // Secondary sort by 'name' (alphabetically)
-    //     if (a.name < b.name) return -1
-    //     if (a.name > b.name) return 1
-    //     return 0
-    //   })
-
-    //   console.warn('reviewing apps')
-    //   console.warn('appsToReview', this.data.appsToReview)
-    //   console.warn('appsToUpdate', this.data.appsToUpdate)
-    // },
-
     //+-------------------------------------------------
     // store()
     // Process:
@@ -1212,80 +1065,7 @@ export default {
       })
 
       this.ui.step = 'complete'
-      return
-      // const payload = []
-
-      // await this.storeNewGames()
-      // // this.updateExistingGames()
-
-      // const keys = this.appsToImport.map((el) => el.uuid)
-      // this.journalStore.add({
-      //   event: 'added',
-      //   data: {
-      //     store: this.module.store,
-      //     games: keys,
-      //   },
-      // })
-
-      // this.ui.step = 'complete'
-      // return
-
-      // this.data.appsToReview
-      //   .filter((el) => el.will_import === true)
-      //   .forEach((el) => {
-      //     const app = {
-      //       uuid: this.$uuid(),
-      //       steam_id: el.appid,
-      //       name: el.name,
-      //     }
-
-      //     if (app.will_ignore) {
-      //       app.ignored = true
-      //     }
-      //     payload.push(app)
-      //   })
-
-      // // const toimport = this.data.games.filter((el) => el.will_import === true)
-      // console.warn('doit', payload[0])
-      // console.warn('we have', payload.length)
-
-      // debugger
     },
-
-    // //+-------------------------------------------------
-    // // storeNewGames()
-    // // Take appsToImport and appsToIgnore
-    // // and store them in the data store
-    // // -----
-    // // Created on Fri Dec 22 2023
-    // //+-------------------------------------------------
-    // async storeNewGames() {
-    //   const items = []
-
-    //   this.appsToImport.forEach((el) => {
-    //     let app = this.dataStore.prepareToStore(el, 'steam')
-    //     app = steam.prepareToStore(app)
-    //     items.push(app)
-    //   })
-
-    //   this.appsToIgnore.forEach((el) => {
-    //     const app = this.dataStore.prepareToStore(el, 'toIgnore')
-    //     items.push(app)
-    //   })
-    //   debugger
-    //   this.dataStore.store(items)
-    // },
-
-    // updateExistingGames() {
-    //   const items = []
-
-    //   // call a method in steam.js
-    //   // that adds playtime (here and in storenewgames)
-    //   // if (lib.playtime_forever !== game.playtime_forever) return true
-    //   //   if (lib.rtime_last_played !== game.rtime_last_played) return true
-
-    //   console.warn('going to update', items)
-    // },
 
     //+-------------------------------------------------
     // scanAndPrepare()
@@ -1342,19 +1122,26 @@ export default {
         background: false,
       })
 
-      if (connection) {
-        this.account = connection.account
-        this.module = connection.module.manifest
-
-        this._log('🆒 Waiting to the user to start the scan')
-        this.process.ready = true
+      if (!connection) {
+        this._log(
+          'The importer could not be started. Try reloading the page and start again.' +
+            'If the problem persists, please report it.',
+          'error'
+        )
         return
       }
 
-      this._log(
-        'The importer could not be started, this is likely a programming problem. Try reloading the page and start again. If the problem persists, please report it.',
-        'error'
-      )
+      this.account = connection.account
+      this.module = connection.module?.manifest
+      console.warn(this.module, connection.module)
+      debugger
+      if (connection.account?.error == 'account:login') {
+        this.ui.error = 'account:provider'
+        return
+      }
+
+      this._log('🆒 Waiting to the user to start the scan')
+      this.process.ready = true
     },
 
     async init() {

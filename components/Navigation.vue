@@ -126,7 +126,7 @@
               </NuxtLink>
             </li>
 
-            <li v-if="$app.dev" class="nav-item">
+            <!-- <li v-if="$app.dev" class="nav-item">
               <NuxtLink to="/welcome" class="nav-link">
                 <span class="nav-link-title text-yellow">
                   <Icon>Subtask</Icon>
@@ -142,7 +142,7 @@
                   Documentation
                 </span>
               </NuxtLink>
-            </li>
+            </li> -->
           </ul>
           <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
             <!-- <div class="input-icon">
@@ -166,7 +166,7 @@
               </span>
             </div> -->
 
-            <!-- <form action="./" method="get" autocomplete="off" novalidate>
+            <form v-if="$app.dev" action="./" method="get" autocomplete="off" novalidate>
               <div class="input-icon">
                 <span class="input-icon-addon">
                   <svg
@@ -185,29 +185,39 @@
                     <line x1="21" y1="21" x2="15" y2="15" />
                   </svg>
                 </span>
-                <input
-                  type="text"
-                  value=""
-                  class="form-control"
-                  placeholder="Search…"
-                  aria-label="Search in website" />
+
+                <div
+                  class="input-group input-group-flat"
+                  @click.stop="$mitt.emit('search:palette')">
+                  <input
+                    type="text"
+                    class="form-control"
+                    autocomplete="off"
+                    placeholder="Search anything…" />
+                  <span class="input-group-text">
+                    <kbd>CTRL K</kbd>
+                  </span>
+                </div>
               </div>
-            </form> -->
+            </form>
           </div>
         </div>
       </div>
-
-      <!-- <div
-        v-if="ui.menu"
-        class="navbar-backdrop"
-        style="position: fixed; top: 0; left: 0; z-index: 1; width: 100vw; height: 100vh"
-        @click="ui.menu = false"></div> -->
     </div>
   </div>
 </template>
 
 <script>
+/**
+ * @file:    \components\Navigation.vue
+ * @desc:    ...
+ * -------------------------------------------
+ * Created Date: 18th November 2022
+ * Modified: Tue Mar 26 2024
+ **/
+
 export default {
+  name: 'HeaderNav',
   props: {
     showMobMenu: {
       type: Boolean,

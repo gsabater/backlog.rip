@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Thu Mar 07 2024
+ * Modified: Tue Mar 26 2024
  */
 
 import importer from '~/utils/importer'
@@ -26,9 +26,6 @@ const _sync = {
     // From detect...
     module: null, // the module assigned to that source to run the import
     account: null, // The user account with userdata at the selected source
-
-    // From connect...
-    manifest: null,
 
     // Scan and prepare...
     data: {},
@@ -90,8 +87,9 @@ async function sync(options = {}) {
 
   log('💠 Importer(1): sync')
 
-  // await delay(2000, true)
-  if ((await detect()) == false) return false
+  let _detect = await detect()
+  if (_detect == false) return false
+  if (_sync.x.account?.error == 'account:login') return _sync.x
 
   // await delay(2000, true)
   if ((await connect()) == false) return false
@@ -118,7 +116,6 @@ async function detect() {
   if (detected) {
     _sync.x.module = { ...detected.module }
     _sync.x.account = { ...detected.account }
-    // console.warn(_sync.x)
 
     return true
   }
@@ -134,14 +131,7 @@ async function detect() {
 async function connect() {
   const connected = importer.connect(_sync.x)
 
-  if (connected) {
-    _sync.x.manifest = { ...connected.manifest }
-    console.warn(_sync.x)
-
-    return true
-  }
-
-  return false
+  return connected
 }
 
 //+-------------------------------------------------

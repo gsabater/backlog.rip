@@ -17,7 +17,7 @@
       <div
         class="d-none d-md-flex col"
         style="
-          max-width: 430px;
+          max-width: 440px;
           position: relative;
           display: flex;
           flex-direction: column;
@@ -39,16 +39,13 @@
           :app="app"
           asset="logo"
           :priority="['steam']"
-          style="
-            max-width: 250px;
-            z-index: 1;
-            filter: drop-shadow(2px 3px 9px black);
-          "></game-asset>
+          style="max-width: 250px; z-index: 1; filter: drop-shadow(2px 3px 9px black)"
+          @click="ui.tab = 'details'"></game-asset>
         <div class="blur_back" style="">
           <game-asset
             ref="background"
             :app="app"
-            asset="background"
+            asset="gen"
             :priority="['steam']"></game-asset>
         </div>
 
@@ -86,47 +83,78 @@
             </ul>
           </div>
         </div>
+
+        <div
+          v-if="$prev"
+          style="
+            position: absolute;
+            left: -35px;
+            bottom: -10px;
+            z-index: 9999;
+            background-color: rgb(55, 49, 49);
+            cursor: pointer;
+            padding: 15px 20px;
+            color: white;
+            box-shadow: black 2px 2px 0px 0px;
+            display: flex;
+            align-items: center;
+          "
+          @click="changeTo($prev)">
+          <Icon size="18" width="2">ChevronLeft</Icon>
+          <h4
+            class="m-0"
+            style="  font-weight: 500;
+              margin-bottom: 8px;
+              letter-spacing: normal;
+              letter-spacing: 2px !important;
+              text-transform: uppercase;
+            }">
+            Prev
+          </h4>
+        </div>
       </div>
 
       <!--
-        information column
-      -->
+        *+---------------------------------
+        *| Information column
+        *+--------------------------------- -->
       <div class="col info_section">
-        <div class="info-header">
-          <game-asset
-            ref="cover"
-            :app="app"
-            asset="cover"
-            class="locandina"
-            :priority="['steam', 'igdb']"
-            @click="ui.layout = ui.layout == 'full' ? 'lite' : 'full'"></game-asset>
+        <template v-if="ui.tab == 'info'">
+          <div class="info-header">
+            <game-asset
+              ref="cover"
+              :app="app"
+              asset="cover"
+              class="locandina"
+              :priority="['steam', 'igdb']"
+              @click="ui.layout = ui.layout == 'full' ? 'lite' : 'full'"></game-asset>
 
-          <h2>
-            {{ app.name }}
-          </h2>
+            <h2>
+              {{ app.name }}
+            </h2>
 
-          <BState :app="app.uuid" :state="app.state"></BState>
+            <BState :app="app.uuid" :state="app.state"></BState>
 
-          <!--
+            <!--
             *+---------------------------------
             *| Playtime pill
             *| If this shit is repeated, make a component
             *+--------------------------------- -->
-          <div v-if="app.is.lib">
-            <div class="status small my-2" style="border-radius: 4px">
-              <span style="font-size: 0.775rem">
-                <template v-if="app._.playtime == 0">Not played</template>
-                <template v-else>
-                  Played
-                  <!-- <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon> -->
-                  {{ dates.minToHours(app._.playtime, 'Not played') }}
-                  {{ dates.timeAgo(app.last_played.steam * 1000) }}
-                </template>
-              </span>
+            <div v-if="app.is.lib">
+              <div class="status small my-2" style="border-radius: 4px">
+                <span style="font-size: 0.775rem">
+                  <template v-if="app._.playtime == 0">Not played</template>
+                  <template v-else>
+                    Played
+                    <!-- <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon> -->
+                    {{ dates.minToHours(app._.playtime, 'Not played') }}
+                    {{ dates.timeAgo(app.last_played.steam * 1000) }}
+                  </template>
+                </span>
+              </div>
             </div>
-          </div>
 
-          <!-- <button
+            <!-- <button
             v-tippy="'Filter by game state'"
             :class="'btn py-2 ps-3 pe-2'"
             style="transform: scale(0.9) translateX(-5px)">
@@ -134,193 +162,193 @@
             <div class="pe-2 me-2 border-end">State</div>
             <BState :state="3" :label="true" :pulse="false"></BState>
           </button> -->
-        </div>
+          </div>
 
-        <p
-          class="text mt-3 mb-2"
-          style="
-            text-align: justify;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          "
-          v-html="app.description || 'No description'"></p>
+          <p
+            class="text mt-3 mb-2"
+            style="
+              text-align: justify;
+              display: -webkit-box;
+              -webkit-line-clamp: 3;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            "
+            v-html="app.description || 'No description'"></p>
 
-        <div v-if="app.genres.length || app.released_at" class="my-2">
-          <h5>General details</h5>
+          <div v-if="app.genres.length || app.released_at" class="my-2">
+            <h5>General details</h5>
 
-          <small style="font-size: 13px">{{ listOfGenres(app) }}</small>
-          <small v-if="app.released_at" style="font-size: 13px">
-            First released on {{ app.released_at }}
-          </small>
-        </div>
+            <small style="font-size: 13px">{{ listOfGenres(app) }}</small>
+            <small v-if="app.released_at" style="font-size: 13px">
+              First released on {{ app.released_at }}
+            </small>
+          </div>
 
-        <!--
+          <!--
           *+---------------------------------
           *| Scores block
           *|
           *+--------------------------------- -->
-        <div v-if="app.score" class="my-2">
-          <h5>Scores</h5>
-          <div class="d-flex align-items-center">
-            <div
-              v-tippy="'Median score'"
-              class="d-flex align-items-center text-muted small me-4">
-              <Icon size="16" width="1.8" class="me-1">Universe</Icon>
+          <div v-if="app.score" class="my-2">
+            <h5>Scores</h5>
+            <div class="d-flex align-items-center">
+              <div
+                v-tippy="'Median score'"
+                class="d-flex align-items-center text-muted small me-4">
+                <Icon size="16" width="1.8" class="me-1">Universe</Icon>
 
-              {{ app.score }}
-            </div>
+                {{ app.score }}
+              </div>
 
-            <div
-              v-if="app.scores.igdb"
-              v-tippy="'Aggregate reviews from multiple sources'"
-              class="d-flex align-items-center text-muted small me-3">
-              <Icon size="16" width="1.8" class="me-1">Stack2</Icon>
-              {{ app.scores.igdb }}%
-              <!-- <br />
+              <div
+                v-if="app.scores.igdb"
+                v-tippy="'Aggregate reviews from multiple sources'"
+                class="d-flex align-items-center text-muted small me-3">
+                <Icon size="16" width="1.8" class="me-1">Stack2</Icon>
+                {{ app.scores.igdb }}%
+                <!-- <br />
               <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
-            </div>
+              </div>
 
-            <!--
+              <!--
               *+---------------------------------
               *| Steam score
               *+---------------------------------
             -->
-            <div
-              v-if="app.scores.steamscoreAlt"
-              v-tippy="'Reviews on Steam'"
-              class="d-flex align-items-center text-muted small me-3">
-              <Icon size="16" width="1.8" class="me-1">DiscountCheck</Icon>
-              {{ app.scores.steamscore }}%, {{ app.scores.steamscoreAlt }}
-              <!-- <br />
+              <div
+                v-if="app.scores.steamscoreAlt"
+                v-tippy="'Reviews on Steam'"
+                class="d-flex align-items-center text-muted small me-3">
+                <Icon size="16" width="1.8" class="me-1">DiscountCheck</Icon>
+                {{ app.scores.steamscore }}%, {{ app.scores.steamscoreAlt }}
+                <!-- <br />
               <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
-            </div>
+              </div>
 
-            <!--
+              <!--
               *+---------------------------------
               *| Metacritic
               *+---------------------------------
             -->
-            <div
-              v-if="app.scores.metascore"
-              class="d-flex align-items-center text-muted small me-3">
               <div
-                v-tippy="'Metacritic'"
-                class="text-muted"
-                style="
-                  display: flex;
-                  width: 23px;
-                  height: 23px;
-                  border-radius: 3px;
-                  align-items: center;
-                  justify-content: center;
-                  color: black !important;
-                "
-                :style="{
-                  'background-color': format.scoreToHuman(
-                    app.scores.metascore,
-                    'meta',
-                    'color'
-                  ),
-                }">
-                {{ app.scores.metascore }}
+                v-if="app.scores.metascore"
+                class="d-flex align-items-center text-muted small me-3">
+                <div
+                  v-tippy="'Metacritic'"
+                  class="text-muted"
+                  style="
+                    display: flex;
+                    width: 23px;
+                    height: 23px;
+                    border-radius: 3px;
+                    align-items: center;
+                    justify-content: center;
+                    color: black !important;
+                  "
+                  :style="{
+                    'background-color': format.scoreToHuman(
+                      app.scores.metascore,
+                      'meta',
+                      'color'
+                    ),
+                  }">
+                  {{ app.scores.metascore }}
+                </div>
               </div>
-            </div>
 
-            <!--
+              <!--
               *+---------------------------------
               *| Metacritic
               *+---------------------------------
             -->
-            <div
-              v-if="app.scores.userscore"
-              class="d-flex align-items-center text-muted small me-3">
               <div
-                v-tippy="'Metacritic users'"
-                class="text-muted"
-                style="
-                  display: flex;
-                  width: 23px;
-                  height: 23px;
-                  border-radius: 3px;
-                  align-items: center;
-                  justify-content: center;
-                  color: black !important;
-                "
-                :style="{
-                  'background-color': format.scoreToHuman(
-                    app.scores.userscore,
-                    'meta',
-                    'color'
-                  ),
-                }">
-                {{ app.scores.userscore }}
+                v-if="app.scores.userscore"
+                class="d-flex align-items-center text-muted small me-3">
+                <div
+                  v-tippy="'Metacritic users'"
+                  class="text-muted"
+                  style="
+                    display: flex;
+                    width: 23px;
+                    height: 23px;
+                    border-radius: 3px;
+                    align-items: center;
+                    justify-content: center;
+                    color: black !important;
+                  "
+                  :style="{
+                    'background-color': format.scoreToHuman(
+                      app.scores.userscore,
+                      'meta',
+                      'color'
+                    ),
+                  }">
+                  {{ app.scores.userscore }}
+                </div>
               </div>
-            </div>
 
-            <!--
+              <!--
               *+---------------------------------
               *| Opencritic
               *+---------------------------------
             -->
-            <div
-              v-if="app.scores.oc"
-              v-tippy="'Opencritic'"
-              class="d-flex align-items-center small"
-              style="color: black">
-              <img
-                :src="
-                  'https://steam-backlog.com/images/' +
-                  format.scoreToHuman(app.scores.oc, 'oc', 'label') +
-                  '-head.png'
-                "
-                style="max-width: 20px; max-height: 20px; margin-right: 3px" />
+              <div
+                v-if="app.scores.oc"
+                v-tippy="'Opencritic'"
+                class="d-flex align-items-center small"
+                style="color: black">
+                <img
+                  :src="
+                    'https://steam-backlog.com/images/' +
+                    format.scoreToHuman(app.scores.oc, 'oc', 'label') +
+                    '-head.png'
+                  "
+                  style="max-width: 20px; max-height: 20px; margin-right: 3px" />
 
-              {{ app.scores.oc }}
+                {{ app.scores.oc }}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div v-if="app.hltb && app.hltb.main" class="my-2">
-          <h5>Time to beat</h5>
-          <small v-tippy="'Main game'" class="text-muted me-5">
-            <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-              SquareRoundedCheck
-            </Icon>
+          <div v-if="app.hltb && app.hltb.main" class="my-2">
+            <h5>Time to beat</h5>
+            <small v-tippy="'Main game'" class="text-muted me-5">
+              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
+                SquareRoundedCheck
+              </Icon>
 
-            {{ dates.minToHours(app.hltb.main / 60) }}
-          </small>
-          <small v-tippy="'Main game with extras'" class="text-muted me-5">
-            <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-              DiscountCheck
-            </Icon>
-            {{ dates.minToHours(app.hltb.extras / 60) }}
-          </small>
-          <small v-tippy="'Completionist'" class="text-muted me-5">
-            <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-              Trophy
-            </Icon>
-            {{ dates.minToHours(app.hltb.comp / 60) }}
-          </small>
+              {{ dates.minToHours(app.hltb.main / 60) }}
+            </small>
+            <small v-tippy="'Main game with extras'" class="text-muted me-5">
+              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
+                DiscountCheck
+              </Icon>
+              {{ dates.minToHours(app.hltb.extras / 60) }}
+            </small>
+            <small v-tippy="'Completionist'" class="text-muted me-5">
+              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
+                Trophy
+              </Icon>
+              {{ dates.minToHours(app.hltb.comp / 60) }}
+            </small>
 
-          <a
-            v-if="hltbSource"
-            v-tippy="'Click to open'"
-            :href="hltbSource"
-            target="_blank"
-            class="text-muted me-5">
-            <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-              Radar
-            </Icon>
-            From HLTB
-          </a>
-        </div>
+            <a
+              v-if="hltbSource"
+              v-tippy="'Click to open'"
+              :href="hltbSource"
+              target="_blank"
+              class="text-muted me-5">
+              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
+                Radar
+              </Icon>
+              From HLTB
+            </a>
+          </div>
 
-        <div class="my-3">
-          <div class="btn-list">
-            <!-- <a
+          <div class="my-3">
+            <div class="btn-list">
+              <!-- <a
             v-tippy="'Open Steam store page'"
             :href="'https://store.steampowered.com/app/' + app.steam_id"
             class="btn btn-sm btn-icon"
@@ -329,7 +357,7 @@
             Steam page
           </a> -->
 
-            <!-- <a
+              <!-- <a
               v-tippy="'Open Steam store page'"
               :href="'https://store.steampowered.com/app/' + app.steam_id"
               class="btn btn-ghost-secondary btn-secondary btn-sm"
@@ -338,38 +366,38 @@
               Steam page
             </a> -->
 
-            <div class="btn-group btn-group-sm" role="group">
+              <div class="btn-group btn-group-sm" role="group">
+                <a
+                  v-tippy="'Open Steam store page'"
+                  :href="'https://store.steampowered.com/app/' + app.steam_id"
+                  class="btn btn-ghost-secondary btn-secondary btn-sm"
+                  style="border: 0"
+                  target="_blank">
+                  <Icon size="15" class="me-2">BrandSteam</Icon>
+                  Steam page
+                </a>
+                <a
+                  v-if="app._.date_owned"
+                  v-tippy="'Run or install the game through Steam'"
+                  :href="'steam://run/' + app.steam_id"
+                  class="btn btn-ghost-secondary btn-secondary btn-sm m-0"
+                  style="border: 0"
+                  target="_blank">
+                  ⚡
+                </a>
+              </div>
+
               <a
-                v-tippy="'Open Steam store page'"
+                v-if="app.has_demo"
+                v-tippy="'Download free demo on Steam'"
                 :href="'https://store.steampowered.com/app/' + app.steam_id"
                 class="btn btn-ghost-secondary btn-secondary btn-sm"
-                style="border: 0"
                 target="_blank">
-                <Icon size="15" class="me-2">BrandSteam</Icon>
-                Steam page
+                <Icon size="15" class="me-1">FreeRights</Icon>
+                Demo
               </a>
-              <a
-                v-if="app._.date_owned"
-                v-tippy="'Run or install the game through Steam'"
-                :href="'steam://run/' + app.steam_id"
-                class="btn btn-ghost-secondary btn-secondary btn-sm m-0"
-                style="border: 0"
-                target="_blank">
-                ⚡
-              </a>
-            </div>
 
-            <a
-              v-if="app.has_demo"
-              v-tippy="'Download free demo on Steam'"
-              :href="'https://store.steampowered.com/app/' + app.steam_id"
-              class="btn btn-ghost-secondary btn-secondary btn-sm"
-              target="_blank">
-              <Icon size="15" class="me-1">FreeRights</Icon>
-              Demo
-            </a>
-
-            <!-- <a
+              <!-- <a
               v-tippy="'Open Xbox store page'"
               :href="'https://store.steampowered.com/app/' + app.xbox_id"
               class="btn btn-ghost-secondary btn-secondary btn-sm"
@@ -377,26 +405,52 @@
               <Icon size="15" class="me-2">BrandXbox</Icon>
               Xbox store
             </a> -->
-            <!-- <a v-tippy="'Open on Steam'" href="#" class="btn btn-icon btn-sm">
+              <!-- <a v-tippy="'Open on Steam'" href="#" class="btn btn-icon btn-sm">
             <Icon>GitMerge</Icon>
           </a> -->
+            </div>
           </div>
-        </div>
 
-        <div class="my-2">
-          <small v-if="app._.date_owned" class="text-muted" :title="app._.date_owned">
-            <Icon
-              v-tippy="'In Backlog.rip since ' + $moment(app.created_at).format('LL')"
-              size="16"
-              style="transform: translateY(-2px)"
-              class="me-1">
-              Calendar
-            </Icon>
-            In your library since {{ app._.date_owned }} -
+          <div class="my-2">
+            <small v-if="app._.date_owned" class="text-muted" :title="app._.date_owned">
+              <Icon
+                v-tippy="'In Backlog.rip since ' + $moment(app.created_at).format('LL')"
+                size="16"
+                style="transform: translateY(-2px)"
+                class="me-1">
+                Calendar
+              </Icon>
+              In your library since {{ app._.date_owned }} -
 
-            {{ $moment(app._.date_owned).format('LL') }}
-          </small>
-        </div>
+              {{ $moment(app._.date_owned).format('LL') }}
+            </small>
+          </div>
+        </template>
+
+        <template v-if="ui.tab == 'details'">
+          <div class="row g-3">
+            <div class="col-12 m-0" @click="ui.tab = 'info'">
+              <h2 class="m-0">{{ app.name }} details</h2>
+            </div>
+            <div class="col-6">
+              <div class="datagrid-title">Registrar</div>
+              <div class="datagrid-content">Third Party</div>
+            </div>
+            <div class="col-6">
+              <div class="datagrid-title">Port number</div>
+              <div class="datagrid-content">3306</div>
+            </div>
+
+            <div class="col-6">
+              <div class="datagrid-title">Registrar</div>
+              <div class="datagrid-content">Third Party</div>
+            </div>
+            <div class="col-6">
+              <div class="datagrid-title">Port number</div>
+              <div class="datagrid-content">3306</div>
+            </div>
+          </div>
+        </template>
 
         <div
           v-if="$next"
@@ -417,24 +471,17 @@
           <h4
             class="m-0"
             style="  font-weight: 500;
-  margin-bottom: 8px;
-  letter-spacing: normal;
-  letter-spacing: 2px !important;
-  text-transform: uppercase;
-}">
+              margin-bottom: 8px;
+              letter-spacing: normal;
+              letter-spacing: 2px !important;
+              text-transform: uppercase;
+            }">
             Next
           </h4>
           <Icon size="18" width="2">ChevronRight</Icon>
         </div>
       </div>
     </div>
-    <!-- <div
-      v-if="$prev"
-      class="btn btn-ghost-secondary"
-      style="position: absolute; left: -77px; z-index: 9999"
-      @click="changeTo($prev)">
-      <Icon size="50" width="2">ChevronLeft</Icon>
-    </div> -->
 
     <!-- <div class="modal-back"></div> -->
     <div v-if="false" class="info_section row">
@@ -528,114 +575,6 @@
 
       <div>93 /100 Overwhelmingly positive Steam score 125.000 votes view on steam</div> -->
 
-      <div v-if="ui.layout == 'full'" class="col-12 p-3">
-        <div class="datagrid">
-          <div class="datagrid-item">
-            <div class="datagrid-title">Registrar</div>
-            <div class="datagrid-content">Third Party</div>
-          </div>
-          <div class="datagrid-item">
-            <div class="datagrid-title">Nameservers</div>
-            <div class="datagrid-content">Third Party</div>
-          </div>
-          <div class="datagrid-item">
-            <div class="datagrid-title">Port number</div>
-            <div class="datagrid-content">3306</div>
-          </div>
-          <div class="datagrid-item">
-            <div class="datagrid-title">Expiration date</div>
-            <div class="datagrid-content">–</div>
-          </div>
-          <div class="datagrid-item">
-            <div class="datagrid-title">Creator</div>
-            <div class="datagrid-content">
-              <div class="d-flex align-items-center">
-                <span
-                  class="avatar avatar-xs me-2 rounded"
-                  style="background-image: url(./static/avatars/000m.jpg)"></span>
-                Paweł Kuna
-              </div>
-            </div>
-          </div>
-          <div class="datagrid-item">
-            <div class="datagrid-title">Age</div>
-            <div class="datagrid-content">15 days</div>
-          </div>
-          <div class="datagrid-item">
-            <div class="datagrid-title">Edge network</div>
-            <div class="datagrid-content">
-              <span class="status status-green">Active</span>
-            </div>
-          </div>
-          <div class="datagrid-item">
-            <div class="datagrid-title">Avatars list</div>
-            <div class="datagrid-content">
-              <div class="avatar-list avatar-list-stacked">
-                <span
-                  class="avatar avatar-xs rounded"
-                  style="background-image: url(./static/avatars/000m.jpg)"></span>
-                <span class="avatar avatar-xs rounded">JL</span>
-                <span
-                  class="avatar avatar-xs rounded"
-                  style="background-image: url(./static/avatars/002m.jpg)"></span>
-                <span
-                  class="avatar avatar-xs rounded"
-                  style="background-image: url(./static/avatars/003m.jpg)"></span>
-                <span
-                  class="avatar avatar-xs rounded"
-                  style="background-image: url(./static/avatars/000f.jpg)"></span>
-                <span class="avatar avatar-xs rounded">+3</span>
-              </div>
-            </div>
-          </div>
-          <div class="datagrid-item">
-            <div class="datagrid-title">Checkbox</div>
-            <div class="datagrid-content">
-              <label class="form-check">
-                <input class="form-check-input" type="checkbox" checked="" />
-                <span class="form-check-label">Click me</span>
-              </label>
-            </div>
-          </div>
-          <div class="datagrid-item">
-            <div class="datagrid-title">Icon</div>
-            <div class="datagrid-content">
-              <!-- Download SVG icon from http://tabler-icons.io/i/check -->
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon text-green"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M5 12l5 5l10 -10"></path>
-              </svg>
-              Checked
-            </div>
-          </div>
-          <div class="datagrid-item">
-            <div class="datagrid-title">Form control</div>
-            <div class="datagrid-content">
-              <input
-                type="text"
-                class="form-control form-control-flush"
-                placeholder="Input placeholder" />
-            </div>
-          </div>
-          <div class="datagrid-item">
-            <div class="datagrid-title">Longer description</div>
-            <div class="datagrid-content">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div v-if="ui.layout == 'full'" class="col col-md-3">
         You played: {{ app._playtime }} last played: {{ app._last_played }}
         <br />
@@ -664,7 +603,7 @@ import format from '../../utils/format'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Thu Mar 14 2024
+ * Modified: Fri Mar 15 2024
  **/
 
 export default {
@@ -681,6 +620,7 @@ export default {
       },
 
       ui: {
+        tab: 'info',
         layout: 'lite', // full
         dialog: false,
         loading: false,

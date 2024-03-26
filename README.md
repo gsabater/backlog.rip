@@ -1,6 +1,7 @@
 # Backlog.rip
 
-Based on a Nuxt 3 project.
+Backlog.rip is an online library manager for all your games.
+All data is saved locally in the browser.
 
 ## Setup
 
@@ -27,10 +28,10 @@ https://repobeats.axiom.co/api/embed/8ad80c908f2c331683b4aa34bb542501b3332bb5.sv
 ### Emoji Cheat Sheet
 
 ⚡ - General backlog logs
-💽 - Used in $db or dexie
+💽 - Logs by dexie
 🥸 - Uer account
 🎴 - User library
 📜 - User Journal
-⭕ - Search is going to run + some todo's have this as well
-
-❇️ and ✅ - For success messages
+🔅 - User events (Keys and right click)
+⭕ - Search started
+❇️ ✅ - For success messages

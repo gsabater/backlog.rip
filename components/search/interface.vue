@@ -5,27 +5,30 @@
         class="my-3"
         style="
           position: fixed;
-          bottom: 10px;
-          left: 10px;
+          top: 10px;
+          right: 10px;
           z-index: 9999;
-          max-height: 120vh;
+          max-height: 350px;
           overflow-y: scroll;
           background: rgba(0, 0, 0, 0.5);
           color: white;
           padding: 10px;
           border-radius: 5px;
           width: auto;
-        "
-        >{{ f }}
+        "><h3>Search interface</h3>
+{{ f }}
 --
 {{ stats }}
-</pre
-      >
+</pre>
     </div>
-    <search-filters :filters="f" @update="onUpdate"></search-filters>
+    <search-filters :filters="f" @updated="onUpdateFilters"></search-filters>
 
     <div class="col-12">
-      <search-results ref="results" :filters="f" :source="source"></search-results>
+      <search-results
+        ref="results"
+        :filters="f"
+        :source="source"
+        @search:end="onSearchEnd"></search-results>
 
       <template v-if="stats.amount == 0 && source == 'library'">
         <!-- <b-empty preset='empty-library'></b-empty> -->
@@ -59,14 +62,22 @@
         <p class="text-muted text-center w-50">
           <!-- <hr class="my-2" > -->
           <template v-if="stats.results > 0">
-            Showing 1-{{ 1 * f.show.perPage * f.show.page }} of
-            {{ format.num(stats.results) }}
+            Showing up to
+            <strong>{{ showing }} of {{ format.num(stats.results) }}</strong>
+            results
           </template>
           <br />
-          Filtered out {{ format.num(stats.filtered) }} of
-          {{ format.num(stats.amount) }} games
+          <template v-if="stats.filtered > 0">
+            Filtered out
+            <strong>
+              {{ format.num(stats.filtered) }} of {{ format.num(stats.amount) }}
+            </strong>
+          </template>
+          <span v-else>No games filtered</span>
         </p>
       </div>
+
+      <div v-else class="d-none">{{ f.show }} {{ stats }}</div>
     </div>
   </div>
 </template>
@@ -77,7 +88,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Mar 26 2024
+ * Modified: Sat Apr 06 2024
  **/
 
 export default {
@@ -137,6 +148,7 @@ export default {
       },
 
       ui: {
+        ping: 0,
         dirty: false,
         ready: false,
         loading: false,
@@ -152,9 +164,22 @@ export default {
       return this.source == 'library'
     },
 
+    //+-------------------------------------------------
+    // stats()
+    // Returns stats from results component
+    // -----
+    // Created on Fri Apr 05 2024
+    //+-------------------------------------------------
     stats() {
-      if (!this.ui.ready) return {}
-      return this.$refs?.results?.stats || {}
+      if (!this.ui.ready) return { state: 'not ready' }
+      if (this.ui.ping == 0) return { state: 'no ping' }
+      return this.$refs?.results?.stats || { state: 'no stats' }
+    },
+
+    showing() {
+      return this.stats.results > this.f.show.perPage
+        ? this.f.show.page * this.f.show.perPage
+        : this.stats.results
     },
   },
 
@@ -170,7 +195,7 @@ export default {
       console.warn('loading', loading)
     },
 
-    onUpdate(filters) {
+    onUpdateFilters(filters) {
       this.f = filters
 
       this.f.show.page = 1
@@ -178,9 +203,14 @@ export default {
 
       this.search('interface')
       // console.warn('📒 updated', JSON.stringify(filters))
-      // this.$nextTick(() => {
-      //   console.warn('📒 updated 2', JSON.stringify(filters))
-      // })
+      this.$nextTick(() => {
+        this.ui.ping++
+        // console.warn('📒 updated 2', JSON.stringify(filters))
+      })
+    },
+
+    onSearchEnd() {
+      this.ui.ping++
     },
 
     addPage() {
@@ -244,10 +274,10 @@ export default {
   mounted() {
     this.init()
 
-    this.$mitt.on('data:updated', () => {
-      log('✨ Search: event -> data:updated')
-      this.search('event')
-    })
+    // this.$mitt.on('data:updated', () => {
+    //   log('✨ Search: event -> data:updated')
+    //   this.search('event')
+    // })
 
     this.$mitt.on('data:ready', () => {
       log('✨ Search: event -> data:ready')

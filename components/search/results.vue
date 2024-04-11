@@ -39,7 +39,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Mar 26 2024
+ * Modified: Fri Apr 05 2024
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -164,7 +164,7 @@ export default {
       // this.$forceUpdate()
     }
 
-    return { search, items }
+    return { search, items, stats }
   },
 
   data() {
@@ -292,8 +292,18 @@ export default {
   },
 
   mounted() {
-    window.$results = this
     this.init()
+
+    this.$mitt.on('data:updated', () => {
+      log('✨ Search: event -> data:updated')
+      this.search('event')
+    })
+
+    // window.$results = this
+  },
+
+  beforeUnmount() {
+    this.$mitt.off('data:updated')
   },
 }
 </script>

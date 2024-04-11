@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Mon Mar 25 2024
+ * Modified: Thu Apr 11 2024
  */
 
 export default {
@@ -49,7 +49,7 @@ export default {
 
       // This should be a check "Show only owned games"
       // if (extra?.source == 'library' && filters?.state == null) {
-      //   if (!app.is?.owned) {
+      //   if (!app._?.owned) {
       //     if (logged > 0) {
       //       console.warn('🛑 Skipping because game is not owned', app.name)
       //       logged--
@@ -96,6 +96,19 @@ export default {
         }
       }
 
+      // Sort By: HLTB
+      // Include only apps with HLTB time
+      // Sort by HLTB.main
+      //+---------------------------------------
+      if (filters?.sortBy == 'hltb') {
+        if (!app.hltb?.main) {
+          filtered.push(uuid)
+          // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
+
+          continue
+        }
+      }
+
       // Finally,
       // Modify and add the app to items
       //+---------------------------------------
@@ -104,20 +117,24 @@ export default {
       // Index: toSort
       // Create an index of elements to sort
       //+---------------------------------------
+      if (filters?.sortBy == 'rand') {
+        toSort.push({ uuid, val: Math.random() })
+      }
+
       if (filters?.sortBy == 'name') {
-        toSort.push({ uuid, name: app.name?.toString().toLowerCase() || '' })
+        toSort.push({ uuid, val: app.name?.toString().toLowerCase() || '' })
       }
 
       if (filters?.sortBy == 'score') {
-        toSort.push({ uuid, score: app._?.score || 0 })
+        toSort.push({ uuid, val: app._?.score || 0 })
       }
 
       if (filters?.sortBy == 'playtime') {
-        toSort.push({ uuid, playtime: app.playtime?.steam || 0 })
+        toSort.push({ uuid, val: app.playtime?.steam || 0 })
       }
 
-      if (filters?.sortBy == 'rand') {
-        toSort.push({ uuid, rand: Math.random() })
+      if (filters?.sortBy == 'hltb') {
+        toSort.push({ uuid, val: app.hltb?.main || 0 })
       }
     }
 
@@ -144,7 +161,8 @@ export default {
   // Created on Wed Jan 10 2024
   //+-------------------------------------------------
   sort(items, filters) {
-    log('🔸 Sorting results by', filters.sortBy)
+    const { sortBy, sortDir } = filters
+    log('🔸 Sorting results by', sortBy)
 
     // SortBy: name
     // Using app.name
@@ -152,9 +170,10 @@ export default {
     if (filters?.sortBy == 'name') {
       return items
         .sort((a, b) => {
-          const A = a.name || ''
-          const B = b.name || ''
-          return A.localeCompare(B)
+          const A = a.val || ''
+          const B = b.val || ''
+          const compare = A.localeCompare(B)
+          return filters?.sortDir === 'desc' ? -compare : compare
         })
         .map((item) => item.uuid)
     }
@@ -162,18 +181,12 @@ export default {
     // SortBy: numeric value
     // Using app.playtime // score // rand
     //+---------------------------------------
-    if (
-      filters?.sortBy == 'rand' ||
-      filters?.sortBy == 'score' ||
-      filters?.sortBy == 'playtime'
-    ) {
-      const field = filters?.sortBy
-
+    if (['rand', 'hltb', 'score', 'playtime'].includes(sortBy)) {
       return items
         .sort((a, b) => {
-          const A = a[field] || 0
-          const B = b[field] || 0
-          return B - A
+          const A = a.val || 0
+          const B = b.val || 0
+          return filters?.sortDir === 'desc' ? B - A : A - B
         })
         .map((item) => item.uuid)
     }

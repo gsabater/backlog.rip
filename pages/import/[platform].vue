@@ -100,6 +100,35 @@
             </div>
           </div>
 
+          <div v-if="ui.saving" class="col-lg-8 mx-auto mt-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-12">
+                    <h3 class="card-title mb-1">Saving your library...</h3>
+                    <!-- <div class="text-muted">Working for {{ watchToHuman }} ...</div> -->
+                    <div class="mt-3">
+                      <div class="row g-2 align-items-center">
+                        <!-- <div class="col-auto">
+                            25%
+                          </div> -->
+                        <div class="col">
+                          <div class="progress progress-sm">
+                            <div
+                              class="progress-bar progress-bar-indeterminate"
+                              role="progressbar"
+                              aria-valuemin="0"
+                              aria-valuemax="100"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!--
             *+---------------------------------
             *| Main waiting to start block
@@ -272,12 +301,16 @@
                 <div class="w-100">
                   <div class="row">
                     <div class="col">
-                      <div class="btn w-100" @click="ui.step = 'review:plus'">
+                      <div
+                        class="btn w-100"
+                        @click="(ui.step = 'review:plus'), toggleAll()">
                         Review your data
                       </div>
                     </div>
                     <div class="col">
-                      <div class="btn btn-success w-100">Update everything</div>
+                      <div class="btn btn-success w-100" @click="store">
+                        Update library
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -348,17 +381,15 @@
                           {{ data.appsToUpdate.length }}
                         </div>
                       </div>
-                      <div class="col">
+                      <!-- <div class="col">
                         <div class="d-flex align-items-center">
                           <div class="subheader">Ignoring</div>
                         </div>
                         <div class="h2 mb-1 d-flex align-items-center">
                           <Icon class="mr-2 text-muted mt-1">SquareRotatedOff</Icon>
                           {{ appsToIgnore.length }}
-                          <!-- <br />
-                          <span class="d-block text-muted">view</span> -->
                         </div>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                 </div>
@@ -380,12 +411,10 @@
                     :checked="tabs.appsToReview.count == tabs.appsToImport.count"
                     @click="toggleAll" />
                   <span class="form-check-label form-check-label-on">
-                    Click to unselect everything
+                    Unselect everything
                   </span>
-                  <span class="form-check-label form-check-label-off">
-                    Click to select
-                    {{ tabs.appsToReview.count }}
-                    games
+                  <span class="form-check-label form-check-label-off text-white">
+                    Select all games ({{ tabs.appsToReview.count }})
                   </span>
                 </label>
 
@@ -492,9 +521,9 @@
                 </button>
               </div>
             </div>
-            <search-empty></search-empty>
 
-            <div class="card">
+            <search-empty v-if="!loopToReview.length" preset="filtering"></search-empty>
+            <div v-else class="card">
               <div class="list-group card-list-group list-group-hoverable">
                 <div
                   v-for="(app, i) in loopToReview"
@@ -507,10 +536,13 @@
                   @click="flagAs('import', app)">
                   <div class="row g-4 align-items-center">
                     <div class="col-auto fs-3">
-                      <label class="form-check form-switch mb-0 ms-2">
+                      <label
+                        v-if="ui.tab == 'appsToReview'"
+                        class="form-check form-switch mb-0 ms-2">
                         <input
                           :checked="app.will_import"
                           class="form-check-input"
+                          :class="{ disabled: ui.tab !== 'appsToReview' }"
                           type="checkbox" />
                       </label>
                     </div>
@@ -529,48 +561,62 @@
                         {{ app.name }}
                       </p>
 
-                      <template v-if="ui.tab == 'appsToImport'">
-                        <small class="text-muted">Will be added to your library</small>
-                      </template>
+                      <div class="d-flex g-2">
+                        <template v-if="ui.tab == 'appsToImport'">
+                          <small class="text-muted">Will be added to your library</small>
+                        </template>
 
-                      <template v-if="app.will_ignore || ui.tab == 'appsToIgnore'">
-                        <small class="text-muted text-red">
-                          Will be ignored and won't be shown again
-                        </small>
-                      </template>
+                        <template v-if="app.will_ignore || ui.tab == 'appsToIgnore'">
+                          <small class="text-muted text-red">
+                            Will be ignored and won't be shown again
+                          </small>
+                        </template>
 
-                      <template v-if="ui.tab == 'appsToUpdate'">
-                        <div v-if="app.toUpdate.owned" class="mb-2">
-                          <span class="badge bg-teal-lt text-green">
-                            + Marking the game as owned in your library
-                          </span>
-                        </div>
+                        <template v-if="ui.tab == 'appsToUpdate'">
+                          <div
+                            v-if="app.toUpdate.owned"
+                            v-tippy="'Marking the game as owned in your library'"
+                            class="status small my-0 me-2"
+                            style="font-size: 0.775rem; border-radius: 4px">
+                            Adding to library
+                          </div>
 
-                        <div v-if="app.toUpdate.playtime" class="mb-2">
-                          <span class="badge bg-teal-lt text-green">
-                            + Updating playtime on Steam from "xx" to
-                            <strong>
-                              {{ dates.minToHours(app.playtime_forever) }}
-                            </strong>
-                          </span>
-                        </div>
+                          <div
+                            v-if="app.toUpdate.playtime"
+                            v-tippy="'Updating your play time on Steam'"
+                            class="status small my-0 me-2"
+                            style="font-size: 0.775rem; border-radius: 4px">
+                            Played
+                            {{ dates.minToHours(app.playtime_forever, 'Not played') }}
+                          </div>
 
-                        <div v-if="app.toUpdate.last_played" class="mb-2">
-                          <span class="badge bg-teal-lt text-green">
-                            + Updating your last played date on steam to
-                            {{ app.last_played }}
-                          </span>
-                        </div>
-                      </template>
+                          <div
+                            v-if="app.toUpdate.last_played"
+                            v-tippy="'Updating last played date on Steam'"
+                            class="status small my-0 me-2"
+                            style="font-size: 0.775rem; border-radius: 4px">
+                            Last played
+                            {{ dates.timeAgo(app.rtime_last_played * 1000) }}
+                          </div>
+                        </template>
 
-                      <template v-if="ui.tab == 'appsToReview' && !app.will_ignore">
-                        <small class="text-muted">
-                          <Icon size="14" style="transform: translateY(-2px)">
-                            ClockHour3
-                          </Icon>
-                          Played {{ dates.minToHours(app.playtime_forever) }}
-                        </small>
-                      </template>
+                        <template v-if="ui.tab == 'appsToReview' && !app.will_ignore">
+                          <small class="text-muted">
+                            <Icon size="14" style="transform: translateY(-2px)">
+                              ClockHour3
+                            </Icon>
+                            Played
+                            {{ dates.minToHours(app.playtime_forever, 'Not played') }}
+                          </small>
+                          <div
+                            v-if="app.toUpdate && app.toUpdate.owned"
+                            v-tippy="'Marking the game as owned in your library'"
+                            class="status small my-0 me-2"
+                            style="font-size: 0.775rem; border-radius: 4px">
+                            Owned
+                          </div>
+                        </template>
+                      </div>
 
                       <!-- <span class="px-1">&nbsp;</span>
                         <svg
@@ -598,7 +644,7 @@
                       </code>
                     </div>
 
-                    <div
+                    <!-- <div
                       v-if="ui.tab == 'appsToReview'"
                       v-tippy="{
                         content:
@@ -608,10 +654,6 @@
                       class="col-auto text-muted cursor-pointer"
                       @click.stop="flagAs('ignore', app)">
                       <Icon>SquareRotatedOff</Icon>
-                    </div>
-                    <!-- <div class="col-auto lh-1">
-                      <Icon class="link-secondary">Dots</Icon>
-
                     </div> -->
                   </div>
                 </div>
@@ -619,7 +661,7 @@
             </div>
 
             <b-btn
-              v-if="table.perPage < data.games.length"
+              v-if="loopToReview.length && table.perPage < data.games.length"
               color="primary"
               class="w-100 my-4"
               @click="table.perPage += 100">
@@ -700,13 +742,13 @@
             </div>
             <div
               v-if="['review', 'review:plus', 'complete'].includes(ui.step)"
-              class="card-body pt-0">
+              class="card-body p-3">
               <b-btn
                 block
                 :color="ui.step.indexOf('review') == -1 ? 'secondary' : 'success'"
                 :disabled="ui.step.indexOf('review') == -1"
                 @click="store">
-                Save your library
+                Update library
               </b-btn>
               <!-- v-if="ui.step == 'complete'" <b-btn v-else block color="success">View library</b-btn> -->
             </div>
@@ -714,7 +756,7 @@
               This module is open source. If you want to know more about the code or
               review your privacy and security, you can
               <a
-                href="https://github.com/gsabater/backlog.rip/tree/master/modules"
+                href="https://github.com/gsabater/backlog.rip/blob/master/modules/importers"
                 target="_blank">
                 check the code on Github.
               </a>
@@ -736,7 +778,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Tue Mar 26 2024
+ * Modified: Thu Apr 11 2024
  **/
 
 const importer = null
@@ -788,6 +830,7 @@ export default {
         step: 'prep',
         tab: 'appsToReview',
 
+        saving: false,
         loading: false,
         showlogs: false,
       },
@@ -856,11 +899,11 @@ export default {
           count: this.data.appsToUpdate.length,
         },
 
-        appsToIgnore: {
-          label: 'to be ignored',
-          object: 'appsToIgnore',
-          count: this.appsToIgnore.length,
-        },
+        // appsToIgnore: {
+        //   label: 'to be ignored',
+        //   object: 'appsToIgnore',
+        //   count: this.appsToIgnore.length,
+        // },
       }
 
       return tabs
@@ -922,14 +965,9 @@ export default {
         .filter((el) => el.will_import === true)
         .forEach((el) => {
           items.push({
-            // uuid: this.$uuid(),
-            [this.platform + '_id']: el.appid,
-            name: el.name,
-            is: {
-              owned: true,
-            },
             data: el,
             will_import: true,
+            [this.platform + '_id']: el.appid,
           })
         })
 
@@ -948,13 +986,12 @@ export default {
         .filter((el) => el.will_ignore === true)
         .forEach((el) => {
           items.push({
-            // uuid: this.$uuid(),
-            [this.platform + '_id']: el.appid,
             name: el.name,
-            is: {
-              owned: true,
-              ignored: true,
-            },
+            [this.platform + '_id']: el.appid,
+            // is: {
+            //   owned: true,
+            //   ignored: true,
+            // },
           })
         })
 
@@ -1027,6 +1064,8 @@ export default {
     // Created on Tue Jan 30 2024
     //+-------------------------------------------------
     flagAs(flag, app) {
+      if (this.ui.tab !== 'appsToReview') return
+
       const source = this.data.appsToReview.find(
         (el) => el.appid === (app.appid || app.steam_id)
       )
@@ -1053,6 +1092,7 @@ export default {
     //+-------------------------------------------------
     async store() {
       log('✨ importer', 'store()')
+      this.ui.saving = true
 
       await this.$importer.store({
         notify: true,
@@ -1064,6 +1104,7 @@ export default {
         },
       })
 
+      this.ui.saving = false
       this.ui.step = 'complete'
     },
 
@@ -1133,8 +1174,7 @@ export default {
 
       this.account = connection.account
       this.module = connection.module?.manifest
-      console.warn(this.module, connection.module)
-      debugger
+
       if (connection.account?.error == 'account:login') {
         this.ui.error = 'account:provider'
         return

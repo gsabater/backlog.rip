@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Tue Mar 26 2024
+ * Modified: Thu Apr 11 2024
  */
 
 import importer from '~/utils/importer'
@@ -179,10 +179,12 @@ async function prepare() {
 //+-------------------------------------------------
 // store()
 // - Saves to DDBB
+// - Tries to update missing apps
 // -----
 // Created on Wed Jan 24 2024
+// Updated on Thu Apr 11 2024
 //+-------------------------------------------------
-function store(options = {}) {
+async function store(options = {}) {
   if (options.apps) {
     _sync.x.apps = {
       toUpdate: options.apps.toUpdate || [],
@@ -191,12 +193,15 @@ function store(options = {}) {
     }
   }
 
-  const stored = importer.store(_sync.x)
+  const stored = await importer.store(_sync.x)
 
   if (stored) {
     _sync.x.apps.stored = [...stored.uuids]
     notify()
+    return true
   }
+
+  return false
 }
 
 //+-------------------------------------------------
@@ -210,7 +215,7 @@ function notify() {
 
   $nuxt.$toast.dismiss($toast)
   $nuxt.$toast.info('Your ' + _sync.x.source + ' library has been updated', {
-    description: 'Added ' + _sync.x.apps.stored.length + ' new games.',
+    description: 'Updated ' + _sync.x.apps.stored.length + ' games in your library',
   })
 }
 

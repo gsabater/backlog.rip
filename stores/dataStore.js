@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue Mar 26 2024
+ * Modified: Thu Apr 11 2024
  */
 
 let $nuxt = null
@@ -54,6 +54,9 @@ let index = {
 
 export const useDataStore = defineStore('data', {
   state: () => ({
+    // version defining data integrity
+    v: 10,
+
     queue: [],
     loaded: [],
     indexes: [],
@@ -70,7 +73,7 @@ export const useDataStore = defineStore('data', {
     },
   },
 
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Methods to load data
   // * loadLibrary()
   // * loadApiStatus()
@@ -94,7 +97,7 @@ export const useDataStore = defineStore('data', {
   // * toData()
   // * toIndex()
   // * isIndexed()
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   actions: {
     status() {
@@ -290,28 +293,6 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
-    // prepareToData()
-    // Prepares an item before adding it to data
-    // -----
-    // Created on Thu Mar 07 2024
-    //+-------------------------------------------------
-    prepareToData(item) {
-      item = $game.normalize(item)
-
-      item._ = {
-        score: $game._score(item),
-        playtime: $game._playtime(item),
-        date_owned: $game._dateOwned(item),
-      }
-
-      if (item.is?.dirty) {
-        item.uuid = item.uuid || $nuxt.$uuid()
-      }
-
-      return item
-    },
-
-    //+-------------------------------------------------
     // prepareToStore()
     // to ensure consistency, add base values to the item
     // and remove unwanted values before returning back
@@ -326,15 +307,15 @@ export const useDataStore = defineStore('data', {
       }
 
       item.uuid = item.uuid || $nuxt.$uuid()
-
-      item.is = item.is || {}
       item.is.lib = item.is.lib || dates.stamp()
 
-      item.log = item.log || []
+      // item.is = item.is || {}
 
-      // Default created at timestamp, should come from api
-      // But sometimes it doesn't or the game is created locally
-      item.created_at = item.created_at || dates.now()
+      // item.log = item.log || []
+
+      // // Default created at timestamp, should come from api
+      // // But sometimes it doesn't or the game is created locally
+      // item.created_at = item.created_at || dates.now()
 
       // Delete internal flags
       // Those are used for application logic
@@ -409,7 +390,7 @@ export const useDataStore = defineStore('data', {
       this.store(this.queue)
       this.queue = []
 
-      let text = 'Updating data in ' + amount
+      let text = 'Details have been updated in ' + amount
       text += amount > 1 ? ' games' : ' game'
       $nuxt.$toast.success(text, {
         // description: 'Monday, January 3rd at 6:00pm',
@@ -483,10 +464,10 @@ export const useDataStore = defineStore('data', {
       // Games in local library have:
       // Different api_id and uuid (not always)
       // state
-      // is.owned
+      // is.lib
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (item.state) return true
-      if (item.is?.owned) return true
+      if (item.is?.lib) return true
       if (!item.is_api && item?.uuid !== item.api_id) return true
 
       return false
@@ -517,6 +498,29 @@ export const useDataStore = defineStore('data', {
 
       return false
       // console.warn(item)
+    },
+
+    //+-------------------------------------------------
+    // prepareToData()
+    // Prepares an item before adding it to data
+    // -----
+    // Created on Thu Mar 07 2024
+    //+-------------------------------------------------
+    prepareToData(item) {
+      item = $game.normalize(item)
+
+      item._ = {
+        // owned: $game._owned(item), // WIP -> should return true if is[store] is there
+        score: $game._score(item),
+        playtime: $game._playtime(item),
+        // date_owned: $game._dateOwned(item), // remove as makes no sense, just use is.lib
+      }
+
+      if (item.is?.dirty) {
+        item.uuid = item.uuid || $nuxt.$uuid()
+      }
+
+      return item
     },
 
     //+-------------------------------------------------
@@ -582,6 +586,39 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
+    // updateMissing()
+    // Builds an array of IDs that should be updated
+    // Tries to follow similar logic than $game.needsUpdate()
+    // -----
+    // Created on Thu Apr 11 2024
+    //+-------------------------------------------------
+    async updateMissing() {
+      let missing = Object.values(data)
+        .filter((game) => {
+          // const needsUpdate = $game.needsUpdate(game)
+          // return needsUpdate !== false
+
+          if (!game.steam_id) return false
+
+          if (!game.api_id) return true
+          // if (game.description == undefined) return true
+
+          return false
+        })
+        .map((game) => game.steam_id)
+      console.warn('🔥 Updating missing games', missing)
+
+      const jxr = await $nuxt.$axios.post(`get/batch`, { steam: missing })
+      if (jxr.status) {
+        log('🪂 Data from API', jxr.data)
+        await this.process(jxr.data, 'api')
+        return true
+      }
+
+      return false
+    },
+
+    //+-------------------------------------------------
     // init()
     // Initialize the data store
     // -----
@@ -609,6 +646,7 @@ export const useDataStore = defineStore('data', {
         get: this.get,
         api: this.search,
         status: this.status,
+        updateMissing: this.updateMissing,
       }
 
       // Finally, data is ready

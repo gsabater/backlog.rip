@@ -7,25 +7,6 @@
  * Modified: Mon Mar 13 2023
  **/
 
-// {
-//   appid: 211420,
-//   name: 'DARK SOULS™: Prepare To Die Edition',
-//   playtime_forever: 1286,
-//   img_icon_url: 'a24804c6c8412c8cd9d50efd06bf03fa58ff80a9',
-//   has_community_visible_stats: true,
-//   playtime_windows_forever: 0,
-//   playtime_mac_forever: 0,
-//   playtime_linux_forever: 0,
-//   rtime_last_played: 1418686838,
-//   sort_as: 'Dark Souls',
-//   has_workshop: false,
-//   has_market: false,
-//   will_import: true,
-//   will_ignore: false,
-//   has_dlc: true,
-//   playtime_disconnected: 0,
-// }
-
 let $log = null
 let $axios = null
 let $account = null
@@ -34,12 +15,12 @@ export default {
   //+-------------------------------------------------
   // Module manifest
   // ---
-  // This manifest is used to describe the module
+  // This object is used to define the module
   // and its capabilities to the importer plugin
   //+-------------------------------------------------
 
   manifest: {
-    version: '1.1',
+    version: '1.3',
     name: 'Steam importer',
     author: 'Gaspar S.',
 
@@ -61,6 +42,10 @@ export default {
     ],
   },
 
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Methods
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   //+-------------------------------------------------
   // connect()
   // Registers the importer script with the vue instance
@@ -75,36 +60,32 @@ export default {
     $account = account
 
     $axios.defaults.headers.common['Authorization'] = 'Bearer ' + account.bearer
-
     $log('🆗 Connection established')
 
     return true
   },
 
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Methods
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   //+-------------------------------------------------
-  // prepareToStore()
-  // Gets an app and appends data to it
+  // update()
+  // takes an app from ddbb and a data object from
+  // steam API and assign values to the app
   // -----
-  // Created on Sun Dec 24 2023
-  // Updated on Tue Mar 05 2024 - New item properties
+  // Created on Wed Apr 10 2024
   //+-------------------------------------------------
-  prepareToStore(app) {
-    if (!app.data) console.warn('prepareToStore() called without data', app)
+  update(app, data) {
+    data = data || app.data
+    if (!data) console.warn('update() called without data', app)
 
+    app.name = data.name
+    app.steam_id = Number(data.appid)
+
+    // Flag this item as dirty to be saved by datastore
     app.is.dirty = true
+    app.is.steam = app.is.steam || dates.stamp()
+    app.time.steam_updated_at = dates.stamp()
 
-    app.is.in = app.is.in || {}
-    app.is.in.steam = dates.stamp()
-
-    app.playtime = app.playtime || {}
-    app.playtime.steam = app.data.playtime_forever
-
-    app.last_played = app.last_played || {}
-    app.last_played.steam = app.data.rtime_last_played
+    app.playtime.steam = data.playtime_forever
+    app.playtime.steam_last = data.rtime_last_played
 
     return app
   },
@@ -118,10 +99,11 @@ export default {
   // Created on Wed Jan 24 2024
   //+-------------------------------------------------
   hasUpdates(field, lib, app) {
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Update: playtime
-    //+---------------------------------------
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (field == 'playtime') {
-      if (lib.playtime?.steam !== app.playtime_forever) {
+      if (app.playtime_forever > 0 && lib.playtime?.steam !== app.playtime_forever) {
         return {
           from: lib.playtime?.steam,
           to: app.playtime_forever,
@@ -129,12 +111,16 @@ export default {
       }
     }
 
-    // Update: playtime
-    //+---------------------------------------
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Update: Last played on steam
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (field == 'last_played') {
-      if (lib.last_played?.steam !== app.rtime_last_played) {
+      if (
+        app.rtime_last_played > 0 &&
+        lib.playtime?.steam_last !== app.rtime_last_played
+      ) {
         return {
-          from: lib.last_played?.steam,
+          from: lib.playtime?.steam_last,
           to: app.rtime_last_played,
         }
       }
@@ -201,4 +187,47 @@ export default {
     data.backlog = await this.getSteamBacklog()
     return data.backlog
   },
+
+  //+-------------------------------------------------
+  // (Deprecated) prepareToStore()
+  // Gets an app and appends data to it
+  // -----
+  // Created on Sun Dec 24 2023
+  // Updated on Tue Mar 05 2024 - New item properties
+  //+-------------------------------------------------
+  // prepareToStore(app) {
+  //   if (!app.data) console.warn('prepareToStore() called without data', app)
+
+  //   app.is.dirty = true
+
+  //   app.is.in = app.is.in || {}
+  //   app.is.in.steam = dates.stamp()
+
+  //   app.playtime = app.playtime || {}
+  //   app.playtime.steam = app.data.playtime_forever
+
+  //   app.last_played = app.last_played || {}
+  //   app.last_played.steam = app.data.rtime_last_played
+
+  //   return app
+  // },
 }
+
+// {
+//   appid: 211420,
+//   name: 'DARK SOULS™: Prepare To Die Edition',
+//   playtime_forever: 1286,
+//   img_icon_url: 'a24804c6c8412c8cd9d50efd06bf03fa58ff80a9',
+//   has_community_visible_stats: true,
+//   playtime_windows_forever: 0,
+//   playtime_mac_forever: 0,
+//   playtime_linux_forever: 0,
+//   rtime_last_played: 1418686838,
+//   sort_as: 'Dark Souls',
+//   has_workshop: false,
+//   has_market: false,
+//   will_import: true,
+//   will_ignore: false,
+//   has_dlc: true,
+//   playtime_disconnected: 0,
+// }

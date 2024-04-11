@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div class="card-footer">
+    <div v-if="$app.dev" class="card-footer">
       <div class="row align-items-center">
         <div class="col-auto">
           <label class="form-check form-switch m-0">
@@ -266,7 +266,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Tue Feb 20 2024
+ * Modified: Thu Apr 11 2024
  **/
 
 export default {

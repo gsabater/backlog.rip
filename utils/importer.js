@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Tue Mar 26 2024
+ * Modified: Thu Apr 11 2024
  */
 
 import axios from 'axios'
@@ -11,6 +11,7 @@ import steam from '~/modules/importers/steam'
 
 let $nuxt = null
 let $data = null
+let $game = null
 let $axios = null
 let $journal = null
 
@@ -31,6 +32,7 @@ export default {
     log('💠 Importer(2): detect')
     if (!$nuxt) $nuxt = useNuxtApp()
     if (!$data) $data = useDataStore()
+    if (!$game) $game = useGameStore()
 
     x.log(`💠🎨 source ID: ${x.source}`)
     let account = {}
@@ -57,10 +59,10 @@ export default {
       //+---------------------------------------
       x.log('Detect 2.3: The module is complete')
       if (
+        steam.update === undefined ||
         steam.getGames === undefined ||
         steam.hasUpdates === undefined ||
-        steam.getUserdata === undefined ||
-        steam.prepareToStore === undefined
+        steam.getUserdata === undefined
       ) {
         x.log('The module module complete, some methods are not present', 'error')
         return false
@@ -202,7 +204,7 @@ export default {
       toUpdate: [],
     }
 
-    x.log('Check 5.1: Preparing Array of owned IDs')
+    x.log('Check 5.1: Preparing Array of library IDs')
     apps.libIDs = x.data.library.reduce((acc, el) => {
       acc[el.steam_id] = el
       return acc
@@ -210,25 +212,26 @@ export default {
 
     //+-------------------------------------------------
     // Categorize apps within the the library
-    // And create two groups: review and update
+    // And create groups: review and update
     // ---
     // Review apps are apps that are not in the library
-    // Update apps are apps that are in the library
+    // Update apps are apps that are in the library and need updating
     //+-------------------------------------------------
     x.data.games.forEach((app) => {
       if (app.appid in apps.libIDs) {
-        // <- match by store_id instead of appid
         let add = false
         const lib = apps.libIDs[app.appid]
 
-        app.toUpdate = {}
-
-        // Update: is.owned
-        //+---------------------------------------
-        if (!lib.is?.owned) {
-          add = true
-          app.toUpdate.owned = true
+        app.toUpdate = {
+          uuid: lib.uuid,
         }
+
+        // // Update: is.owned
+        // //+---------------------------------------
+        // if (!lib.is?.owned) {
+        //   add = true
+        //   app.toUpdate.owned = true
+        // }
 
         // Update: playtime
         //+---------------------------------------
@@ -264,7 +267,7 @@ export default {
   // -----
   // Created on Wed Jan 24 2024
   //+-------------------------------------------------
-  store(x = {}) {
+  async store(x = {}) {
     x.log('💠 Importer(6): Storing data ...')
     if (!$data) $data = useDataStore()
 
@@ -272,10 +275,21 @@ export default {
     const items = []
 
     x.log('Check 6.1: Processing the array of new apps')
-    x.apps.toImport.forEach((el) => {
-      let app = { ...el }
-      // app = $data.prepareToStore(app)
-      app = steam.prepareToStore(app)
+    x.apps.toImport.forEach((item) => {
+      let app = $game.create(item)
+      app = steam.update(app, item.data)
+
+      items.push(app)
+      uuids.push(app.uuid)
+    })
+
+    x.log('Check 6.2: Processing the array of updated apps')
+    console.warn('Apps to update', x.apps)
+    console.warn(uuids, items)
+
+    x.apps.toUpdate.forEach((el) => {
+      let $db = $data.get(el.toUpdate.uuid)
+      let app = steam.update($db, { ...el })
 
       items.push(app)
       uuids.push(app.uuid)
@@ -283,6 +297,10 @@ export default {
 
     x.log('Check 6.2: Storing apps')
     $data.process(items, 'import')
+
+    x.log('✅ Data stored')
+    x.log('Updating missing data')
+    await $data.updateMissing()
 
     return {
       uuids: uuids,

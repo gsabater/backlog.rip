@@ -39,7 +39,12 @@
           :app="app"
           asset="logo"
           :priority="['steam']"
-          style="max-width: 250px; z-index: 1; filter: drop-shadow(2px 3px 9px black)"
+          style="
+            max-width: 250px;
+            z-index: 1;
+            padding-bottom: 35px;
+            filter: drop-shadow(2px 3px 9px black);
+          "
           @click="ui.tab = 'details'"></game-asset>
         <div class="blur_back" style="">
           <game-asset
@@ -99,7 +104,7 @@
             display: flex;
             align-items: center;
           "
-          @click="changeTo($prev)">
+          @click="load($prev)">
           <Icon size="18" width="2">ChevronLeft</Icon>
           <h4
             class="m-0"
@@ -142,13 +147,14 @@
             *+--------------------------------- -->
             <div v-if="app.is.lib">
               <div class="status small my-2" style="border-radius: 4px">
+                <Icon size="14">ClockHour3</Icon>
                 <span style="font-size: 0.775rem">
                   <template v-if="app._.playtime == 0">Not played</template>
                   <template v-else>
                     Played
                     <!-- <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon> -->
                     {{ dates.minToHours(app._.playtime, 'Not played') }}
-                    {{ dates.timeAgo(app.last_played.steam * 1000) }}
+                    {{ dates.timeAgo(app.playtime.steam_last * 1000) }}
                   </template>
                 </span>
               </div>
@@ -326,7 +332,7 @@
               </Icon>
               {{ dates.minToHours(app.hltb.extras / 60) }}
             </small>
-            <small v-tippy="'Completionist'" class="text-muted me-5">
+            <small v-if="app.hltb.comp" v-tippy="'Completionist'" class="text-muted me-5">
               <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
                 Trophy
               </Icon>
@@ -334,13 +340,13 @@
             </small>
 
             <a
-              v-if="hltbSource"
-              v-tippy="'Click to open'"
-              :href="hltbSource"
-              target="_blank"
-              class="text-muted me-5">
+              v-tippy="hltbSource ? 'Click to open' : null"
+              :href="hltbSource || null"
+              :target="hltbSource ? '_blank' : null"
+              class="text-muted"
+              :class="{ disabled: !hltbSource }">
               <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-                Radar
+                Click
               </Icon>
               From HLTB
             </a>
@@ -370,17 +376,16 @@
                 <a
                   v-tippy="'Open Steam store page'"
                   :href="'https://store.steampowered.com/app/' + app.steam_id"
-                  class="btn btn-ghost-secondary btn-secondary btn-sm"
+                  class="btn btn-ghost-secondary btn-secondary tonal btn-sm pe-2"
                   style="border: 0"
                   target="_blank">
                   <Icon size="15" class="me-2">BrandSteam</Icon>
                   Steam page
                 </a>
                 <a
-                  v-if="app._.date_owned"
                   v-tippy="'Run or install the game through Steam'"
                   :href="'steam://run/' + app.steam_id"
-                  class="btn btn-ghost-secondary btn-secondary btn-sm m-0"
+                  class="btn btn-ghost-secondary btn-secondary tonal btn-sm m-0 ps-0 pe-1"
                   style="border: 0"
                   target="_blank">
                   ⚡
@@ -412,7 +417,7 @@
           </div>
 
           <div class="my-2">
-            <small v-if="app._.date_owned" class="text-muted" :title="app._.date_owned">
+            <small v-if="app.is.lib" class="text-muted" :title="app.is.lib">
               <Icon
                 v-tippy="'In Backlog.rip since ' + $moment(app.created_at).format('LL')"
                 size="16"
@@ -420,9 +425,9 @@
                 class="me-1">
                 Calendar
               </Icon>
-              In your library since {{ app._.date_owned }} -
+              In your library since {{ app.is.lib }} -
 
-              {{ $moment(app._.date_owned).format('LL') }}
+              {{ $moment(app.is.lib).format('LL') }}
             </small>
           </div>
         </template>
@@ -467,7 +472,7 @@
             display: flex;
             align-items: center;
           "
-          @click="changeTo($next)">
+          @click="load($next)">
           <h4
             class="m-0"
             style="  font-weight: 500;
@@ -603,7 +608,7 @@ import format from '../../utils/format'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Fri Mar 15 2024
+ * Modified: Thu Apr 11 2024
  **/
 
 export default {
@@ -660,31 +665,24 @@ export default {
   methods: {
     async show() {
       this.ui.dialog = true
+      this.ui.layout == 'full'
     },
 
-    changeTo(uuid) {
+    load(uuid) {
       this.gameStore.load(uuid)
     },
 
-    listOfGenres(app) {
-      if (!app.genres) return
-
-      return app.genres
-        .map((id) => (this._genres[id] ? this._genres[id].name : undefined))
-        .filter(Boolean)
-        .join(', ')
-
-      return app.genres.map((id) => this._genres[id]?.name).join(', ')
-    },
-
-    confirm() {
-      console.log('confirm✅✅✅✅')
-      this.show = false
-    },
-
-    async load(payload) {
+    //+-------------------------------------------------
+    // loadAndShow()
+    // Loads a game and shows the modal
+    // -----
+    // Created on Fri Apr 05 2024
+    //+-------------------------------------------------
+    async loadAndShow(payload) {
       this.$list = payload.$list
-      this.gameStore.load(payload.uuid)
+      this.load(payload.uuid)
+      this.show()
+
       // const timeline = await this.journalStore.getForRef(app)
 
       // this.app = { ...data }
@@ -697,8 +695,24 @@ export default {
       // // console.warn(app, this.app, timeline)
 
       // this.evaluate()
+    },
 
-      this.show()
+    //+-------------------------------------------------
+    // listOfGenres()
+    // Helper method to get the list of genre names for the current app
+    // NOTE: Should be moved to a store
+    // -----
+    // Created on Fri Apr 05 2024
+    //+-------------------------------------------------
+    listOfGenres(app) {
+      if (!app.genres) return
+
+      return app.genres
+        .map((id) => (this._genres[id] ? this._genres[id].name : undefined))
+        .filter(Boolean)
+        .join(', ')
+
+      return app.genres.map((id) => this._genres[id]?.name).join(', ')
     },
 
     //+-------------------------------------------------
@@ -720,7 +734,7 @@ export default {
 
   mounted() {
     this.$mitt.on('game:modal', (payload) => {
-      this.load(payload)
+      this.loadAndShow(payload)
     })
   },
 }

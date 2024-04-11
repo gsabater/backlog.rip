@@ -13,7 +13,7 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Tue Mar 05 2024
+ * Modified: Fri Mar 22 2024
  **/
 
 export default {
@@ -37,6 +37,11 @@ export default {
     priority: {
       type: Array,
       default: () => ['steam', 'igdb'],
+    },
+
+    fallback: {
+      type: String,
+      default: null,
     },
   },
 
@@ -70,22 +75,24 @@ export default {
   computed: {
     assets() {
       const assets = []
+      const fallback = []
 
       this.priority.forEach((source) => {
         if (source == 'igdb' && !this.app.cover) return
         if (this.resources[source]) assets.push(this.resources[source][this.asset])
+        if (this.resources[source]) fallback.push(this.resources[source][this.fallback])
       })
 
-      if (this.asset == 'cover' && this.priority.includes('steam')) {
-        assets.push(this.resources.steam.banner)
-      }
+      // if (this.asset == 'cover' && this.priority.includes('steam')) {
+      //   assets.push(this.resources.steam.banner)
+      // }
 
-      if (this.asset == 'background' && this.priority.includes('steam')) {
-        assets.push(this.resources.steam.library)
-        assets.push(this.resources.steam.gen)
-      }
+      // if (this.asset == 'background' && this.priority.includes('steam')) {
+      //   assets.push(this.resources.steam.library)
+      //   assets.push(this.resources.steam.gen)
+      // }
 
-      return assets
+      return assets.concat(fallback)
     },
   },
 

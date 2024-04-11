@@ -2,7 +2,8 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip?ref=badge_shield)
 
 
-Based on a Nuxt 3 project.
+Backlog.rip is an online library manager for all your games.
+All data is saved locally in the browser.
 
 ## Setup
 
@@ -29,14 +30,13 @@ https://repobeats.axiom.co/api/embed/8ad80c908f2c331683b4aa34bb542501b3332bb5.sv
 ### Emoji Cheat Sheet
 
 ⚡ - General backlog logs
-💽 - Used in $db or dexie
+💽 - Logs by dexie
 🥸 - Uer account
 🎴 - User library
 📜 - User Journal
-⭕ - Search is going to run + some todo's have this as well
-
-❇️ and ✅ - For success messages
-
+🔅 - User events (Keys and right click)
+⭕ - Search started
+❇️ ✅ - For success messages
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip?ref=badge_large)

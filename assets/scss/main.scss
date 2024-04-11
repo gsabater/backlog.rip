@@ -7,7 +7,7 @@
 @import '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
 @import '../../node_modules/@tabler/core/dist/css/demo.css';
 @import 'extend';
-@import 'tabler_changes';
+@import 'tabler_override';
 
 @import 'base';
 @import 'colors';
@@ -21,6 +21,7 @@
 @import 'partials/nav';
 @import 'partials/home';
 @import 'partials/search';
+@import 'partials/palette';
 
 @import 'partials/base/_menus';
 @import 'partials/base/_sidebar';

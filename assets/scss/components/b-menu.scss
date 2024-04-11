@@ -1,3 +1,8 @@
+.dropdown-item.active,
+.dropdown-item:active {
+  color: var(--tblr-dropdown-link-color);
+}
+
 [data-theme='game-manager'],
 [data-theme='dropdown'],
 [data-theme='filters'],

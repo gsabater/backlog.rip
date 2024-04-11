@@ -1,6 +1,6 @@
 <template>
   <div
-    v-tippy="manager ? 'Click to change' : ''"
+    nopwv-tippy="manager ? 'Click to change' : ''"
     class="status small"
     :class="{ 'cursor-pointer': manager }"
     style="border-radius: 4px"
@@ -16,7 +16,7 @@
 
     <span class="status-dot" :class="{ 'status-dot-animated': pulse && state }"></span>
     <template v-if="label">
-      {{ st.name || 'Not in your backlog' }}
+      {{ st.name || 'Assign a state' }}
       <slot />
     </template>
   </div>
@@ -31,7 +31,7 @@
  * <BState :state="state"></BState>
  * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Mon Mar 11 2024
+ * Modified: Thu Apr 11 2024
  **/
 
 export default {

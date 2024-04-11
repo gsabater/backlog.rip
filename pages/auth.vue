@@ -42,7 +42,7 @@
  *           this token identifies the user in the backlog.rip database
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Fri Feb 02 2024
+ * Modified: Wed Apr 10 2024
  **/
 
 export default {
@@ -71,6 +71,12 @@ export default {
       }, 1000)
     },
 
+    //+-------------------------------------------------
+    // setUser()
+    // Sets the token and loads the user data
+    // -----
+    // Created on Fri Dec 29 2023
+    //+-------------------------------------------------
     async setUser() {
       try {
         const redirect = null
@@ -82,15 +88,13 @@ export default {
         await this.userStore.getApiData()
 
         // And update the local ddbb
-        await this.userStore.update('local', 'account')
+        await this.userStore.updateAccount()
 
         this.$router.push(redirect ? redirect : '/welcome')
-
-        // console.warn(auth)
       } catch (e) {
         // errors.value = e
         console.error(e)
-        alert('ERROR')
+        alert('ERROR STORING THE USER, THIS SHOULD NOT HAPPEN!')
       } finally {
         this.ui.loading = false
       }

@@ -11,11 +11,15 @@ body {
   --tblr-bg-surface-tertiary: #202231ef;
 
   --tblr-bg-forms: #191a22;
-  --tblr-border-color: #2a2d39;
+
+  --tblr-card-border-color: #38394c;
+  --tblr-border-color: var(--tblr-card-border-color); // #2a2d39;
+
   --tblr-status-color: #667382;
 
   --tblr-active-bg: rgb(13 6 24 / 17%);
   --tblr-link-hover-color: var(--tblr-primary);
+  --tblr-code-bg: hsl(0, 0%, 13.6%);
 
   // .status {
   //   --tblr-status-color: #dce1e7;

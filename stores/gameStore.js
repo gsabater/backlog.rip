@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Thu Mar 14 2024
+ * Modified: Thu Apr 11 2024
  */
 
 let $nuxt = null
@@ -24,6 +24,7 @@ export const useGameStore = defineStore('game', {
   // * getFromAPI()
   //
   // Modify data
+  // * create()
   // * update()
   //
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -43,11 +44,21 @@ export const useGameStore = defineStore('game', {
       this.update(game)
     },
 
-    // async add(data) {
-    //   const $nuxt = useNuxtApp()
-    //   const id = await $nuxt.$db.states.add(data)
-    //   return id
-    // },
+    //+-------------------------------------------------
+    // create()
+    // Creates a new item and normalizes it
+    // -----
+    // Created on Wed Apr 10 2024
+    //+-------------------------------------------------
+    create(data = {}) {
+      let app = {}
+
+      app = this.normalize({ ...data })
+      app.uuid = app.uuid || $nuxt.$uuid()
+      app.is.lib = app.is.lib || dates.stamp()
+
+      return app
+    },
 
     // async delete(id) {
     //   const $nuxt = useNuxtApp()
@@ -162,7 +173,9 @@ export const useGameStore = defineStore('game', {
 
       let app = this.app.uuid
       let api = this.app.api_id
+
       if (this.app.is_api) api = this.app.uuid
+      if (this.app.api_id.length > 0 && app !== this.app.api_id) api = this.app.api_id
 
       if (!api) {
         console.error('🪝 No API ID found')
@@ -188,26 +201,24 @@ export const useGameStore = defineStore('game', {
     // Created on Tue Feb 20 2024
     //+-------------------------------------------------
     normalize(game) {
-      game.is = game.is || { in: {} }
-      game.is.in = game.is.in || {}
+      // game.v = $data.v
 
+      game.is = game.is || {}
       game.log = game.log || []
+      game.time = game.time || {}
       game.scores = game.scores || {}
       game.genres = game.genres || []
-
-      if (game.is_lib) {
-        game.playtime = game.playtime || {}
-        game.last_played = game.last_played || {}
-      }
+      game.playtime = game.playtime || {}
 
       // if (game.is_api) {
       //   game.api_id = game.uuid
       //   game.uuid = game.api_id
       // }
 
-      game.updated_at = game.updated_at || 0
+      // game.updated_at = game.updated_at || 0
 
       delete game.trigger
+      delete game.data
       return game
     },
 
@@ -232,7 +243,7 @@ export const useGameStore = defineStore('game', {
       if (app.score > 90 && app.scores?.steamCount < 100) score *= 0.8
       if (app.score > 93 && app.scores?.steamCount < 3000) score *= 0.8
 
-      if (app.score >= 95 && app.scores?.steamCount < 1000) score *= 0.8
+      if (app.score >= 95 && app.scores?.steamCount < 3000) score *= 0.8
       if (app.score >= 95 && app.scores?.steamCount < 15000) score *= 0.8
 
       if (app.scores?.igdbCount < 90) score *= 0.9
@@ -252,13 +263,14 @@ export const useGameStore = defineStore('game', {
     _playtime(app) {
       if (!app.playtime) return 0
 
-      let sum = Object.values(app.playtime).reduce((total, num) => total + num, 0)
-      return sum
+      return Object.entries(app.playtime)
+        .filter(([key]) => !key.endsWith('_last'))
+        .reduce((total, [, num]) => total + num, 0)
     },
 
-    _dateOwned(app) {
-      return app.is.lib * 1000 || false
-    },
+    // _dateOwned(app) {
+    //   return app.is.lib * 1000 || false
+    // },
 
     async init() {
       if (!$nuxt) $nuxt = useNuxtApp()

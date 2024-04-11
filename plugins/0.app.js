@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 
 /*
@@ -5,10 +6,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Wed Mar 13 2024
+ * Modified: Thu Apr 11 2024
  */
 
-import { reactive } from 'vue'
+// import { reactive } from 'vue'
+// import { useWindowSize } from '@vueuse/core'
+// import { useBreakpoints } from '@vueuse/core'
 
 let $nuxt = null
 let $user = null
@@ -18,7 +21,7 @@ let $state = null
 let $repos = null
 
 let app = {
-  v: '0.10.0', //β
+  v: '0.11.0 β', //β
 
   dev: false,
   env: 'production',
@@ -28,16 +31,11 @@ let app = {
   // like 'loading' , 'error' or 'update'
   // db: null,
 
-  device: {
-    is: 'pc', // pc, mobile, deck
-    controller: false,
-  },
+  width: 0,
+  device: null,
+  controller: false,
 
-  layout: {
-    sidebar: false,
-  },
-
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Counters of data
   //
   // count.api is the # of games available in the api
@@ -45,7 +43,7 @@ let app = {
   // count.library is the # of games in local library
   //
   // states.backlog (and others) is the # of games in each state
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   count: {
     api: 0,
     data: 0,
@@ -60,16 +58,38 @@ let app = {
 
   // Global app state
   // Controls modules boundaries
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ready: false,
   loading: false,
 
   // Global log
   // Has every message received from the app
   // Used to debug and review messages
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   log: ['wip'],
+
+  f: {
+    toggleFullscreen: null,
+  },
+
+  // Global user interface
+  // Quick access to ui elements on the layout
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ui: {
+    drawer: false,
+    sidebar: false,
+    fullscreen: false,
+  },
 }
+
+//+-------------------------------------------------
+// goFullScreen()
+// -----
+// Created on Thu Apr 04 2024
+//+-------------------------------------------------
+// async function goFullScreen() {
+
+// }
 
 //+-------------------------------------------------
 // toggleSidebar()
@@ -110,10 +130,10 @@ async function init() {
   if (!$game) $game = useGameStore()
   if (!$repos) $repos = useRepositoryStore()
 
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Initialize stores
   // Initialize only the stores that are needed
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   $game.init()
   $repos.init()
@@ -130,23 +150,43 @@ async function initClient() {
   if (!$data) $data = useDataStore()
   if (!$state) $state = useStateStore()
 
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  const breakpoints = useBreakpoints({
+    sm: 0,
+    md: 768,
+    lg: 992,
+    xl: 1200,
+  })
+
+  const { width, height } = useWindowSize()
+  const { isFullscreen, toggle } = useFullscreen(document.documentElement)
+
+  app.width = width
+  app.device = breakpoints.active()
+
+  app.f.toggleFullscreen = toggle
+  app.ui.fullscreen = isFullscreen
+
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Authenticate the user
   // Try to determinate if the user has an account
   // either locally or online and load values
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   await $user.authenticate()
 
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Initialize stores
   // Initialize only the stores that are needed
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   await $data.init()
   $state.init()
 
-  app.ready = true
   detectEnvironment()
+
+  await delay(300)
+  app.ready = true
+
+  // console.warn('load most popular now')
 }
 
 export default defineNuxtPlugin(() => {

@@ -21,6 +21,7 @@
           ref="cover"
           :app="app"
           asset="cover"
+          fallback="banner"
           :priority="['steam', 'igdb']"></game-asset>
       </template>
     </div>
@@ -76,7 +77,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Mar 05 2024
+ * Modified: Sat Mar 23 2024
  **/
 
 export default {

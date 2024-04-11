@@ -1,16 +1,16 @@
 <template>
-  <!-- Page header -->
   <div class="page-header d-print-none">
     <div class="container-xl">
       <div class="row g-2 align-items-center">
         <div class="col">
-          <h2 class="page-title">Dashboard</h2>
+          <div class="page-pretitle">Your games</div>
+          <h1 class="page-title">Dashboard</h1>
+          <!-- <p class="text-muted">Find games, apps, and more...</p> -->
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Page body -->
   <div class="page-body">
     <div class="container-xl">
       <div class="row row-cards">
@@ -173,7 +173,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Sun Mar 03 2024
+ * Modified: Fri Apr 05 2024
  **/
 
 export default {

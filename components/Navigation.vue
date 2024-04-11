@@ -84,39 +84,6 @@
               </NuxtLink>
             </li>
 
-            <!-- <li class="nav-item">
-              <NuxtLink to="/dev/ui" class="nav-link">
-                <span v-if="false" class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-                    stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <polyline points="5 12 3 12 12 3 21 12 19 12" />
-                    <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                    <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-                  </svg>
-                </span>
-                <span class="nav-link-title">
-                  UI
-                </span>
-              </NuxtLink>
-            </li> -->
-
-            <!-- <li class="nav-item">
-              <NuxtLink to="/games" class="nav-link">
-                <span class="nav-link-title">Browse games</span>
-              </NuxtLink>
-            </li> -->
-
-            <!-- <li class="nav-item">
-              <NuxtLink to="/account" class="nav-link">
-                <span class="nav-link-title">
-                  account
-                </span>
-              </NuxtLink>
-            </li>
-
-             -->
-
             <li class="nav-item">
               <NuxtLink to="/import/steam" class="nav-link">
                 <span class="nav-link-title text-orange">
@@ -126,7 +93,7 @@
               </NuxtLink>
             </li>
 
-            <li v-if="$app.dev" class="nav-item">
+            <!-- <li v-if="$app.dev" class="nav-item">
               <NuxtLink to="/welcome" class="nav-link">
                 <span class="nav-link-title text-yellow">
                   <Icon>Subtask</Icon>
@@ -142,7 +109,7 @@
                   Documentation
                 </span>
               </NuxtLink>
-            </li>
+            </li> -->
           </ul>
           <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
             <!-- <div class="input-icon">
@@ -166,7 +133,7 @@
               </span>
             </div> -->
 
-            <!-- <form action="./" method="get" autocomplete="off" novalidate>
+            <form v-if="$app.dev" action="./" method="get" autocomplete="off" novalidate>
               <div class="input-icon">
                 <span class="input-icon-addon">
                   <svg
@@ -185,29 +152,39 @@
                     <line x1="21" y1="21" x2="15" y2="15" />
                   </svg>
                 </span>
-                <input
-                  type="text"
-                  value=""
-                  class="form-control"
-                  placeholder="Search…"
-                  aria-label="Search in website" />
+
+                <div
+                  class="input-group input-group-flat"
+                  @click.stop="$mitt.emit('search:palette')">
+                  <input
+                    type="text"
+                    class="form-control"
+                    autocomplete="off"
+                    placeholder="Search anything…" />
+                  <span class="input-group-text">
+                    <kbd>CTRL K</kbd>
+                  </span>
+                </div>
               </div>
-            </form> -->
+            </form>
           </div>
         </div>
       </div>
-
-      <!-- <div
-        v-if="ui.menu"
-        class="navbar-backdrop"
-        style="position: fixed; top: 0; left: 0; z-index: 1; width: 100vw; height: 100vh"
-        @click="ui.menu = false"></div> -->
     </div>
   </div>
 </template>
 
 <script>
+/**
+ * @file:    \components\Navigation.vue
+ * @desc:    ...
+ * -------------------------------------------
+ * Created Date: 18th November 2022
+ * Modified: Tue Apr 02 2024
+ **/
+
 export default {
+  name: 'HeaderNav',
   props: {
     showMobMenu: {
       type: Boolean,

@@ -5,7 +5,6 @@
     :size="size"
     :stroke-width="width"
     :class="{ 'icon-pulse': loader }" />
-  <!-- <pre>{{ theIcon }}</pre> -->
 </template>
 
 <script>
@@ -17,7 +16,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Mar 07 2024
+ * Modified: Tue Apr 02 2024
  **/
 
 // import {

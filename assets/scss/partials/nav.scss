@@ -1,5 +1,47 @@
 [data-bs-theme='dark'] {
   header.navbar {
-    background-color: rgb(33 26 40 / 75%);
+    --tblr-navbar-border-color: rgb(56 57 76 / 25%);
+    background-color: rgb(33 26 40 / 50%);
+  }
+
+  aside {
+    --tblr-navbar-border-color: rgb(56 57 76 / 25%);
+    --tblr-dropdown-divider-bg: rgb(56 57 76 / 25%);
+
+    background-color: rgb(43 45 57 / 25%);
+    // border-right: 1px solid var(--tblr-navbar-border-color);
   }
 }
+
+aside {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+aside .dropdown-menu {
+  border: none;
+  box-shadow: none;
+  padding: 6px;
+
+  & .dropdown-item {
+    border-radius: 3px;
+    padding: 0.45rem var(--tblr-dropdown-item-padding-x);
+  }
+
+  & .dropdown-divider {
+    margin: 0.5rem -10px;
+  }
+}
+
+// #sidebar-menu li {
+//   position: relative;
+// }
+
+// #sidebar-menu li:hover:after {
+//   content: '';
+//   position: absolute;
+//   inset: 1px 8px;
+//   background-color: rgba(124, 124, 163, 0.125);
+//   z-index: -1;
+//   border-radius: 2px;
+// }

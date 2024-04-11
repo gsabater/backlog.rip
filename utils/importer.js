@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Thu Mar 07 2024
+ * Modified: Thu Apr 11 2024
  */
 
 import axios from 'axios'
@@ -11,6 +11,7 @@ import steam from '~/modules/importers/steam'
 
 let $nuxt = null
 let $data = null
+let $game = null
 let $axios = null
 let $journal = null
 
@@ -31,13 +32,15 @@ export default {
     log('💠 Importer(2): detect')
     if (!$nuxt) $nuxt = useNuxtApp()
     if (!$data) $data = useDataStore()
+    if (!$game) $game = useGameStore()
 
     x.log(`💠🎨 source ID: ${x.source}`)
+    let account = {}
 
     try {
       // Detect: Check if the source is valid
       //+---------------------------------------
-      x.log('Check 2.1: valid source')
+      x.log('Detect 2.1: valid source')
       if (!sources.includes(x.source)) {
         x.log(`💠 Source ${x.source} not supported`)
         return false
@@ -45,7 +48,7 @@ export default {
 
       // Detect: The platform module is available
       //+---------------------------------------
-      x.log('Check 2.2: valid module')
+      x.log('Detect 2.2: valid module')
       if (steam == undefined) {
         x.log('💠 The Steam library module is not available', 'error')
         return false
@@ -54,12 +57,12 @@ export default {
       // Detect: If the module is complete
       // And has all required methods to run
       //+---------------------------------------
-      x.log('Check 2.3: The module is complete')
+      x.log('Detect 2.3: The module is complete')
       if (
+        steam.update === undefined ||
         steam.getGames === undefined ||
         steam.hasUpdates === undefined ||
-        steam.getUserdata === undefined ||
-        steam.prepareToStore === undefined
+        steam.getUserdata === undefined
       ) {
         x.log('The module module complete, some methods are not present', 'error')
         return false
@@ -67,19 +70,25 @@ export default {
 
       // Detect: Detect if the user is logged in
       //+---------------------------------------
-      x.log('Check 2.4: valid user')
+      x.log('Detect 2.4: valid user')
       if (
-        !$nuxt.$auth.bearer ||
-        !$nuxt.$auth.user[x.source] ||
-        !$nuxt.$auth.user[x.source + '_data']
+        $nuxt.$auth.bearer &&
+        $nuxt.$auth.user[x.source] &&
+        $nuxt.$auth.user[x.source + '_data']
       ) {
-        x.log(
-          'User needs to login with provider - code: [account:provider]',
-          'error',
-          'account:provider'
-        )
+        account = {
+          ...$nuxt.$auth.user,
+          bearer: $nuxt.$auth.bearer,
+          provider: $nuxt.$auth.user.steam_data,
+        }
+      } else {
+        account = { error: 'account:login' }
 
-        return false
+        x.log(
+          'User needs to login with provider - code: [account:login]',
+          'error',
+          'account:login'
+        )
       }
 
       x.log('✅ Detected')
@@ -90,11 +99,7 @@ export default {
 
     return {
       module: steam,
-      account: {
-        ...$nuxt.$auth.user,
-        bearer: $nuxt.$auth.bearer,
-        provider: $nuxt.$auth.user.steam_data,
-      },
+      account: account,
     }
   },
 
@@ -102,24 +107,24 @@ export default {
   // connect()
   // - creates a new axios instance
   // - connects to the module giving data
-  // - Collects the module manifest
   // -----
   // Created on Mon Jan 22 2024
+  // Updated on Tue Mar 26 2024
   //+-------------------------------------------------
   connect(x = {}) {
     log('💠 Importer(3): connect')
 
     try {
-      // connect: Create a new axios instance
-      //+---------------------------------------
-      x.log('Check 3.1: Create a new axios instance')
+      // Connect: Create a new axios instance
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      x.log('Connect 3.1: Create a new axios instance')
       $axios = axios.create({
         timeout: 60000,
       })
 
-      // connect: Give methods and data to the module
-      //+---------------------------------------
-      x.log('Check 3.2: Connect with the module')
+      // Connect: Give methods and data to the module
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      x.log('Connect 3.2: Connect with the module')
       x.module.connect(x.account, $axios, x.log)
 
       x.log('✅ Connected and ready to start')
@@ -128,9 +133,7 @@ export default {
       return false
     }
 
-    return {
-      manifest: module.manifest,
-    }
+    return true
   },
 
   //+-------------------------------------------------
@@ -201,7 +204,7 @@ export default {
       toUpdate: [],
     }
 
-    x.log('Check 5.1: Preparing Array of owned IDs')
+    x.log('Check 5.1: Preparing Array of library IDs')
     apps.libIDs = x.data.library.reduce((acc, el) => {
       acc[el.steam_id] = el
       return acc
@@ -209,25 +212,26 @@ export default {
 
     //+-------------------------------------------------
     // Categorize apps within the the library
-    // And create two groups: review and update
+    // And create groups: review and update
     // ---
     // Review apps are apps that are not in the library
-    // Update apps are apps that are in the library
+    // Update apps are apps that are in the library and need updating
     //+-------------------------------------------------
     x.data.games.forEach((app) => {
       if (app.appid in apps.libIDs) {
-        // <- match by store_id instead of appid
         let add = false
         const lib = apps.libIDs[app.appid]
 
-        app.toUpdate = {}
-
-        // Update: is.owned
-        //+---------------------------------------
-        if (!lib.is?.owned) {
-          add = true
-          app.toUpdate.owned = true
+        app.toUpdate = {
+          uuid: lib.uuid,
         }
+
+        // // Update: is.owned
+        // //+---------------------------------------
+        // if (!lib.is?.owned) {
+        //   add = true
+        //   app.toUpdate.owned = true
+        // }
 
         // Update: playtime
         //+---------------------------------------
@@ -263,7 +267,7 @@ export default {
   // -----
   // Created on Wed Jan 24 2024
   //+-------------------------------------------------
-  store(x = {}) {
+  async store(x = {}) {
     x.log('💠 Importer(6): Storing data ...')
     if (!$data) $data = useDataStore()
 
@@ -271,10 +275,21 @@ export default {
     const items = []
 
     x.log('Check 6.1: Processing the array of new apps')
-    x.apps.toImport.forEach((el) => {
-      let app = { ...el }
-      // app = $data.prepareToStore(app)
-      app = steam.prepareToStore(app)
+    x.apps.toImport.forEach((item) => {
+      let app = $game.create(item)
+      app = steam.update(app, item.data)
+
+      items.push(app)
+      uuids.push(app.uuid)
+    })
+
+    x.log('Check 6.2: Processing the array of updated apps')
+    console.warn('Apps to update', x.apps)
+    console.warn(uuids, items)
+
+    x.apps.toUpdate.forEach((el) => {
+      let $db = $data.get(el.toUpdate.uuid)
+      let app = steam.update($db, { ...el })
 
       items.push(app)
       uuids.push(app.uuid)
@@ -282,6 +297,10 @@ export default {
 
     x.log('Check 6.2: Storing apps')
     $data.process(items, 'import')
+
+    x.log('✅ Data stored')
+    x.log('Updating missing data')
+    await $data.updateMissing()
 
     return {
       uuids: uuids,

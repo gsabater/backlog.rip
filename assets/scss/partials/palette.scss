@@ -6,7 +6,7 @@
   --highContrast: #ffffff;
   --gray1: hsl(0, 0%, 8.5%);
   --gray2: hsl(0, 0%, 11%);
-  --gray3: hsl(0, 0%, 13.6%);
+  --gray3: rgba(174, 62, 201, 0.2); // hsl(0, 0%, 13.6%);
   --gray4: hsl(0, 0%, 15.8%);
   --gray5: hsl(0, 0%, 17.9%);
   --gray6: hsl(0, 0%, 20.5%);
@@ -40,6 +40,20 @@
   --blue10: hsl(209, 100%, 60.6%);
   --blue11: hsl(210, 100%, 66.1%);
   --blue12: hsl(206, 98%, 95.8%);
+}
+
+.input-palette input,
+.input-palette .input-group-text {
+  border: none;
+  background: transparent;
+  padding: 0.45rem 0.5rem;
+}
+
+.input-palette {
+  border: 1px solid var(--tblr-card-border-color);
+  // background-color: rgba(108, 122, 145, 0.08);
+  box-shadow: none;
+  border-radius: 7px;
 }
 
 .backlog {
@@ -131,6 +145,19 @@
   transition: all 0.15s ease;
   transition-property: none;
   position: relative;
+}
+
+.backlog [command-item].command-item-game {
+  height: 60px;
+}
+
+.backlog [command-item] .asset-banner {
+  z-index: 1;
+  outline: 1px solid rgba(255, 255, 255, 0.15);
+  outline-offset: -1px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
+  max-width: 100px;
+  max-height: 40px;
 }
 
 /* .backlog [command-item][aria-selected='true'],
@@ -228,7 +255,8 @@
 }
 
 [data-bs-theme='dark'] .backlog [command-dialog-wrapper] {
-  background: linear-gradient(136.61deg, #27282b 13.72%, #2d2e31 74.3%);
+  // background: linear-gradient(136.61deg, #27282b 13.72%, #2d2e31 74.3%);
+  background: linear-gradient(136.61deg, #24262b 13.72%, #20222b 74.3%);
 }
 
 .backlog [command-dialog-footer] ul,
@@ -440,11 +468,11 @@ div [command-dialog-footer] {
 //+-------------------------------------------------
 @media screen and (max-width: 768px) {
   div [command-dialog-mask] {
-    padding: 20px;
+    padding: 15px 20px;
   }
 
   div [command-dialog-wrapper] {
-    margin: 5vh auto auto;
+    margin: 0 auto auto;
   }
 
   div [command-dialog-footer] {

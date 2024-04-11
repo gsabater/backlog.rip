@@ -1,8 +1,14 @@
 <template>
   <Command.Dialog :visible="ui.show" theme="backlog">
     <template #header>
-      <div v-if="ui.tab" command-linear-badge style="text-transform: capitalize">
+      <div
+        v-if="ui.tab"
+        command-linear-badge
+        style="text-transform: capitalize; cursor: pointer"
+        @click="ui.tab = null">
         {{ ui.tab }}
+
+        <Icon size="16" class="ms-2">X</Icon>
       </div>
       <!-- <Command.Input placeholder="Type a command or search..." @update:value="search" /> -->
       <input
@@ -69,9 +75,10 @@
           <Command.Item
             v-for="(item, i) in _games"
             :key="'game' + i"
+            class="command-item-game"
             :data-value="item.name + ' ' + item.steam_id"
             @select="handleSelectItem({ modal: item.uuid })">
-            <div
+            <!-- <div
               style="
                 width: 100px;
                 height: 30px;
@@ -79,26 +86,23 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-              ">
-              <game-asset
-                ref="logo"
-                :app="item"
-                asset="banner"
-                fallback="logo"
-                :priority="['steam', 'igdb']"
-                style="
-                  z-index: 1;
-                  outline: 1px solid rgba(255, 255, 255, 0.15);
-                  outline-offset: -1px;
-                  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
-                  width: 85px;
-                "
-                @click="ui.tab = 'details'"></game-asset>
-            </div>
+              "> -->
+            <game-asset
+              ref="logo"
+              class="asset-banner"
+              :app="item"
+              asset="banner"
+              fallback="logo"
+              :priority="['steam', 'igdb']"></game-asset>
+            <!-- </div> -->
             <div>
               {{ item.name }}
               <small v-if="searchString == item.steam_id" class="d-block text-secondary">
                 Steam ID: {{ item.steam_id }}
+              </small>
+
+              <small v-else class="d-block text-secondary">
+                UUID: {{ item.uuid ?? '---' }}
               </small>
             </div>
             <!-- <b-state></b-state> -->
@@ -204,7 +208,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th March 2024
- * Modified: Tue Mar 26 2024
+ * Modified: Thu Apr 11 2024
  **/
 
 export default {
@@ -343,6 +347,8 @@ export default {
     // Created on Thu Mar 21 2024
     //+-------------------------------------------------
     handleSelectItem(item) {
+      log('#️⃣ handle', item)
+
       if (item.tab) {
         this.ui.tab = item.tab
       }
@@ -435,9 +441,9 @@ export default {
       console.warn('search:palette')
     })
 
-    this.$mitt.on('data:updated', () => {
-      this.search()
-    })
+    // this.$mitt.on('data:updated', () => {
+    //   this.search()
+    // })
   },
 }
 </script>

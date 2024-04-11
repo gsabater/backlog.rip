@@ -41,17 +41,17 @@
         "command": "npm run dev",
       },
 
-      {
-        "name": "🛑 Commits en casa",
-        "color": "orange",
-        // "command": "npm run dev",
-      },
+      // {
+      //   "name": "🛑 Commits en casa",
+      //   "color": "orange",
+      //   // "command": "npm run dev",
+      // },
 
-      {
-        "name": "🤌 Añadir versión",
-        "color": "yellow",
-        // "command": "npm run dev",
-      },
+      // {
+      //   "name": "🤌 Añadir versión",
+      //   "color": "yellow",
+      //   // "command": "npm run dev",
+      // },
     ]
   },
 

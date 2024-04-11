@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Sun Mar 03 2024
+ * Modified: Wed Apr 10 2024
  */
 
 let $nuxt = null
@@ -18,9 +18,9 @@ export const useStateStore = defineStore('state', {
     keyed: {},
     states: [],
 
-    favs: [], // Holds index for special state 'favorites'
     index: [], // Holds index for every state keyed by state.id
 
+    pinned: [], // Holds index for special state 'pinned'
     backlog: [], // Holds index for special state 'backlog'
     playing: [], // Holds index for special state 'playing'
     completed: [], // Holds index for special state 'completed'
@@ -39,10 +39,10 @@ export const useStateStore = defineStore('state', {
     // -----
     // Created on Sun Mar 03 2024
     //+-------------------------------------------------
-    getCurrentlyPlaying() {
-      return this.playing
-    },
-
+    // not used
+    // getCurrentlyPlaying() {
+    //   return this.playing
+    // },
     // //+-------------------------------------------------
     // // list()
     // // Returns the array of states
@@ -56,6 +56,17 @@ export const useStateStore = defineStore('state', {
   },
 
   actions: {
+    //+-------------------------------------------------
+    // count()
+    // Returns the amount of apps in a state
+    // Used when is not possible to use the global $app.count[state]
+    // -----
+    // Created on Wed Apr 03 2024
+    //+-------------------------------------------------
+    count(state) {
+      return this.index[state]?.length || 0
+    },
+
     // //+-------------------------------------------------
     // // list()
     // // Returns the array of states
@@ -190,7 +201,7 @@ export const useStateStore = defineStore('state', {
         }
       })
 
-      this.favs = library.filter((app) => app.is && app.is.fav)
+      this.pinned = library.filter((app) => app.is && app.is.pinned)
     },
 
     //+-------------------------------------------------
@@ -206,6 +217,7 @@ export const useStateStore = defineStore('state', {
 
       this.states = states.sort((a, b) => a.order - b.order)
       this.keyed = states.reduce((obj, state) => {
+        state.key = state.key || 'state_' + state.id
         obj[state.id] = state
         return obj
       }, {})

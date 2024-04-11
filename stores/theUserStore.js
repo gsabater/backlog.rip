@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Tue Mar 05 2024
+ * Modified: Wed Apr 10 2024
  */
 
 let $nuxt = null
@@ -21,6 +21,8 @@ export const useUserStore = defineStore('user', {
 
     api: {},
     local: {},
+
+    menu: {},
     config: {},
 
     redirectTo: null,
@@ -47,7 +49,6 @@ export const useUserStore = defineStore('user', {
       // delete me.providers
       // this.storeAccount(me)
 
-      // me.config = this.config
       this.user = { ...me }
 
       log('🥸 User is authenticated as ' + this.user.username, this.user)
@@ -104,6 +105,7 @@ export const useUserStore = defineStore('user', {
         {})
 
       this.config = _config
+      this.menu = _config.menu || {}
     },
 
     //+-------------------------------------------------
@@ -167,11 +169,11 @@ export const useUserStore = defineStore('user', {
     // -----
     // Created on Fri Dec 29 2023
     //+-------------------------------------------------
-    async updateAccount(field) {
+    async updateAccount(field = null) {
       let account = await $nuxt.$db.account.get('me')
 
       let data = { ...account }
-      data[field] = this.local[field]
+      if (field) data[field] = this.local[field]
 
       await $nuxt.$db.account.put(data)
       this.user = { ...this.api, ...this.local }

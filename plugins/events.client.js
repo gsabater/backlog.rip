@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd February 2024
- * Modified: Mon Mar 25 2024
+ * Modified: Thu Apr 11 2024
  */
 
 import { useMagicKeys, whenever } from '@vueuse/core'
@@ -77,7 +77,7 @@ function registerMagicKeys() {
   // CTRL + P to open the palette
   // ESC to close the palette
   // Arrows to navigate the palette
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   whenever(keys['control+K'], () => {
     $tree.palette.show()
   })

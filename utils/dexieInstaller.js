@@ -9,6 +9,7 @@ export class DexieInstaller {
     //   description:
     //     'A category for games that the user particularly enjoyed or would recommend. This is useful for revisiting or suggesting to others.',
     // },
+
     {
       id: 1,
       order: 1,
@@ -18,6 +19,7 @@ export class DexieInstaller {
       description:
         "Games you've bought or added to your collection but haven't started playing yet. This makes it easier for you to keep an eye on the games you plan to dive into",
     },
+
     {
       id: 2,
       order: 2,
@@ -27,6 +29,7 @@ export class DexieInstaller {
       description:
         "Games you're currently playing. This category helps you stay focused on what you're actively engaged with and monitor your progress in these games.",
     },
+
     {
       id: 3,
       order: 3,
@@ -106,6 +109,9 @@ export class DexieInstaller {
       debug: false,
       created_at: dates.now(),
       autosync_steam: false,
+      menu: {
+        states: [1, 2, 3],
+      },
     }
 
     for (const [option, value] of Object.entries(config)) {

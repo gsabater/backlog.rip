@@ -46,28 +46,28 @@
   </div>
 
   <!-- <ul class="steps steps-vertical">
-                <li class="step-item">
-                  <div>
-                    <div class="h4 mb-2">State changed</div>
-                    <span class="status" style="border-radius: 4px">Unknown</span>
-                    has been added to
-                  </div>
-                  <small class="text-secondary d-inline-block border-top pt-2 mt-2">
-                    Entry added 12 de enero de 2024 11:49:51
-                  </small>
-                </li>
-              </ul> -->
+        <li class="step-item">
+          <div>
+            <div class="h4 mb-2">State changed</div>
+            <span class="status" style="border-radius: 4px">Unknown</span>
+            has been added to
+          </div>
+          <small class="text-secondary d-inline-block border-top pt-2 mt-2">
+            Entry added 12 de enero de 2024 11:49:51
+          </small>
+        </li>
+      </ul> -->
 
   <div id="changelog" class="page-body">
     <div class="container">
       <ContentQuery path="changelog" :sort="[{ date: -1 }]">
         <template #default="{ data }">
           <div v-for="item in data" :key="item._path" class="row mb-5">
-            <div class="col col-2 offset-md-1 p-2">
+            <div class="col col-12 col-md-2 offset-md-1 p-2">
               <h3 class="mb-1">{{ $moment(item.date).format('LL') }}</h3>
               <code>version {{ item.version }}</code>
             </div>
-            <div class="col col-7">
+            <div class="col col-12 col-md-7">
               <div class="card">
                 <div
                   class="card-header"
@@ -83,7 +83,7 @@
           </div>
         </template>
         <template #not-found>
-          <p>No authors found.</p>
+          <p>Not found</p>
         </template>
       </ContentQuery>
     </div>
@@ -96,7 +96,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th January 2024
- * Modified: Wed Mar 13 2024
+ * Modified: Thu Apr 04 2024
  **/
 
 export default {

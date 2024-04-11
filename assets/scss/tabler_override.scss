@@ -6,6 +6,10 @@ svg.tabler-icon {
   position: static;
 }
 
+:root {
+  scroll-behavior: auto !important;
+}
+
 @media (min-width: 768px) {
   .navbar-expand-md .navbar-nav .dropdown-menu {
     position: static;

@@ -148,6 +148,7 @@ export default {
   //+-------------------------------------------------
   // getGames()
   // Calls backend to retrieve user games
+  // Must return an array even if empty
   // -----
   // Created on Thu Dec 08 2022
   //+-------------------------------------------------
@@ -157,7 +158,7 @@ export default {
 
     if (jxr.data.status == 'success') {
       // xDDDD
-      return jxr.data?.fetch?.data?.games || {}
+      return jxr.data?.fetch?.data?.games || []
     }
   },
 

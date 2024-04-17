@@ -68,6 +68,39 @@
 
           <!--
             *+---------------------------------
+            *| Error block
+            *| Shown when the error is library:empty
+            *+--------------------------------- -->
+          <div v-if="ui.error == 'library:empty'" class="container container-tight py-4">
+            <div class="card card-md">
+              <div class="card-body text-center">
+                <div class="mb-4">
+                  <h2>No games have been found</h2>
+                  <p class="text-secondary mb-4">
+                    The response from Steam was empty.
+                    <br />
+                    If you have games on your account, please review
+                    <a href="https://steamcommunity.com/my/edit/settings" target="_blank">
+                      your profile privacy settings.
+                    </a>
+                    and set your profile and game details to public.
+                  </p>
+                </div>
+                <div>
+                  <a
+                    class="btn btn-ghost"
+                    href="https://steamcommunity.com/my/edit/settings"
+                    target="_blank">
+                    <Icon class="me-2">BrandSteam</Icon>
+                    Steam privacy settings
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--
+            *+---------------------------------
             *| Loading block
             *| Shown when ui.loading == true
             *+--------------------------------- -->
@@ -77,7 +110,9 @@
                 <div class="row align-items-center">
                   <div class="col-12">
                     <h3 class="card-title mb-1">Scanning library...</h3>
-                    <!-- <div class="text-muted">Working for {{ watchToHuman }} ...</div> -->
+                    <div class="text-muted">
+                      This shouldn't take more than a few moments...
+                    </div>
                     <div class="mt-3">
                       <div class="row g-2 align-items-center">
                         <!-- <div class="col-auto">
@@ -778,7 +813,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Thu Apr 11 2024
+ * Modified: Tue Apr 16 2024
  **/
 
 const importer = null
@@ -1123,6 +1158,11 @@ export default {
       const data = await this.$importer.scan({
         background: false,
       })
+      if (data?.status == 'error') {
+        this.ui.error = data?.code
+        this.ui.loading = false
+        return
+      }
 
       this.data.user = data.data.user
       this.data.games = data.data.games

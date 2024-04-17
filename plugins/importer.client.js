@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Thu Apr 11 2024
+ * Modified: Tue Apr 16 2024
  */
 
 import importer from '~/utils/importer'
@@ -30,6 +30,10 @@ const _sync = {
     // Scan and prepare...
     data: {},
     apps: {},
+
+    // Error handling
+    code: null, // profile:private, library:empty, etc
+    status: null, // 'error', 'warning'
   },
 
   enabled: null,
@@ -143,9 +147,8 @@ async function connect() {
 async function scan() {
   const scanned = await importer.scan(_sync.x)
 
-  if (scanned) {
-    _sync.x.data = { ...scanned }
-  }
+  if (_sync.x.status) return _sync.x
+  if (scanned) _sync.x.data = { ...scanned }
 
   await prepare()
 

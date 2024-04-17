@@ -513,6 +513,9 @@ export const useDataStore = defineStore('data', {
         // owned: $game._owned(item), // WIP -> should return true if is[store] is there
         score: $game._score(item),
         playtime: $game._playtime(item),
+        released_at: $game._dateReleasedAt(item),
+
+        // owned: $game._owned(item), // WIP -> should return true if is[store] is there
         // date_owned: $game._dateOwned(item), // remove as makes no sense, just use is.lib
       }
 

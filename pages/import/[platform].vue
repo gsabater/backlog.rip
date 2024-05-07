@@ -193,13 +193,59 @@
                   </p>
                 </div>
                 <div>
-                  <div class="btn btn-primary w-100 mb-2" @click="scanAndPrepare">
+                  <div
+                    v-if="lastUpdateInHours >= 24"
+                    class="btn btn-primary w-100 mb-2"
+                    @click="scanAndPrepare">
                     <Icon class="me-2">ArrowsTransferDown</Icon>
-                    Import your {{ module.store }} library
+                    Syncronize your {{ module.store }} library
                   </div>
+                  <div v-else class="btn btn-primary disabled w-100 mb-2">
+                    <Icon class="me-2">ArrowsTransferDown</Icon>
+                    Syncronize your {{ module.store }} library
+                  </div>
+
                   <small class="text-muted">
                     Last update, {{ dates.timeAgo($auth.user.steam_updated_at) }}
                   </small>
+
+                  <div
+                    v-if="lastUpdateInHours < 24"
+                    class="invalid-feedback d-block mt-1">
+                    You have recently updated your library. Please wait a while before
+                    updating again.
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <div class="row align-items-center">
+                  <div class="col-auto">
+                    <label class="form-check form-switch m-0">
+                      <input
+                        v-model="$auth.config.autosync_steam"
+                        class="form-check-input position-static"
+                        type="checkbox"
+                        @change="updateConfig('autosync_steam')" />
+                      <span class="form-check-label form-check-label-on">
+                        Auto updates are enabled
+                      </span>
+                      <span class="form-check-label form-check-label-off">
+                        Enable automatic updates
+                      </span>
+                    </label>
+                  </div>
+                  <div class="col-auto ms-auto">
+                    <small
+                      v-tippy="{
+                        content:
+                          'Your Steam library will be automatically updated to stay synchronized with your backlog.rip account. This update process occurs every 24 hours',
+                        placement: 'top',
+                      }"
+                      class="text-muted cursor-help">
+                      What is this?
+                      <span class="form-help mx-2">?</span>
+                    </small>
+                  </div>
                 </div>
               </div>
             </div>
@@ -380,7 +426,7 @@
                 </div>
               </div>
               <div class="col-sm-6 col-lg-4">
-                <div class="card">
+                <div class="card cursor-pointer" @click="ui.tab = 'appsToReview'">
                   <div class="card-body">
                     <div class="d-flex align-items-center">
                       <div class="subheader">New games found</div>
@@ -394,7 +440,40 @@
                   </div>
                 </div>
               </div>
-              <div class="col-sm-6 col-lg-4">
+
+              <div class="col-sm-2">
+                <div class="card cursor-pointer" @click="ui.tab = 'appsToImport'">
+                  <div
+                    class="card-body d-flex align-items-center"
+                    style="flex-direction: column">
+                    <div class="h2 m-0">
+                      <Icon class="text-muted" style="transform: translateY(-1px)">
+                        SquareRoundedPlus
+                      </Icon>
+                      {{ appsToImport.length }}
+                    </div>
+                    <div class="subheader">Importing</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-2">
+                <div class="card cursor-pointer" @click="ui.tab = 'appsToUpdate'">
+                  <div
+                    class="card-body d-flex align-items-center"
+                    style="flex-direction: column">
+                    <div class="h2 m-0">
+                      <Icon class="text-muted" style="transform: translateY(-1px)">
+                        Refresh
+                      </Icon>
+                      {{ data.appsToUpdate.length }}
+                    </div>
+                    <div class="subheader">Updating</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6 col-lg-4 d-none">
                 <div class="card">
                   <div class="card-body">
                     <div class="row">
@@ -736,20 +815,30 @@
         <div class="col-lg-4">
           <div class="card" style="position: sticky; top: 20px">
             <div class="card-body">
-              <div class="d-flex align-items-center mb-0">
+              <div class="d-flex align-items-center mb-2">
                 <div class="me-3">
                   <Icon size="26">BrandSteam</Icon>
                 </div>
                 <div>
-                  <small class="text-muted">
-                    Version {{ module.version }} by {{ module.author }}
-                  </small>
-                  <h3 class="lh-1">{{ module.name }}</h3>
+                  <h3 class="my-1">
+                    {{ module.name }}
+                  </h3>
                 </div>
               </div>
-              <div class="text-muted mb-1">
+              <div class="text-muted mb-3">
                 {{ module.description }}
               </div>
+              <small class="text-muted">
+                By {{ module.author }},
+                <a
+                  href="https://github.com/gsabater/backlog.rip/blob/master/modules/importers/steam.js"
+                  target="_blank">
+                  version {{ module.version }}
+                </a>
+                <br />
+                Updated,
+                {{ dates.format(module.updated_at, 'LL') }}
+              </small>
             </div>
 
             <div class="card-body">
@@ -813,7 +902,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Tue Apr 16 2024
+ * Modified: Tue May 07 2024
  **/
 
 const importer = null
@@ -875,6 +964,11 @@ export default {
   computed: {
     platform() {
       return this.$route.params?.platform || null
+    },
+
+    lastUpdateInHours() {
+      let last_sync = this.$auth?.user?.steam_updated_at ?? null
+      return dates.hoursAgo(last_sync)
     },
 
     steps() {
@@ -1150,14 +1244,13 @@ export default {
     // Created on Fri Jan 26 2024
     //+-------------------------------------------------
     async scanAndPrepare() {
-      log('✨ importer', 'detectAndConnect()')
+      log('✨ importer', 'scanAndPrepare()')
 
       this.ui.loading = true
       this.ui.step = 'games'
 
-      const data = await this.$importer.scan({
-        background: false,
-      })
+      const data = await this.$importer.scan()
+
       if (data?.status == 'error') {
         this.ui.error = data?.code
         this.ui.loading = false
@@ -1222,6 +1315,11 @@ export default {
 
       this._log('🆒 Waiting to the user to start the scan')
       this.process.ready = true
+    },
+
+    updateConfig(field) {
+      this.$auth.updateConfig(field)
+      this.$toast.success('Your preferences have been updated')
     },
 
     async init() {

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Tue Apr 16 2024
+ * Modified: Tue May 07 2024
  */
 
 import axios from 'axios'
@@ -263,6 +263,14 @@ export default {
         app.will_ignore = false
 
         apps.toReview.push(app)
+      }
+    })
+
+    x.log('Check 5.2: Preparing an Array ready to import')
+    apps.toImport = apps.toReview.map((item) => {
+      return {
+        data: item,
+        ['steam' + '_id']: item.appid,
       }
     })
 

@@ -36,6 +36,10 @@
         state: {{ app.state ?? '--' }}
         <br />
         lib: {{ app.is.lib ?? '--' }}
+        <template v-if="app.released_at">
+          <br />
+          {{ app.released_at }} -- {{ app._.released_at }}
+        </template>
       </div>
     </div>
     <!-- <div class="card-body">
@@ -77,14 +81,14 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat Mar 23 2024
+ * Modified: Fri Apr 26 2024
  **/
 
 export default {
   name: 'Game',
   props: {
     uuid: {
-      type: String,
+      type: [String, Object],
       default: null,
     },
 
@@ -119,7 +123,7 @@ export default {
     },
 
     async getData() {
-      this.app = this.dataStore.get(this.uuid)
+      this.app = this.dataStore.get(this.uuid?.uuid || this.uuid)
     },
   },
 

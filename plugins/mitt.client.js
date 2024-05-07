@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Tue Mar 26 2024
+ * Modified: Sat May 04 2024
  */
 
 //+-------------------------------------------------
@@ -31,7 +31,7 @@ export default defineNuxtPlugin(() => {
   window.$mitt = emitter
 
   emitter.on('*', (e, payload) => {
-    log('🔔 ev: ' + e, payload)
+    log('🔔 ' + e, payload)
     // console.info(emitter.all)
   })
 

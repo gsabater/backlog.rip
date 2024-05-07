@@ -102,7 +102,7 @@
               </small>
 
               <small v-else class="d-block text-secondary">
-                UUID: {{ item.uuid ?? '---' }}
+                {{ item._.released_at ?? '--' }}
               </small>
             </div>
             <!-- <b-state></b-state> -->
@@ -185,6 +185,7 @@
 
   <search-results
     ref="results"
+    :disabled="!ui.show"
     :filters="{
       string: searchString,
       sortBy: 'score',
@@ -208,7 +209,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th March 2024
- * Modified: Thu Apr 11 2024
+ * Modified: Sat May 04 2024
  **/
 
 export default {
@@ -366,15 +367,12 @@ export default {
     },
 
     onSearched(ev) {
-      console.warn('searched', ev)
-
+      // console.warn('searched', ev)
       // if (!this.$refs.results?.items) return []
       // const games = []
-
       // this.$refs.results.items?.forEach((uuid) => {
       //   games.push(this.dataStore.get(uuid))
       // })
-
       // return games.slice(0, 20)
     },
 

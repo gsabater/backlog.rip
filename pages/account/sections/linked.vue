@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div v-if="$app.dev" class="card-footer">
+    <div class="card-footer">
       <div class="row align-items-center">
         <div class="col-auto">
           <label class="form-check form-switch m-0">
@@ -71,11 +71,11 @@
           <small
             v-tippy="{
               content:
-                'Enable automatic updates to keep your Steam library in sync with your backlog.rip account. The update will run every 24 hours.',
+                'Your Steam library will be automatically updated to stay synchronized with your backlog.rip account. This update process occurs every 24 hours',
               placement: 'top',
             }"
             class="text-muted cursor-help">
-            More information
+            What is this?
             <span class="form-help mx-2">?</span>
           </small>
         </div>
@@ -266,7 +266,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Thu Apr 11 2024
+ * Modified: Fri Apr 26 2024
  **/
 
 export default {

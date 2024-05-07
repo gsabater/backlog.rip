@@ -31,13 +31,16 @@
                 <template v-for="(genre, ii) in _genresStartsWith(letter)" :key="ii">
                   <NuxtLink
                     :to="'/games/' + genre.slug"
-                    class="list-group-item py-2 px-3 cursor-pointer">
+                    class="list-group-item px-3 cursor-pointer text-decoration-none"
+                    style="padding-top: 0.8rem; padding-bottom: 0.8rem">
                     <div class="row g-2 align-items-center">
                       <div class="col">
                         {{ genre.name }}
-                        <!-- <div class="text-secondary">GOLEC UORKIESTRA, Gromee, Bedoes</div> -->
                       </div>
-                      <div class="col-auto text-secondary"><b-btn>View games</b-btn></div>
+                      <div class="col-auto text-secondary">
+                        <Icon>ChevronRight</Icon>
+                        <!-- <b-btn>View games</b-btn> -->
+                      </div>
                     </div>
                   </NuxtLink>
                 </template>
@@ -58,7 +61,7 @@ import { useRepositoryStore } from '../../stores/RepositoryStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 15th January 2024
- * Modified: Mon Feb 12 2024
+ * Modified: Fri May 03 2024
  **/
 
 export default {

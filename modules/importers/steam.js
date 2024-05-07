@@ -20,15 +20,17 @@ export default {
   //+-------------------------------------------------
 
   manifest: {
-    version: '1.3',
-    name: 'Steam importer',
+    name: 'Steam library importer',
     author: 'Gaspar S.',
+
+    version: '1.3',
+    updated_at: '2024-04-25',
 
     store: 'Steam',
     source: 'steam',
 
     description:
-      'Import all your games and playtime for every game on your library, including free games.',
+      'Syncronize all your games and playtime for every game on your library, including free games.',
 
     games: true,
     account: true,

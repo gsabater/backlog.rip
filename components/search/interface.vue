@@ -88,7 +88,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat Apr 06 2024
+ * Modified: Sat May 04 2024
  **/
 
 export default {
@@ -123,8 +123,9 @@ export default {
 
         states: [],
         genres: [],
+        released: null,
 
-        modes: {
+        mods: {
           // states: 'any(of) // all(of) // not(of)'
         },
 
@@ -158,6 +159,7 @@ export default {
 
   computed: {
     ...mapStores(useDataStore, useRepositoryStore),
+    ...mapState(useStateStore, ['states']),
     ...mapState(useRepositoryStore, ['genres']),
 
     isLibrary() {
@@ -238,7 +240,12 @@ export default {
 
       if (this.slug && this.genres.length) {
         const genre = this.genres.find((g) => g.slug == this.slug)
-        loaded.genres = [genre.id]
+        if (genre) loaded.genres = [genre.id]
+      }
+
+      if (this.slug && this.states.length) {
+        const state = this.states.find((g) => g.key == this.slug)
+        if (state) loaded.states = [state.id]
       }
 
       this.f = {
@@ -279,13 +286,13 @@ export default {
     //   this.search('event')
     // })
 
-    this.$mitt.on('data:ready', () => {
-      log('✨ Search: event -> data:ready')
-      // this.control.event = 'data:ready'
-      if (this.ui.dirty) return
+    // this.$mitt.on('data:ready', () => {
+    //   log('✨ Search: event -> data:ready')
+    //   // this.control.event = 'data:ready'
+    //   if (this.ui.dirty) return
 
-      this.search('event')
-    })
+    //   this.search('event')
+    // })
   },
 
   beforeUnmount() {

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu Apr 11 2024
+ * Modified: Sat May 04 2024
  */
 
 let $nuxt = null
@@ -45,10 +45,7 @@ let search = {}
 let index = {
   ed: [],
   lib: [],
-
-  // api: {},
-  // gog: {},
-  // epic: {}
+  api: {},
   steam: {},
 }
 
@@ -79,9 +76,10 @@ export const useDataStore = defineStore('data', {
   // * loadApiStatus()
   //
   // Methods to retrieve data
-  // * list()
-  // * library()
-  // * get()
+  // * list() <-- Returns the whole data object
+  // * library() <-- Returns the library object
+  // * get() <-- Get an element by uuid
+  // * getRandom() <-- Get random elements
   //
   // Methods to Query the API
   // * search()
@@ -165,14 +163,31 @@ export const useDataStore = defineStore('data', {
     // Created on Tue Nov 14 2023
     //+-------------------------------------------------
     get(uuid) {
-      return (
-        data[uuid] || {
-          uuid: uuid,
-          character: 'pikachu',
-          face: 'surprised',
-          error: 'missing',
-        }
-      )
+      if (!uuid) return
+      if (data[uuid]) return data[uuid]
+      if (index.api[uuid] && data[index.api[uuid]]) return data[index.api[uuid]]
+
+      return {
+        uuid: uuid,
+        character: 'pikachu',
+        face: 'surprised',
+        error: 'missing',
+      }
+    },
+
+    //+-------------------------------------------------
+    // getRandom()
+    // Get random elements from the data object
+    // -----
+    // Created on Thu Apr 18 2024
+    //+-------------------------------------------------
+    getRandom(amount = 1) {
+      console.warn(Object.values(data).length)
+      let items = Object.values(data)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, amount)
+
+      return items
     },
 
     getRecentlyAdded(amount = 30, as = 'uuid') {
@@ -190,12 +205,41 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
+    // searchHash()
+    // Sanitizes and creates a hash for the search to API
+    // -----
+    // Created on Wed May 01 2024
+    //+-------------------------------------------------
+    searchHash(f = {}) {
+      let emptyString = !f.string || f.string?.length < 3
+
+      if (f.sortBy == 'rand') return null
+      if (f.sortBy == 'score' && f.sortDir == 'desc' && emptyString) return null
+      if (f.sortBy == 'playtime' && emptyString) return null
+
+      delete f.mods
+      delete f.show
+      delete f.states
+      if (!f.released) delete f.released
+      if (f.genres?.length == 0) delete f.genres
+
+      const json = JSON.stringify(f)
+      const hash = btoa(json)
+
+      console.warn('🪂 Search hash', hash, f)
+      return hash
+    },
+
+    //+-------------------------------------------------
     // search(hash)
     // Performs a search against the api
     // -----
     // Created on Fri Nov 24 2023
     //+-------------------------------------------------
-    async search(hash) {
+    async search(filters) {
+      let hash = this.searchHash(filters)
+
+      if (!hash) return
       if (search[hash]) {
         log('🛑 Search', hash, 'already done')
         return
@@ -225,14 +269,15 @@ export const useDataStore = defineStore('data', {
           return
         }
 
-        // Debug on elden ring
+        // Debug on
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (item.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') {
-          // if (item.steam_id == '292030') {
-          // if (context) {
-          console.warn('✨ ELDEN RING', item, context)
-          //   debugger
-        }
+        // if (item.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') {
+        // if (item.name == 'DOOM') {
+        //   // if (item.steam_id == '292030') {
+        //   // if (context) {
+        // console.warn('✨ ' + item.name, item, context)
+        //   debugger
+        // }
 
         // Flag games coming from API as is_api
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -429,15 +474,14 @@ export const useDataStore = defineStore('data', {
 
     //+-------------------------------------------------
     // toIndex()
-    // Adds each uuid to their respective store index
+    // Adds item IDs to various indexes.
+    // Those indexes are then used to find the game by the ref
     // -----
     // Created on Thu Nov 30 2023
+    // Updated on Thu Apr 25 2024 - Added api_id ref
     //+-------------------------------------------------
     toIndex(item) {
-      // Temporary disabled
-      // if (item.api_id) index.api[item.api_id] = item.uuid
-      // if (item.gog_id) index.gog[item.gog_id] = item.uuid
-      // if (item.epic_id) index.epic[item.epic_id] = item.uuid
+      if (item.api_id) index.api[item.api_id] = item.uuid
       if (item.steam_id) index.steam[item.steam_id] = item.uuid
 
       if (this.isLibrary(item) && !index.lib.includes(item.uuid)) {
@@ -510,7 +554,6 @@ export const useDataStore = defineStore('data', {
       item = $game.normalize(item)
 
       item._ = {
-        // owned: $game._owned(item), // WIP -> should return true if is[store] is there
         score: $game._score(item),
         playtime: $game._playtime(item),
         released_at: $game._dateReleasedAt(item),
@@ -653,8 +696,7 @@ export const useDataStore = defineStore('data', {
       }
 
       // Finally, data is ready
-      // console.warn('🌈 data:ready')
-      $nuxt.$mitt.emit('data:ready')
+      $nuxt.$mitt.emit('data:ready', '🟢 Go!')
 
       log('💽 Data is ready to use', {
         data: Object.keys(data).length,

@@ -92,13 +92,6 @@ export default defineNuxtConfig({
       // fetch from an unauthenticated endpoint
       'https://api.backlog.rip/dev/sitemap',
     ],
-
-    // urls: async () => {
-    //   const response = await fetch('https://api.backlog.rip/dev/sitemap')
-    //   const urls = await response.json()
-    //   console.warn('urls', urls)
-    //   return urls
-    // }
   },
 
   // robots: {

@@ -184,11 +184,16 @@
 
           <div v-if="app.genres.length || app.released_at" class="my-2">
             <h5>General details</h5>
-
-            <small style="font-size: 13px">{{ listOfGenres(app) }}</small>
-            <small v-if="app.released_at" style="font-size: 13px">
-              First released on {{ app.released_at }}
-            </small>
+            <ul>
+              <li style="font-size: 13px">{{ listOfGenres(app) }}</li>
+              <li
+                v-if="app.released_at"
+                style="font-size: 13px"
+                v-tippy="dates.timeAgo(app.released_at)">
+                <Icon>Calendar</Icon>
+                First released on {{ app._.released_at }}
+              </li>
+            </ul>
           </div>
 
           <!--
@@ -608,7 +613,7 @@ import format from '../../utils/format'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Thu Apr 11 2024
+ * Modified: Tue Apr 16 2024
  **/
 
 export default {

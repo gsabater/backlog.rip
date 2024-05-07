@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Mon Mar 11 2024
+ * Modified: Fri Apr 26 2024
  */
 
 let $nuxt = null
@@ -94,6 +94,14 @@ export default {
     if (format == 'nice time') format = 'DD [de] MMMM, YYYY [-] HH:mm:ss'
     if (format) return moment.format(format)
     return moment
+  },
+
+  hoursAgo(time) {
+    if (!time) return false
+    if (!$nuxt) $nuxt = useNuxtApp()
+
+    const ref = $nuxt.$dayjs(time)
+    return $nuxt.$dayjs().diff(ref, 'hours')
   },
 
   //+-------------------------------------------------

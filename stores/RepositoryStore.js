@@ -3,14 +3,24 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Tue Mar 26 2024
+ * Modified: Fri Apr 19 2024
  */
 
 let $nuxt = null
 let $data = null
 
 export const useRepositoryStore = defineStore('repository', {
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // List of defined repositories
+  //
+  // - top: top 500 games
+  // - hot: hot games this month + autoloaded
+  // - genres: list of genres + autoloaded
+  //
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   state: () => ({
+    _hot: [],
     _genres: [],
 
     loaded: [],
@@ -18,8 +28,19 @@ export const useRepositoryStore = defineStore('repository', {
 
   getters: {
     //+-------------------------------------------------
+    // hot()
+    // Dynamically loads repository and returns data
+    // -----
+    // Created on Fri Apr 19 2024
+    //+-------------------------------------------------
+    hot() {
+      if (this._hot.length === 0) this.load('hot')
+      return this._hot
+    },
+
+    //+-------------------------------------------------
     // genres()
-    // Dynamically loads genres and returns data
+    // Dynamically loads repository and returns data
     // -----
     // Created on Mon Feb 12 2024
     //+-------------------------------------------------
@@ -67,6 +88,26 @@ export const useRepositoryStore = defineStore('repository', {
       return this.genres.filter((genre) =>
         genre.name.toLowerCase().includes(query.toLowerCase())
       )
+    },
+
+    //+-------------------------------------------------
+    // load()
+    // Returns a named batch of 500 games.
+    // -----
+    // Created on Wed Dec 20 2023
+    // Updated on Fri Apr 19 2024 - assign to _{repo}
+    //+-------------------------------------------------
+    async load(repo) {
+      if (!repo) return
+      if (!$nuxt.$app.ready) return []
+      if (this.loaded.includes(`${repo}`)) return
+
+      const jxr = await $nuxt.$axios.get(`repository/${repo}.json`)
+      if (jxr.status) {
+        this.loaded.push(repo)
+        $data.process(jxr.data, 'api')
+        if (this[`_${repo}`]) this[`_${repo}`] = jxr.data
+      }
     },
 
     //+-------------------------------------------------

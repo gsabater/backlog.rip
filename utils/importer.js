@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Thu Apr 11 2024
+ * Modified: Fri Apr 26 2024
  */
 
 import axios from 'axios'
@@ -138,9 +138,10 @@ export default {
 
   //+-------------------------------------------------
   // scan()
-  // Calls the module methods to get data
+  // Calls the module methods to retrieve user data
   // -----
   // Created on Tue Jan 23 2024
+  // Updated on Tue Apr 16 2024 - Added error handling
   //+-------------------------------------------------
   async scan(x = {}) {
     x.log('💠 Importer(4): Starting data scan...')
@@ -181,6 +182,13 @@ export default {
     } catch (e) {
       x.log('Error getting user data', 'error', e)
       console.error('💠🔴 scan() found an error', e)
+      return false
+    }
+
+    x.log('Check 4.5: scan post validation')
+    if (data.games.length === 0) {
+      x.code = 'library:empty'
+      x.status = 'error'
       return false
     }
 
@@ -255,6 +263,14 @@ export default {
         app.will_ignore = false
 
         apps.toReview.push(app)
+      }
+    })
+
+    x.log('Check 5.2: Preparing an Array ready to import')
+    apps.toImport = apps.toReview.map((item) => {
+      return {
+        data: item,
+        ['steam' + '_id']: item.appid,
       }
     })
 

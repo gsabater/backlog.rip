@@ -39,7 +39,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Apr 05 2024
+ * Modified: Sat May 04 2024
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -50,6 +50,11 @@ export default {
   name: 'SearchResults',
 
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+
     source: {
       type: [String, Array],
       default: 'all', // 'library', []
@@ -86,24 +91,12 @@ export default {
     //+-------------------------------------------------
     const search = useThrottleFn(
       (source = null) => {
+        if (props.disabled) return
         if (Object.keys(props.filters).length === 0) return
 
         log('✨🔥 search:start - from:', source || 'direct')
+
         emit('search:start', source)
-
-        const control = { ...props.filters }
-        // delete control.state
-        // delete control.show
-
-        const json = JSON.stringify(control)
-        const hash = btoa(json)
-
-        // if (source == 'event' && this.control.search === hash) {
-        //   log('🛑 Search already done')
-        //   return
-        // }
-
-        // this.control.hash = hash
         filter()
         emit('search:end')
 
@@ -111,8 +104,12 @@ export default {
         // Only allowd sources will be searched
         const sources = ['all', 'palette']
         if (sources.includes(props.source)) {
-          if (!props.filters?.string || props.filters?.string?.length < 3) return
-          $data.search(hash)
+          // console.warn(
+          //   'comprobar otros filtros y trabajar en optimizar el payload',
+          //   'genre, released, sortby: name, score,released, hltb'
+          // )
+
+          $data.search({ ...props.filters })
         }
       },
       500,
@@ -208,33 +205,33 @@ export default {
     // Created on Fri Nov 24 2023
     // Updated on Tue Jan 09 2024
     //+-------------------------------------------------
-    _search(source = null) {
-      log('✨🔥 Search: init from: ', source || 'direct run')
+    // _search(source = null) {
+    //   log('✨🔥 Search: init from: ', source || 'direct run')
 
-      if (Object.keys(this.filters).length === 0) return
-      // this.$emit('loading', false)
+    //   if (Object.keys(this.filters).length === 0) return
+    //   // this.$emit('loading', false)
 
-      const control = { ...this.filters }
-      delete control.state
-      delete control.show
+    //   const control = { ...this.filters }
+    //   delete control.state
+    //   delete control.show
 
-      const json = JSON.stringify(control)
-      const hash = btoa(json)
+    //   const json = JSON.stringify(control)
+    //   const hash = btoa(json)
 
-      if (source == 'event' && this.control.search === hash) {
-        log('🛑 Search already done')
-        return
-      }
+    //   if (source == 'event' && this.control.search === hash) {
+    //     log('🛑 Search already done')
+    //     return
+    //   }
 
-      this.control.hash = hash
-      this.filter()
+    //   this.control.hash = hash
+    //   this.filter()
 
-      if (this.source == 'all') {
-        if (!this.filters?.string || this.filters?.string?.length < 3) return
-        this.dataStore.search(hash)
-        // this.$emit('loading', true)
-      }
-    },
+    //   if (this.source == 'all') {
+    //     if (!this.filters?.string || this.filters?.string?.length < 3) return
+    //     this.dataStore.search(hash)
+    //     // this.$emit('loading', true)
+    //   }
+    // },
 
     //+-------------------------------------------------
     // filter()
@@ -245,40 +242,40 @@ export default {
     // Updated on Tue Jan 09 2024 - Included utils.search
     // Created on Thu Feb 15 2024 - Added stats
     //+-------------------------------------------------
-    _filter() {
-      // do again?
-      // if (!this.dataStore.isReady) return
+    // _filter() {
+    //   // do again?
+    //   // if (!this.dataStore.isReady) return
 
-      let source = null
-      const start = performance.now()
+    //   let source = null
+    //   const start = performance.now()
 
-      // prettier-ignore
-      if (Array.isArray(this.source)) source = this.source
-      else source = this.source == 'all' ? this.dataStore.list() : this.dataStore.library('object')
+    //   // prettier-ignore
+    //   if (Array.isArray(this.source)) source = this.source
+    //   else source = this.source == 'all' ? this.dataStore.list() : this.dataStore.library('object')
 
-      if (source == 'all') this.stats.amount = this.$app.count.api
-      this.stats.source = this.source
+    //   if (source == 'all') this.stats.amount = this.$app.count.api
+    //   this.stats.source = this.source
 
-      log(
-        `⚡ Filtering ${this.source} with ${Object.keys(source).length} apps with filters`,
-        JSON.stringify(this.filters)
-      )
+    //   log(
+    //     `⚡ Filtering ${this.source} with ${Object.keys(source).length} apps with filters`,
+    //     JSON.stringify(this.filters)
+    //   )
 
-      this.stats.amount = Object.keys(source).length
-      if (this.source.length == 0) return
+    //   this.stats.amount = Object.keys(source).length
+    //   if (this.source.length == 0) return
 
-      const searched = search.filter(source, this.filters, { source: this.source })
-      const paged = search.paginate(searched.items, this.filters.show)
-      const end = performance.now()
+    //   const searched = search.filter(source, this.filters, { source: this.source })
+    //   const paged = search.paginate(searched.items, this.filters.show)
+    //   const end = performance.now()
 
-      this.items = paged
+    //   this.items = paged
 
-      this.stats.time = end - start
-      this.stats.results = searched.results
-      this.stats.filtered = searched.filtered || 0
+    //   this.stats.time = end - start
+    //   this.stats.results = searched.results
+    //   this.stats.filtered = searched.filtered || 0
 
-      this.$forceUpdate()
-    },
+    //   this.$forceUpdate()
+    // },
 
     // async loadRepositories() {
     //   log('Loading repositories')
@@ -295,7 +292,9 @@ export default {
     this.init()
 
     this.$mitt.on('data:updated', () => {
-      log('✨ Search: event -> data:updated')
+      if (!$app.ready) return
+
+      if (this.$app.dev) log('✨ Search from event', 'data:updated')
       this.search('event')
     })
 

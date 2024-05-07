@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Thu Apr 11 2024
+ * Modified: Wed May 01 2024
  */
 
 export default {
@@ -18,6 +18,7 @@ export default {
     let toSort = []
     let filtered = []
 
+    let now = dates.stamp()
     let re = /(?:^|[ ]):([a-zA-Z]+)/gm
     let searchString = filters?.string?.toLowerCase().replace(re, '').trim()
 
@@ -96,6 +97,32 @@ export default {
         }
       }
 
+      // Sort By: Released at
+      // Include only apps with release date
+      //+---------------------------------------
+      if (filters?.released > 0 || filters?.sortBy == 'released') {
+        if (!app.released_at) {
+          filtered.push(uuid)
+          // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
+
+          continue
+        }
+
+        if (app.released_at > now) {
+          filtered.push(uuid)
+          // console.warn('🛑 Skipping because released in the future', filters.released, app.released_at
+
+          continue
+        }
+
+        if (app.released_at < filters.released) {
+          filtered.push(uuid)
+          // console.warn('🛑 Skipping because released before', filters.released, app.released_at)
+
+          continue
+        }
+      }
+
       // Sort By: HLTB
       // Include only apps with HLTB time
       // Sort by HLTB.main
@@ -127,6 +154,10 @@ export default {
 
       if (filters?.sortBy == 'score') {
         toSort.push({ uuid, val: app._?.score || 0 })
+      }
+
+      if (filters?.sortBy == 'released') {
+        toSort.push({ uuid, val: app.released_at || 0 })
       }
 
       if (filters?.sortBy == 'playtime') {
@@ -181,7 +212,7 @@ export default {
     // SortBy: numeric value
     // Using app.playtime // score // rand
     //+---------------------------------------
-    if (['rand', 'hltb', 'score', 'playtime'].includes(sortBy)) {
+    if (['rand', 'hltb', 'score', 'playtime', 'released'].includes(sortBy)) {
       return items
         .sort((a, b) => {
           const A = a.val || 0

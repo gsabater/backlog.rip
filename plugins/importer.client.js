@@ -3,11 +3,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Thu Apr 11 2024
+ * Modified: Tue May 07 2024
  */
 
 import importer from '~/utils/importer'
-import Toast from '../components/toasts/Importing.vue'
+// import Toast from '../components/toasts/Importing.vue'
 
 //+-------------------------------------------------
 // Importer plugin (_sync)
@@ -30,6 +30,10 @@ const _sync = {
     // Scan and prepare...
     data: {},
     apps: {},
+
+    // Error handling
+    code: null, // profile:private, library:empty, etc
+    status: null, // 'error', 'warning'
   },
 
   enabled: null,
@@ -43,21 +47,59 @@ const _sync = {
 // -----
 // Created on Thu Jan 25 2024
 //+-------------------------------------------------
-function autoSync() {
+async function autoSync() {
   let autosync_steam = $nuxt?.$auth?.config?.autosync_steam ?? false
-  if (autosync_steam) {
-    sync({
-      platform: 'steam',
-      background: true,
-    })
-  } else log('♾️ AutoSync cancelled - not enabled in settings', autosync_steam)
+  let last_sync = $nuxt?.$auth?.user?.steam_updated_at ?? null
+  let hoursAgo = dates.hoursAgo(last_sync)
+
+  if (!autosync_steam) {
+    log('♾️ AutoSync cancelled - not enabled in settings', autosync_steam)
+    return
+  }
+
+  if (hoursAgo < 24) {
+    log('♾️ AutoSync cancelled - last sync was less than 24h ago', hoursAgo, last_sync)
+    return
+  }
+
+  $nuxt.$app.updating = true
+
+  await sync({
+    platform: 'steam',
+    background: true,
+  })
+
+  await delay(2000, true)
+  log('✨ importer', 'scanAndPrepare()')
+  const data = await scan()
+
+  if (data.apps.toImport.length == 0 && data.apps.toUpdate.length == 0) {
+    log('✨ importer', 'No games to import or update')
+
+    $nuxt.$auth.local.steam_updated_at = dates.now()
+    $nuxt.$auth.updateAccount('steam_updated_at')
+
+    $nuxt.$app.updating = false
+    return
+  }
+
+  store({
+    notify: true,
+    journal: true,
+    apps: {
+      toUpdate: data.apps.toUpdate,
+      toImport: data.apps.toImport,
+    },
+  })
+
+  await delay(5000, true)
+  $nuxt.$app.updating = false
 }
 
 //+-------------------------------------------------
 // sync()
 // Receives the configuration to be used by the importer
-// And starts the chain process
-// Detect, connect and sync the library
+// And starts the process -> detect and connect
 // -----
 // Options available:
 // - log: function
@@ -67,23 +109,11 @@ function autoSync() {
 // Created on Mon Jan 22 2024
 //+-------------------------------------------------
 async function sync(options = {}) {
-  // if (!$nuxt) $nuxt = nuxt
-
   _sync.enabled = true
   _sync.background = options.background ?? false
 
   _sync.x.log = options.log ?? log
   _sync.x.source = options.platform ?? null
-
-  if (_sync.background) {
-    $toast = $nuxt.$toast(Toast, {
-      duration: Infinity,
-    })
-
-    await delay(5000, true)
-    notify()
-    return
-  }
 
   log('💠 Importer(1): sync')
 
@@ -95,14 +125,7 @@ async function sync(options = {}) {
   if ((await connect()) == false) return false
 
   // Wait for the user to start the scan
-  if (!_sync.background) {
-    return _sync.x
-  }
-
-  // ... scan , prepare and store
-
-  console.error('wip')
-  return
+  return _sync.x
 }
 
 //+-------------------------------------------------
@@ -143,15 +166,11 @@ async function connect() {
 async function scan() {
   const scanned = await importer.scan(_sync.x)
 
-  if (scanned) {
-    _sync.x.data = { ...scanned }
-  }
+  if (_sync.x.status) return _sync.x
+  if (scanned) _sync.x.data = { ...scanned }
 
   await prepare()
-
-  if (!_sync.background) {
-    return _sync.x
-  }
+  return _sync.x
 }
 
 //+-------------------------------------------------
@@ -166,14 +185,12 @@ async function prepare() {
   if (prepared) {
     _sync.x.apps = {
       toReview: prepared.toReview,
-      toImport: prepared.toReview,
+      toImport: prepared.toImport,
       toUpdate: prepared.toUpdate,
     }
   }
 
   return true
-
-  store()
 }
 
 //+-------------------------------------------------
@@ -225,10 +242,10 @@ function notify() {
 // -----
 // Created on Mon Jan 22 2024
 //+-------------------------------------------------
-function init(nuxt) {
+function init() {
   window.setTimeout(() => {
     autoSync()
-  }, 1000)
+  }, 2000)
 }
 
 //+-------------------------------------------------
@@ -241,9 +258,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   if (!$nuxt) $nuxt = nuxtApp
 
   window.$_sync = _sync
-
-  // Disabled temporarily
-  // init(nuxtApp)
+  init()
 
   _sync.sync = sync
   _sync.scan = scan

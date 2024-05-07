@@ -49,7 +49,8 @@ export default defineNuxtConfig({
     ],
   },
 
-  css: ['@/assets/scss/main.scss', 'animate.css/animate.min.css'],
+  css: ['@/assets/scss/main.scss'],
+  // 'animate.css/animate.min.css'
 
   build: {
     transpile: ['vue-sonner', 'rxjs'],

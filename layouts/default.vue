@@ -145,23 +145,25 @@
               <Icon size="16">Notebook</Icon>
             </span>
             <span class="nav-link-title">Journal</span>
+            <small class="ms-auto text-secondary">
+              {{ $moment().format('DD/MM') }}
+            </small>
           </NuxtLink>
 
           <div class="dropdown-divider"></div>
 
           <NuxtLink v-if="$app.dev" to="/library" class="dropdown-item">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-              <Icon size="16">Bookmarks</Icon>
+              <Icon size="16">Bookmark</Icon>
             </span>
             <span class="nav-link-title">Pinned games</span>
           </NuxtLink>
 
-          <div
+          <NuxtLink
             v-for="(state, i) in pinnedStates"
-            v-if="$app.dev"
+            :to="'/library/' + (state.key || state.id)"
             :key="'state' + i"
-            class="dropdown-item ps-3 pe-1"
-            @click="setState(state)">
+            class="dropdown-item ps-3 pe-1">
             <div class="content d-flex align-items-center w-100 px-1">
               <span
                 class="status-dot me-2"
@@ -182,9 +184,11 @@
                 <Icon size="18" stroke="1">HelpCircleFilled</Icon>
               </tippy> -->
             </div>
-          </div>
+          </NuxtLink>
 
-          <NuxtLink to="/import/steam" class="dropdown-item mt-2">
+          <div class="dropdown-divider"></div>
+
+          <NuxtLink to="/import/steam" class="dropdown-item mt-1">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">SquareRoundedPlus</Icon>
             </span>
@@ -201,7 +205,32 @@
       <div
         class="d-none d-lg-block aside-bottom w-100"
         style="position: absolute; bottom: 10px">
-        <div class="px-3 mt-2 mb-3" @click.stop="$mitt.emit('search:palette')">
+        <div v-if="$app.updating" class="px-3 mt-2 mb-3">
+          <div class="input-icon" style="overflow: hidden; border-radius: 4px">
+            <div class="progress progress-sm" style="position: absolute; height: 0.15rem">
+              <div class="progress-bar progress-bar-indeterminate"></div>
+            </div>
+            <span class="input-icon-addon">
+              <Icon>BrandSteam</Icon>
+              <!-- <div
+                class="spinner-border spinner-border-sm text-secondary"
+                role="status"></div> -->
+            </span>
+            <input
+              type="text"
+              value="Updating your library…"
+              class="form-control"
+              style="background-color: transparent"
+              disabled />
+            <!-- <span class="input-icon-addon">
+                <div
+                  class="spinner-border spinner-border-sm text-secondary"
+                  role="status"></div>
+              </span> -->
+          </div>
+        </div>
+
+        <div v-else class="px-3 mt-2 mb-3" @click.stop="$mitt.emit('search:palette')">
           <div class="input-group input-group-flat input-palette">
             <span class="input-group-text">
               <Icon size="16" class="me-1">Search</Icon>
@@ -222,7 +251,7 @@
             <div
               class="btn btn-ghost-secondary btn-sm btn-icon"
               style="border-radius: 50%">
-              <Icon size="18" style="transform: translateY(1px)">ProgressHelp</Icon>
+              <Icon size="18" style="transform: translateY(1px)">HelpSquare</Icon>
               <b-dropdown placement="top-start">
                 <a
                   class="dropdown-item"
@@ -266,11 +295,13 @@
             </div>
           </div>
           <div class="col col d-flex justify-content-center">
-            <div
+            <NuxtLink
+              v-if="$app.dev"
+              to="/docs"
               class="btn btn-ghost-secondary btn-sm btn-icon"
               style="border-radius: 50%">
-              <Icon size="18" style="transform: translateY(1px)">ProgressHelp</Icon>
-            </div>
+              <Icon size="18" style="transform: translateY(1px)">Book</Icon>
+            </NuxtLink>
           </div>
         </div>
       </div>
@@ -668,7 +699,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu Apr 11 2024
+ * Modified: Fri Apr 26 2024
  **/
 
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'

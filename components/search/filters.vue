@@ -80,7 +80,7 @@ Selected
             Selector
           </Icon>
 
-          <b-tippy-sheety @closed="reset">
+          <b-tippy-sheety @closed="reset" ref="filters">
             <div class="b-menu dropdown-menu show">
               <template v-if="ui.step == 'pick'">
                 <span class="dropdown-header">
@@ -99,22 +99,31 @@ Selected
               </template>
 
               <template v-if="ui.step == 'picked'">
-                <div class="dropdown-item">
-                  <input
-                    ref="findOption"
-                    v-model="ui.findOption"
-                    type="text"
-                    class="form-control form-control-flush"
-                    placeholder="Filter..." />
-                </div>
-                <div class="dropdown-divider"></div>
+                <template v-if="option.search !== false">
+                  <div class="dropdown-item">
+                    <input
+                      ref="findOption"
+                      v-model="ui.findOption"
+                      type="text"
+                      class="form-control form-control-flush"
+                      placeholder="Filter..." />
+                  </div>
+                  <div class="dropdown-divider"></div>
+                </template>
+                <span class="dropdown-header" v-else>
+                  <span class="text-muted">Filter by {{ option.label }}</span>
+                </span>
 
                 <div
                   v-for="(param, key) in picked"
                   :key="key"
-                  class="dropdown-item px-2"
-                  :class="{ selected: selected[param[option.opValue]] }">
+                  class="dropdown-item"
+                  :class="{
+                    'selected': selected[param[option.opValue]],
+                    'px-2': option.multiple !== false,
+                  }">
                   <div
+                    v-if="option.multiple !== false"
                     class="selection"
                     style="margin-right: 0.55rem"
                     @click="select(param, 'soft')">
@@ -151,10 +160,17 @@ Selected
                       </tippy>
                     </template>
 
-                    <template v-if="option.by == 'genre'">
+                    <template v-else-if="option.by == 'genre'">
                       <span class="avatar avatar-xs me-2">
                         {{ param.name[0] }}
                       </span>
+
+                      <span class="me-4">
+                        {{ param.name }}
+                      </span>
+                    </template>
+                    <template v-else>
+                      <Icon class="me-2" size="16">{{ param.icon ?? option.icon }}</Icon>
 
                       <span class="me-4">
                         {{ param.name }}
@@ -331,6 +347,27 @@ Selected
 
               <label
                 class="dropdown-item ps-1"
+                :class="{ active: f.sortBy == 'released' }"
+                @click="sortBy('released', 'desc', true)">
+                <div class="d-flex justify-center" style="width: 30px">
+                  <Icon size="16" class="me-1">CalendarDot</Icon>
+                </div>
+                <div>
+                  Release date
+                  <div
+                    v-if="f.sortBy == 'released'"
+                    class="text-muted"
+                    style="font-size: 0.75rem">
+                    {{ f.sortDir == 'asc' ? 'Oldest' : 'Newest' }}
+                    <Icon size="14" width="2" class="mx-1">Repeat</Icon>
+                  </div>
+                </div>
+                <!-- <div class="ms-auto">AZ</div> -->
+                <!-- <span class="text-muted">Sorting by Name descending</span> -->
+              </label>
+
+              <label
+                class="dropdown-item ps-1"
                 :class="{ active: f.sortBy == 'playtime' }"
                 @click="sortBy('playtime', 'desc', true)">
                 <div class="d-flex justify-center" style="width: 30px">
@@ -461,7 +498,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Fri Apr 05 2024
+ * Modified: Tue May 07 2024
  **/
 
 export default {
@@ -512,6 +549,22 @@ export default {
           opTitle: 'name',
           opValue: 'id',
         },
+
+        released: {
+          search: false,
+          multiple: false,
+
+          by: 'released',
+          filter: 'released',
+
+          icon: 'CalendarDot',
+          label: 'Release date',
+          labels: 'Release dates',
+
+          data: 'released',
+          opTitle: 'name',
+          opValue: 'value',
+        },
       },
 
       ui: {
@@ -551,12 +604,13 @@ export default {
     },
 
     _filters() {
-      const enabled = ['states', 'genres']
+      const enabled = ['states', 'genres', 'released']
 
       const filters = {}
 
       for (const key in this.f) {
         if (enabled.includes(key)) {
+          if (!this.f[key] || !this.f[key].length) continue
           if (this.f[key].length == 0) continue
 
           filters[key] = this.f[key]
@@ -564,6 +618,47 @@ export default {
       }
 
       return filters
+    },
+
+    _released() {
+      let dates = [
+        {
+          name: '15 days ago',
+          value: this.$dayjs().subtract(15, 'days').unix(),
+        },
+
+        {
+          name: '1 month ago',
+          value: this.$dayjs().subtract(1, 'months').unix(),
+        },
+
+        {
+          name: '3 months ago',
+          value: this.$dayjs().subtract(3, 'months').unix(),
+        },
+        {
+          name: '6 months ago',
+          value: this.$dayjs().subtract(6, 'months').unix(),
+        },
+        {
+          name: '1 year ago',
+          value: this.$dayjs().subtract(1, 'years').unix(),
+        },
+        {
+          name: '3 years ago',
+          value: this.$dayjs().subtract(3, 'years').unix(),
+        },
+        {
+          name: '5 years ago',
+          value: this.$dayjs().subtract(5, 'years').unix(),
+        },
+        {
+          name: '10 years ago',
+          value: this.$dayjs().subtract(10, 'years').unix(),
+        },
+      ]
+
+      return dates
     },
   },
 
@@ -642,19 +737,23 @@ export default {
 
       this.$nextTick(() => {
         if (this.$app.device !== 'sm') {
-          this.$refs.findOption.focus()
+          this.$refs.findOption?.focus()
         }
       })
     },
 
     //+-------------------------------------------------
     // select()
-    //
+    // selects an option from the group of options to filter
     // -----
     // Created on Fri Feb 09 2024
     //+-------------------------------------------------
     select(param, mode = 'soft') {
       const key = param[this.option.opValue]
+
+      if (this.option.multiple == false) {
+        this.selected = {}
+      }
 
       if (this.selected[key]) delete this.selected[key]
       else this.selected[key] = { ...param }
@@ -684,7 +783,7 @@ export default {
     restoreFilter(option) {
       const selected = {}
       this.picked.forEach((param) => {
-        if (this.f[option.filter].includes(param[option.opValue])) {
+        if (this.f[option.filter]?.includes(param[option.opValue])) {
           selected[param[option.opValue]] = { ...param }
         }
       })

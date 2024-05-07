@@ -31,7 +31,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Fri Apr 05 2024
+ * Modified: Fri Apr 26 2024
  **/
 
 export default {
@@ -124,6 +124,32 @@ export default {
   },
 
   methods: {
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Fri Apr 26 2024
+    //+-------------------------------------------------
+    show() {
+      this.$refs['tippy-sheety'].setProps({
+        appendTo: () => document.body,
+
+        getReferenceClientRect: () => ({
+          width: 0,
+          height: 0,
+          top: event?.clientY ?? 333,
+          bottom: event?.clientY ?? 333,
+          left: event?.clientX ?? 444,
+          right: event?.clientX ?? 444,
+        }),
+
+        // popperOptions: {
+        //   strategy: 'fixed',
+        // },
+      })
+      this.$refs['tippy-sheety'].show()
+    },
+
     //+-------------------------------------------------
     // hide()
     // Requests to hide / disable the tippy

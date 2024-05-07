@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Thu Apr 11 2024
+ * Modified: Tue May 07 2024
  */
 
 // import { reactive } from 'vue'
@@ -21,10 +21,13 @@ let $state = null
 let $repos = null
 
 let app = {
-  v: '0.11.0 β', //β
+  v: '0.12.0 β', //β
 
+  // Global app state
+  // Controls modules boundaries
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   dev: false,
-  env: 'production',
+  ready: false,
 
   // $db.status
   // can be true when is ready or a status
@@ -56,18 +59,6 @@ let app = {
 
   api: {},
 
-  // Global app state
-  // Controls modules boundaries
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ready: false,
-  loading: false,
-
-  // Global log
-  // Has every message received from the app
-  // Used to debug and review messages
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  log: ['wip'],
-
   f: {
     toggleFullscreen: null,
   },
@@ -78,8 +69,15 @@ let app = {
   ui: {
     drawer: false,
     sidebar: false,
+    updating: false,
     fullscreen: false,
   },
+
+  // Global log
+  // Has every message received from the app
+  // Used to debug and review messages
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  log: ['wip'],
 }
 
 //+-------------------------------------------------

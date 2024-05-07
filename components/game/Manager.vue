@@ -108,18 +108,16 @@
 
         <!--
           *+---------------------------------
-          *| Favorites
-          *| Simple item
+          *| Pinned
+          *| Simple item with pin option
           *+--------------------------------- -->
-        <template v-if="false">
-          <div class="dropdown-item">
-            <div class="d-flex" style="width: 30px">
-              <Icon>Star</Icon>
-            </div>
-
-            <span>Add to favorites</span>
+        <div v-if="$app.dev" class="dropdown-item">
+          <div class="d-flex" style="width: 30px">
+            <Icon>BookmarkPlus</Icon>
           </div>
-        </template>
+
+          <span>Pin this</span>
+        </div>
 
         <!--
           *+---------------------------------
@@ -221,7 +219,7 @@
     </div>
   </div> -->
   <div
-    v-if="ui.show"
+    v-if="ui.backdrop"
     class="dropdown-control"
     style="
       background-color: rgba(0, 0, 0, 0.7);
@@ -256,7 +254,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Wed Apr 10 2024
+ * Modified: Fri May 03 2024
  **/
 
 export default {
@@ -271,7 +269,7 @@ export default {
       ui: {
         top: '0px',
         left: '0px',
-        show: false,
+        backdrop: false,
       },
     }
   },
@@ -307,23 +305,20 @@ export default {
         // },
       })
 
-      // this.ui.show = true
-      // this.$refs.tippy.show()
-
       this.appUUID = app
       this.app = this.dataStore.get(app)
-      this.ui.show = true
+      this.ui.backdrop = true
 
       this.$refs.tippy.show()
     },
 
     hide() {
-      this.ui.show = false
+      this.ui.backdrop = false
       this.$refs.tippy.hide()
     },
 
     hideBackdrop() {
-      this.ui.show = false
+      this.ui.backdrop = false
     },
 
     // isFav(state) {

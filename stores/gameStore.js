@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Thu Apr 11 2024
+ * Modified: Fri May 03 2024
  */
 
 let $nuxt = null
@@ -101,7 +101,12 @@ export const useGameStore = defineStore('game', {
       // Create the new object with the updated data
       // And normalize removing unwanted data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let updated = { ...game, ...data }
+      let updated = {
+        ...game,
+        ...Object.fromEntries(
+          Object.entries(data).filter(([key, value]) => value !== null)
+        ),
+      }
 
       updated.uuid = game.uuid
       updated = this.normalize(updated)
@@ -210,6 +215,8 @@ export const useGameStore = defineStore('game', {
       game.genres = game.genres || []
       game.playtime = game.playtime || {}
 
+      if (game.steam_id) game.steam_id = Number(game.steam_id)
+
       // if (game.is_api) {
       //   game.api_id = game.uuid
       //   game.uuid = game.api_id
@@ -266,6 +273,10 @@ export const useGameStore = defineStore('game', {
       return Object.entries(app.playtime)
         .filter(([key]) => !key.endsWith('_last'))
         .reduce((total, [, num]) => total + num, 0)
+    },
+
+    _dateReleasedAt(app) {
+      return $nuxt.$moment(app.released_at * 1000).format('LL')
     },
 
     // _dateOwned(app) {

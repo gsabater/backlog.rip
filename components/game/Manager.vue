@@ -111,12 +111,21 @@
           *| Pinned
           *| Simple item with pin option
           *+--------------------------------- -->
-        <div v-if="$app.dev" class="dropdown-item">
-          <div class="d-flex" style="width: 30px">
-            <Icon>BookmarkPlus</Icon>
-          </div>
+        <div @click="setState({ id: 'pinned' })" class="dropdown-item">
+          <template v-if="app.is && app.is.pinned">
+            <div class="d-flex" style="width: 30px">
+              <Icon class="text-green">BookmarkFilled</Icon>
+            </div>
+            <span>Unpin</span>
+          </template>
 
-          <span>Pin this</span>
+          <template v-else>
+            <div class="d-flex" style="width: 30px">
+              <Icon>BookmarkPlus</Icon>
+            </div>
+
+            <span>Pin this</span>
+          </template>
         </div>
 
         <!--
@@ -124,26 +133,25 @@
           *| Delete this
           *| Simple item
           *+--------------------------------- -->
-        <div v-if="app.is && app.is.lib" class="dropdown-item" @click="deleteme">
+        <template v-if="app.is && app.is.lib">
           <div class="dropdown-divider"></div>
+          <div class="dropdown-item" @click="deleteme">
+            <div class="d-flex" style="width: 30px">
+              <Icon>PlaylistX</Icon>
+            </div>
 
-          <div class="d-flex" style="width: 30px">
-            <Icon>PlaylistX</Icon>
+            <span>Delete</span>
+
+            <tippy
+              :allow-h-t-m-l="true"
+              class="text-muted ms-auto cursor-help"
+              content="Delete this game from your library.<br>You might want to delete the game to fix duplicates or errors">
+              <Icon style="opacity: 0.6">HelpCircleFilled</Icon>
+            </tippy>
           </div>
-
-          <span>Delete</span>
-
-          <tippy
-            :allow-h-t-m-l="true"
-            class="text-muted ms-auto cursor-help"
-            content="Delete this game from your library.<br>You might want to delete the game to fix duplicates or errors">
-            <Icon style="opacity: 0.6">HelpCircleFilled</Icon>
-          </tippy>
-        </div>
+        </template>
 
         <template v-if="$app.dev">
-          <div class="dropdown-divider"></div>
-
           <!--
           *+---------------------------------
           *| DEV
@@ -254,7 +262,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Fri May 03 2024
+ * Modified: Fri May 10 2024
  **/
 
 export default {
@@ -328,7 +336,7 @@ export default {
 
     //+-------------------------------------------------
     // setState()
-    // Performs action when an item is clicked
+    // Change state on item
     // -----
     // Created on Sat Jan 06 2024
     //+-------------------------------------------------
@@ -336,7 +344,6 @@ export default {
       this.value = state?.id || null
       this.stateStore.set(this.appUUID, state.id)
 
-      // this.onChange(state)
       this.hide()
     },
 
@@ -350,18 +357,6 @@ export default {
     deleteme() {
       this.dataStore.delete(this.appUUID)
     },
-
-    // TODO: Move this to a store
-    // setState(state) {
-    //   this.$emit('set', state)
-    //   // this.$parent.app.state = state.id
-    //   // this.dataStore.update(this.$parent.app, 'state')
-
-    //   this.$toast.success('Added to ' + state.name, {
-    //     description: 'Monday, January 3rd at 6:00pm',
-    //   })
-
-    // },
 
     init() {},
   },

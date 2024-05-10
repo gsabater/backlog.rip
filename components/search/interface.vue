@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12">
       <pre
-        class="my-3"
+        class="d-none my-3"
         style="
           position: fixed;
           top: 10px;
@@ -88,7 +88,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat May 04 2024
+ * Modified: Fri May 10 2024
  **/
 
 export default {
@@ -134,12 +134,8 @@ export default {
           perPage: 28,
 
           display: 'grid',
+          card: ['default'],
         },
-      },
-
-      table: {
-        page: 1,
-        perPage: 10,
       },
 
       presets: {
@@ -162,6 +158,10 @@ export default {
     ...mapState(useStateStore, ['states']),
     ...mapState(useRepositoryStore, ['genres']),
 
+    //+-------------------------------------------------
+    // isLibrary()
+    // Returns true when browsing library
+    //+-------------------------------------------------
     isLibrary() {
       return this.source == 'library'
     },
@@ -204,10 +204,8 @@ export default {
       this.ui.dirty = true
 
       this.search('interface')
-      // console.warn('📒 updated', JSON.stringify(filters))
       this.$nextTick(() => {
         this.ui.ping++
-        // console.warn('📒 updated 2', JSON.stringify(filters))
       })
     },
 
@@ -221,7 +219,6 @@ export default {
     },
 
     search(by) {
-      // console.warn('📒 search')
       this.$nextTick(() => {
         this.$refs.results.search(by)
       })
@@ -246,6 +243,10 @@ export default {
       if (this.slug && this.states.length) {
         const state = this.states.find((g) => g.key == this.slug)
         if (state) loaded.states = [state.id]
+      }
+
+      if (this.slug && this.slug == 'pinned') {
+        loaded.states = ['pinned']
       }
 
       this.f = {

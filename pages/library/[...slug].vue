@@ -19,7 +19,7 @@
 
   <div class="page-body">
     <div class="container-xl">
-      <search-interface source="library"></search-interface>
+      <search-interface :source="is"></search-interface>
     </div>
   </div>
 </template>
@@ -30,20 +30,25 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th December 2023
- * Modified: Wed Mar 06 2024
+ * Modified: Fri May 10 2024
  **/
 
 export default {
   data() {
     return {
-      source: {
-        is: 'library',
-      },
+      is: 'library',
     }
   },
 
   computed: {
     ...mapStores(useDataStore),
+
+    source() {
+      let slug = this.$route.params?.slug || null
+      if (slug == 'pinned') return 'pinned'
+
+      return 'library'
+    },
   },
 
   methods: {

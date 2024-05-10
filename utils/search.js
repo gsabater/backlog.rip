@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Wed May 01 2024
+ * Modified: Fri May 10 2024
  */
 
 export default {
@@ -39,11 +39,11 @@ export default {
       // Match with app.state
       //+---------------------------------------
       if (filters?.states?.length) {
-        if (!filters.states.includes(app.state)) {
-          // if (app.state !== filters.state) {
-          filtered.push(uuid)
-          // console.warn('🛑 Skipping as not in state', filters.state, app.name)
+        const { states } = filters
+        const isPinned = states.includes('pinned')
 
+        if ((isPinned && !app.is?.pinned) || (!isPinned && !states.includes(app.state))) {
+          filtered.push(uuid)
           continue
         }
       }

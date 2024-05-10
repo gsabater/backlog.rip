@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Wed Apr 10 2024
+ * Modified: Fri May 10 2024
  */
 
 let $nuxt = null
@@ -140,8 +140,14 @@ export const useStateStore = defineStore('state', {
     // - ✅ emits a state change event
     // -----
     // Created on Sat Jan 06 2024
+    // Updated on Fri May 10 2024 - Added pinned
     //+-------------------------------------------------
     set(uuid, state) {
+      if (state == 'pinned') {
+        this.pin(uuid)
+        return
+      }
+
       let obj = this.keyed[state]
       let app = $data.get(uuid)
       let old = app.state || null
@@ -179,6 +185,38 @@ export const useStateStore = defineStore('state', {
     },
 
     //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Fri May 10 2024
+    //+-------------------------------------------------
+    pin(uuid) {
+      let app = $data.get(uuid)
+      let old = app.is?.pinned || false
+
+      // Update the pin status
+      // on $game and $data
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      app.is.dirty = true
+      app.is.pinned = !old
+
+      $game.app.is.pinned = !old
+      $game.update(uuid, { ...app })
+
+      $nuxt.$mitt.emit('pinned:change', {
+        uuid: uuid,
+        pinned: !old,
+      })
+
+      $nuxt.$toast.success('Game has been ' + (old ? 'unpinned' : 'pinned'), {
+        // description: 'Monday, January 3rd at 6:00pm',
+      })
+
+      this.indexLibrary()
+    },
+
+    //+-------------------------------------------------
     // indexLibrary()
     // Creates an index Array of UUIDs for each state
     // keyed by the state's id
@@ -201,7 +239,9 @@ export const useStateStore = defineStore('state', {
         }
       })
 
-      this.pinned = library.filter((app) => app.is && app.is.pinned)
+      this.pinned = library
+        .filter((app) => app.is && app.is.pinned)
+        .map((app) => app.uuid)
     },
 
     //+-------------------------------------------------

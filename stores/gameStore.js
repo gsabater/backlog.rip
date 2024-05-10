@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Tue May 07 2024
+ * Modified: Fri May 10 2024
  */
 
 let $nuxt = null
@@ -13,7 +13,9 @@ let $data = null
 
 export const useGameStore = defineStore('game', {
   state: () => ({
-    app: {},
+    app: {
+      is: {},
+    },
   }),
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,6 +28,11 @@ export const useGameStore = defineStore('game', {
   // Modify data
   // * create()
   // * update()
+  // * normalize()
+  //
+  // Getters
+  // * _score()
+  // * _playtime()
   //
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

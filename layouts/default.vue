@@ -152,7 +152,7 @@
 
           <div class="dropdown-divider"></div>
 
-          <NuxtLink v-if="$app.dev" to="/library" class="dropdown-item">
+          <NuxtLink to="/library/pinned" class="dropdown-item">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">Bookmark</Icon>
             </span>
@@ -597,7 +597,7 @@
       descriptionClassName: 'my-toast-description',
     }" />
 
-    <SpeedInsights v-if="!$app.dev" />
+    <!-- <SpeedInsights v-if="!$app.dev" /> -->
 
     <component :is="'style'" id="dynamic-style" type="text/css">
       <template v-if="!$app.dev">pre{ display: none !important; }</template>
@@ -699,15 +699,15 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Fri Apr 26 2024
+ * Modified: Fri May 10 2024
  **/
 
-import { SpeedInsights } from '@vercel/speed-insights/nuxt'
+// import { SpeedInsights } from '@vercel/speed-insights/nuxt'
 
 export default {
   name: 'DefaultLayout',
   components: {
-    SpeedInsights,
+    // SpeedInsights,
   },
 
   data() {

@@ -8,11 +8,13 @@
  * Modified:
  */
 
-
-// import { mapState } from "pinia";
-
 export default defineNuxtConfig({
   // ssr: false,
+  sourcemap: { server: false, client: true },
+
+  features: {
+    devLogs: false
+  },
 
   experimental: {
     payloadExtraction: false,
@@ -54,7 +56,6 @@ export default defineNuxtConfig({
 
   build: {
     transpile: ['vue-sonner', 'rxjs'],
-    // transpile: ['element-plus/es'],
   },
 
   content: {
@@ -132,7 +133,7 @@ export default defineNuxtConfig({
     // },
   },
 
-  sourcemap: { server: false, client: true },
+
 
   devtools: {
     enabled: false,

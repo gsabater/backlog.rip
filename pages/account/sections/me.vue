@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="card-body">
-      <h2 class="mb-3">Account</h2>
+      <h2 class="mb-2">Account</h2>
       <p class="card-subtitle">Profile details and personal settings</p>
       <!-- <div class="row align-items-center">
         <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url(./static/avatars/000m.jpg)"></span>
@@ -15,12 +15,13 @@
       </div> -->
       <!-- <h3 class="card-title mt-4">Your profile</h3> -->
       <div class="row g-3">
-        <div class="col-md nope-col-lg-8">
-          <!-- <div class="form-label">Username</div> -->
-          <!-- <h4 class="card-title mb-2">Username</h4> -->
-          <b-input
+        <div class="col-md-12 nope-col-lg-8">
+          <div class="form-label">Your username</div>
+          <!-- <h4 class="card-title mb-2">Username2</h4> -->
+          <v-text-field
             v-model="$auth.local.username"
-            label="Username"
+            density="comfortable"
+            persistent-hint
             hint="This is only you display name"
             @change="update('account', 'username')" />
         </div>
@@ -95,7 +96,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Feb 20 2024
+ * Modified: Wed Jun 19 2024
  **/
 
 export default {

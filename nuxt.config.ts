@@ -8,11 +8,15 @@
  * Modified:
  */
 
-
-// import { mapState } from "pinia";
+import { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
   // ssr: false,
+  sourcemap: { server: false, client: true },
+
+  features: {
+    devLogs: false,
+  },
 
   experimental: {
     payloadExtraction: false,
@@ -30,9 +34,9 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/devtools',
     '@nuxtjs/seo',
+    '@pinia/nuxt',
     '@vueuse/nuxt',
 
-    '@pinia/nuxt',
     // ['@pinia/nuxt', {
     //   autoImports: ['defineStore', 'mapStores', 'acceptHMRUpdate']
     // }],
@@ -49,12 +53,15 @@ export default defineNuxtConfig({
     ],
   },
 
-  css: ['@/assets/scss/main.scss'],
+  css: [
+    //'vuetify/lib/styles/main.sass',
+    '@mdi/font/css/materialdesignicons.min.css',
+    '@/assets/scss/main.scss',
+  ],
   // 'animate.css/animate.min.css'
 
   build: {
-    transpile: ['vue-sonner', 'rxjs'],
-    // transpile: ['element-plus/es'],
+    transpile: ['vue-sonner', 'rxjs', 'vuetify'],
   },
 
   content: {
@@ -123,16 +130,15 @@ export default defineNuxtConfig({
 
     plugins: [],
 
-    // vue: {
-    //   template: {
-    //     compilerOptions: {
-    //       isCustomElement: (tag) => ['ninja-keys'].includes(tag),
-    //     },
-    //   },
-    // },
+    vue: {
+      template: {
+        transformAssetUrls,
+        // compilerOptions: {
+        //   isCustomElement: (tag) => ['ninja-keys'].includes(tag),
+        // },
+      },
+    },
   },
-
-  sourcemap: { server: false, client: true },
 
   devtools: {
     enabled: false,

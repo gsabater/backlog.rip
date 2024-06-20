@@ -36,9 +36,9 @@
 
 <script>
 /**
- * @project: KAAM
  * @file:    \components\helpers\Confirm.vue
- * @desc:    Usage
+ * @desc:    ...
+ * -------------------------------------------
 
   $emit('confirm:show', {
     title: 'Confirmar',

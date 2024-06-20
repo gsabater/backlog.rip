@@ -47,6 +47,12 @@
       box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
     }
 
+    &:not(.is-banner) img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     & img {
       z-index: 1;
       /* object-fit: cover; */

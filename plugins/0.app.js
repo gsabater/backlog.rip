@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Tue May 07 2024
+ * Modified: Thu Jun 20 2024
  */
 
 // import { reactive } from 'vue'
@@ -21,7 +21,7 @@ let $state = null
 let $repos = null
 
 let app = {
-  v: '0.12.0 β', //β
+  v: '0.13.1 β', //β
 
   // Global app state
   // Controls modules boundaries

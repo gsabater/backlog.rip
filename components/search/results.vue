@@ -1,5 +1,6 @@
 <template>
   <pre
+    v-if="items.length"
     class="my-3"
     style="
       position: fixed;
@@ -13,12 +14,10 @@
       padding: 10px;
       border-radius: 5px;
       width: auto;
-    "
-    >{{ items.length }}
+    "><h3>Search results ({{ items.length }})</h3>
     --
     {{ filters }}
-</pre
-  >
+</pre>
 
   <slot name="body" :items="items">
     <div class="row row-deck row-cards row-games-list">
@@ -26,9 +25,36 @@
         <div
           class="col col-6 col-sm-4 col-md-3 col-lg-custom pt-1 pb-3"
           style="padding-left: 0.75rem; padding-right: 0.75rem">
-          <b-game :key="app" :uuid="app" :body="['name']"></b-game>
+          <b-game :key="app" :uuid="app" :body="cardBody"></b-game>
         </div>
       </template>
+
+      <!-- <div class="page-header">
+        <div class="row align-items-center">
+          <div class="col-auto">
+            <span class="avatar avatar-md">90</span>
+          </div>
+          <div class="col">
+            <h2 class="page-title">Group name</h2>
+            <div class="page-subtitle">
+              <div class="row">
+                <div class="col-auto">
+                  <small class="text-reset">Value 1</small>
+                </div>
+                <div class="col-auto">
+                  <small class="text-reset">value 2</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-auto d-none d-md-flex">
+            <a href="javascript:void(0)" class="btn btn-primary">
+              <Icon>ArrowUp</Icon>
+              Back to top
+            </a>
+          </div>
+        </div>
+      </div> -->
     </div>
   </slot>
 </template>
@@ -39,7 +65,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat May 04 2024
+ * Modified: Tue May 14 2024
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -285,6 +311,32 @@ export default {
     init() {
       // this.loadRepositories()
       // this.search('onmounted')
+    },
+  },
+
+  computed: {
+    cardBody() {
+      let show = [...this.filters.show.card]
+
+      if (show.length == 1 && show.includes('default')) {
+        if (this.filters.sortBy == 'score') {
+          show.push('score')
+        }
+
+        if (this.filters.sortBy == 'released') {
+          show.push('released')
+        }
+
+        if (this.filters.sortBy == 'playtime') {
+          show.push('playtime')
+        }
+
+        if (this.filters.sortBy == 'hltb') {
+          show.push('hltb')
+        }
+      }
+
+      return show
     },
   },
 

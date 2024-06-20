@@ -4,7 +4,7 @@
       v-if="$app.ready"
       ref="tippy-sheety"
       theme="filters"
-      trigger="click"
+      :trigger="trigger"
       :placement="placement"
       to="parent"
       tag="div"
@@ -31,7 +31,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Fri Apr 26 2024
+ * Modified: Thu May 09 2024
  **/
 
 export default {
@@ -45,7 +45,7 @@ export default {
 
     trigger: {
       type: String,
-      default: 'mouseenter focus',
+      default: 'click',
       options: ['click', 'hover', 'focus', 'manual'],
     },
 

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Wed Apr 10 2024
+ * Modified: Thu Jun 20 2024
  */
 
 let $nuxt = null
@@ -43,16 +43,6 @@ export const useStateStore = defineStore('state', {
     // getCurrentlyPlaying() {
     //   return this.playing
     // },
-    // //+-------------------------------------------------
-    // // list()
-    // // Returns the array of states
-    // // -----
-    // // Created on Fri Jan 12 2024
-    // // Updated on Sat Feb 10 2024 - Made a getter
-    // //+-------------------------------------------------
-    // list() {
-    //   return this.states
-    // },
   },
 
   actions: {
@@ -67,16 +57,6 @@ export const useStateStore = defineStore('state', {
       return this.index[state]?.length || 0
     },
 
-    // //+-------------------------------------------------
-    // // list()
-    // // Returns the array of states
-    // // -----
-    // // Created on Fri Jan 12 2024
-    // //+-------------------------------------------------
-    // async list() {
-    //   return this.states
-    // },
-
     //+-------------------------------------------------
     // get()
     // Returns a single state by id
@@ -87,30 +67,60 @@ export const useStateStore = defineStore('state', {
       return this.states.find((state) => state.id === id)
     },
 
-    // async add(data) {
-    //   const $nuxt = useNuxtApp()
-    //   const id = await $nuxt.$db.states.add(data)
-    //   return id
-    // },
-
     // async update(data) {
     //   const $nuxt = useNuxtApp()
     //   const id = await $nuxt.$db.states.put(data)
     //   return id
     // },
 
-    async delete(id) {
-      this.states = this.states.filter((state) => state.id !== id)
-      await $nuxt.$db.states.delete(id)
+    //+-------------------------------------------------
+    // create()
+    // Creates a new state and saves it to the DB
+    // -----
+    // Created on Tue Jun 18 2024
+    //+-------------------------------------------------
+    async create(data) {
+      delete data.action
+
+      data.created_at = dates.now()
+      data.updated_at = dates.now()
+
+      const id = await $nuxt.$db.states.put(data)
+      await this.load(true)
+
+      return id
     },
 
     //+-------------------------------------------------
-    // sortState()
-    //
+    // update()
+    // Update a state and reload
+    // -----
+    // Created on Thu Jun 20 2024
+    //+-------------------------------------------------
+    async update(data) {
+      delete data.action
+
+      data.updated_at = dates.now()
+      await $nuxt.$db.states.put(data)
+      await this.load(true)
+    },
+
+    async delete(id) {
+      this.states = this.states.filter((state) => state.id !== id)
+
+      await $nuxt.$db.states.delete(id)
+      await this.load(true)
+
+      return true
+    },
+
+    //+-------------------------------------------------
+    // sort()
+    // Sorts a state in a direction and saves both states
     // -----
     // Created on Wed Jan 17 2024
     //+-------------------------------------------------
-    sortState(direction, id) {
+    sort(direction, id) {
       let states = this.states
       const index = states.findIndex((item) => item.id === id)
 
@@ -118,16 +128,29 @@ export const useStateStore = defineStore('state', {
         const temp = states[index].order
         states[index].order = states[index - 1].order
         states[index - 1].order = temp
+
+        $nuxt.$db.states.bulkPut([
+          { ...states[index], nonCloneableProp: undefined },
+          { ...states[index - 1], nonCloneableProp: undefined },
+        ])
       }
 
       if (index < states.length - 1 && direction === 'down') {
         const temp = states[index].order
         states[index].order = states[index + 1].order
         states[index + 1].order = temp
+
+        $nuxt.$db.states.bulkPut([
+          { ...states[index], nonCloneableProp: undefined },
+          { ...states[index - 1], nonCloneableProp: undefined },
+        ])
       }
 
       this.states = states.sort((a, b) => a.order - b.order)
       console.warn('🔃 Sorted states', this.states)
+      $nuxt.$toast.success('Order saved', {
+        // description: 'Monday, January 3rd at 6:00pm',
+      })
     },
 
     //+-------------------------------------------------
@@ -140,8 +163,14 @@ export const useStateStore = defineStore('state', {
     // - ✅ emits a state change event
     // -----
     // Created on Sat Jan 06 2024
+    // Updated on Fri May 10 2024 - Added pinned
     //+-------------------------------------------------
     set(uuid, state) {
+      if (state == 'pinned') {
+        this.pin(uuid)
+        return
+      }
+
       let obj = this.keyed[state]
       let app = $data.get(uuid)
       let old = app.state || null
@@ -179,6 +208,38 @@ export const useStateStore = defineStore('state', {
     },
 
     //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Fri May 10 2024
+    //+-------------------------------------------------
+    pin(uuid) {
+      let app = $data.get(uuid)
+      let old = app.is?.pinned || false
+
+      // Update the pin status
+      // on $game and $data
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      app.is.dirty = true
+      app.is.pinned = !old
+
+      $game.app.is.pinned = !old
+      $game.update(uuid, { ...app })
+
+      $nuxt.$mitt.emit('pinned:change', {
+        uuid: uuid,
+        pinned: !old,
+      })
+
+      $nuxt.$toast.success('Game has been ' + (old ? 'unpinned' : 'pinned'), {
+        // description: 'Monday, January 3rd at 6:00pm',
+      })
+
+      this.indexLibrary()
+    },
+
+    //+-------------------------------------------------
     // indexLibrary()
     // Creates an index Array of UUIDs for each state
     // keyed by the state's id
@@ -201,7 +262,9 @@ export const useStateStore = defineStore('state', {
         }
       })
 
-      this.pinned = library.filter((app) => app.is && app.is.pinned)
+      this.pinned = library
+        .filter((app) => app.is && app.is.pinned)
+        .map((app) => app.uuid)
     },
 
     //+-------------------------------------------------
@@ -209,9 +272,10 @@ export const useStateStore = defineStore('state', {
     // Loads the state array from DB to this
     // -----
     // Created on Sat Jan 06 2024
+    // Updated on Wed Jun 19 2024 - Reload
     //+-------------------------------------------------
-    async load() {
-      if (this.meta.loaded) return
+    async load(reload = false) {
+      if (this.meta.loaded && !reload) return
 
       const states = await $nuxt.$db.states.toArray()
 

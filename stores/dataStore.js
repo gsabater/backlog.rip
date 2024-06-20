@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Sat May 04 2024
+ * Modified: Thu Jun 20 2024
  */
 
 let $nuxt = null
@@ -212,14 +212,19 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     searchHash(f = {}) {
       let emptyString = !f.string || f.string?.length < 3
+      let dirty = ['genres', 'anotherArrayProperty'].some(
+        (prop) => Array.isArray(f[prop]) && f[prop].length > 0
+      )
 
       if (f.sortBy == 'rand') return null
-      if (f.sortBy == 'score' && f.sortDir == 'desc' && emptyString) return null
+      if (f.sortBy == 'score' && f.sortDir == 'desc' && emptyString && !dirty) return null
       if (f.sortBy == 'playtime' && emptyString) return null
 
       delete f.mods
       delete f.show
       delete f.states
+
+      if (emptyString) delete f.string
       if (!f.released) delete f.released
       if (f.genres?.length == 0) delete f.genres
 
@@ -484,7 +489,7 @@ export const useDataStore = defineStore('data', {
       if (item.api_id) index.api[item.api_id] = item.uuid
       if (item.steam_id) index.steam[item.steam_id] = item.uuid
 
-      if (this.isLibrary(item) && !index.lib.includes(item.uuid)) {
+      if ((this.isLibrary(item) && !index.lib.includes(item.uuid)) || item.is.dirty) {
         index.lib.push(item.uuid)
       }
 

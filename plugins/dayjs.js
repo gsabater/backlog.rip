@@ -1,5 +1,4 @@
 /**
- * @project: KAAM
  * @file:    \plugins\dayjs.js
  * @desc:    https://kas.kim/blog/using-dayjs-in-nuxt-3-as-plugin/
  * -------------------------------------------

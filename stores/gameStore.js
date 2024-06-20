@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Tue May 07 2024
+ * Modified: Tue May 14 2024
  */
 
 let $nuxt = null
@@ -13,7 +13,9 @@ let $data = null
 
 export const useGameStore = defineStore('game', {
   state: () => ({
-    app: {},
+    app: {
+      is: {},
+    },
   }),
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,6 +28,11 @@ export const useGameStore = defineStore('game', {
   // Modify data
   // * create()
   // * update()
+  // * normalize()
+  //
+  // Getters
+  // * _score()
+  // * _playtime()
   //
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -240,29 +247,28 @@ export const useGameStore = defineStore('game', {
 
       // Avoid very high scores not verified
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (!app.scores) score = score - 10
+      if (!app.scores) score = score - 25
       if (app.score >= 96 && !app.scores) {
-        score = 60
+        score = 50
       }
 
-      // Reduce the final score if the amount of reviews is low
+      // // Reduce the final score if the amount of reviews is low
+      // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (app.scores?.steamCount < 100) score *= 0.7
+      else if (app.scores?.steamCount < 1000) score *= 0.8
+      else if (app.scores?.steamCount < 3000) score *= 0.9
+
+      if (app.score >= 95 && app.scores?.steamCount < 16000) score *= 0.8
+
+      // On games outside of steam...
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (app.score > 90 && app.scores?.steamCount < 100) score *= 0.8
-      if (app.score > 93 && app.scores?.steamCount < 3000) score *= 0.8
-
-      if (app.score >= 95 && app.scores?.steamCount < 3000) score *= 0.8
-      if (app.score >= 95 && app.scores?.steamCount < 15000) score *= 0.8
-
-      if (app.scores?.igdbCount < 90) score *= 0.9
+      if (app.scores.igdb > 0 && app.scores?.igdbCount < 90) score *= 0.8
 
       // Only when there is only igdb
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (app.scores && !app.scores?.steamCount) {
-        if (app.scores?.igdb >= 90 && !app.scores.igdbCount) score *= 0.8
-      }
-
-      // if (app.scores?.steamCount < 100) score = score * 0.6
-      // else if (app.scores?.steamCount < 1000) score = score * 0.8
+      // if (app.scores && !app.scores?.steamCount) {
+      //   if (app.scores?.igdb >= 90 && !app.scores.igdbCount) score *= 0.8
+      // }
 
       return score
     },

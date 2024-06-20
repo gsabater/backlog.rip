@@ -152,11 +152,19 @@
 
           <div class="dropdown-divider"></div>
 
-          <NuxtLink v-if="$app.dev" to="/library" class="dropdown-item">
+          <NuxtLink to="/library/pinned" class="dropdown-item pe-2">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">Bookmark</Icon>
             </span>
             <span class="nav-link-title">Pinned games</span>
+
+            <Icon
+              class="ms-auto text-secondary"
+              size="15"
+              v-tippy="'Configure'"
+              @click.prevent="goTo('/account/states')">
+              Settings2
+            </Icon>
           </NuxtLink>
 
           <NuxtLink
@@ -431,7 +439,7 @@
           class="d-none d-md-flex navbar-nav flex-row order-md-last align-items-center">
           <div class="mx-3">
             <div
-              xv-tippy="'Enable dark mode'"
+              v-tippy="'Change theme'"
               class="nav-link cursor-pointer px-0 hide-theme-dark"
               @click="changeTheme('dark')">
               <Icon>Moon</Icon>
@@ -580,6 +588,8 @@
   </div>
 
   <client-only>
+    <helpers-notification />
+
     <game-details></game-details>
     <game-manager></game-manager>
     <search-palette></search-palette>
@@ -597,7 +607,7 @@
       descriptionClassName: 'my-toast-description',
     }" />
 
-    <SpeedInsights v-if="!$app.dev" />
+    <!-- <SpeedInsights v-if="!$app.dev" /> -->
 
     <component :is="'style'" id="dynamic-style" type="text/css">
       <template v-if="!$app.dev">pre{ display: none !important; }</template>
@@ -699,15 +709,15 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Fri Apr 26 2024
+ * Modified: Sun Jun 16 2024
  **/
 
-import { SpeedInsights } from '@vercel/speed-insights/nuxt'
+// import { SpeedInsights } from '@vercel/speed-insights/nuxt'
 
 export default {
   name: 'DefaultLayout',
   components: {
-    SpeedInsights,
+    // SpeedInsights,
   },
 
   data() {
@@ -738,6 +748,12 @@ export default {
   },
 
   methods: {
+    goTo(route) {
+      navigateTo(route)
+
+      // this.$router.push(route)
+    },
+
     changeTheme(theme) {
       this.ui.theme = theme
       if (document?.body) document.body.setAttribute('data-bs-theme', theme)

@@ -1,0 +1,81 @@
+//+-------------------------------------------------
+// Vuetify colors
+//+-------------------------------------------------
+[data-bs-theme='dark'] {
+  --v-border-color: 207, 102, 121;
+  --v-theme-error: 1, 2, 3;
+}
+
+//+-------------------------------------------------
+// v-card
+//+-------------------------------------------------
+.v-card {
+  & .v-card-title {
+    display: flex;
+    align-items: center;
+
+    & svg {
+      width: 17px;
+      height: 17px;
+      margin-right: 0.4rem;
+      transform: translateY(1px);
+    }
+  }
+}
+
+//+-------------------------------------------------
+// v-text-field
+//+-------------------------------------------------
+.v-input {
+  & .v-field--variant-solo {
+    background: var(--tblr-bg-forms);
+    border: var(--tblr-border-width) solid var(--tblr-border-color);
+    // color: var(--tblr-border-color);
+
+    &.v-field--focused {
+      color: var(--tblr-body-color);
+      background-color: var(--tblr-bg-forms);
+      border-color: #80aad3;
+      outline: 0;
+      box-shadow:
+        var(--tblr-box-shadow-input),
+        0 0 0 0.25rem rgba(var(--tblr-primary-rgb), 0.25);
+    }
+  }
+
+  & .v-field__input {
+    --v-field-input-padding-top: 0.45rem; //0.5625rem;
+    --v-field-input-padding-bottom: 0.45rem; //0.5625rem;
+
+    padding-top: var(--v-field-input-padding-top);
+    padding-bottom: var(--v-field-input-padding-bottom);
+    min-height: unset;
+    font-size: 0.875rem;
+  }
+
+  & .v-input__details {
+    padding-inline: 5px !important;
+    padding-top: 7px;
+    min-height: 17px;
+
+    & .v-messages__message {
+      color: var(--tblr-secondary);
+      font-size: 95%;
+    }
+  }
+
+  & .v-field--error {
+    border-color: var(--tblr-form-invalid-border-color);
+    padding-right: calc(1.4285714286em + 1.125rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23d63939' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cline x1='18' y1='6' x2='6' y2='18'%3e%3c/line%3e%3cline x1='6' y1='6' x2='18' y2='18'%3e%3c/line%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.3571428572em + 0.28125rem) center;
+    background-size: calc(0.7142857143em + 0.5625rem) calc(0.7142857143em + 0.5625rem);
+  }
+  &.v-input--error {
+    & .v-messages__message {
+      color: var(--tblr-form-invalid-color);
+      color: rgb(var(--v-theme-error));
+    }
+  }
+}

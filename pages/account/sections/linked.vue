@@ -1,5 +1,5 @@
 <template>
-  <div class="card mb-3" style="padding: 2.5rem">
+  <div class="card mb-3" style="padding: 1rem">
     <div class="card-body">
       <div>
         <div class="d-flex mb-3">
@@ -266,7 +266,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Fri Apr 26 2024
+ * Modified: Tue Jun 04 2024
  **/
 
 export default {

@@ -14,11 +14,9 @@
       padding: 10px;
       border-radius: 5px;
       width: auto;
-    ">
-Filters
+    "><h3>Search Filters</h3>
 {{ f }}
-</pre
-  >
+</pre>
 
   <pre
     class="d-none my-3"
@@ -63,7 +61,7 @@ Selected
 
   <div class="col-12">
     <div class="row gap-2 mb-4 align-items-center">
-      <div class="col col-12 col-md-6">
+      <div class="col col-12 col-md-5">
         <b-input
           v-model="f.string"
           placeholder="Search games..."
@@ -169,20 +167,64 @@ Selected
                         {{ param.name }}
                       </span>
                     </template>
+
                     <template v-else>
                       <Icon class="me-2" size="16">{{ param.icon ?? option.icon }}</Icon>
-
                       <span class="me-4">
                         {{ param.name }}
                       </span>
                     </template>
                   </div>
                 </div>
+
+                <template v-if="$app.dev && option.by == 'released'">
+                  <div class="hr-text mt-2 mb-3">Or pick</div>
+                  <div style="transform: scale(0.9)">
+                    <!-- <div>
+                      <input type="month" value="2018-05" />
+                    </div> -->
+                    <pre>
+                      {{ released }}
+                    </pre>
+                    <div class="input-group mb-1">
+                      <select class="form-control" v-model="released.month">
+                        <option selected="selected" disabled="disabled">Month</option>
+                        <option value="01">January</option>
+                        <option value="02">February</option>
+                        <option value="03">March</option>
+                        <option value="04">April</option>
+                        <option value="05">May</option>
+                        <option value="06">June</option>
+                        <option value="07">July</option>
+                        <option value="08">August</option>
+                        <option value="09">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                      </select>
+                      <select
+                        placeholder="asdasd"
+                        class="form-control"
+                        style="max-width: 43%"
+                        v-model="released.year">
+                        <option selected="selected" disabled="disabled">Year</option>
+                        <option
+                          v-for="year in Array.from(
+                            { length: $moment().year() - 1994 },
+                            (_, i) => $moment().year() - i
+                          )"
+                          :value="year">
+                          {{ year }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <!-- </div> -->
+                </template>
               </template>
 
-              <!-- <div class="dropdown-item">Genre</div>
+              <!--
                 <div class="dropdown-item">Features</div>
-                <div class="dropdown-item">Release date</div>
                 <div class="dropdown-item">Languages</div>
                 <div class="dropdown-item">Platform</div>
                 <div class="dropdown-item">Type</div>
@@ -191,7 +233,7 @@ Selected
                   <div style="width: 30px">
                     <Icon style="color: red; fill: pink">Heart</Icon>
                   </div>
-                  <span>OPción</span>
+                  <span>Opción</span>
                 </div> -->
             </div>
           </b-tippy-sheety>
@@ -219,22 +261,19 @@ Selected
         </div>
       </div>
 
-      <div class="col text-end">
-        <div class="btn" style="padding: 0.35rem 0.85rem">
-          <Icon size="19" class="text-muted me-2">
+      <div class="col text-end d-flex" style="justify-content: flex-end">
+        <div
+          class="d-inline-flex align-items-center nbtn mx-2 text-muted cursor-pointer"
+          style="padding: 0.35rem 0.85rem">
+          <!-- <Icon size="19" class="text-muted me-2">
             SortDescending
-            <!-- {{ f.sortDir == 'asc' ? 'SortAscending' : 'SortDescending' }} -->
-          </Icon>
-          Sort · Display
+            {{ f.sortDir == 'asc' ? 'SortAscending' : 'SortDescending' }}
+          </Icon> -->
+          Sorting by
+          {{ sortLabel[f.sortBy] ?? '--' + f.sortBy }}
 
-          <!-- <div class="ps-1 pe-2 me-2 border-end">Sort · Display</div> -->
-          <!-- <span v-tippy="'Toggle sorting'" class="badge bg-primary-lt">
-            {{ sortLabel[f.sortBy] || 'sorting' + f.sortBy }}
-            <Icon class="text-muted" size="11">ArrowDown</Icon>
-          </span> -->
-
-          <Icon class="text-muted" size="15" style="transform: translateX(8px)">
-            Selector
+          <Icon class="text-muted" size="14" style="transform: translateX(8px)">
+            ChevronDown
           </Icon>
 
           <b-tippy-sheety placement="bottom-end">
@@ -335,8 +374,6 @@ Selected
                     HelpSmall
                   </Icon>
                 </tippy>
-                <!-- <div class="ms-auto">AZ</div> -->
-                <!-- <span class="text-muted">Sorting by Name descending</span> -->
               </label>
 
               <div class="dropdown-divider"></div>
@@ -362,8 +399,6 @@ Selected
                     <Icon size="14" width="2" class="mx-1">Repeat</Icon>
                   </div>
                 </div>
-                <!-- <div class="ms-auto">AZ</div> -->
-                <!-- <span class="text-muted">Sorting by Name descending</span> -->
               </label>
 
               <label
@@ -383,8 +418,6 @@ Selected
                     <Icon size="14" width="2" class="mx-1">Repeat</Icon>
                   </div>
                 </div>
-                <!-- <div class="ms-auto">AZ</div> -->
-                <!-- <span class="text-muted">Sorting by Name descending</span> -->
               </label>
 
               <label
@@ -413,9 +446,41 @@ Selected
                     HelpSmall
                   </Icon>
                 </tippy>
-                <!-- <div class="ms-auto">AZ</div> -->
-                <!-- <span class="text-muted">Sorting by Name descending</span> -->
               </label>
+            </div>
+          </b-tippy-sheety>
+        </div>
+
+        <div class="d-inline-flex align-items-center btn btn-sm">
+          <Icon size="19" class="text-muted">ChartScatter3d</Icon>
+
+          <b-tippy-sheety placement="bottom-start">
+            <div class="b-menu dropdown-menu show" style="min-width: 280px">
+              <span class="dropdown-header">
+                <span class="text-muted">Display properties</span>
+              </span>
+
+              <div class="px-2 mx-1 mb-2">
+                <small class="text-muted mb-3">
+                  Select the properties you want to display on the cards
+                </small>
+
+                <div class="my-2"></div>
+                <template v-for="(v, k) in _cardProperties">
+                  <span
+                    class="badge bg-purple-lt ms-auto mx-2 mb-2 cursor-pointer"
+                    style="padding: 0.4rem"
+                    :style="
+                      f.show.card.includes(k)
+                        ? 'outline: 1px solid; outline-offset: -1px;'
+                        : '--tblr-bg-opacity: 0.6;'
+                    "
+                    @click="showInCard(k)">
+                    <!-- <Icon size="16" v-if="f.show.card.includes(k)">Check</Icon> -->
+                    {{ v }}
+                  </span>
+                </template>
+              </div>
             </div>
           </b-tippy-sheety>
         </div>
@@ -498,7 +563,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Tue May 07 2024
+ * Modified: Thu Jun 20 2024
  **/
 
 export default {
@@ -567,6 +632,11 @@ export default {
         },
       },
 
+      released: {
+        month: null,
+        year: null,
+      },
+
       ui: {
         dice: 4,
         step: 'pick',
@@ -584,6 +654,22 @@ export default {
     ...mapState(useRepositoryStore, {
       _genres: 'genres',
     }),
+
+    sortLabel() {
+      return {
+        name: 'Name',
+        score: 'Score',
+        playtime: 'Playtime',
+        hltb: 'How long to beat',
+        released: 'Release date',
+      }
+    },
+
+    amountOfApps() {
+      if (this.$parent.source == 'all') return format.num(this.$app.count.api)
+
+      return format.num(this.$app.count.library)
+    },
 
     picked() {
       const options = []
@@ -610,6 +696,7 @@ export default {
 
       for (const key in this.f) {
         if (enabled.includes(key)) {
+          if (key == 'states' && this.f[key].includes('pinned')) continue
           if (!this.f[key] || !this.f[key].length) continue
           if (this.f[key].length == 0) continue
 
@@ -621,6 +708,22 @@ export default {
     },
 
     _released() {
+      let manual = false
+
+      if (this.selected.month) {
+        if (!this.selected.year) {
+          manual = true
+          this.selected.year = this.$moment().year()
+        }
+      }
+
+      if (this.selected.year) {
+        if (!this.selected.month) {
+          manual = true
+          this.selected.month = this.$moment().month() + 1
+        }
+      }
+
       let dates = [
         {
           name: '15 days ago',
@@ -636,40 +739,25 @@ export default {
           name: '3 months ago',
           value: this.$dayjs().subtract(3, 'months').unix(),
         },
-        {
-          name: '6 months ago',
-          value: this.$dayjs().subtract(6, 'months').unix(),
-        },
-        {
-          name: '1 year ago',
-          value: this.$dayjs().subtract(1, 'years').unix(),
-        },
-        {
-          name: '3 years ago',
-          value: this.$dayjs().subtract(3, 'years').unix(),
-        },
-        {
-          name: '5 years ago',
-          value: this.$dayjs().subtract(5, 'years').unix(),
-        },
-        {
-          name: '10 years ago',
-          value: this.$dayjs().subtract(10, 'years').unix(),
-        },
       ]
 
       return dates
     },
+
+    _cardProperties() {
+      return {
+        default: 'Default',
+        name: 'Name',
+        score: 'Score',
+        playtime: 'Playtime',
+        hltb: 'How long to beat',
+        released: 'Release date',
+        genres: 'Genres',
+      }
+    },
   },
 
   watch: {
-    // f: {
-    //   handler: function (val) {
-    //     // this.notify(val)
-    //   },
-    //   deep: true,
-    // },
-
     filters: {
       handler: function (val) {
         this.f = { ...val }
@@ -679,16 +767,6 @@ export default {
   },
 
   methods: {
-    // TODO: move to a helper
-    sortLabel() {
-      return {
-        name: 'Name',
-        score: 'Score',
-        playtime: 'Playtime',
-        hltb: 'How long to beat',
-      }
-    },
-
     filterLabel(key) {
       let data = this['_' + this.options[key].data]
       if (!data) return
@@ -763,6 +841,28 @@ export default {
       if (mode == 'hard') {
         // this.$refs.tippyFilter.hide()
       }
+    },
+
+    //+-------------------------------------------------
+    // showInCard()
+    //
+    // -----
+    // Created on Fri May 10 2024
+    //+-------------------------------------------------
+    showInCard(key) {
+      if (this.f.show.card.includes(key)) {
+        this.f.show.card = this.f.show.card.filter((item) => item !== key)
+      } else {
+        this.f.show.card.push(key)
+      }
+
+      if (key == 'default') this.f.show.card = ['default']
+      if (this.f.show.card.length == 0) this.f.show.card = ['default']
+      if (this.f.show.card.length > 1 && this.f.show.card.includes('default')) {
+        this.f.show.card.splice(this.f.show.card.indexOf('default'), 1)
+      }
+
+      this.notify()
     },
 
     // Move selected to filters

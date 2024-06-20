@@ -3,12 +3,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Thu Dec 14 2023
+ * Modified: Thu May 09 2024
  */
 
 let $nuxt = null
 
-export const useCollectionsStore = defineStore('collections', {
+export const useCollectionStore = defineStore('collection', {
   state: () => ({
     meta: {
       time: 0,
@@ -57,5 +57,5 @@ export const useCollectionsStore = defineStore('collections', {
 //| https://pinia.vuejs.org/cookbook/hot-module-replacement.html
 //+-------------------------------------------------
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useCollectionsStore, import.meta.hot))
+  import.meta.hot.accept(acceptHMRUpdate(useCollectionStore, import.meta.hot))
 }

@@ -27,10 +27,68 @@
     </div>
 
     <div v-if="body" class="card-game__details">
-      <span class="details__name font-serif">
+      <span
+        v-if="body.includes('name') || body.includes('default')"
+        class="details__name font-serif d-block">
         {{ app.name }}
       </span>
-      <div v-if="$app.dev" class="details__secondary text-muted">
+
+      <small v-if="body.includes('score')" class="details__secondary text-muted">
+        <Icon
+          size="12"
+          width="1.8"
+          style="transform: translateY(-1px); margin-right: 3px">
+          Universe
+        </Icon>
+        {{ app.score ?? 'Unscored' }}
+        <template v-if="$app.dev">-- {{ app._.score }}</template>
+      </small>
+
+      <small
+        v-if="body.includes('released')"
+        class="d-block details__secondary text-muted">
+        <Icon
+          size="12"
+          width="1.8"
+          style="transform: translateY(-1px); margin-right: 3px">
+          Calendar
+        </Icon>
+        {{ app._.released_at }}
+      </small>
+
+      <small
+        v-if="body.includes('playtime')"
+        class="d-block details__secondary text-muted">
+        <Icon
+          size="12"
+          width="1.8"
+          style="transform: translateY(-1px); margin-right: 3px">
+          ClockHour3
+        </Icon>
+
+        <span style="font-size: 0.775rem">
+          <template v-if="app._.playtime == 0">Not played</template>
+          <template v-else>
+            Played
+            {{ dates.minToHours(app._.playtime, 'Not played') }}
+            <!-- {{ dates.timeAgo(app.playtime.steam_last * 1000) }} -->
+          </template>
+        </span>
+      </small>
+
+      <small
+        v-if="body.includes('hltb') && app.hltb && app.hltb.main"
+        class="d-block details__secondary text-muted">
+        <Icon
+          size="12"
+          width="1.8"
+          style="transform: translateY(-1px); margin-right: 3px">
+          SquareRoundedCheck
+        </Icon>
+        {{ dates.minToHours(app.hltb.main / 60) }}
+      </small>
+
+      <!-- <div v-if="$app.dev" class="details__secondary text-muted">
         score: {{ app.score }} -- {{ app._.score }}
         <br />
         state: {{ app.state ?? '--' }}
@@ -40,7 +98,7 @@
           <br />
           {{ app.released_at }} -- {{ app._.released_at }}
         </template>
-      </div>
+      </div> -->
     </div>
     <!-- <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -81,7 +139,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Apr 26 2024
+ * Modified: Fri May 17 2024
  **/
 
 export default {

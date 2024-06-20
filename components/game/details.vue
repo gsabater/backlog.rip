@@ -33,26 +33,27 @@
           >
         </div>
 
-        <game-asset
-          v-else
-          ref="logo"
-          :app="app"
-          asset="logo"
-          :priority="['steam']"
-          style="
-            max-width: 250px;
-            z-index: 1;
-            padding-bottom: 35px;
-            filter: drop-shadow(2px 3px 9px black);
-          "
-          @click="ui.tab = 'details'"></game-asset>
-        <div class="blur_back" style="">
+        <template v-else-if="app.steam_id">
           <game-asset
-            ref="background"
+            ref="logo"
             :app="app"
-            asset="gen"
-            :priority="['steam']"></game-asset>
-        </div>
+            asset="logo"
+            :priority="['steam']"
+            style="
+              max-width: 250px;
+              z-index: 1;
+              padding-bottom: 35px;
+              filter: drop-shadow(2px 3px 9px black);
+            "
+            @click="ui.tab = 'details'"></game-asset>
+          <div class="blur_back" style="">
+            <game-asset
+              ref="background"
+              :app="app"
+              asset="gen"
+              :priority="['steam']"></game-asset>
+          </div>
+        </template>
 
         <div
           style="
@@ -64,7 +65,10 @@
             padding: 10px 0;
           ">
           <small class="text-muted" style="font-size: 12px; display: block">
-            <span v-tippy="'Added to database ' + $moment(app.created_at).format('LL')">
+            <span
+              v-tippy="
+                `Added to database ${dates.timeAgo(app.created_at)} - ${$moment(app.created_at).format('L')}`
+              ">
               Updated {{ $moment(app.updated_at * 1000).format('LL') }}
             </span>
             <br />
@@ -145,7 +149,7 @@
             *| Playtime pill
             *| If this shit is repeated, make a component
             *+--------------------------------- -->
-            <div v-if="app.is.lib">
+            <div v-if="app.is && app.is.lib">
               <div class="status small my-2" style="border-radius: 4px">
                 <Icon size="14">ClockHour3</Icon>
                 <span style="font-size: 0.775rem">
@@ -172,6 +176,7 @@
 
           <p
             class="text mt-3 mb-2"
+            :class="{ 'text-muted': !app.description }"
             style="
               text-align: justify;
               display: -webkit-box;
@@ -377,7 +382,7 @@
               Steam page
             </a> -->
 
-              <div class="btn-group btn-group-sm" role="group">
+              <div v-if="app.steam_id" class="btn-group btn-group-sm" role="group">
                 <a
                   v-tippy="'Open Steam store page'"
                   :href="'https://store.steampowered.com/app/' + app.steam_id"
@@ -388,6 +393,7 @@
                   Steam page
                 </a>
                 <a
+                  v-if="app.is.steam"
                   v-tippy="'Run or install the game through Steam'"
                   :href="'steam://run/' + app.steam_id"
                   class="btn btn-ghost-secondary btn-secondary tonal btn-sm m-0 ps-0 pe-1"
@@ -399,12 +405,22 @@
 
               <a
                 v-if="app.has_demo"
-                v-tippy="'Download free demo on Steam'"
+                v-tippy="'Play a free demo on Steam'"
                 :href="'https://store.steampowered.com/app/' + app.steam_id"
                 class="btn btn-ghost-secondary btn-secondary btn-sm"
                 target="_blank">
-                <Icon size="15" class="me-1">FreeRights</Icon>
+                <Icon size="15" class="me-1">Download</Icon>
                 Demo
+              </a>
+
+              <a
+                v-if="app.xbox_id"
+                v-tippy="'Open Xbox page'"
+                :href="`https://www.xbox.com/games/store/${app.slug}/${app.xbox_id}`"
+                class="btn btn-ghost-secondary btn-secondary btn-sm"
+                target="_blank">
+                <Icon size="15" class="me-1">BrandXbox</Icon>
+                Xbox store
               </a>
 
               <!-- <a
@@ -613,7 +629,7 @@ import format from '../../utils/format'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Tue Apr 16 2024
+ * Modified: Thu Jun 20 2024
  **/
 
 export default {

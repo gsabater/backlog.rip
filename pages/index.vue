@@ -165,7 +165,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Sat May 04 2024
+ * Modified: Thu May 09 2024
  **/
 
 export default {
@@ -301,7 +301,7 @@ body {
   overflow: hidden;
   height: 100vh; */
   background-color: var(--color-bg);
-  background: url(../img/noise.png),
+  background: url(https://backlog.rip/img/noise.png),
     radial-gradient(circle, var(--color-bg) 0%, var(--color-bg-alt) 100%);
   background-size:
     150px,

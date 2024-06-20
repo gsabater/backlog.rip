@@ -7,15 +7,71 @@
         </div>
       </div>
       <p>
-        Here you can manage the states used to categorize your games. You can create new
-        states, edit existing ones, and delete them. You can also change the order in
-        which they appear in the dropdown menu.
+        Here you can manage the states used to categorize your games. You can create more
+        states, edit existing ones, and delete the states you don't need anymore.Also, you
+        can also change the order in which they appear on the dropdown menus.
       </p>
       <p>
-        Some States are special and cannot be deleted. These are the states that are used
-        to generate personalized recommendations and statistics.
+        Some states are special and cannot be deleted. Those are used to generate
+        personalized recommendations and insights on your dashboard.
       </p>
-      <div class="mt-2">
+    </div>
+  </div>
+
+  <div
+    class="divider"
+    style="border-top: 1px dashed rgb(204 204 204 / 25%); margin: 2rem"></div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2>New State</h2>
+      <!-- <p class="card-subtitle">Profile details and personal settings</p> -->
+
+      <!-- <h3 class="card-title mb-3">
+        <Icon style="transform: translateY(-2px)">Bookmark</Icon>
+        Pinned games
+      </h3>
+      <p class="card-subtitle mb-2">
+        Enable a special category for pinned games.
+        <br />
+        This will allow you to quickly pin a game and access it from the sidebar.
+      </p>
+      <div class="mb-3">
+        <label class="form-check form-switch form-switch-lg">
+          <input
+            v-model="$auth.config.debug"
+            class="form-check-input"
+            type="checkbox"
+            @change="update('config', 'debug')" />
+          <span class="form-check-label form-check-label-on">Debugging enabled</span>
+          <span class="form-check-label form-check-label-off">Developer mode is off</span>
+        </label>
+      </div> -->
+
+      <!--
+      <h3 class="card-title mt-4">Public profile</h3>
+      <p class="card-subtitle">
+        Making your profile public means that anyone on the Dashkit network will be able
+        to find you.
+      </p>
+      <div>
+        <label class="form-check form-switch form-switch-lg">
+          <input class="form-check-input" type="checkbox" />
+          <span class="form-check-label form-check-label-on">
+            You're currently visible
+          </span>
+          <span class="form-check-label form-check-label-off">
+            You're currently invisible
+          </span>
+        </label>
+      </div>
+      -->
+      <!-- <div class="p-3"></div> -->
+      <!-- <h3 class="card-title mb-3">Create a new state</h3> -->
+      <p class="card-subtitle mb-4">
+        Create a new state to categorize your library. You can edit and delete it later.
+      </p>
+      <div>
         <a class="btn btn-primary px-5" @click="$refs.crud.create()">
           Create a new state
         </a>
@@ -24,9 +80,9 @@
   </div>
 
   <div class="card">
-    <div class="card-body">
-      <div v-if="states.length">
-        <div v-for="(item, i) in states" :key="item.id">
+    <div v-if="states.length">
+      <template v-for="(item, i) in states" :key="item.id">
+        <div class="card-body">
           <div v-if="item" class="row">
             <div class="col-auto">
               <!-- <span class="form-colorinput-color bg-lime"></span>
@@ -36,15 +92,15 @@
               </span>
             </div>
             <div class="col">
-              <div class="text-truncate">
+              <div class="text-truncate mb-2">
                 <strong>{{ item.name }}</strong>
               </div>
               <div class="text-secondary">
                 {{ item.description }}
-                <span v-if="item.key" class="badge">
+                <!-- <span v-if="item.key" class="badge">
                   This is your {{ item.key }}. It represents a unique state utilized for
                   generating personalized recommendations and statistics.
-                </span>
+                </span> -->
               </div>
             </div>
             <div class="col-auto align-self-center">
@@ -64,12 +120,26 @@
               <div>
                 <div class="d-flex">
                   <span
+                    v-if="isPinned(item.id)"
+                    v-tippy="'Shown on sidebar'"
+                    class="btn-action cursor-help">
+                    <Icon class="icon" size="13" style="color: #575ac6">
+                      BookmarkFilled
+                    </Icon>
+                    <!-- <Icon class="icon">Pin</Icon>
+                    <Icon class="icon">PinnedFilled</Icon> -->
+                  </span>
+
+                  <span
+                    v-if="i > 0"
                     v-tippy="'Move upwards'"
                     class="btn-action cursor-pointer"
                     @click="sort('up', item.id)">
                     <Icon class="icon">ChevronUp</Icon>
                   </span>
+
                   <span
+                    v-if="i < states.length - 1"
                     v-tippy="'Move downwards'"
                     class="btn-action cursor-pointer"
                     @click="sort('down', item.id)">
@@ -77,42 +147,47 @@
                   </span>
 
                   <span
-                    v-tippy="'Edit this state'"
+                    v-tippy="'Edit'"
                     class="btn-action cursor-pointer"
                     :class="{ disabled: item.key }"
                     @click="edit(item)">
                     <Icon class="icon">Pencil</Icon>
                   </span>
 
-                  <template v-if="item.key">
-                    <span v-tippy="'This state cannot be deleted'" class="btn-action">
-                      <Icon class="icon" color="red">TrashOff</Icon>
-                    </span>
-                  </template>
-
-                  <template v-else>
+                  <template v-if="!item.key || item.key.includes('state_')">
                     <span
                       v-tippy="'Delete'"
                       class="btn-action cursor-pointer"
                       :class="{ disabled: item.key }"
-                      @click="remove(item.id)">
-                      <Icon class="icon" color="red">Trash</Icon>
+                      @click="remove(item)">
+                      <Icon class="icon text" color="red">Trash</Icon>
+                    </span>
+                  </template>
+
+                  <template v-else>
+                    <span v-tippy="'This state cannot be deleted'" class="btn-action">
+                      <Icon class="icon" color="red" style="opacity: 0.5">TrashOff</Icon>
                     </span>
                   </template>
                 </div>
               </div>
             </div>
           </div>
-          <hr />
         </div>
-      </div>
+      </template>
     </div>
   </div>
 
-  <states-crud-dialog
+  <!-- <states-crud-dialog
     ref="crud"
     @close="selected = null"
     @stored="$forceUpdate()"
+    @deleted="$forceUpdate()" /> -->
+
+  <dialog-crud-states
+    ref="crud"
+    @close="selected = null"
+    @stored="onStored"
     @deleted="$forceUpdate()" />
 </template>
 
@@ -122,11 +197,8 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Thu Jan 18 2024
+ * Modified: Thu Jun 20 2024
  **/
-
-// import { liveQuery } from 'dexie'
-// import { useObservable } from '@vueuse/rxjs'
 
 export default {
   name: 'AccountStates',
@@ -138,82 +210,42 @@ export default {
   computed: {
     ...mapStores(useStateStore),
     ...mapState(useStateStore, ['states']),
-
-    // //+-------------------------------------------------
-    // // $states
-    // // Live query of Dexie states table.
-    // // -----
-    // // Created on Wed Jan 03 2024
-    // //+-------------------------------------------------
-    // $states() {
-    //   if (!this.$db?.states) return []
-    //   return useObservable(liveQuery(() => this.$db.states.toArray()))
-    // },
   },
 
   methods: {
+    isPinned(id) {
+      const pinned = this.$auth?.menu?.states || []
+      return pinned.includes(id)
+    },
+
     sort(direction, id) {
-      this.stateStore.sortState(direction, id)
+      this.stateStore.sort(direction, id)
     },
 
     edit(item) {
       this.$refs.crud.edit(item)
+      this.$toast.success('State updated')
     },
 
-    remove(id) {
-      this.stateStore.delete(id)
-      this.$toast.success('The state has been deleted', {
-        description: 'Monday, January 3rd at 6:00pm',
-      })
-    },
-
-    async ins() {
-      await this.$db.config.put(
-        {
-          id: 5,
-          uuid: null,
-          steam: 76561198061541150,
-          gog: null,
-          epic: null,
-          name: 'Gaspar S.',
-          username: 'Gohrum',
-          slug: null,
-          email: null,
-          avatar:
-            'https://avatars.akamai.steamstatic.com/be9372d5ab3d163fd96fbe3e97b3330cc10c1165_medium.jpg',
-          created_at: '2022-04-29T12:36:13.000000Z',
-          updated_at: '2023-03-21T17:42:31.000000Z',
-        },
-        'me'
-      )
-      log('hey')
-    },
-
-    noti(a, b) {
-      console.log(a, b, this.user.username)
+    async remove(item) {
+      this.$refs.crud.delete(item)
+      this.$toast.success('The element has been deleted')
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // onStored()
     // -----
-    // Created on Mon Dec 18 2023
+    // Created on Tue Jun 18 2024
     //+-------------------------------------------------
-    async update() {
-      this.$toast.success('Your data has been updated', {
-        description: 'Monday, January 3rd at 6:00pm',
-      })
+    async onStored() {
+      this.$toast.success('Your new state has been created')
+      this.$forceUpdate()
     },
 
-    async getData() {
-      this.db.user = await this.$db.account.get('me')
-      this.user = { ...this.db.user }
-    },
-
-    async init() {
-      await this.getData()
-      // this.ui.loading = false
-    },
+    // async init() {
+    // await this.getData()
+    // this.ui.loading = false
+    // },
   },
 
   mounted() {

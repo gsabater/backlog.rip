@@ -31,6 +31,11 @@ aside .dropdown-menu {
   & .dropdown-divider {
     margin: 0.5rem -10px;
   }
+
+  & .router-link-active {
+    background-color: var(--tblr-dropdown-link-active-bg);
+    color: var(--tblr-dropdown-link-color);
+  }
 }
 
 // #sidebar-menu li {

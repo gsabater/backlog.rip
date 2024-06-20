@@ -8,7 +8,8 @@
 
 export default {
   show(params) {
-    useNuxtApp().$emit('notifications:show', {
+    let $nuxt = useNuxtApp()
+    $nuxt.$mitt.emit('notification:show', {
       // type: 'error',
       text: 'Debes revisar los campos antes de continuar',
       ...params,

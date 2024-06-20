@@ -7,7 +7,9 @@
 @import '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
 @import '../../node_modules/@tabler/core/dist/css/demo.css';
 @import 'extend';
-@import 'tabler_override';
+
+@import 'overrides/tabler';
+@import 'overrides/vuetify';
 
 @import 'base';
 @import 'colors';

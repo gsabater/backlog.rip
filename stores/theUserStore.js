@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Wed Apr 10 2024
+ * Modified: Sat Jun 29 2024
  */
 
 let $nuxt = null
@@ -142,26 +142,28 @@ export const useUserStore = defineStore('user', {
 
         let provider = jxr.data.providers.find((p) => p.provider === 'steam')
         this.local.steam_data = provider?.data || null
-        this.local.steam_updated_at = provider.updated_at
+        // this.local.steam_updated_at = provider.updated_at
 
         log('🧭 Userdata from API', jxr.data)
       }
     },
 
-    // //+-------------------------------------------------
-    // // storeAccount()
-    // // Store the resulting userdata in the local database
-    // // -----
-    // // Created on Fri Nov 17 2023
-    // //+-------------------------------------------------
-    // async storeAccount(me) {
-    //   let json = JSON.parse(JSON.stringify(me))
-    //   await $nuxt.$db.account.put({
-    //     ...json,
-    //     uuid: 'me',
-    //     updated_at: dates.now(),
-    //   })
-    // },
+    //+-------------------------------------------------
+    // register()
+    // Stores the user data after the first login
+    // -----
+    // Created on Sat Jun 29 2024
+    //+-------------------------------------------------
+    async register() {
+      let json = JSON.parse(JSON.stringify(this.local))
+      await $nuxt.$db.account.put({
+        ...json,
+        uuid: 'me',
+        updated_at: dates.now(),
+      })
+
+      this.user = { ...this.api, ...this.local }
+    },
 
     //+-------------------------------------------------
     // updateAccount()
@@ -203,6 +205,22 @@ export const useUserStore = defineStore('user', {
     //   delete $nuxt.$axios.defaults.headers.common['Authorization']
     //   navigateTo('/login')
     // },
+  },
+
+  getters: {
+    //+-------------------------------------------------
+    // canUpdateSteamLibrary()
+    // Returns true if the user is a guest
+    // NOTE: We set 1h of cooldown while we test the feature
+    // -----
+    // Created on Sat Jun 29 2024
+    //+-------------------------------------------------
+    canUpdateSteamLibrary() {
+      let last_sync = this.user.steam_updated_at
+      if (!last_sync) return true
+
+      return dates.hoursAgo(last_sync) > 24
+    },
   },
 })
 

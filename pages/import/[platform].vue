@@ -194,7 +194,7 @@
                 </div>
                 <div>
                   <div
-                    v-if="lastUpdateInHours >= 24"
+                    v-if="$auth.canUpdateSteamLibrary"
                     class="btn btn-primary w-100 mb-2"
                     @click="scanAndPrepare">
                     <Icon class="me-2">ArrowsTransferDown</Icon>
@@ -205,12 +205,12 @@
                     Syncronize your {{ module.store }} library
                   </div>
 
-                  <small class="text-muted">
+                  <small v-if="$auth.user.steam_updated_at" class="text-muted">
                     Last update, {{ dates.timeAgo($auth.user.steam_updated_at) }}
                   </small>
 
                   <div
-                    v-if="lastUpdateInHours < 24"
+                    v-if="!$auth.canUpdateSteamLibrary"
                     class="invalid-feedback d-block mt-1">
                     You have recently updated your library. Please wait a while before
                     updating again.
@@ -902,7 +902,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Tue May 07 2024
+ * Modified: Sat Jun 29 2024
  **/
 
 const importer = null
@@ -966,10 +966,10 @@ export default {
       return this.$route.params?.platform || null
     },
 
-    lastUpdateInHours() {
-      let last_sync = this.$auth?.user?.steam_updated_at ?? null
-      return dates.hoursAgo(last_sync)
-    },
+    // lastUpdateInHours() {
+    //   let last_sync = this.$auth?.user?.steam_updated_at ?? null
+    //   return dates.hoursAgo(last_sync)
+    // },
 
     steps() {
       const steps = {

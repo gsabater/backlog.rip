@@ -20,7 +20,7 @@
 </pre>
 
   <slot name="body" :items="items">
-    <div class="row row-deck row-cards row-games-list">
+    <div v-if="items.length" class="row row-deck row-cards row-games-list">
       <template v-for="(app, i) in items" :key="'card' + i">
         <div
           class="col col-6 col-sm-4 col-md-3 col-lg-custom pt-1 pb-3"
@@ -65,7 +65,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue May 14 2024
+ * Modified: Sat Jun 29 2024
  **/
 
 // import { useThrottleFn } from '@vueuse/core'

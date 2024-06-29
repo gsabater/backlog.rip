@@ -11,8 +11,8 @@
           <div class="card">
             <div class="card-body">
               <div class="row align-items-center">
-                <div class="col-12">
-                  <h3 class="card-title mb-1">Loading your userdata, please wait...</h3>
+                <div class="col-8">
+                  <h3 class="card-title mb-1">Loading your account, please wait...</h3>
                   <div class="mt-3">
                     <div class="row g-2 align-items-center">
                       <div class="col">
@@ -42,7 +42,7 @@
  *           this token identifies the user in the backlog.rip database
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed Apr 10 2024
+ * Modified: Sat Jun 29 2024
  **/
 
 export default {
@@ -88,7 +88,7 @@ export default {
         await this.userStore.getApiData()
 
         // And update the local ddbb
-        await this.userStore.updateAccount()
+        await this.userStore.register()
 
         this.$router.push(redirect ? redirect : '/welcome')
       } catch (e) {
@@ -100,6 +100,13 @@ export default {
       }
     },
 
+    //+-------------------------------------------------
+    // init()
+    // When the page is loaded, take the token from the URL
+    // and authenticate the user
+    // -----
+    // Created on Fri Dec 29 2023
+    //+-------------------------------------------------
     async init() {
       const route = this.$route
       const { token } = route.query
@@ -107,6 +114,7 @@ export default {
       this.token = token
       this.auth = this.$auth
 
+      // TODO: can show a message if no token is found
       if (!token) return
       this.authenticate()
     },

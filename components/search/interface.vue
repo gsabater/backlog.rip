@@ -40,7 +40,7 @@
             Try importing your Steam games or add any game you want from games page.
           </p>
           <div class="empty-action">
-            <b-btn to="import/steam" color="primary" size="sm" class="me-3">
+            <b-btn to="/import/steam" color="primary" size="sm" class="me-3">
               <!-- <Icon>StepInto</Icon> -->
               Import your library
             </b-btn>
@@ -88,7 +88,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri May 10 2024
+ * Modified: Sat Jun 29 2024
  **/
 
 export default {

@@ -79,7 +79,7 @@ export default {
     if (!data) console.warn('update() called without data', app)
 
     app.name = data.name
-    app.steam_id = Number(data.appid)
+    app.id.steam = Number(data.appid)
 
     // Flag this item as dirty to be saved by datastore
     app.is.dirty = true

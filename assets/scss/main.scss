@@ -1,6 +1,10 @@
 @charset "utf-8";
 
-// Import libs
+//+-------------------------------------------------
+// Libraries and overrides
+//
+//+-------------------------------------------------
+
 @import '../../node_modules/@tabler/core/dist/css/tabler.css';
 // @import '../../node_modules/@tabler/core/dist/css/tabler-flags.css';
 // @import '../../node_modules/@tabler/core/dist/css/tabler-payments.css';
@@ -11,15 +15,21 @@
 @import 'overrides/tabler';
 @import 'overrides/vuetify';
 
+//+-------------------------------------------------
+// Mixins and default CSS
+//+-------------------------------------------------
+
 @import 'base';
 @import 'colors';
 @import 'borders';
 
-// Import mixins
 @import 'mixins/cards';
 @import 'mixins/buttons';
 
-// Import layout
+//+-------------------------------------------------
+// Partials
+//+-------------------------------------------------
+
 @import 'partials/nav';
 @import 'partials/home';
 @import 'partials/search';
@@ -30,7 +40,12 @@
 @import 'partials/base/_lists';
 @import 'partials/base/_modal';
 
-// Import components
+//+-------------------------------------------------
+// Components
+// styles created for distinct UI elements, like buttons or nav bars,
+// to promote reusability and organization in stylesheets.
+//+-------------------------------------------------
+
 @import 'components/b-menu';
 @import 'components/b-game';
 @import 'components/b-list';

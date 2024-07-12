@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="card-body">
-      <h2 class="mb-2">Account</h2>
+      <h2 class="mb-3">Account</h2>
       <p class="card-subtitle">Profile details and personal settings</p>
       <!-- <div class="row align-items-center">
         <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url(./static/avatars/000m.jpg)"></span>
@@ -96,7 +96,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Jun 19 2024
+ * Modified: Tue Jul 09 2024
  **/
 
 export default {

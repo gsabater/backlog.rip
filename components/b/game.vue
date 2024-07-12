@@ -33,7 +33,9 @@
         {{ app.name }}
       </span>
 
-      <small v-if="body.includes('score')" class="details__secondary text-muted">
+      <small
+        v-if="body.includes('score') && app.score"
+        class="details__secondary text-muted">
         <Icon
           size="12"
           width="1.8"
@@ -87,18 +89,6 @@
         </Icon>
         {{ dates.minToHours(app.hltb.main / 60) }}
       </small>
-
-      <!-- <div v-if="$app.dev" class="details__secondary text-muted">
-        score: {{ app.score }} -- {{ app._.score }}
-        <br />
-        state: {{ app.state ?? '--' }}
-        <br />
-        lib: {{ app.is.lib ?? '--' }}
-        <template v-if="app.released_at">
-          <br />
-          {{ app.released_at }} -- {{ app._.released_at }}
-        </template>
-      </div> -->
     </div>
     <!-- <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -139,7 +129,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri May 17 2024
+ * Modified: Fri Jul 12 2024
  **/
 
 export default {

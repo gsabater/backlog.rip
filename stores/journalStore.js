@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th December 2023
- * Modified: Sun Jan 21 2024
+ * Modified: Thu Jul 04 2024
  */
 
 //+-------------------------------------------------
@@ -50,9 +50,7 @@ export const useJournalStore = defineStore('journal', {
     //+-------------------------------------------------
     async list() {
       $nuxt = useNuxtApp()
-      let items = await $nuxt.$db.journal
-        // .filter((game) => game.api_id === undefined)
-        .toArray()
+      let items = await $nuxt.$db.journal.toArray()
 
       return items
     },

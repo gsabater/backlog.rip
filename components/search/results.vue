@@ -65,7 +65,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat Jun 29 2024
+ * Modified: Thu Jul 04 2024
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -138,7 +138,7 @@ export default {
           $data.search({ ...props.filters })
         }
       },
-      500,
+      1000,
       true
     )
 
@@ -345,16 +345,20 @@ export default {
 
     this.$mitt.on('data:updated', () => {
       if (!$app.ready) return
-
       if (this.$app.dev) log('✨ Search from event', 'data:updated')
       this.search('event')
     })
 
-    // window.$results = this
+    this.$mitt.on('data:deleted', () => {
+      if (!$app.ready) return
+      if (this.$app.dev) log('✨ Search from event', 'data:deleted')
+      this.search('event')
+    })
   },
 
   beforeUnmount() {
     this.$mitt.off('data:updated')
+    this.$mitt.off('data:deleted')
   },
 }
 </script>

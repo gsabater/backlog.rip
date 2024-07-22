@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Sat Jun 29 2024
+ * Modified: 19 July 2024 - 16:06:19
  */
 
 let $nuxt = null
@@ -22,7 +22,7 @@ export const useUserStore = defineStore('user', {
     api: {},
     local: {},
 
-    menu: {},
+    // menu: {}, -> made a getter dude
     config: {},
 
     redirectTo: null,
@@ -105,7 +105,7 @@ export const useUserStore = defineStore('user', {
         {})
 
       this.config = _config
-      this.menu = _config.menu || {}
+      // this.menu = _config.menu || {}
     },
 
     //+-------------------------------------------------
@@ -182,15 +182,18 @@ export const useUserStore = defineStore('user', {
     },
 
     //+-------------------------------------------------
-    // updateConfig()
+    // storeConfig()
     // Updates $config store and this.config data
     // -----
     // Created on Sun Feb 18 2024
     //+-------------------------------------------------
-    async updateConfig(field) {
+    async storeConfig(field) {
+      console.warn('storeConfig', field, this.config[field])
+
+      let value = JSON.parse(JSON.stringify(this.config[field]))
       await $nuxt.$db.config.put({
         key: field,
-        value: this.config[field],
+        value: value,
       })
 
       $nuxt.$app.dev = this.config.debug
@@ -208,6 +211,20 @@ export const useUserStore = defineStore('user', {
   },
 
   getters: {
+    //+-------------------------------------------------
+    // menu()
+    // Getter for the menu object
+    // -----
+    // Created on Fri Jul 19 2024
+    //+-------------------------------------------------
+    menu() {
+      let menu = this.config.menu || {}
+      menu.pinned = this.config.pinned
+      menu.favorites = this.config.favorites
+
+      return menu
+    },
+
     //+-------------------------------------------------
     // canUpdateSteamLibrary()
     // Returns true if the user is a guest

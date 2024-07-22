@@ -11,6 +11,8 @@
 import { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
+  compatibilityDate: '2024-07-04',
+
   // ssr: false,
   sourcemap: { server: false, client: true },
 
@@ -34,6 +36,7 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/devtools',
     '@nuxtjs/seo',
+    '@nuxtjs/supabase',
     '@pinia/nuxt',
     '@vueuse/nuxt',
 
@@ -62,6 +65,10 @@ export default defineNuxtConfig({
 
   build: {
     transpile: ['vue-sonner', 'rxjs', 'vuetify'],
+  },
+
+  supabase: {
+    redirect: false,
   },
 
   content: {

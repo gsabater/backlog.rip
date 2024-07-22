@@ -5,7 +5,7 @@
     style="
       position: fixed;
       bottom: 10px;
-      left: 400px;
+      left: 230px;
       z-index: 9999;
       max-height: 120vh;
       overflow-y: scroll;

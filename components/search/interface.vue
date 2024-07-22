@@ -231,6 +231,7 @@ export default {
     // -----
     // Created on Tue Nov 14 2023
     // Updated on Sun Jan 28 2024 - Added slug param
+    // Updated on Sun Jul 14 2024 - Use slug for special filters
     //+-------------------------------------------------
     mergeFilters() {
       const loaded = {}
@@ -241,12 +242,12 @@ export default {
       }
 
       if (this.slug && this.states.length) {
-        const state = this.states.find((g) => g.key == this.slug)
+        const state = this.states.find((g) => g.slug == this.slug)
         if (state) loaded.states = [state.id]
       }
 
-      if (this.slug && this.slug == 'pinned') {
-        loaded.states = ['pinned']
+      if (this.slug && ['pinned', 'hidden', 'favorites'].includes(this.slug)) {
+        loaded.is = this.slug
       }
 
       this.f = {
@@ -255,11 +256,14 @@ export default {
         ...this.filters,
         ...loaded,
       }
+
+      // console.warn(this.f)
       // console.warn('📒 mounted filters')
     },
 
     async getData() {
       this.slug = this.$route.params?.slug || null
+      if (this.slug && typeof this.slug == 'object') this.slug = this.slug[0]
 
       // if (this.slug) await this.repositoryStore.getGenres()
       // else this.repositoryStore.getGenres()

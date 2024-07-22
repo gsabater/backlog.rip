@@ -266,7 +266,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Tue Jun 04 2024
+ * Modified: 18 July 2024 - 17:02:33
  **/
 
 export default {
@@ -284,9 +284,7 @@ export default {
 
   methods: {
     async update(store, field) {
-      if (store == 'config') this.$auth.updateConfig(field)
-      else this.$auth.updateAccount(field)
-
+      this.$auth.storeConfig(field)
       this.$toast.success('Your preferences have been updated')
     },
   },

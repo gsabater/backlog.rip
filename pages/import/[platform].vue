@@ -225,7 +225,7 @@
                         v-model="$auth.config.autosync_steam"
                         class="form-check-input position-static"
                         type="checkbox"
-                        @change="updateConfig('autosync_steam')" />
+                        @change="storeConfig('autosync_steam')" />
                       <span class="form-check-label form-check-label-on">
                         Auto updates are enabled
                       </span>
@@ -241,7 +241,7 @@
                           'Your Steam library will be automatically updated to stay synchronized with your backlog.rip account. This update process occurs every 24 hours',
                         placement: 'top',
                       }"
-                      class="text-muted cursor-help">
+                      class="text-muted">
                       What is this?
                       <span class="form-help mx-2">?</span>
                     </small>
@@ -665,7 +665,7 @@
                       <img
                         loading="lazy"
                         :src="`https://cdn.akamai.steamstatic.com/steam/apps/${
-                          app.appid || app.steam_id
+                          app.appid || app.id.steam
                         }/capsule_184x69.jpg?t=1699291031`"
                         class="b-poster"
                         style="max-width: 120px" />
@@ -754,7 +754,7 @@
                     </div>
                     <div class="col-auto text-secondary">
                       <code v-tippy="'Steam appid'">
-                        #{{ app.appid || app.steam_id }}
+                        #{{ app.appid || app.id.steam }}
                       </code>
                     </div>
 
@@ -902,7 +902,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Sat Jun 29 2024
+ * Modified: 18 July 2024 - 17:02:53
  **/
 
 const importer = null
@@ -1196,7 +1196,7 @@ export default {
       if (this.ui.tab !== 'appsToReview') return
 
       const source = this.data.appsToReview.find(
-        (el) => el.appid === (app.appid || app.steam_id)
+        (el) => el.appid === (app.appid || app.id.steam)
       )
 
       if (flag === 'ignore') {
@@ -1317,8 +1317,8 @@ export default {
       this.process.ready = true
     },
 
-    updateConfig(field) {
-      this.$auth.updateConfig(field)
+    storeConfig(field) {
+      this.$auth.storeConfig(field)
       this.$toast.success('Your preferences have been updated')
     },
 

@@ -1,14 +1,4 @@
 <template>
-  <!-- <div class="page-header d-print-none">
-    <div class="container-xl">
-      <div class="row g-2 align-items-center">
-        <div class="col">
-          <h2 class="page-title">Account and settings</h2>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
   <div class="page-body">
     <div class="container-xl">
       <div class="row gx-lg-5 mx-auto">
@@ -29,15 +19,17 @@ import states from './sections/states'
 import linked from './sections/linked'
 import history from './sections/history'
 import database from './sections/database'
+import preferences from './sections/preferences'
 
 export default {
-  name: 'AccountSection',
+  name: 'AccountPages',
   components: {
     me,
     states,
     linked,
     history,
     database,
+    preferences,
   },
 
   data() {

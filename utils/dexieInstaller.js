@@ -107,11 +107,16 @@ export class DexieInstaller {
   async checkin() {
     const config = {
       debug: false,
-      created_at: dates.now(),
       autosync_steam: false,
+
+      pinned: true,
+      favorites: true,
+      hidden: true,
       menu: {
         states: [1, 2, 3],
       },
+
+      created_at: dates.now(),
     }
 
     for (const [option, value] of Object.entries(config)) {
@@ -136,10 +141,14 @@ export class DexieInstaller {
   // Install default states on indexeddb
   // -----
   // Created on Tue Nov 28 2023
+  // Updated on Fri Jul 12 2024 - Added slugs
   //+-------------------------------------------------
   async states() {
     let count = await this.$db.states.count()
-    if (count > 0) return
+    if (count > 0) {
+      this.slugStates()
+      return
+    }
 
     let states = this.defaultStates.map((state) => {
       return {
@@ -150,6 +159,29 @@ export class DexieInstaller {
     })
 
     await this.$db.states.bulkAdd(states)
+  }
+
+  //+-------------------------------------------------
+  // slugStates()
+  // Create a slug for each state
+  // -----
+  // Created on Fri Jul 12 2024
+  //+-------------------------------------------------
+  async slugStates() {
+    let states = await this.$db.states.toArray()
+    if (!states.some((state) => !state.hasOwnProperty('slug'))) return
+
+    states = states.map((state) => {
+      if (state.slug) return state
+
+      return {
+        ...state,
+        slug: format.stringToslug(state.name),
+        updated_at: dates.now(),
+      }
+    })
+
+    this.$db.states.bulkPut(states)
   }
 
   //+-------------------------------------------------

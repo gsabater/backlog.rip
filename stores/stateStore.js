@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Thu Jun 20 2024
+ * Modified: 19 July 2024 - 11:39:34
  */
 
 let $nuxt = null
@@ -20,6 +20,7 @@ export const useStateStore = defineStore('state', {
 
     index: [], // Holds index for every state keyed by state.id
 
+    hidden: [], // Holds index for special state 'hidden'
     pinned: [], // Holds index for special state 'pinned'
     backlog: [], // Holds index for special state 'backlog'
     playing: [], // Holds index for special state 'playing'
@@ -63,15 +64,9 @@ export const useStateStore = defineStore('state', {
     // -----
     // Created on Fri Jan 12 2024
     //+-------------------------------------------------
-    async get(id) {
+    get(id) {
       return this.states.find((state) => state.id === id)
     },
-
-    // async update(data) {
-    //   const $nuxt = useNuxtApp()
-    //   const id = await $nuxt.$db.states.put(data)
-    //   return id
-    // },
 
     //+-------------------------------------------------
     // create()
@@ -105,6 +100,12 @@ export const useStateStore = defineStore('state', {
       await this.load(true)
     },
 
+    //+-------------------------------------------------
+    // delete()
+    // Deletes a state in the $db
+    // -----
+    // Created on Thu Jun 20 2024
+    //+-------------------------------------------------
     async delete(id) {
       this.states = this.states.filter((state) => state.id !== id)
 
@@ -164,10 +165,16 @@ export const useStateStore = defineStore('state', {
     // -----
     // Created on Sat Jan 06 2024
     // Updated on Fri May 10 2024 - Added pinned
+    // Created on Thu Jul 11 2024 - Added hidden
     //+-------------------------------------------------
     set(uuid, state) {
       if (state == 'pinned') {
         this.pin(uuid)
+        return
+      }
+
+      if (state == 'hidden') {
+        this.hide(uuid)
         return
       }
 
@@ -208,8 +215,8 @@ export const useStateStore = defineStore('state', {
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // pin()
+    // Toggle the is.pinned flag on an app
     // -----
     // Created on Fri May 10 2024
     //+-------------------------------------------------
@@ -217,10 +224,11 @@ export const useStateStore = defineStore('state', {
       let app = $data.get(uuid)
       let old = app.is?.pinned || false
 
-      // Update the pin status
+      // Update the pinned status
       // on $game and $data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+      app.is.lib = null
       app.is.dirty = true
       app.is.pinned = !old
 
@@ -233,6 +241,38 @@ export const useStateStore = defineStore('state', {
       })
 
       $nuxt.$toast.success('Game has been ' + (old ? 'unpinned' : 'pinned'), {
+        // description: 'Monday, January 3rd at 6:00pm',
+      })
+
+      this.indexLibrary()
+    },
+
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Thu Jul 11 2024
+    //+-------------------------------------------------
+    hide(uuid) {
+      let app = $data.get(uuid)
+      let old = app.is?.hidden || false
+
+      // Update the hidden status
+      // on $game and $data
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      app.is.dirty = true
+      app.is.hidden = !old
+
+      $game.app.is.hidden = !old
+      $game.update(uuid, { ...app })
+
+      $nuxt.$mitt.emit('hidden:change', {
+        uuid: uuid,
+        hidden: !old,
+      })
+
+      $nuxt.$toast.success('Game has been ' + (old ? 'unhidden' : 'hidden'), {
         // description: 'Monday, January 3rd at 6:00pm',
       })
 
@@ -264,6 +304,10 @@ export const useStateStore = defineStore('state', {
 
       this.pinned = library
         .filter((app) => app.is && app.is.pinned)
+        .map((app) => app.uuid)
+
+      this.hidden = library
+        .filter((app) => app.is && app.is.hidden)
         .map((app) => app.uuid)
     },
 
@@ -309,6 +353,29 @@ export const useStateStore = defineStore('state', {
 
       await this.load()
       await this.indexLibrary()
+
+      window.$states = {
+        x: this,
+        k: this.keyed,
+        s: this.states,
+        p: this.pinned,
+        h: this.hidden,
+        index: this.index,
+      }
+    },
+  },
+
+  getters: {
+    pinnedStates() {
+      if (!this.states.length) return ['xx']
+      const pinned = $nuxt.$auth?.menu?.states || []
+      return this.states.filter((state) => pinned.includes(state.id))
+    },
+
+    unPinnedStates() {
+      if (!this.states.length) return ['xx']
+      const pinned = $nuxt.$auth?.menu?.states || []
+      return this.states.filter((state) => !pinned.includes(state.id))
     },
   },
 })

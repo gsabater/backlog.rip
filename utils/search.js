@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Thu Jun 20 2024
+ * Modified: Thu Jul 11 2024
  */
 
 export default {
@@ -25,12 +25,12 @@ export default {
     for (const uuid in source) {
       const app = source[uuid]
 
-      // Filter: Ignored games
-      // Remove any games ignored
+      // Filter: Hidden games
+      // Remove any games hidden
       //+---------------------------------------
-      if (app.is?.ignored) {
+      if (app.is?.hidden) {
         filtered.push(uuid)
-        // console.warn('🛑 Skipping ignored app', app.name, app)
+        // console.warn('🛑 Skipping hidden app', app.name, app)
 
         continue
       }
@@ -61,7 +61,7 @@ export default {
       // }
 
       // Filter: Name
-      // Match with on app.name and store_ids
+      // Match with on app.name and store IDs
       //+---------------------------------------
       if (filters?.string?.length > 0) {
         let appName = app.name ? app.name : ''
@@ -69,10 +69,10 @@ export default {
 
         if (
           appName.indexOf(searchString) === -1 &&
-          app.steam_id?.toString() !== searchString
+          app.id.steam?.toString() !== searchString
         ) {
           // counters.skip++
-          // data.hidden.string.push(steam_id)
+          // data.hidden.string.push(id.steam)
 
           filtered.push(uuid)
           // console.warn(

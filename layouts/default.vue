@@ -130,16 +130,6 @@
             <span class="nav-link-title">Dashboard</span>
           </NuxtLink>
 
-          <NuxtLink to="/library" class="dropdown-item">
-            <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-              <Icon size="16">LayoutDashboard</Icon>
-            </span>
-            <span class="nav-link-title">Your library</span>
-            <small class="ms-auto text-secondary">
-              {{ format.num($app.count.library) }}
-            </small>
-          </NuxtLink>
-
           <NuxtLink to="/journal" class="dropdown-item">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">Notebook</Icon>
@@ -152,24 +142,48 @@
 
           <div class="dropdown-divider"></div>
 
-          <NuxtLink to="/library/pinned" class="dropdown-item pe-2">
+          <NuxtLink to="/library" class="dropdown-item">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-              <Icon size="16">Bookmark</Icon>
+              <Icon size="16">LayoutDashboard</Icon>
             </span>
-            <span class="nav-link-title">Pinned games</span>
+            <span class="nav-link-title">Your library</span>
+            <small class="ms-auto text-secondary">
+              {{ format.num($app.count.library) }}
+            </small>
 
-            <Icon
+            <!-- <Icon
+              style="outline: none"
               class="ms-auto text-secondary"
               size="15"
               v-tippy="'Configure'"
               @click.prevent="goTo('/account/states')">
               Settings2
-            </Icon>
+            </Icon> -->
+          </NuxtLink>
+
+          <NuxtLink
+            v-if="$auth.menu.favorites"
+            to="/library/favorites"
+            class="dropdown-item pe-2">
+            <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+              <Icon size="16">Heart</Icon>
+            </span>
+            <span class="nav-link-title">Favorites</span>
+          </NuxtLink>
+
+          <NuxtLink
+            v-if="$auth.menu.pinned"
+            to="/library/pinned"
+            class="dropdown-item pe-2">
+            <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+              <Icon size="16">Bookmark</Icon>
+            </span>
+            <span class="nav-link-title">Pinned</span>
           </NuxtLink>
 
           <NuxtLink
             v-for="(state, i) in pinnedStates"
-            :to="'/library/' + (state.key || state.id)"
+            :to="'/library/' + state.slug"
             :key="'state' + i"
             class="dropdown-item ps-3 pe-1">
             <div class="content d-flex align-items-center w-100 px-1">
@@ -194,14 +208,14 @@
             </div>
           </NuxtLink>
 
-          <div class="dropdown-divider"></div>
+          <!-- <div class="dropdown-divider"></div>
 
           <NuxtLink to="/import/steam" class="dropdown-item mt-1">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">SquareRoundedPlus</Icon>
             </span>
             <span class="nav-link-title">Import your games</span>
-          </NuxtLink>
+          </NuxtLink> -->
         </div>
       </div>
 
@@ -238,7 +252,7 @@
           </div>
         </div>
 
-        <div v-else class="px-3 mt-2 mb-3" @click.stop="$mitt.emit('search:palette')">
+        <!-- <div v-else class="px-3 mt-2 mb-3" @click.stop="$mitt.emit('search:palette')">
           <div class="input-group input-group-flat input-palette">
             <span class="input-group-text">
               <Icon size="16" class="me-1">Search</Icon>
@@ -252,7 +266,7 @@
               <kbd style="font-size: 0.6rem">Ctrl K</kbd>
             </span>
           </div>
-        </div>
+        </div> -->
 
         <div class="row w-100 mb-3">
           <div class="col col d-flex justify-content-center">
@@ -435,6 +449,81 @@
           </VueFinalModal>
         </client-only>
 
+        <div class="nav-item d-none d-md-flex align-items-center">
+          <!-- <div class="px-3" @click.stop="$mitt.emit('search:palette')">
+            <div class="input-group input-group-flat input-palette">
+              <span class="input-group-text">
+                <Icon size="16" class="me-1">Search</Icon>
+              </span>
+              <input
+                type="text"
+                class="form-control"
+                autocomplete="off"
+                placeholder="Search" />
+              <span class="input-group-text">
+                <kbd style="font-size: 0.6rem">Ctrl K</kbd>
+              </span>
+            </div>
+          </div> -->
+
+          <button
+            style="transform: scale(0.9)"
+            class="form-control d-flex items-center cursor-pointer"
+            @click.stop="$mitt.emit('search:palette')">
+            <!-- <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon icon-tabler icon-tabler-search icon form-control-icon"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-label="Quick search">
+              <circle cx="10" cy="10" r="7"></circle>
+              <line x1="21" y1="21" x2="15" y2="15"></line>
+            </svg> -->
+            <Icon size="16" class="text-secondary mx-1">Search</Icon>
+            <div class="flex-fill">
+              <span class="form-control-placeholder text-secondary ms-3 me-6">
+                Quick search…
+              </span>
+            </div>
+            <!-- <span class="badge bg-purple-lt">Control + K</span> -->
+            <span class="v-kbd">Control + K</span>
+          </button>
+
+          <div class="dropdown">
+            <div class="btn dropdown-toggle" style="transform: scale(0.9)">
+              <span class="me-2">Add games</span>
+            </div>
+
+            <b-dropdown trigger="mouseenter focus click hover manual" placement="bottom">
+              <span class="dropdown-header">Add games to your library</span>
+              <div class="dropdown-item" @click.stop="$mitt.emit('game:add')">
+                <Icon size="18" class="me-2 text-muted">SquareRoundedPlus</Icon>
+                Manually
+                <!-- <small class="text-secondary ms-auto me-0">Insert</small> -->
+              </div>
+              <div class="dropdown-item">
+                <Icon size="18" class="me-2 text-muted">BrandSteam</Icon>
+                Import your Steam account
+              </div>
+              <!-- <NuxtLink to="/library" class="dropdown-item">
+                Library
+                <small class="text-secondary ms-auto me-0">
+                  {{ format.num($app.count.library) }}
+                </small>
+              </NuxtLink>
+              <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
+              <div class="dropdown-divider"></div>
+              <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink> -->
+            </b-dropdown>
+          </div>
+        </div>
+
         <div
           class="d-none d-md-flex navbar-nav flex-row order-md-last align-items-center">
           <div class="mx-3">
@@ -478,6 +567,9 @@
                 <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
                 <div class="dropdown-divider"></div>
                 <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
+                <NuxtLink to="/account/preferences" class="dropdown-item">
+                  Preferences
+                </NuxtLink>
               </b-dropdown>
             </div>
             <!-- <b-menu ref="menu" position="end">
@@ -590,9 +682,11 @@
   <client-only>
     <helpers-notification />
 
-    <game-details></game-details>
     <game-manager></game-manager>
     <search-palette></search-palette>
+
+    <game-add></game-add>
+    <game-details></game-details>
     <!-- <b-backdrop></b-backdrop> -->
     <!-- <ModalsContainer /> -->
 
@@ -709,7 +803,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Sun Jun 16 2024
+ * Modified: 19 July 2024 - 16:07:11
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

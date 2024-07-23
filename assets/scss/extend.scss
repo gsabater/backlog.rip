@@ -9,11 +9,11 @@
 }
 
 .scale-90 {
-  transform: scale(.9);
+  transform: scale(0.9);
 }
 
 .scale-95 {
-  transform: scale(.95);
+  transform: scale(0.95);
 }
 
 .mx-auto {
@@ -202,7 +202,8 @@
   padding-left: 6rem !important;
 }
 
-.capitalized, .capitalize {
+.capitalized,
+.capitalize {
   text-transform: capitalize !important;
 }
 

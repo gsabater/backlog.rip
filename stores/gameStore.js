@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Thu Jul 11 2024
+ * Modified: 23 July 2024 - 16:49:22
  */
 
 let $nuxt = null
@@ -15,6 +15,8 @@ export const useGameStore = defineStore('game', {
   state: () => ({
     app: {
       is: {},
+      id: {},
+      genres: [],
     },
   }),
 
@@ -224,6 +226,8 @@ export const useGameStore = defineStore('game', {
       game.playtime = game.playtime || {}
 
       if (game.steam_id) game.steam_id = Number(game.steam_id)
+
+      if (game.epic_id) game.id.epic = game.epic_id
       if (game.id.steam) game.id.steam = Number(game.id.steam)
 
       // if (game.is_api) {
@@ -233,6 +237,7 @@ export const useGameStore = defineStore('game', {
 
       // game.updated_at = game.updated_at || 0
 
+      delete game.epic_id
       delete game.trigger
       delete game.data
       return game

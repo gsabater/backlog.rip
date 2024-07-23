@@ -36,7 +36,7 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/devtools',
     '@nuxtjs/seo',
-    '@nuxtjs/supabase',
+    // '@nuxtjs/supabase',
     '@pinia/nuxt',
     '@vueuse/nuxt',
 
@@ -67,9 +67,9 @@ export default defineNuxtConfig({
     transpile: ['vue-sonner', 'rxjs', 'vuetify'],
   },
 
-  supabase: {
-    redirect: false,
-  },
+  // supabase: {
+  //   redirect: false,
+  // },
 
   content: {
     // ... options
@@ -146,6 +146,10 @@ export default defineNuxtConfig({
       },
     },
   },
+
+  // nitro: {
+  //   preset: 'static',
+  // },
 
   devtools: {
     enabled: false,

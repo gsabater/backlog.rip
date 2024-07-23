@@ -35,10 +35,65 @@
 
         <!--
           *+---------------------------------
+          *| States block
+          *| Inner dropdown with states
+          *+--------------------------------- -->
+        <div class="dropdown-item">
+          <div style="width: 30px">
+            <Icon size="18" class="text-muted" width="1.5">Background</Icon>
+          </div>
+
+          <span>Assign a state</span>
+
+          <span class="text-muted ms-auto">
+            <Icon size="14">CaretRightFilled</Icon>
+          </span>
+          <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
+            <div
+              v-for="(state, i) in states"
+              :key="'state' + i"
+              class="dropdown-item px-2"
+              :class="{ active: app.state == state.id }"
+              @click="setState(state)">
+              <div
+                v-if="app.state"
+                class="selection"
+                style="margin-right: 0.55rem; transform: translateY(-1px)">
+                <!-- <input
+                  type="checkbox"
+                  class="form-check-input"
+                  style="transform: scale(0.8)" /> -->
+                <Icon v-if="app.state == state.id" style="color: var(--tblr-primary)">
+                  SquareCheck
+                </Icon>
+                <Icon v-else style="color: #666">Square</Icon>
+              </div>
+              <div class="content d-flex align-items-center w-100 px-1">
+                <span
+                  class="status-dot me-2"
+                  :style="{ 'background-color': state.color || '' }"
+                  :class="{ 'status-dot-animated': app.state == state.id }"></span>
+
+                <span class="me-4">
+                  {{ state.name }}
+                </span>
+
+                <tippy
+                  class="text-muted ms-auto ms-1 cursor-help"
+                  :content="state.description">
+                  <span class="form-help">?</span>
+                </tippy>
+              </div>
+            </div>
+          </b-dropdown>
+        </div>
+
+        <!--
+          *+---------------------------------
           *| Add to library
           *| Click to add a game to library
           *+--------------------------------- -->
-        <div @click="setState({ id: 'hidden' })" class="dropdown-item">
+        <div v-if="!app.is || !app.is.lib" @click="addToLibrary" class="dropdown-item">
           <div class="d-flex" style="width: 30px">
             <Icon size="18" class="text-muted" width="1.5">SquareRoundedPlus</Icon>
           </div>
@@ -108,61 +163,6 @@
             content="Add this game to a special list for quick access. This does not add the game to your library">
             <span class="form-help">?</span>
           </tippy>
-        </div>
-
-        <!--
-          *+---------------------------------
-          *| States block
-          *| Inner dropdown with states
-          *+--------------------------------- -->
-        <div class="dropdown-item">
-          <div style="width: 30px">
-            <Icon size="18" class="text-muted" width="1.5">Background</Icon>
-          </div>
-
-          <span>Assign a state</span>
-
-          <span class="text-muted ms-auto">
-            <Icon size="14">CaretRightFilled</Icon>
-          </span>
-          <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
-            <div
-              v-for="(state, i) in states"
-              :key="'state' + i"
-              class="dropdown-item px-2"
-              :class="{ active: app.state == state.id }"
-              @click="setState(state)">
-              <div
-                v-if="app.state"
-                class="selection"
-                style="margin-right: 0.55rem; transform: translateY(-1px)">
-                <!-- <input
-                  type="checkbox"
-                  class="form-check-input"
-                  style="transform: scale(0.8)" /> -->
-                <Icon v-if="app.state == state.id" style="color: var(--tblr-primary)">
-                  SquareCheck
-                </Icon>
-                <Icon v-else style="color: #666">Square</Icon>
-              </div>
-              <div class="content d-flex align-items-center w-100 px-1">
-                <span
-                  class="status-dot me-2"
-                  :style="{ 'background-color': state.color || '' }"
-                  :class="{ 'status-dot-animated': app.state == state.id }"></span>
-
-                <span class="me-4">
-                  {{ state.name }}
-                </span>
-
-                <tippy
-                  class="text-muted ms-auto ms-1 cursor-help"
-                  :content="state.description">
-                  <span class="form-help">?</span>
-                </tippy>
-              </div>
-            </div>
-          </b-dropdown>
         </div>
 
         <!--
@@ -321,11 +321,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Fri Jul 12 2024
+ * Modified: 23 July 2024 - 22:54:29
  **/
 
 export default {
-  name: 'GameManager',
+  name: 'GameRightMenu',
   props: {},
 
   data() {
@@ -342,7 +342,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useDataStore, useStateStore),
+    ...mapStores(useDataStore, useStateStore, useGameStore),
     ...mapState(useStateStore, ['states']),
   },
 
@@ -386,6 +386,23 @@ export default {
 
     hideBackdrop() {
       this.ui.backdrop = false
+    },
+
+    //+-------------------------------------------------
+    // addToLibrary()
+    // Adds a game to the user library
+    // -----
+    // Created on Tue Jul 23 2024
+    //+-------------------------------------------------
+    addToLibrary() {
+      let app = { ...this.app }
+      app.is.lib = dates.stamp()
+      app.is.dirty = true
+
+      this.gameStore.update(this.appUUID, { ...app })
+      this.$nuxt.$toast.success(app.name + ' has been added to your library')
+
+      this.hide()
     },
 
     //+-------------------------------------------------

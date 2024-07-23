@@ -45,7 +45,7 @@
                 <div class="list-group card-list-group list-group-hoverable">
                   <div
                     v-for="item in db.items"
-                    @click="create(item)"
+                    @click="add(item)"
                     class="list-group-item p-2 cursor-pointer"
                     :class="{ 'disabled opacity-25': isInLibrary(item) }"
                     style="border-style: solid">
@@ -112,7 +112,7 @@
                   color="deep-purple-lighten-2"
                   :variant="!item.name ? 'tonal' : 'text'"
                   :disabled="!item.name"
-                  @click="create">
+                  @click="add">
                   Create for myself
                 </v-btn>
               </div>
@@ -187,7 +187,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 26th June 2024
- * Modified: 22 July 2024 - 12:32:30
+ * Modified: 23 July 2024 - 17:19:10
  **/
 
 //+-------------------------------------------------
@@ -279,17 +279,30 @@ export default {
     },
 
     //+-------------------------------------------------
-    // create()
+    // add()
     // Creates a new game just for you
     // -----
     // Created on Tue Jul 02 2024
     //+-------------------------------------------------
-    async create(item = null) {
+    async add(item = null) {
       item = item || this.item
+      item = JSON.parse(JSON.stringify(item))
 
-      let app = this.gameStore.create({ ...item })
+      let app = this.gameStore.create(item)
+      app.name = app.name || this.item.name
+      app.description = app.summary
+
+      delete app.k
+      delete app.genres
+      delete app.summary
+      delete app.epic_id
+      delete app.category
+      delete app.platforms
+
+      delete app.isTrusted
+      delete app._vts
+
       this.dataStore.process(app, 'add:new')
-
       this.$toast.success(item.name + ' has been added to your library')
 
       this.ui.show = false

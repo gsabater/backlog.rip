@@ -40,14 +40,16 @@
             Try importing your Steam games or add any game you want from games page.
           </p>
           <div class="empty-action">
-            <b-btn to="/import/steam" color="primary" size="sm" class="me-3">
+            <b-btn to="/import/steam" class="me-3">
               <!-- <Icon>StepInto</Icon> -->
               Import your library
             </b-btn>
 
-            <b-btn to="games" variant="ghost" size="sm" color="secondary">
-              Browse games
+            <b-btn @click.stop="$mitt.emit('game:add')" class="me-3">
+              Manually add a game
             </b-btn>
+
+            <b-btn to="/games">Browse all games</b-btn>
           </div>
         </div>
       </template>
@@ -88,7 +90,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat Jun 29 2024
+ * Modified: 23 July 2024 - 15:58:47
  **/
 
 export default {

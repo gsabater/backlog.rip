@@ -13,7 +13,7 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Thu Jul 04 2024
+ * Modified: 23 July 2024 - 10:43:05
  **/
 
 export default {
@@ -125,6 +125,7 @@ export default {
       const cover = this.app?.cover
       const assets = this.assets[index]
 
+      if (!assets) return
       let theUrl = null
 
       if (assets.includes('igdb/')) this.is = 'igdb'

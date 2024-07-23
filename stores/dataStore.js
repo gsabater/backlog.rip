@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu Jul 11 2024
+ * Modified: 23 July 2024 - 22:49:56
  */
 
 let $nuxt = null
@@ -47,6 +47,7 @@ let index = {
   lib: [],
   api: {},
   igdb: {},
+  epic: {},
   steam: {},
 }
 
@@ -97,6 +98,7 @@ export const useDataStore = defineStore('data', {
   // * toIndex()
   // * isIndexed()
   // * inInLibrary()
+  // * countLibrary()
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   actions: {
@@ -156,6 +158,36 @@ export const useDataStore = defineStore('data', {
       }
 
       return library.map((uuid) => data[uuid]).filter(Boolean)
+    },
+
+    //+-------------------------------------------------
+    // countLibrary()
+    // Counts the library filtering out hidden and non library items
+    // -----
+    // Created on Tue Jul 23 2024
+    //+-------------------------------------------------
+    countLibrary() {
+      let library = this.library()
+      let active = library.filter((item) => {
+        if (!item.is) {
+          console.warn('🔒', item)
+          return false
+        }
+        if (!item.is.lib) {
+          console.warn('🔒', item)
+          return false
+        }
+        if (item.is.hidden) {
+          console.warn('🔒', item)
+          return false
+        }
+        return true
+      })
+
+      console.log('🚀 ~ countLibrary ~ library:', library)
+      console.log('🚀 ~ active ~ active:', active)
+
+      return active.length
     },
 
     //+-------------------------------------------------
@@ -346,7 +378,7 @@ export const useDataStore = defineStore('data', {
       })
 
       $nuxt.$app.count.data = Object.keys(data).length || 0
-      $nuxt.$app.count.library = index.lib.length || 0
+      $nuxt.$app.count.library = this.countLibrary() // index.lib.length || 0
 
       if (context.includes('update:')) return
       // console.warn('🌈 data:updated', apps.length)
@@ -369,9 +401,9 @@ export const useDataStore = defineStore('data', {
       }
 
       let item = JSON.parse(JSON.stringify(data))
-
       item.uuid = item.uuid || $nuxt.$uuid()
-      item.is.lib = item.is.lib || dates.stamp()
+
+      item.is.lib = item.is.lib === 0 ? 0 : item.is.lib || dates.stamp()
 
       // item.is = item.is || {}
 
@@ -505,7 +537,7 @@ export const useDataStore = defineStore('data', {
       if (item.id.igdb) index.igdb[item.id.igdb] = item.uuid
       if (item.id.steam) index.steam[item.id.steam] = item.uuid
 
-      if ((this.isLibrary(item) && !index.lib.includes(item.uuid)) || item.is.dirty) {
+      if ((this.isLibrary(item) || item.is.dirty) && !index.lib.includes(item.uuid)) {
         index.lib.push(item.uuid)
       }
 

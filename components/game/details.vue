@@ -13,7 +13,7 @@
       'leave-to-class': 'details-modal-out',
       'leave-active-class': 'hunaa-menu-leave-active',
     }">
-    <div class="row w-100 h-100 g-0 m-0">
+    <div class="row w-100 h-100 g-0 m-0" v-if="app">
       <div
         class="d-none d-md-flex col"
         style="
@@ -629,7 +629,7 @@ import format from '../../utils/format'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Thu Jul 11 2024
+ * Modified: 23 July 2024 - 11:49:08
  **/
 
 export default {
@@ -672,7 +672,17 @@ export default {
     $next() {
       if (!this.app || !this.$data.$list || !this.$data.$list.items) return
 
-      const index = this.$data.$list.items.indexOf(this.app.uuid)
+      let index = null
+      let uuid = this.app.uuid
+      let list = this.$data.$list.items
+
+      // Check if the list contains objects with a uuid property
+      if (typeof list[0] === 'object' && 'uuid' in list[0]) {
+        index = list.findIndex((item) => item.uuid === uuid)
+      } else if (typeof list[0] === 'string') {
+        index = list.indexOf(uuid)
+      }
+
       return this.$data.$list.items[index + 1]
     },
 
@@ -689,7 +699,17 @@ export default {
       this.ui.layout == 'full'
     },
 
-    load(uuid) {
+    //+-------------------------------------------------
+    // load()
+    // Receives an uuid or object and tries to load the game
+    // -----
+    // Created on Tue Jul 23 2024
+    //+-------------------------------------------------
+    load(app) {
+      let uuid = null
+      if (typeof app === 'string') uuid = app
+      else if (typeof app === 'object') uuid = app.uuid
+
       this.gameStore.load(uuid)
     },
 

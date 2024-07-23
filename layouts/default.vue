@@ -468,7 +468,7 @@
 
           <button
             style="transform: scale(0.9)"
-            class="form-control d-flex items-center cursor-pointer"
+            class="form-control d-flex align-items-center cursor-pointer"
             @click.stop="$mitt.emit('search:palette')">
             <!-- <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -803,7 +803,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 19 July 2024 - 16:07:11
+ * Modified: 23 July 2024 - 10:53:41
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

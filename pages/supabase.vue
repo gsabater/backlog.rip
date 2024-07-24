@@ -59,47 +59,20 @@
       </ul> -->
 
   <div id="changelog" class="page-body">
-    <div class="container">
-      <ContentQuery path="changelog" :sort="[{ date: -1 }]">
-        <template #default="{ data }">
-          <div v-for="item in data" :key="item._path" class="row mb-5">
-            <div class="col col-12 col-md-2 offset-md-1 p-2">
-              <h3 class="mb-1">{{ $moment(item.date).format('LL') }}</h3>
-              <code>version {{ item.version }}</code>
-            </div>
-            <div class="col col-12 col-md-7">
-              <div class="card">
-                <div
-                  class="card-header"
-                  style="padding-top: 0.75rem; padding-bottom: 0.75rem">
-                  <h3 class="card-title">{{ item.title }}</h3>
-                </div>
-                <div class="card-body">
-                  <ContentRenderer :value="item" />
-                </div>
-              </div>
-              <div class="hr-text my-4">❤️💜🧡</div>
-            </div>
-          </div>
-        </template>
-        <template #not-found>
-          <p>Not found</p>
-        </template>
-      </ContentQuery>
-    </div>
+    <div class="container"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-const client = useSupabaseClient()
-const { data: restaurant } = await useAsyncData('restaurant', async () => {
-  const { data } = await client
-    .from('restaurants')
-    .select('name, location')
-    .eq('name', 'My Restaurant Name')
-    .single()
-  return data
-})
+// const client = useSupabaseClient()
+// const { data: restaurant } = await useAsyncData('restaurant', async () => {
+//   const { data } = await client
+//     .from('restaurants')
+//     .select('name, location')
+//     .eq('name', 'My Restaurant Name')
+//     .single()
+//   return data
+// })
 </script>
 
 <!-- <script>
@@ -108,7 +81,7 @@ const { data: restaurant } = await useAsyncData('restaurant', async () => {
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th January 2024
- * Modified: Wed Jul 03 2024
+ * Modified: 24 July 2024 - 16:25:37
  **/
 
 export default {

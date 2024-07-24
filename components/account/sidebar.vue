@@ -22,7 +22,7 @@
       </NuxtLink>
     </li>
 
-    <li class="nav-item" v-if="$app.dev">
+    <li class="nav-item">
       <NuxtLink to="/account/preferences" class="nav-link">
         <Icon class="me-2 icon-rotate">Settings</Icon>
         Preferences

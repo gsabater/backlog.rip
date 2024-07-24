@@ -142,23 +142,24 @@
 
           <div class="dropdown-divider"></div>
 
-          <NuxtLink to="/library" class="dropdown-item">
+          <NuxtLink to="/library" class="dropdown-item control-hover">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">LayoutDashboard</Icon>
             </span>
             <span class="nav-link-title">Your library</span>
-            <small class="ms-auto text-secondary">
+
+            <small class="ms-auto text-secondary hide-hover">
               {{ format.num($app.count.library) }}
             </small>
 
-            <!-- <Icon
-              style="outline: none"
-              class="ms-auto text-secondary"
+            <Icon
+              style="outline: none; transform: translateX(4px)"
+              class="ms-auto text-secondary show-hover"
               size="15"
               v-tippy="'Configure'"
-              @click.prevent="goTo('/account/states')">
+              @click.prevent="goTo('/account/preferences')">
               Settings2
-            </Icon> -->
+            </Icon>
           </NuxtLink>
 
           <NuxtLink
@@ -185,7 +186,7 @@
             v-for="(state, i) in pinnedStates"
             :to="'/library/' + state.slug"
             :key="'state' + i"
-            class="dropdown-item ps-3 pe-1">
+            class="dropdown-item ps-3">
             <div class="content d-flex align-items-center w-100 px-1">
               <span
                 class="status-dot me-2"
@@ -195,11 +196,15 @@
                 {{ state.name }}
               </span>
 
-              <span
+              <small v-if="stateStore.count(state.id) > 0" class="ms-auto text-secondary">
+                {{ format.num(stateStore.count(state.id)) }}
+              </small>
+
+              <!-- <span
                 v-if="stateStore.count(state.id) > 0"
                 class="badge bg-purple-lt ms-auto">
                 {{ format.num(stateStore.count(state.id)) }}
-              </span>
+              </span> -->
               <!-- <tippy
                 class="text-muted ms-auto ms-1 cursor-help"
                 :content="state.description">
@@ -803,7 +808,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 24 July 2024 - 09:42:57
+ * Modified: 24 July 2024 - 15:06:55
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

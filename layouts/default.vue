@@ -507,10 +507,10 @@
                 Manually
                 <!-- <small class="text-secondary ms-auto me-0">Insert</small> -->
               </div>
-              <div class="dropdown-item">
+              <NuxtLink to="/import/steam" class="dropdown-item">
                 <Icon size="18" class="me-2 text-muted">BrandSteam</Icon>
                 Import your Steam account
-              </div>
+              </NuxtLink>
               <!-- <NuxtLink to="/library" class="dropdown-item">
                 Library
                 <small class="text-secondary ms-auto me-0">
@@ -803,7 +803,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 23 July 2024 - 10:53:41
+ * Modified: 24 July 2024 - 09:42:57
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

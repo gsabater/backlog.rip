@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: 23 July 2024 - 22:56:17
+ * Modified: 24 July 2024 - 12:43:30
  */
 
 let $nuxt = null
@@ -20,9 +20,9 @@ export const useStateStore = defineStore('state', {
 
     index: [], // Holds index for every state keyed by state.id
 
-    fav: [], // Holds index for special state 'fav'
-    hidden: [], // Holds index for special state 'hidden'
-    pinned: [], // Holds index for special state 'pinned'
+    // fav: [], // Holds index for special state 'fav'
+    // pinned: [], // Holds index for special state 'pinned'
+    // hidden: [], // Holds index for special state 'hidden'
 
     backlog: [], // Holds index for special state 'backlog'
     playing: [], // Holds index for special state 'playing'
@@ -196,6 +196,7 @@ export const useStateStore = defineStore('state', {
       app.is.dirty = true
       app.is.state = app.is.state || {}
       app.is.state[obj.key] = dates.stamp()
+      app.is.lib = app.is.lib ?? dates.stamp()
 
       $game.app.state = state
       $game.update(uuid, { ...app })
@@ -317,7 +318,7 @@ export const useStateStore = defineStore('state', {
         // description: 'Monday, January 3rd at 6:00pm',
       })
 
-      this.indexLibrary()
+      this.indexLibrary('hidden')
     },
 
     //+-------------------------------------------------
@@ -326,32 +327,49 @@ export const useStateStore = defineStore('state', {
     // keyed by the state's id
     // -----
     // Created on Sat Jan 06 2024
+    // Updated on Wed Jul 24 2024 - Added index by key
     //+-------------------------------------------------
-    async indexLibrary() {
+    async indexLibrary(scan = 'states') {
       let library = $data.library('array')
 
-      this.states.forEach((state) => {
-        const apps = library
-          .filter((app) => app.state === state.id)
-          .map((app) => app.uuid)
+      // Scan the library for states
+      // And index each state on this
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (scan == 'states' || scan == 'all') {
+        this.states.forEach((state) => {
+          const apps = library
+            .filter((app) => app.state === state.id)
+            .map((app) => app.uuid)
 
-        this.index[state.id] = apps
+          this.index[state.id] = apps
 
-        if (state.key) {
-          this[state.key] = apps
-          $nuxt.$app.count.states[state.key] = apps.length || 0
-        }
-      })
+          if (state.key) {
+            this[state.key] = apps
+            $nuxt.$app.count.states[state.key] = apps.length || 0
+          }
+        })
+      }
 
-      this.fav = library.filter((app) => app.is && app.is.fav).map((app) => app.uuid)
+      // Scan the library for states
+      // And set the index on $data
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (scan == 'fav' || scan == 'all') {
+        let fav = library.filter((app) => app.is && app.is.fav).map((app) => app.uuid)
+        $data.setIndex('fav', fav)
+      }
 
-      this.pinned = library
-        .filter((app) => app.is && app.is.pinned)
-        .map((app) => app.uuid)
+      // Scan all data for special
+      // And set the index on $data
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (scan == 'pinned' || scan == 'hidden' || scan == 'all') {
+        let data = $data.list('array')
 
-      this.hidden = library
-        .filter((app) => app.is && app.is.hidden)
-        .map((app) => app.uuid)
+        let pinned = data.filter((app) => app.is && app.is.pinned).map((app) => app.uuid)
+        let hidden = data.filter((app) => app.is && app.is.hidden).map((app) => app.uuid)
+
+        $data.setIndex('pinned', pinned)
+        $data.setIndex('hidden', hidden)
+      }
     },
 
     //+-------------------------------------------------
@@ -395,14 +413,12 @@ export const useStateStore = defineStore('state', {
       if (!$journal) $journal = useJournalStore()
 
       await this.load()
-      await this.indexLibrary()
+      await this.indexLibrary('all')
 
       window.$states = {
         x: this,
         k: this.keyed,
         s: this.states,
-        p: this.pinned,
-        h: this.hidden,
         index: this.index,
       }
     },

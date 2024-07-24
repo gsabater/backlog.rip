@@ -199,12 +199,12 @@
               <Icon size="18" class="text-muted" width="2">PlaylistX</Icon>
             </div>
 
-            <span>Delete</span>
+            <span>Remove from library</span>
 
             <tippy
               :allow-h-t-m-l="true"
               class="text-muted ms-auto cursor-help"
-              content="Delete this game from your library.<br>You might want to delete a game to fix duplicates or errors">
+              content="Delete this game from your library.<br>You might want to do it to fix duplicates or errors">
               <span class="form-help">?</span>
             </tippy>
           </div>
@@ -321,7 +321,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: 23 July 2024 - 22:54:29
+ * Modified: 24 July 2024 - 12:06:25
  **/
 
 export default {

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: 23 July 2024 - 22:49:56
+ * Modified: 24 July 2024 - 13:54:32
  */
 
 let $nuxt = null
@@ -49,6 +49,10 @@ let index = {
   igdb: {},
   epic: {},
   steam: {},
+
+  fav: [],
+  pinned: [],
+  hidden: [],
 }
 
 export const useDataStore = defineStore('data', {
@@ -80,6 +84,8 @@ export const useDataStore = defineStore('data', {
   // Methods to retrieve data
   // * list() <-- Returns the whole data object
   // * library() <-- Returns the library object
+  // * pinned() <-- Returns the pinned games
+  // * hidden() <-- Returns the hidden games
   // * get() <-- Get an element by uuid
   // * getRandom() <-- Get random elements
   //
@@ -96,6 +102,7 @@ export const useDataStore = defineStore('data', {
   // * prepareToStore()
   // * toData()
   // * toIndex()
+  // * setIndex()
   // * isIndexed()
   // * inInLibrary()
   // * countLibrary()
@@ -135,21 +142,24 @@ export const useDataStore = defineStore('data', {
     // Returns the whole data object
     // -----
     // Created on Tue Nov 21 2023
+    // Updated on Wed Jul 24 2024 - Return as array
     //+-------------------------------------------------
-    list() {
+    list(as = 'object') {
+      if (as == 'array') return Object.values(data).filter(Boolean)
+
       return data
     },
 
     //+-------------------------------------------------
     // library()
-    // Returns the library object
-    // TODO: work with array, should return array with data
+    // Returns the library as an array or object
     // -----
     // Created on Mon Dec 25 2023
     // Updated on Wed Feb 14 2024 - Library is now an index
+    // Created on Wed Jul 24 2024 - Work with other indexes
     //+-------------------------------------------------
-    library(as = 'array') {
-      let library = [...index.lib]
+    library(as = 'array', key = 'lib') {
+      let library = [...index[key]]
 
       if (as == 'object') {
         return Object.fromEntries(
@@ -158,6 +168,20 @@ export const useDataStore = defineStore('data', {
       }
 
       return library.map((uuid) => data[uuid]).filter(Boolean)
+    },
+
+    //+-------------------------------------------------
+    // pinned and hidden()
+    // Returns a list of apps marked as pinned
+    // -----
+    // Created on Wed Jul 24 2024
+    //+-------------------------------------------------
+    pinned(as = null) {
+      return this.library(as, 'pinned')
+    },
+
+    hidden(as = null) {
+      return this.library(as, 'hidden')
     },
 
     //+-------------------------------------------------
@@ -170,22 +194,22 @@ export const useDataStore = defineStore('data', {
       let library = this.library()
       let active = library.filter((item) => {
         if (!item.is) {
-          console.warn('🔒', item)
+          // console.warn('🔒1', item)
           return false
         }
         if (!item.is.lib) {
-          console.warn('🔒', item)
+          // console.warn('🔒2', item)
           return false
         }
         if (item.is.hidden) {
-          console.warn('🔒', item)
+          // console.warn('🔒3', item)
           return false
         }
         return true
       })
 
-      console.log('🚀 ~ countLibrary ~ library:', library)
-      console.log('🚀 ~ active ~ active:', active)
+      // console.log('🚀 ~ countLibrary ~ library:', library)
+      // console.log('🚀 ~ active ~ active:', active)
 
       return active.length
     },
@@ -545,6 +569,16 @@ export const useDataStore = defineStore('data', {
 
       // index.api[item.id.api] = index.api[item.id.api] || item.uuid
       // index.steam[item.id.steam] = index.steam[item.id.steam] || item.uuid
+    },
+
+    //+-------------------------------------------------
+    // setIndex()
+    // Replaces an index with a new array
+    // -----
+    // Created on Wed Jul 24 2024
+    //+-------------------------------------------------
+    setIndex(key, data) {
+      index[key] = data
     },
 
     //+-------------------------------------------------

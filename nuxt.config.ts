@@ -147,9 +147,9 @@ export default defineNuxtConfig({
     },
   },
 
-  // nitro: {
-  //   preset: 'static',
-  // },
+  nitro: {
+    preset: 'static',
+  },
 
   devtools: {
     enabled: false,

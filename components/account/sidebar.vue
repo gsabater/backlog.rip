@@ -1,7 +1,7 @@
 <template>
   <div class="row g-2 align-items-center">
     <div class="col">
-      <h3>Preferences and account libraries</h3>
+      <h3>Account and settings</h3>
     </div>
   </div>
 
@@ -23,8 +23,15 @@
     </li>
 
     <li class="nav-item">
+      <NuxtLink to="/account/preferences" class="nav-link">
+        <Icon class="me-2 icon-rotate">Settings</Icon>
+        Preferences
+      </NuxtLink>
+    </li>
+
+    <li class="nav-item">
       <NuxtLink to="/account/linked" class="nav-link">
-        <Icon class="me-2">LayersLinked</Icon>
+        <Icon class="me-2">CirclesRelation</Icon>
         Linked libraries
       </NuxtLink>
     </li>

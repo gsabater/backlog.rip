@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu Jun 20 2024
+ * Modified: 24 July 2024 - 13:54:32
  */
 
 let $nuxt = null
@@ -46,7 +46,13 @@ let index = {
   ed: [],
   lib: [],
   api: {},
+  igdb: {},
+  epic: {},
   steam: {},
+
+  fav: [],
+  pinned: [],
+  hidden: [],
 }
 
 export const useDataStore = defineStore('data', {
@@ -78,6 +84,8 @@ export const useDataStore = defineStore('data', {
   // Methods to retrieve data
   // * list() <-- Returns the whole data object
   // * library() <-- Returns the library object
+  // * pinned() <-- Returns the pinned games
+  // * hidden() <-- Returns the hidden games
   // * get() <-- Get an element by uuid
   // * getRandom() <-- Get random elements
   //
@@ -94,7 +102,10 @@ export const useDataStore = defineStore('data', {
   // * prepareToStore()
   // * toData()
   // * toIndex()
+  // * setIndex()
   // * isIndexed()
+  // * inInLibrary()
+  // * countLibrary()
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   actions: {
@@ -131,21 +142,24 @@ export const useDataStore = defineStore('data', {
     // Returns the whole data object
     // -----
     // Created on Tue Nov 21 2023
+    // Updated on Wed Jul 24 2024 - Return as array
     //+-------------------------------------------------
-    list() {
+    list(as = 'object') {
+      if (as == 'array') return Object.values(data).filter(Boolean)
+
       return data
     },
 
     //+-------------------------------------------------
     // library()
-    // Returns the library object
-    // TODO: work with array, should return array with data
+    // Returns the library as an array or object
     // -----
     // Created on Mon Dec 25 2023
     // Updated on Wed Feb 14 2024 - Library is now an index
+    // Created on Wed Jul 24 2024 - Work with other indexes
     //+-------------------------------------------------
-    library(as = 'array') {
-      let library = [...index.lib]
+    library(as = 'array', key = 'lib') {
+      let library = [...index[key]]
 
       if (as == 'object') {
         return Object.fromEntries(
@@ -154,6 +168,50 @@ export const useDataStore = defineStore('data', {
       }
 
       return library.map((uuid) => data[uuid]).filter(Boolean)
+    },
+
+    //+-------------------------------------------------
+    // pinned and hidden()
+    // Returns a list of apps marked as pinned
+    // -----
+    // Created on Wed Jul 24 2024
+    //+-------------------------------------------------
+    pinned(as = null) {
+      return this.library(as, 'pinned')
+    },
+
+    hidden(as = null) {
+      return this.library(as, 'hidden')
+    },
+
+    //+-------------------------------------------------
+    // countLibrary()
+    // Counts the library filtering out hidden and non library items
+    // -----
+    // Created on Tue Jul 23 2024
+    //+-------------------------------------------------
+    countLibrary() {
+      let library = this.library()
+      let active = library.filter((item) => {
+        if (!item.is) {
+          // console.warn('🔒1', item)
+          return false
+        }
+        if (!item.is.lib) {
+          // console.warn('🔒2', item)
+          return false
+        }
+        if (item.is.hidden) {
+          // console.warn('🔒3', item)
+          return false
+        }
+        return true
+      })
+
+      // console.log('🚀 ~ countLibrary ~ library:', library)
+      // console.log('🚀 ~ active ~ active:', active)
+
+      return active.length
     },
 
     //+-------------------------------------------------
@@ -279,8 +337,8 @@ export const useDataStore = defineStore('data', {
         // if (item.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') {
         // if (item.name == 'DOOM') {
         //   // if (item.steam_id == '292030') {
-        //   // if (context) {
-        // console.warn('✨ ' + item.name, item, context)
+        // if (context == 'add:new') {
+        //   console.warn('✨ ' + item.name, item, context)
         //   debugger
         // }
 
@@ -289,16 +347,17 @@ export const useDataStore = defineStore('data', {
         if (context == 'api') {
           item.is_api = true
           item.api_id = item.api_id || item.uuid
+          // item.id.api = item.id.api || item.uuid
         }
 
-        // Process games coming from the library
+        // Games coming from the library
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (context == 'library') {
           this.toData(item)
           return
         }
 
-        // Process importing games
+        // Importing games
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (context == 'import') {
           this.toData(item)
@@ -322,6 +381,14 @@ export const useDataStore = defineStore('data', {
           return
         }
 
+        // Adding games manually
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (context?.includes('add:')) {
+          item.is.dirty = true
+          this.toData(item)
+          return
+        }
+
         if (item.trigger) {
           console.log('this shouldnt happen, delete trigger here and under', item)
           debugger
@@ -335,7 +402,7 @@ export const useDataStore = defineStore('data', {
       })
 
       $nuxt.$app.count.data = Object.keys(data).length || 0
-      $nuxt.$app.count.library = index.lib.length || 0
+      $nuxt.$app.count.library = this.countLibrary() // index.lib.length || 0
 
       if (context.includes('update:')) return
       // console.warn('🌈 data:updated', apps.length)
@@ -349,15 +416,18 @@ export const useDataStore = defineStore('data', {
     // -----
     // Created on Thu Dec 14 2023
     // Updated on Tue Feb 27 2024
+    // updated on Thu Jul 11 2024 - Clone the object
     //+-------------------------------------------------
-    prepareToStore(item) {
-      if (!item) {
+    prepareToStore(data) {
+      if (!data) {
         console.error('🔥 Called prepareToStore without item', item)
         return
       }
 
+      let item = JSON.parse(JSON.stringify(data))
       item.uuid = item.uuid || $nuxt.$uuid()
-      item.is.lib = item.is.lib || dates.stamp()
+
+      item.is.lib = item.is.lib === 0 ? 0 : item.is.lib || dates.stamp()
 
       // item.is = item.is || {}
 
@@ -467,7 +537,8 @@ export const useDataStore = defineStore('data', {
       // Delete indexes
       delete index.ed[index.ed.indexOf(uuid)]
       delete index.lib[index.lib.indexOf(uuid)]
-      delete index.steam[item.steam_id]
+      delete index.igdb[item.id.igdb]
+      delete index.steam[item.id.steam]
 
       // update counters
       $nuxt.$app.count.data = Object.keys(data).length || 0
@@ -483,20 +554,31 @@ export const useDataStore = defineStore('data', {
     // Those indexes are then used to find the game by the ref
     // -----
     // Created on Thu Nov 30 2023
-    // Updated on Thu Apr 25 2024 - Added api_id ref
+    // Updated on Thu Apr 25 2024 - Added id.api ref
     //+-------------------------------------------------
     toIndex(item) {
-      if (item.api_id) index.api[item.api_id] = item.uuid
-      if (item.steam_id) index.steam[item.steam_id] = item.uuid
+      if (item.id.api) index.api[item.id.api] = item.uuid
+      if (item.id.igdb) index.igdb[item.id.igdb] = item.uuid
+      if (item.id.steam) index.steam[item.id.steam] = item.uuid
 
-      if ((this.isLibrary(item) && !index.lib.includes(item.uuid)) || item.is.dirty) {
+      if ((this.isLibrary(item) || item.is.dirty) && !index.lib.includes(item.uuid)) {
         index.lib.push(item.uuid)
       }
 
       index.ed.push(item.uuid)
 
-      // index.api[item.api_id] = index.api[item.api_id] || item.uuid
-      // index.steam[item.steam_id] = index.steam[item.steam_id] || item.uuid
+      // index.api[item.id.api] = index.api[item.id.api] || item.uuid
+      // index.steam[item.id.steam] = index.steam[item.id.steam] || item.uuid
+    },
+
+    //+-------------------------------------------------
+    // setIndex()
+    // Replaces an index with a new array
+    // -----
+    // Created on Wed Jul 24 2024
+    //+-------------------------------------------------
+    setIndex(key, data) {
+      index[key] = data
     },
 
     //+-------------------------------------------------
@@ -511,13 +593,13 @@ export const useDataStore = defineStore('data', {
       // if (index.lib.includes(item.uuid)) return false
 
       // Games in local library have:
-      // Different api_id and uuid (not always)
+      // Different id.api and uuid (not always)
       // state
       // is.lib
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (item.state) return true
       if (item.is?.lib) return true
-      if (!item.is_api && item?.uuid !== item.api_id) return true
+      if (!item.is_api && item?.uuid !== item.id.api) return true
 
       return false
     },
@@ -534,19 +616,37 @@ export const useDataStore = defineStore('data', {
       if (index.ed.includes(item.uuid)) return true
 
       for (const store of this.indexes) {
-        if (item[store + '_id'] && index[store][item[store + '_id']]) {
+        if (
+          (item.id?.store && index[store][item.id[store]]) ||
+          (item[store + '_id'] && index[store][item[store + '_id']])
+        ) {
           // console.warn(
           //   `🔥 ${item.name} is already indexed on ${store}`,
           //   index[store][item[store + '_id']],
           //   item
           // )
 
-          return index[store][item[store + '_id']]
+          return index[store][item[store + '_id']] || index[store][item.id[store]]
         }
       }
 
       return false
       // console.warn(item)
+    },
+
+    //+-------------------------------------------------
+    // isInLibrary()
+    // Tries to determine if an item is in the libraryeteryrhgjfgjj
+    // -----
+    // Created on Fri Jul 05 2024
+    //+-------------------------------------------------
+    isInLibrary(item, deep = false) {
+      if (!deep) return index.lib.includes(item.uuid)
+      else {
+        let isIndexed = this.isIndexed(item)
+
+        return isIndexed && index.lib.includes(isIndexed)
+      }
     },
 
     //+-------------------------------------------------
@@ -570,6 +670,16 @@ export const useDataStore = defineStore('data', {
       if (item.is?.dirty) {
         item.uuid = item.uuid || $nuxt.$uuid()
       }
+
+      if (item.api_id) item.id.api = item.api_id
+      if (item.igdb_id) item.id.igdb = item.igdb_id
+      if (item.xbox_id) item.id.xbox = item.xbox_id
+      if (item.steam_id) item.id.steam = item.steam_id
+
+      delete item.api_id
+      delete item.igdb_id
+      delete item.xbox_id
+      delete item.platforms
 
       return item
     },
@@ -649,14 +759,13 @@ export const useDataStore = defineStore('data', {
           // const needsUpdate = $game.needsUpdate(game)
           // return needsUpdate !== false
 
-          if (!game.steam_id) return false
-
-          if (!game.api_id) return true
+          if (!game.id.steam) return false
+          if (!game.id.api) return true
           // if (game.description == undefined) return true
 
           return false
         })
-        .map((game) => game.steam_id)
+        .map((game) => game.id.steam)
       console.warn('🔥 Updating missing games', missing)
 
       const jxr = await $nuxt.$axios.post(`get/batch`, { steam: missing })

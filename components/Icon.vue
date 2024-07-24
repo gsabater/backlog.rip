@@ -16,27 +16,13 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Apr 02 2024
+ * Modified: Thu Jul 11 2024
  **/
-
-// import {
-//   IconHome,
-//   IconBrandSteam,
-//   IconArrowsTransferDown,
-//   IconCirclePlus,
-// } from '@tabler/icons-vue'
 
 import * as TablerIcons from '@tabler/icons-vue'
 
 export default {
   name: 'TablerIcon',
-
-  // components: {
-  //   IconHome,
-  //   IconBrandSteam,
-  //   IconArrowsTransferDown,
-  //   IconCirclePlus,
-  // },
 
   props: {
     icon: {

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Tue May 14 2024
+ * Modified: 23 July 2024 - 16:49:22
  */
 
 let $nuxt = null
@@ -15,6 +15,8 @@ export const useGameStore = defineStore('game', {
   state: () => ({
     app: {
       is: {},
+      id: {},
+      genres: [],
     },
   }),
 
@@ -146,7 +148,7 @@ export const useGameStore = defineStore('game', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (data) {
         // app matched with an api item
-        if (app && !app.api_id && data?.api_id) return 'update:match'
+        if (app && !app.id.api && data?.id.api) return 'update:match'
 
         // disabled as i havent decided if this should be
         // a match or update:api or what
@@ -184,10 +186,10 @@ export const useGameStore = defineStore('game', {
       console.warn('🪝 Going to ask api for more data')
 
       let app = this.app.uuid
-      let api = this.app.api_id
+      let api = this.app.id.api
 
       if (this.app.is_api) api = this.app.uuid
-      if (this.app.api_id.length > 0 && app !== this.app.api_id) api = this.app.api_id
+      if (this.app.id.api?.length > 0 && app !== this.app.id.api) api = this.app.id.api
 
       if (!api) {
         console.error('🪝 No API ID found')
@@ -215,6 +217,7 @@ export const useGameStore = defineStore('game', {
     normalize(game) {
       // game.v = $data.v
 
+      game.id = game.id || {}
       game.is = game.is || {}
       game.log = game.log || []
       game.time = game.time || {}
@@ -224,6 +227,9 @@ export const useGameStore = defineStore('game', {
 
       if (game.steam_id) game.steam_id = Number(game.steam_id)
 
+      if (game.epic_id) game.id.epic = game.epic_id
+      if (game.id.steam) game.id.steam = Number(game.id.steam)
+
       // if (game.is_api) {
       //   game.api_id = game.uuid
       //   game.uuid = game.api_id
@@ -231,6 +237,7 @@ export const useGameStore = defineStore('game', {
 
       // game.updated_at = game.updated_at || 0
 
+      delete game.epic_id
       delete game.trigger
       delete game.data
       return game

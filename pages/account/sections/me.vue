@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="card-body">
-      <h2 class="mb-2">Account</h2>
+      <h2 class="mb-3">Account</h2>
       <p class="card-subtitle">Profile details and personal settings</p>
       <!-- <div class="row align-items-center">
         <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url(./static/avatars/000m.jpg)"></span>
@@ -33,9 +33,9 @@
         <div class="m-0">
           <label class="form-check form-switch form-switch-lg">
             <input
-              v-model="$auth.config.debug"
-              class="form-check-input"
               type="checkbox"
+              class="form-check-input"
+              v-model="$auth.config.debug"
               @change="update('config', 'debug')" />
             <span class="form-check-label form-check-label-on">Debugging enabled</span>
             <span class="form-check-label form-check-label-off">
@@ -96,7 +96,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed Jun 19 2024
+ * Modified: 19 July 2024 - 14:06:55
  **/
 
 export default {
@@ -114,7 +114,7 @@ export default {
     // Created on Mon Dec 18 2023
     //+-------------------------------------------------
     async update(store, field) {
-      if (store == 'config') this.$auth.updateConfig(field)
+      if (store == 'config') this.$auth.storeConfig(field)
       else this.$auth.updateAccount(field)
 
       this.$toast.success('Your preferences have been updated')

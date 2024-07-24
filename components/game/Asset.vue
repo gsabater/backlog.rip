@@ -13,7 +13,7 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Fri Mar 22 2024
+ * Modified: 23 July 2024 - 10:43:05
  **/
 
 export default {
@@ -125,12 +125,13 @@ export default {
       const cover = this.app?.cover
       const assets = this.assets[index]
 
+      if (!assets) return
       let theUrl = null
 
       if (assets.includes('igdb/')) this.is = 'igdb'
       else if (assets.includes('steam/')) this.is = 'steam'
 
-      if (this.is == 'steam') theUrl = assets.replace('%ID%', this.app.steam_id)
+      if (this.is == 'steam') theUrl = assets.replace('%ID%', this.app.id.steam)
       else if (this.is == 'igdb') theUrl = assets.replace('%ID%', cover.igdb)
 
       if (this.asset == 'cover' && assets.includes('header.')) {

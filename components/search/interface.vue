@@ -40,14 +40,16 @@
             Try importing your Steam games or add any game you want from games page.
           </p>
           <div class="empty-action">
-            <b-btn to="/import/steam" color="primary" size="sm" class="me-3">
+            <b-btn to="/import/steam" class="me-3">
               <!-- <Icon>StepInto</Icon> -->
               Import your library
             </b-btn>
 
-            <b-btn to="games" variant="ghost" size="sm" color="secondary">
-              Browse games
+            <b-btn @click.stop="$mitt.emit('game:add')" class="me-3">
+              Manually add a game
             </b-btn>
+
+            <b-btn to="/games">Browse all games</b-btn>
           </div>
         </div>
       </template>
@@ -88,7 +90,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat Jun 29 2024
+ * Modified: 23 July 2024 - 15:58:47
  **/
 
 export default {
@@ -231,6 +233,7 @@ export default {
     // -----
     // Created on Tue Nov 14 2023
     // Updated on Sun Jan 28 2024 - Added slug param
+    // Updated on Sun Jul 14 2024 - Use slug for special filters
     //+-------------------------------------------------
     mergeFilters() {
       const loaded = {}
@@ -241,12 +244,12 @@ export default {
       }
 
       if (this.slug && this.states.length) {
-        const state = this.states.find((g) => g.key == this.slug)
+        const state = this.states.find((g) => g.slug == this.slug)
         if (state) loaded.states = [state.id]
       }
 
-      if (this.slug && this.slug == 'pinned') {
-        loaded.states = ['pinned']
+      if (this.slug && ['pinned', 'hidden', 'favorites'].includes(this.slug)) {
+        loaded.is = this.slug
       }
 
       this.f = {
@@ -255,11 +258,14 @@ export default {
         ...this.filters,
         ...loaded,
       }
+
+      // console.warn(this.f)
       // console.warn('📒 mounted filters')
     },
 
     async getData() {
       this.slug = this.$route.params?.slug || null
+      if (this.slug && typeof this.slug == 'object') this.slug = this.slug[0]
 
       // if (this.slug) await this.repositoryStore.getGenres()
       // else this.repositoryStore.getGenres()

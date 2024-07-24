@@ -120,11 +120,18 @@
               <div>
                 <div class="d-flex">
                   <span
-                    v-if="isPinned(item.id)"
-                    v-tippy="'Shown on sidebar'"
-                    class="btn-action cursor-help">
-                    <Icon class="icon" size="13" style="color: #575ac6">
+                    v-tippy="'Display list in the sidebar'"
+                    class="btn-action cursor-pointer"
+                    @click="pinSidebar(item.id)">
+                    <Icon
+                      v-if="isPinned(item.id)"
+                      class="icon"
+                      size="13"
+                      style="color: #575ac6">
                       BookmarkFilled
+                    </Icon>
+                    <Icon v-else class="icon" size="13" style="color: #575ac6">
+                      Bookmark
                     </Icon>
                     <!-- <Icon class="icon">Pin</Icon>
                     <Icon class="icon">PinnedFilled</Icon> -->
@@ -197,7 +204,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Thu Jun 20 2024
+ * Modified: 19 July 2024 - 11:41:24
  **/
 
 export default {
@@ -213,6 +220,25 @@ export default {
   },
 
   methods: {
+    //+-------------------------------------------------
+    // pinSidebar()
+    // Pins states on the sidebar and stores at config
+    // -----
+    // Created on Thu Jul 18 2024
+    //+-------------------------------------------------
+    async pinSidebar(id) {
+      let pinned = this.$auth?.menu?.states || []
+      if (pinned.includes(id)) {
+        pinned = pinned.filter((item) => item !== id)
+      } else {
+        pinned.push(id)
+      }
+
+      this.$auth.config.menu.states = pinned
+      this.$auth.storeConfig('menu')
+      this.$toast.success('Sidebar updated')
+    },
+
     isPinned(id) {
       const pinned = this.$auth?.menu?.states || []
       return pinned.includes(id)

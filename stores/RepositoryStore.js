@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Fri Apr 19 2024
+ * Modified: Mon Jul 01 2024
  */
 
 let $nuxt = null
@@ -88,6 +88,21 @@ export const useRepositoryStore = defineStore('repository', {
       return this.genres.filter((genre) =>
         genre.name.toLowerCase().includes(query.toLowerCase())
       )
+    },
+
+    //+-------------------------------------------------
+    // searchGames()
+    // Calls the api to search a game by name
+    // -----
+    // Created on Thu Jun 27 2024
+    //+-------------------------------------------------
+    async searchGames(query) {
+      const jxr = await $nuxt.$axios.post(`search/global`, { query })
+      if (jxr.status) {
+        return jxr.data
+      }
+
+      return []
     },
 
     //+-------------------------------------------------

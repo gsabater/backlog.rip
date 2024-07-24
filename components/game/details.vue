@@ -13,7 +13,7 @@
       'leave-to-class': 'details-modal-out',
       'leave-active-class': 'hunaa-menu-leave-active',
     }">
-    <div class="row w-100 h-100 g-0 m-0">
+    <div class="row w-100 h-100 g-0 m-0" v-if="app">
       <div
         class="d-none d-md-flex col"
         style="
@@ -33,7 +33,7 @@
           >
         </div>
 
-        <template v-else-if="app.steam_id">
+        <template v-else-if="app.id.steam">
           <game-asset
             ref="logo"
             :app="app"
@@ -237,7 +237,7 @@
                 v-tippy="'Reviews on Steam'"
                 class="d-flex align-items-center text-muted small me-3">
                 <Icon size="16" width="1.8" class="me-1">DiscountCheck</Icon>
-                {{ app.scores.steamscore }}%, {{ app.scores.steamscoreAlt }}
+                {{ app.scores.steamscore }}% · {{ app.scores.steamscoreAlt }}
                 <!-- <br />
               <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
               </div>
@@ -366,7 +366,7 @@
             <div class="btn-list">
               <!-- <a
             v-tippy="'Open Steam store page'"
-            :href="'https://store.steampowered.com/app/' + app.steam_id"
+            :href="'https://store.steampowered.com/app/' + app.id.steam"
             class="btn btn-sm btn-icon"
             target="_blank">
             <Icon>BrandSteam</Icon>
@@ -375,17 +375,17 @@
 
               <!-- <a
               v-tippy="'Open Steam store page'"
-              :href="'https://store.steampowered.com/app/' + app.steam_id"
+              :href="'https://store.steampowered.com/app/' + app.id.steam"
               class="btn btn-ghost-secondary btn-secondary btn-sm"
               target="_blank">
               <Icon size="15" class="me-2">BrandSteam</Icon>
               Steam page
             </a> -->
 
-              <div v-if="app.steam_id" class="btn-group btn-group-sm" role="group">
+              <div v-if="app.id.steam" class="btn-group btn-group-sm" role="group">
                 <a
                   v-tippy="'Open Steam store page'"
-                  :href="'https://store.steampowered.com/app/' + app.steam_id"
+                  :href="'https://store.steampowered.com/app/' + app.id.steam"
                   class="btn btn-ghost-secondary btn-secondary tonal btn-sm pe-2"
                   style="border: 0"
                   target="_blank">
@@ -395,7 +395,7 @@
                 <a
                   v-if="app.is.steam"
                   v-tippy="'Run or install the game through Steam'"
-                  :href="'steam://run/' + app.steam_id"
+                  :href="'steam://run/' + app.id.steam"
                   class="btn btn-ghost-secondary btn-secondary tonal btn-sm m-0 ps-0 pe-1"
                   style="border: 0"
                   target="_blank">
@@ -406,7 +406,7 @@
               <a
                 v-if="app.has_demo"
                 v-tippy="'Play a free demo on Steam'"
-                :href="'https://store.steampowered.com/app/' + app.steam_id"
+                :href="'https://store.steampowered.com/app/' + app.id.steam"
                 class="btn btn-ghost-secondary btn-secondary btn-sm"
                 target="_blank">
                 <Icon size="15" class="me-1">Download</Icon>
@@ -414,9 +414,9 @@
               </a>
 
               <a
-                v-if="app.xbox_id"
+                v-if="app.id.xbox"
                 v-tippy="'Open Xbox page'"
-                :href="`https://www.xbox.com/games/store/${app.slug}/${app.xbox_id}`"
+                :href="`https://www.xbox.com/games/store/${app.slug}/${app.id.xbox}`"
                 class="btn btn-ghost-secondary btn-secondary btn-sm"
                 target="_blank">
                 <Icon size="15" class="me-1">BrandXbox</Icon>
@@ -425,7 +425,7 @@
 
               <!-- <a
               v-tippy="'Open Xbox store page'"
-              :href="'https://store.steampowered.com/app/' + app.xbox_id"
+              :href="'https://store.steampowered.com/app/' + app.id.xbox"
               class="btn btn-ghost-secondary btn-secondary btn-sm"
               target="_blank">
               <Icon size="15" class="me-2">BrandXbox</Icon>
@@ -629,7 +629,7 @@ import format from '../../utils/format'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Thu Jun 20 2024
+ * Modified: 23 July 2024 - 11:49:08
  **/
 
 export default {
@@ -672,7 +672,17 @@ export default {
     $next() {
       if (!this.app || !this.$data.$list || !this.$data.$list.items) return
 
-      const index = this.$data.$list.items.indexOf(this.app.uuid)
+      let index = null
+      let uuid = this.app.uuid
+      let list = this.$data.$list.items
+
+      // Check if the list contains objects with a uuid property
+      if (typeof list[0] === 'object' && 'uuid' in list[0]) {
+        index = list.findIndex((item) => item.uuid === uuid)
+      } else if (typeof list[0] === 'string') {
+        index = list.indexOf(uuid)
+      }
+
       return this.$data.$list.items[index + 1]
     },
 
@@ -689,7 +699,17 @@ export default {
       this.ui.layout == 'full'
     },
 
-    load(uuid) {
+    //+-------------------------------------------------
+    // load()
+    // Receives an uuid or object and tries to load the game
+    // -----
+    // Created on Tue Jul 23 2024
+    //+-------------------------------------------------
+    load(app) {
+      let uuid = null
+      if (typeof app === 'string') uuid = app
+      else if (typeof app === 'object') uuid = app.uuid
+
       this.gameStore.load(uuid)
     },
 

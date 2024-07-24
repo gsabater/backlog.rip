@@ -16,7 +16,7 @@
     </template> -->
 
     <template #content="{ hide }">
-      <div class="b-menu dropdown-menu show" @click="hide">
+      <div class="b-menu dropdown-menu show" @click="hide" v-bind="$attrs">
         <slot />
       </div>
     </template>
@@ -29,7 +29,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Wed Mar 27 2024
+ * Modified: Thu Jul 11 2024
  **/
 
 export default {

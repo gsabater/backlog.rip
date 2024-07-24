@@ -83,7 +83,7 @@
           </v-btn>
           <v-btn
             color="primary"
-            class="mx-2 px-5"
+            class="ms-2 px-5"
             elevation="1"
             variant="elevated"
             @click="submit"
@@ -109,7 +109,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th June 2024
- * Modified: Thu Jun 20 2024
+ * Modified: 19 July 2024 - 11:44:50
  **/
 
 export default {
@@ -246,6 +246,7 @@ export default {
       let index = this.item.index || 0
       let action = this.item.action
       let payload = { ...this.item }
+      payload.slug = format.stringToslug(payload.name)
 
       try {
         if (action == 'create') await this.stateStore.create(payload)

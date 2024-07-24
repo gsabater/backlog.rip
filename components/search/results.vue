@@ -5,7 +5,7 @@
     style="
       position: fixed;
       bottom: 10px;
-      left: 400px;
+      left: 230px;
       z-index: 9999;
       max-height: 120vh;
       overflow-y: scroll;
@@ -65,7 +65,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat Jun 29 2024
+ * Modified: 24 July 2024 - 13:23:40
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -138,7 +138,7 @@ export default {
           $data.search({ ...props.filters })
         }
       },
-      500,
+      1000,
       true
     )
 
@@ -156,15 +156,11 @@ export default {
       // do again?
       // if (!$data.isReady) return
 
-      let source = null
       const start = performance.now()
+      const source = getSource()
 
-      // prettier-ignore
-      if (Array.isArray(props.source)) source = props.source
-      else source = props.source == 'all' ? $data.list() : $data.library('object')
-
-      if (source == 'all') stats.amount = this.$app.count.api
-      stats.source = props.source
+      // if (source == 'all') stats.amount = this.$app.count.api
+      // stats.source = props.source
 
       log(
         `⚡ Filtering "${props.source}" with ${Object.keys(source).length} apps with filters`,
@@ -185,6 +181,29 @@ export default {
       stats.filtered = searched.filtered || 0
 
       // this.$forceUpdate()
+    }
+
+    //+-------------------------------------------------
+    // getSource()
+    // Returns the source array based on the props
+    // -----
+    // Created on Wed Jul 24 2024
+    //+-------------------------------------------------
+    const getSource = () => {
+      // Source is an array of fixed items
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (Array.isArray(props.source)) return props.source
+
+      // Source is all games
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (props.source == 'all') return $data.list()
+
+      // The source is the library but...
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (!props.filters.is) return $data.library('object')
+      if (props.filters.is == 'pinned') return $data.pinned('object')
+      if (props.filters.is == 'hidden') return $data.hidden('object')
+      if (props.filters.is == 'favorites') return $data.library('object')
     }
 
     return { search, items, stats }
@@ -345,16 +364,20 @@ export default {
 
     this.$mitt.on('data:updated', () => {
       if (!$app.ready) return
-
       if (this.$app.dev) log('✨ Search from event', 'data:updated')
       this.search('event')
     })
 
-    // window.$results = this
+    this.$mitt.on('data:deleted', () => {
+      if (!$app.ready) return
+      if (this.$app.dev) log('✨ Search from event', 'data:deleted')
+      this.search('event')
+    })
   },
 
   beforeUnmount() {
     this.$mitt.off('data:updated')
+    this.$mitt.off('data:deleted')
   },
 }
 </script>

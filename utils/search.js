@@ -1,9 +1,9 @@
 /*
  * @file:    \utils\search.js
- * @desc:    ...
+ * @desc:    Handles search filtering and sorting
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Thu Jun 20 2024
+ * Modified: 24 July 2024 - 13:44:40
  */
 
 export default {
@@ -12,6 +12,7 @@ export default {
   // Filters out apps based on criteria
   // -----
   // Created on Tue Jan 09 2024
+  // Updated on Wed Jul 24 2024 - Added fav
   //+-------------------------------------------------
   filter(source, filters, extra) {
     let items = []
@@ -25,27 +26,45 @@ export default {
     for (const uuid in source) {
       const app = source[uuid]
 
-      // Filter: Ignored games
-      // Remove any games ignored
-      //+---------------------------------------
-      if (app.is?.ignored) {
-        filtered.push(uuid)
-        // console.warn('🛑 Skipping ignored app', app.name, app)
-
-        continue
-      }
-
-      // Filter: Backlog state
+      // ✨ Filter: Backlog state
       // Match with app.state
       //+---------------------------------------
       if (filters?.states?.length) {
         const { states } = filters
-        const isPinned = states.includes('pinned')
 
-        if ((isPinned && !app.is?.pinned) || (!isPinned && !states.includes(app.state))) {
+        if (!states.includes(app.state)) {
           filtered.push(uuid)
           continue
         }
+      }
+
+      // ✨ App is...
+      // Filter apps based on filters.is
+      //+---------------------------------------
+      if (filters?.is) {
+        if (filters.is == 'favorites' && !app.is?.fav) {
+          filtered.push(uuid)
+          continue
+        }
+
+        if (filters.is == 'pinned' && !app.is?.pinned) {
+          filtered.push(uuid)
+          continue
+        }
+
+        if (filters.is == 'hidden' && !app.is?.hidden) {
+          filtered.push(uuid)
+          continue
+        }
+      }
+
+      // ✨ Filter: Hidden games
+      // Remove any games hidden
+      //+---------------------------------------
+      if (app.is?.hidden && filters.is !== 'hidden') {
+        filtered.push(uuid)
+        // console.warn('🛑 Skipping hidden app', app.name, app)
+        continue
       }
 
       // This should be a check "Show only owned games"
@@ -60,8 +79,8 @@ export default {
       //   }
       // }
 
-      // Filter: Name
-      // Match with on app.name and store_ids
+      // ✨ Filter: Name
+      // Match with on app.name and store IDs
       //+---------------------------------------
       if (filters?.string?.length > 0) {
         let appName = app.name ? app.name : ''
@@ -69,10 +88,10 @@ export default {
 
         if (
           appName.indexOf(searchString) === -1 &&
-          app.steam_id?.toString() !== searchString
+          app.id.steam?.toString() !== searchString
         ) {
           // counters.skip++
-          // data.hidden.string.push(steam_id)
+          // data.hidden.string.push(id.steam)
 
           filtered.push(uuid)
           // console.warn(
@@ -85,7 +104,7 @@ export default {
         }
       }
 
-      // Filter: Genres
+      // ✨ Filter: Genres
       // Include only apps with genres
       //+---------------------------------------
       if (filters?.genres?.length) {
@@ -97,7 +116,7 @@ export default {
         }
       }
 
-      // Sort By: Released at
+      // ✨ Sort By: Released at
       // Include only apps with release date
       //+---------------------------------------
       if (filters?.released > 0 || filters?.sortBy == 'released') {
@@ -123,7 +142,7 @@ export default {
         }
       }
 
-      // Sort By: HLTB
+      // ✨ Sort By: HLTB
       // Include only apps with HLTB time
       // Sort by HLTB.main
       //+---------------------------------------

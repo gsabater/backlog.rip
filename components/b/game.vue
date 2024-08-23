@@ -16,7 +16,13 @@
         {{ app.error }}
       </div>
       <template v-else>
-        <BState :app="app.uuid" :state="app.state" :label="false"></BState>
+        <BState
+          :app="app.uuid"
+          :state="app.state"
+          :label="false"
+          :fav="app.is.fav"
+          :pinned="app.is.pinned"
+          :hidden="app.is.hidden"></BState>
         <game-asset
           ref="cover"
           :app="app"
@@ -129,7 +135,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Jul 12 2024
+ * Modified: Sun 18 August 2024 - 19:31:28
  **/
 
 export default {

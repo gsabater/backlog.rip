@@ -4,7 +4,7 @@
     class="game-details"
     content-class="game-details-content game-card"
     overlay-transition="vfm-fade"
-    swipe-to-close="up"
+    :lock-scroll="false"
     :content-transition="{
       'enter-from-class': 'details-modal-out',
       'enter-to-class': 'hunaa-menu-full',
@@ -629,7 +629,7 @@ import format from '../../utils/format'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: 23 July 2024 - 11:49:08
+ * Modified: Sun 18 August 2024 - 18:28:44
  **/
 
 export default {

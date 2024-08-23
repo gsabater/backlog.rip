@@ -160,7 +160,7 @@
           <tippy
             :allow-h-t-m-l="true"
             class="text-muted ms-auto cursor-help"
-            content="Add this game to a special list for quick access. This does not add the game to your library">
+            content="Add this game to a special list for quick access ~ This does not add the game to your library">
             <span class="form-help">?</span>
           </tippy>
         </div>
@@ -236,6 +236,37 @@
               </div>
             </b-dropdown>
           </div>
+
+          <div class="dropdown-item" v-if="!ui.isRightClick">
+            <div class="d-flex" style="width: 30px">
+              <Icon size="18" class="text-muted">Mouse</Icon>
+            </div>
+
+            <div>
+              <span href="javascript:void(0)" class="dropdown-header p-0">
+                Did you know?
+              </span>
+              <small class="d-block text-secondary">
+                Open this menu with right click on the game
+              </small>
+            </div>
+          </div>
+
+          <!-- <div class="dropdown-item">
+            <div class="d-flex align-items-center">
+              <div
+                class="avatar avatar-sm rounded-circle bg-green-lt"
+                style="--tblr-bg-opacity: 0.3">
+                <Icon size="18" width="1.2">MouseFilled</Icon>
+              </div>
+              <div class="ms-3">
+                <a href="javascript:void(0)" class="text-body">Did you know?</a>
+                <small class="d-block text-secondary">
+                  you can open this menu with right click
+                </small>
+              </div>
+            </div>
+          </div> -->
         </template>
       </div>
     </template>
@@ -321,7 +352,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: 24 July 2024 - 12:06:25
+ * Modified: Sun 18 August 2024 - 19:11:50
  **/
 
 export default {
@@ -334,9 +365,8 @@ export default {
       app: {},
 
       ui: {
-        top: '0px',
-        left: '0px',
         backdrop: false,
+        isRightClick: false,
       },
     }
   },
@@ -375,6 +405,7 @@ export default {
       this.appUUID = app
       this.app = this.dataStore.get(app)
       this.ui.backdrop = true
+      this.ui.isRightClick = event.button !== 0 || event.type == 'contextmenu'
 
       this.$refs.tippy.show()
     },

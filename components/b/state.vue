@@ -5,7 +5,7 @@
     :class="{ 'cursor-pointer': manager }"
     style="border-radius: 4px"
     :style="{ '--tblr-status-color': st.color }"
-    @click.stop="manage($event)">
+    @click.stop="showManager($event)">
     <span
       v-if="from"
       :style="{ color: oldst.color + ' !important' }"
@@ -13,6 +13,9 @@
       {{ oldst.name || 'Not in your backlog' }}
       <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon>
     </span>
+
+    <Icon size="18" width="1.5" class="text-green" v-if="pinned">BookmarkFilled</Icon>
+    <Icon size="18" width="1.5" style="color: red; fill: pink" v-if="fav">Heart</Icon>
 
     <span class="status-dot" :class="{ 'status-dot-animated': pulse && state }"></span>
     <template v-if="label">
@@ -31,11 +34,11 @@
  * <BState :state="state"></BState>
  * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Thu Apr 11 2024
+ * Modified: Sun 18 August 2024 - 19:32:11
  **/
 
 export default {
-  name: 'State',
+  name: 'BState',
   props: {
     app: {
       type: String,
@@ -45,6 +48,21 @@ export default {
     state: {
       type: [String, Number],
       default: null,
+    },
+
+    fav: {
+      type: Boolean,
+      default: false,
+    },
+
+    pinned: {
+      type: Boolean,
+      default: false,
+    },
+
+    hidden: {
+      type: Boolean,
+      default: false,
     },
 
     from: {
@@ -94,12 +112,12 @@ export default {
 
   methods: {
     //+-------------------------------------------------
-    // manage()
+    // showManager()
     // Invoques the game manager
     // -----
     // Created on Sat Jan 06 2024
     //+-------------------------------------------------
-    manage($event) {
+    showManager($event) {
       if (!this.manager) return
 
       this.$mitt.emit('game:manager', {

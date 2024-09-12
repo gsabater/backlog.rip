@@ -5,12 +5,13 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: 24 July 2024 - 12:43:30
+ * Modified: Wed 11 September 2024 - 17:49:31
  */
 
 let $nuxt = null
 let $data = null
 let $game = null
+let $cloud = null
 let $journal = null
 
 export const useStateStore = defineStore('state', {
@@ -72,9 +73,10 @@ export const useStateStore = defineStore('state', {
 
     //+-------------------------------------------------
     // create()
-    // Creates a new state and saves it to the DB
+    // Creates a new state and saves it
     // -----
     // Created on Tue Jun 18 2024
+    // Updated on Thu Sep 05 2024 - Up`dates the cloud
     //+-------------------------------------------------
     async create(data) {
       delete data.action
@@ -84,6 +86,7 @@ export const useStateStore = defineStore('state', {
 
       const id = await $nuxt.$db.states.put(data)
       await this.load(true)
+      $cloud.update('states')
 
       return id
     },
@@ -93,6 +96,7 @@ export const useStateStore = defineStore('state', {
     // Update a state and reload
     // -----
     // Created on Thu Jun 20 2024
+    // Updated on Thu Sep 05 2024 - Up`dates the cloud
     //+-------------------------------------------------
     async update(data) {
       delete data.action
@@ -100,6 +104,7 @@ export const useStateStore = defineStore('state', {
       data.updated_at = dates.now()
       await $nuxt.$db.states.put(data)
       await this.load(true)
+      $cloud.update('states')
     },
 
     //+-------------------------------------------------
@@ -107,12 +112,14 @@ export const useStateStore = defineStore('state', {
     // Deletes a state in the $db
     // -----
     // Created on Thu Jun 20 2024
+    // Updated on Thu Sep 05 2024 - Up`dates the cloud
     //+-------------------------------------------------
     async delete(id) {
       this.states = this.states.filter((state) => state.id !== id)
 
       await $nuxt.$db.states.delete(id)
       await this.load(true)
+      $cloud.update('states')
 
       return true
     },
@@ -122,6 +129,7 @@ export const useStateStore = defineStore('state', {
     // Sorts a state in a direction and saves both states
     // -----
     // Created on Wed Jan 17 2024
+    // Updated on Thu Sep 05 2024 - Up`dates the cloud
     //+-------------------------------------------------
     sort(direction, id) {
       let states = this.states
@@ -132,10 +140,7 @@ export const useStateStore = defineStore('state', {
         states[index].order = states[index - 1].order
         states[index - 1].order = temp
 
-        $nuxt.$db.states.bulkPut([
-          { ...states[index], nonCloneableProp: undefined },
-          { ...states[index - 1], nonCloneableProp: undefined },
-        ])
+        $nuxt.$db.states.bulkPut([{ ...states[index] }, { ...states[index - 1] }])
       }
 
       if (index < states.length - 1 && direction === 'down') {
@@ -143,10 +148,7 @@ export const useStateStore = defineStore('state', {
         states[index].order = states[index + 1].order
         states[index + 1].order = temp
 
-        $nuxt.$db.states.bulkPut([
-          { ...states[index], nonCloneableProp: undefined },
-          { ...states[index - 1], nonCloneableProp: undefined },
-        ])
+        $nuxt.$db.states.bulkPut([{ ...states[index] }, { ...states[index - 1] }])
       }
 
       this.states = states.sort((a, b) => a.order - b.order)
@@ -154,6 +156,8 @@ export const useStateStore = defineStore('state', {
       $nuxt.$toast.success('Order saved', {
         // description: 'Monday, January 3rd at 6:00pm',
       })
+
+      $cloud.update('states')
     },
 
     //+-------------------------------------------------
@@ -168,6 +172,7 @@ export const useStateStore = defineStore('state', {
     // Created on Sat Jan 06 2024
     // Updated on Fri May 10 2024 - Added pinned
     // Created on Thu Jul 11 2024 - Added hidden
+    // Updated on Thu Sep 05 2024 - Toggle a state
     //+-------------------------------------------------
     set(uuid, state) {
       if (state == 'fav') {
@@ -185,9 +190,14 @@ export const useStateStore = defineStore('state', {
         return
       }
 
-      let obj = this.keyed[state]
       let app = $data.get(uuid)
+      let obj = this.keyed[state]
       let old = app.state || null
+
+      if (state == app.state) {
+        this.clear(uuid, state)
+        return
+      }
 
       // Update the state
       // on $game and $data
@@ -216,6 +226,37 @@ export const useStateStore = defineStore('state', {
       })
 
       $nuxt.$toast.success(app.name + ' set as ' + obj.name, {
+        // description: 'Monday, January 3rd at 6:00pm',
+      })
+
+      this.indexLibrary()
+    },
+
+    //+-------------------------------------------------
+    // clear()
+    // Clears the state on an app
+    // -----
+    // Created on Mon Sep 02 2024
+    //+-------------------------------------------------
+    clear(uuid, state) {
+      let app = $data.get(uuid)
+      let obj = this.keyed[state]
+
+      app.is.dirty = true
+      app.is.state = app.is.state || {}
+
+      delete app.state
+      delete app.is.state[obj.key]
+
+      delete $game.app.state
+      $game.update(uuid, { ...app })
+
+      $nuxt.$mitt.emit('state:change', {
+        uuid: uuid,
+        state: null,
+      })
+
+      $nuxt.$toast.success('The state has been cleared on ' + app.name, {
         // description: 'Monday, January 3rd at 6:00pm',
       })
 
@@ -386,7 +427,7 @@ export const useStateStore = defineStore('state', {
 
       this.states = states.sort((a, b) => a.order - b.order)
       this.keyed = states.reduce((obj, state) => {
-        state.key = state.key || 'state_' + state.id
+        state.key = 'state_' + state.id // state.key ||
         obj[state.id] = state
         return obj
       }, {})
@@ -410,6 +451,7 @@ export const useStateStore = defineStore('state', {
       if (!$nuxt) $nuxt = useNuxtApp()
       if (!$data) $data = useDataStore()
       if (!$game) $game = useGameStore()
+      $cloud ??= useCloudStore()
       if (!$journal) $journal = useJournalStore()
 
       await this.load()

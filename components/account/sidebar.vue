@@ -24,8 +24,15 @@
 
     <li class="nav-item">
       <NuxtLink to="/account/preferences" class="nav-link">
-        <Icon class="me-2 icon-rotate">Settings</Icon>
+        <Icon class="me-2">Settings</Icon>
         Preferences
+      </NuxtLink>
+    </li>
+
+    <li class="nav-item">
+      <NuxtLink to="/account/cloud" class="nav-link">
+        <Icon class="me-2">CloudRain</Icon>
+        Cloud sync
       </NuxtLink>
     </li>
 
@@ -51,6 +58,7 @@
       <h3>Your data</h3>
     </div>
   </div>
+
   <ul class="nav nav-pills nav-vertical">
     <li class="nav-item">
       <NuxtLink to="/account/states" class="nav-link">
@@ -63,6 +71,13 @@
       <NuxtLink to="/account/database" class="nav-link">
         <Icon class="me-2">Database</Icon>
         Database
+      </NuxtLink>
+    </li>
+
+    <li class="nav-item" v-if="$app.dev">
+      <NuxtLink to="/account/logs" class="nav-link">
+        <Icon class="me-2">Bug</Icon>
+        Application logs
       </NuxtLink>
     </li>
     <!-- <li class="nav-item">

@@ -3,27 +3,44 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: 19 July 2024 - 16:06:19
+ * Modified: Thu 12 September 2024 - 15:43:17
  */
 
 let $nuxt = null
+let $cloud = null
+
+//+-------------------------------------------------
+// User auth and flow
+// ~~~~~~~~~~~~~~~~~~
+// - Anonymous user is created on first load
+// - The user data and configuration can live on localDB
+// - On page load, call authenticate()
+// > - $auth.user.config from $db.config
+// > - $auth.user.me from $db.account.get('me')
+// > - $auth.user.cloud from $db.account.get('cloud')
+//
+// > - $auth.user.bearer from $db.account.me.bearer
+// > - $auth.user.jwt from $db.account.cloud.jwt
+//+-------------------------------------------------
 
 export const useUserStore = defineStore('user', {
   state: () => ({
     user: { username: 'Traveler' },
-    bearer: null,
+
+    jwt: null, // JWT token to sync data with the cloud
+    bearer: null, // Determines if the user is logged in with the API
+
+    me: {},
+    api: {},
+    cloud: {},
+    config: {},
 
     is: {
       guest: false,
+      cloud: false,
       logged: false,
       checked: false,
     },
-
-    api: {},
-    local: {},
-
-    // menu: {}, -> made a getter dude
-    config: {},
 
     redirectTo: null,
   }),
@@ -32,72 +49,46 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     // authenticate()
     // Loads current user from local database
+    // If required, loads cloud credentials from API
     // -----
     // Created on Wed Mar 22 2023
     // Updated on Wed Dec 13 2023
+    // Updated on Fri Aug 02 2024 - Call cloud connect
     //+-------------------------------------------------
     async authenticate() {
       if (this.user?.uuid) return this.user
 
       if (!$nuxt) $nuxt = useNuxtApp()
+      if (!$cloud) $cloud = useCloudStore()
 
-      await this.loadLocal()
-      // await this.getApiData()
+      await this.loadMe()
+      await this.getApiData()
 
-      let me = { ...this.api, ...this.local }
-      // delete me.settings
-      // delete me.providers
-      // this.storeAccount(me)
-
-      this.user = { ...me }
-
-      log('🥸 User is authenticated as ' + this.user.username, this.user)
-      if (this.user.username == 'Traveler') log('🥸 Traveler user', this.user)
+      this.user = { ...this.api, ...this.me }
+      log('🥸 User logged in as ' + this.user.username, this.user)
 
       this.is.checked = true
+      if (this.jwt) this.is.cloud = true
       if (this.bearer) this.is.logged = true
 
       return true
     },
 
     //+-------------------------------------------------
-    // setToken()
-    // Loads the bearer token and adds it to pinia and axios
-    // -----
-    // Created on Mon Nov 20 2023
-    // Updated on Fri Dec 29 2023 Dont use cookies anymore
-    //+-------------------------------------------------
-    async setToken(bearer = false) {
-      // if (!bearer) bearer = useCookie('auth._token.local').value
-      // else useCookie('auth._token.local').value = bearer
-      this.bearer = bearer
-      this.local.bearer = bearer
-
-      $nuxt.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + bearer
-      return
-
-      this.user.bearer = bearer
-      this.local.bearer = bearer
-
-      this.update('local', 'account')
-
-      // Dirty hack to reauthenticate with api
-      await this.getApiData()
-      this.user.uuid = null
-      this.authenticate()
-    },
-
-    //+-------------------------------------------------
-    // loadLocal()
+    // loadMe()
     // Gets the local "account" database
     // -----
     // Created on Fri Nov 17 2023
+    // Updated on Thu Aug 15 2024 - load cloud data
     //+-------------------------------------------------
-    async loadLocal() {
+    async loadMe() {
       let config = await $nuxt.$db.config.toArray()
-      this.local = await $nuxt.$db.account.get('me')
 
-      if (this.local?.bearer) this.setToken(this.local?.bearer)
+      this.me = (await $nuxt.$db.account.get('me')) || {}
+      this.cloud = (await $nuxt.$db.account.get('cloud')) || {}
+
+      this.setBearer(this.me?.bearer)
+      this.setJWT(this.cloud?.jwt)
 
       // prettier-ignore
       let _config = config.reduce((acc, row) =>
@@ -105,47 +96,81 @@ export const useUserStore = defineStore('user', {
         {})
 
       this.config = _config
-      // this.menu = _config.menu || {}
     },
 
     //+-------------------------------------------------
     // getApiData()
     // Gets the userdata from the API
-    // And then set values on local for future use
     // -----
     // Created on Fri Nov 17 2023
+    // Updated on Thu Aug 01 2024 - Update Cloud data
     //+-------------------------------------------------
     async getApiData() {
       if (!this.bearer) return
+      if (this.bearer && this.jwt) return
 
-      const jxr = await $nuxt.$axios.get('me').catch((e) => {
+      try {
+        const xhr = await $nuxt.$axios.get('me')
+
+        if (xhr?.status === 200 && xhr?.data) {
+          this.api = xhr.data
+          let provider = xhr.data.providers.find((p) => p.provider === 'steam')
+
+          this.me.steam = xhr.data.steam || this.me.steam
+          this.me.avatar = this.me.avatar || xhr.data.avatar
+          this.me.steam_data = provider?.data || null
+          // this.me.steam_updated_at = provider.updated_at
+
+          this.cloud.jwt = xhr.data.jwt
+          this.cloud.sub = xhr.data.uuid
+          this.setJWT(this.cloud?.jwt)
+
+          // prettier-ignore
+          this.me.username = (this.me.username == 'Traveler')
+            ? xhr.data.username
+            : this.me.username
+
+          log('🧭 Userdata from API', xhr.data)
+
+          // Try to persist the user data
+          // and avoid the need to login again
+          this.register()
+        }
+      } catch (e) {
+        debugger
         console.warn(e)
         return e.response
-      })
-
-      if (jxr?.status === 200) {
-        if (!jxr.data) return
-
-        this.api = jxr.data
-
-        this.local.steam = jxr.data.steam || this.local.steam
-
-        // prettier-ignore
-        this.local.username = (this.local.username == 'Traveler')
-          ? jxr.data.username
-          : this.local.username
-
-        // prettier-ignore
-        this.local.avatar = !this.local.avatar
-          ? jxr.data.avatar
-          : this.local.avatar
-
-        let provider = jxr.data.providers.find((p) => p.provider === 'steam')
-        this.local.steam_data = provider?.data || null
-        // this.local.steam_updated_at = provider.updated_at
-
-        log('🧭 Userdata from API', jxr.data)
       }
+    },
+
+    //+-------------------------------------------------
+    // setBearer()
+    // Sets the token value and configures axios
+    // -----
+    // Created on Mon Nov 20 2023
+    // Updated on Fri Dec 29 2023 - Dont use cookies anymore
+    //+-------------------------------------------------
+    async setBearer(token = false) {
+      if (!token) return
+
+      this.bearer = token
+      this.me.bearer = token
+
+      $nuxt.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+    },
+
+    //+-------------------------------------------------
+    // setJWT()
+    // Sets the JWT token for cloud sync
+    // -----
+    // Created on Tue Jul 30 2024
+    //+-------------------------------------------------
+    async setJWT(token = false) {
+      if (!token) return
+      if (!$cloud) $cloud = useCloudStore()
+
+      this.jwt = token
+      this.cloud.jwt = token
     },
 
     //+-------------------------------------------------
@@ -153,32 +178,47 @@ export const useUserStore = defineStore('user', {
     // Stores the user data after the first login
     // -----
     // Created on Sat Jun 29 2024
+    // Updated on Thu Aug 01 2024 - Store cloud credentials
     //+-------------------------------------------------
     async register() {
-      let json = JSON.parse(JSON.stringify(this.local))
-      await $nuxt.$db.account.put({
-        ...json,
-        uuid: 'me',
+      await this.putAccount(this.me, 'me')
+      await this.putAccount(this.cloud, 'cloud')
+
+      this.user = { ...this.api, ...this.me }
+    },
+
+    //+-------------------------------------------------
+    // putAccount()
+    // Writes an account object to the database
+    // Use updateAccount() to update a single field instead
+    // -----
+    // Created on Mon Aug 19 2024
+    //+-------------------------------------------------
+    putAccount(json, uuid) {
+      let data = JSON.parse(JSON.stringify(json))
+      return $nuxt.$db.account.put({
+        ...data,
+        uuid,
         updated_at: dates.now(),
       })
-
-      this.user = { ...this.api, ...this.local }
     },
 
     //+-------------------------------------------------
     // updateAccount()
-    // updates $account store and this.local data
+    // updates $account store and this.me data
     // -----
     // Created on Fri Dec 29 2023
+    // Created on Mon Aug 26 2024 - Integrate with cloud
     //+-------------------------------------------------
     async updateAccount(field = null) {
       let account = await $nuxt.$db.account.get('me')
 
       let data = { ...account }
-      if (field) data[field] = this.local[field]
+      if (field) data[field] = this.me[field]
+      this.user = { ...this.api, ...this.me }
 
+      await $cloud.update('account')
       await $nuxt.$db.account.put(data)
-      this.user = { ...this.api, ...this.local }
     },
 
     //+-------------------------------------------------
@@ -188,8 +228,6 @@ export const useUserStore = defineStore('user', {
     // Created on Sun Feb 18 2024
     //+-------------------------------------------------
     async storeConfig(field) {
-      console.warn('storeConfig', field, this.config[field])
-
       let value = JSON.parse(JSON.stringify(this.config[field]))
       await $nuxt.$db.config.put({
         key: field,
@@ -197,17 +235,8 @@ export const useUserStore = defineStore('user', {
       })
 
       $nuxt.$app.dev = this.config.debug
+      if (field !== 'cloud') await $cloud.update('account')
     },
-
-    // logout() {
-    //   this.user = {}
-    //   this.isLogged = false
-    //   this.bearer = null
-
-    //   useCookie('auth._token.local').value = null
-    //   delete $nuxt.$axios.defaults.headers.common['Authorization']
-    //   navigateTo('/login')
-    // },
   },
 
   getters: {
@@ -233,6 +262,7 @@ export const useUserStore = defineStore('user', {
     // Created on Sat Jun 29 2024
     //+-------------------------------------------------
     canUpdateSteamLibrary() {
+      return true
       let last_sync = this.user.steam_updated_at
       if (!last_sync) return true
 

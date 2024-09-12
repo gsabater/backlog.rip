@@ -15,6 +15,8 @@
 
 <script>
 import me from './sections/me'
+import logs from './sections/logs'
+import cloud from './sections/cloud'
 import states from './sections/states'
 import linked from './sections/linked'
 import history from './sections/history'
@@ -25,6 +27,8 @@ export default {
   name: 'AccountPages',
   components: {
     me,
+    logs,
+    cloud,
     states,
     linked,
     history,

@@ -14,8 +14,24 @@
       <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon>
     </span>
 
-    <Icon size="18" width="1.5" class="text-green" v-if="pinned">BookmarkFilled</Icon>
-    <Icon size="18" width="1.5" style="color: red; fill: pink" v-if="fav">Heart</Icon>
+    <Icon
+      v-if="pinned"
+      size="17"
+      width="1.5"
+      style="
+        fill: #1f4112d9 !important;
+        filter: drop-shadow(rgba(0, 0, 0, 0.41) 1px 1px 6px);
+        stroke: #0b651c;
+      ">
+      BookmarkFilled
+    </Icon>
+    <Icon
+      v-if="fav"
+      size="17"
+      width="1.5"
+      style="color: red; fill: #ff000094; filter: drop-shadow(1px 1px 6px #00000069)">
+      Heart
+    </Icon>
 
     <span class="status-dot" :class="{ 'status-dot-animated': pulse && state }"></span>
     <template v-if="label">
@@ -34,7 +50,7 @@
  * <BState :state="state"></BState>
  * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Sun 18 August 2024 - 19:32:11
+ * Modified: Wed 11 September 2024 - 13:14:58
  **/
 
 export default {

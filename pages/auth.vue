@@ -42,7 +42,7 @@
  *           this token identifies the user in the backlog.rip database
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Sat Jun 29 2024
+ * Modified: 31 July 2024 - 12:05:45
  **/
 
 export default {
@@ -50,8 +50,9 @@ export default {
 
   data() {
     return {
-      token: '',
+      jwt: '',
       auth: '',
+      token: '',
 
       ui: {
         loading: false,
@@ -67,22 +68,23 @@ export default {
     async authenticate() {
       this.ui.loading = true
       window.setTimeout(() => {
-        this.setUser()
+        this.setUserCredentials()
       }, 1000)
     },
 
     //+-------------------------------------------------
-    // setUser()
+    // setUserCredentials()
     // Sets the token and loads the user data
     // -----
     // Created on Fri Dec 29 2023
     //+-------------------------------------------------
-    async setUser() {
+    async setUserCredentials() {
       try {
         const redirect = null
 
-        // Set the token in the axios header
-        this.userStore.setToken(this.token)
+        // Set tokens received to the user
+        this.userStore.setJWT(this.jwt)
+        this.userStore.setBearer(this.token)
 
         // And load current user
         await this.userStore.getApiData()
@@ -109,8 +111,9 @@ export default {
     //+-------------------------------------------------
     async init() {
       const route = this.$route
-      const { token } = route.query
+      const { token, jwt } = route.query
 
+      this.jwt = jwt
       this.token = token
       this.auth = this.$auth
 

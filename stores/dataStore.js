@@ -5,11 +5,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: 24 July 2024 - 13:54:32
+ * Modified: Wed 11 September 2024 - 17:42:47
  */
 
 let $nuxt = null
 let $game = null
+let $cloud = null
 
 //+-------------------------------------------------
 // Data sources
@@ -309,11 +310,11 @@ export const useDataStore = defineStore('data', {
       }
 
       search[hash] = true
-      const jxr = await $nuxt.$axios.get(`repository/${hash}.json`)
-      if (jxr.status) {
-        log('🪂 Data from API', jxr.data)
+      const xhr = await $nuxt.$axios.get(`repository/${hash}.json`)
+      if (xhr.status) {
+        log('🪂 Data from API', xhr.data)
 
-        await this.process(jxr.data, 'api')
+        await this.process(xhr.data, 'api')
       }
     },
 
@@ -518,6 +519,7 @@ export const useDataStore = defineStore('data', {
 
       await delay(1000, true)
       this.storeQueue()
+      $cloud.update('library')
     },
 
     //+-------------------------------------------------
@@ -545,7 +547,7 @@ export const useDataStore = defineStore('data', {
       $nuxt.$app.count.library = index.lib.length || 0
 
       // Emits event
-      $nuxt.$mitt.emit('data:deleted', uuid)
+      $nuxt.$mitt.emit('data:deleted', { uuid })
     },
 
     //+-------------------------------------------------
@@ -700,9 +702,10 @@ export const useDataStore = defineStore('data', {
 
       if (game.is?.dirty) {
         delete game.is.dirty
-        this.queue.push(game.uuid)
+        if (this.queue.includes(game.uuid)) return
 
         console.warn('🔥 Queueing', game.uuid, 'to be stored, having ', this.queue.length)
+        this.queue.push(game.uuid)
         this.storeQueue()
       }
     },
@@ -714,8 +717,8 @@ export const useDataStore = defineStore('data', {
     // Created on Fri Nov 17 2023
     // Updated on Sun Feb 25 2024
     //+-------------------------------------------------
-    async loadLibrary() {
-      if (this.loaded.includes('library')) return
+    async loadLibrary(reload = false) {
+      if (this.loaded.includes('library') && !reload) return
 
       let games = await $nuxt.$db.games.toArray()
       this.process(games, 'library')
@@ -738,10 +741,10 @@ export const useDataStore = defineStore('data', {
     async loadApiStatus() {
       if (this.loaded.includes('api')) return
 
-      const jxr = await $nuxt.$axios.get(`get/status.json`)
-      if (jxr.status) {
-        $nuxt.$app.api = jxr.data
-        $nuxt.$app.count.api = jxr.data?.games?.total || 0
+      const xhr = await $nuxt.$axios.get(`get/status.json`)
+      if (xhr.status) {
+        $nuxt.$app.api = xhr.data
+        $nuxt.$app.count.api = xhr.data?.games?.total || 0
         this.loaded.push('api')
       }
     },
@@ -768,10 +771,10 @@ export const useDataStore = defineStore('data', {
         .map((game) => game.id.steam)
       console.warn('🔥 Updating missing games', missing)
 
-      const jxr = await $nuxt.$axios.post(`get/batch`, { steam: missing })
-      if (jxr.status) {
-        log('🪂 Data from API', jxr.data)
-        await this.process(jxr.data, 'api')
+      const xhr = await $nuxt.$axios.post(`get/batch`, { steam: missing })
+      if (xhr.status) {
+        log('🪂 Data from API', xhr.data)
+        await this.process(xhr.data, 'api')
         return true
       }
 
@@ -787,8 +790,9 @@ export const useDataStore = defineStore('data', {
     async init() {
       if (this.loaded.includes('init')) return
 
-      if (!$nuxt) $nuxt = useNuxtApp()
-      if (!$game) $game = useGameStore()
+      $nuxt ??= useNuxtApp()
+      $game ??= useGameStore()
+      $cloud ??= useCloudStore()
 
       this.loaded.push('init')
       this.indexes = Object.keys(index)

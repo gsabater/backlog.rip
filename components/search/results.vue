@@ -65,7 +65,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 02 August 2024 - 17:04:47
+ * Modified: Thu 05 September 2024 - 16:41:46
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -161,6 +161,11 @@ export default {
 
       // if (source == 'all') stats.amount = this.$app.count.api
       // stats.source = props.source
+
+      if (props.source == 'library' && Object.keys(source).length == 0) {
+        log('Canceling the search because of empty library')
+        return
+      }
 
       log(
         `🛞 Filtering "${props.source}" with ${Object.keys(source).length} apps with filters`,

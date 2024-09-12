@@ -1,8 +1,8 @@
 <template>
   <div class="card">
     <div class="card-body">
-      <h2 class="mb-3">Account</h2>
-      <p class="card-subtitle">Profile details and personal settings</p>
+      <h2 class="mb-2">Account</h2>
+      <p class="card-subtitle">Preferences and profile details</p>
       <!-- <div class="row align-items-center">
         <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url(./static/avatars/000m.jpg)"></span>
         </div>
@@ -97,7 +97,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri 23 August 2024 - 09:47:52
+ * Modified: Wed 11 September 2024 - 19:21:35
  **/
 
 export default {

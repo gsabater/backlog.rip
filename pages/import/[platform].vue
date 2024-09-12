@@ -185,7 +185,7 @@
                   }')`"></span>
                 <div class="mb-6">
                   <h3 class="card-title mb-0">
-                    {{ account.username }} on {{ module.store }}
+                    {{ account.steam_data.personaname }} on {{ module.store }}
                   </h3>
                   <p class="text-muted">
                     SteamID
@@ -404,7 +404,7 @@
             *| Review interface
             *| Can edit everything
             *+--------------------------------- -->
-          <div v-if="ui.step == 'review:plus'">
+          <div v-if="ui.step == 'review:plus' && !ui.saving">
             <div class="row row-deck row-cards mb-5">
               <div class="col-sm-6 col-lg-4">
                 <div class="card">
@@ -800,7 +800,7 @@
                 <div>
                   <NuxtLink to="/library" class="btn btn-primary w-100">
                     <Icon class="me-2">Apps</Icon>
-                    View your library and backlog
+                    View your library
                   </NuxtLink>
 
                   <!-- <div class="btn btn-primary w-100" @click="store">Again</div>
@@ -902,7 +902,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: 18 July 2024 - 17:02:53
+ * Modified: Thu 29 August 2024 - 10:20:53
  **/
 
 const importer = null
@@ -1011,7 +1011,7 @@ export default {
 
       const tabs = {
         appsToReview: {
-          label: 'new games',
+          label: 'games found',
           object: 'data.appsToReview',
           count: this.data.appsToReview.length,
         },

@@ -166,7 +166,7 @@
                       v-tippy="'Delete'"
                       class="btn-action cursor-pointer"
                       :class="{ disabled: item.key }"
-                      @click="remove(item)">
+                      @click="this.delete(item)">
                       <Icon class="icon text" color="red">Trash</Icon>
                     </span>
                   </template>
@@ -204,7 +204,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: 19 July 2024 - 11:41:24
+ * Modified: Tue 27 August 2024 - 17:12:44
  **/
 
 export default {
@@ -253,9 +253,9 @@ export default {
       this.$toast.success('State updated')
     },
 
-    async remove(item) {
+    async delete(item) {
       this.$refs.crud.delete(item)
-      this.$toast.success('The element has been deleted')
+      this.$toast.success('The state has been deleted')
     },
 
     //+-------------------------------------------------

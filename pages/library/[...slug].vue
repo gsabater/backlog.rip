@@ -18,7 +18,7 @@
 
               <NuxtLink to="/library" class="dropdown-item">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon size="18" width="1.5">LayoutDashboard</Icon>
+                  <Icon size="17" width="1.5" class="text-muted">LayoutDashboard</Icon>
                 </span>
                 <span class="nav-link-title">Your library</span>
                 <small class="ms-auto text-secondary me-1">
@@ -31,7 +31,7 @@
                 to="/library/favorites"
                 class="dropdown-item pe-2">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon size="18" width="1.5">Heart</Icon>
+                  <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
                 </span>
                 <span class="nav-link-title">Favorites</span>
               </NuxtLink>
@@ -42,8 +42,9 @@
                 :key="'state' + i"
                 class="dropdown-item ps-3">
                 <span
-                  class="status-dot ms-1 me-4"
-                  :style="{ 'background-color': state.color || '' }"></span>
+                  class="status-dot ms-0 me-4"
+                  :style="{ 'background-color': state.color || '' }"
+                  style="transform: translateX(1px)"></span>
 
                 <span class="nav-link-title">{{ state.name }}</span>
                 <small class="ms-auto text-secondary me-1">
@@ -111,7 +112,7 @@
                 to="/library/pinned"
                 class="dropdown-item pe-2">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon size="18" width="1.5">Bookmark</Icon>
+                  <Icon size="17" width="1.5" class="text-muted">Bookmark</Icon>
                 </span>
                 <span class="nav-link-title">Pinned games</span>
               </NuxtLink>
@@ -121,7 +122,7 @@
                 to="/library/hidden"
                 class="dropdown-item pe-2">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon size="18" width="1.5">Cancel</Icon>
+                  <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
                 </span>
                 <span class="nav-link-title">Hidden games</span>
               </NuxtLink>
@@ -162,7 +163,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th December 2023
- * Modified: 22 July 2024 - 12:33:45
+ * Modified: Wed 11 September 2024 - 19:19:08
  **/
 
 export default {

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: 23 July 2024 - 16:49:22
+ * Modified: Wed 11 September 2024 - 19:08:39
  */
 
 let $nuxt = null
@@ -148,7 +148,7 @@ export const useGameStore = defineStore('game', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (data) {
         // app matched with an api item
-        if (app && !app.id.api && data?.id.api) return 'update:match'
+        if (app && !app.id?.api && (data?.id?.api || data?.api_id)) return 'update:match'
 
         // disabled as i havent decided if this should be
         // a match or update:api or what
@@ -196,13 +196,13 @@ export const useGameStore = defineStore('game', {
         return
       }
 
-      let jxr = await $nuxt.$axios.get(`/get/${api}.json`)
+      let xhr = await $nuxt.$axios.get(`/get/${api}.json`)
 
-      if (jxr.status == 200) {
+      if (xhr.status == 200) {
         console.warn('🪝 Data received: Updating')
-        return jxr.data
+        return xhr.data
       } else {
-        console.error('🪝 Error loading data from API', jxr)
+        console.error('🪝 Error loading data from API', xhr)
       }
     },
 
@@ -259,8 +259,8 @@ export const useGameStore = defineStore('game', {
         score = 50
       }
 
-      // // Reduce the final score if the amount of reviews is low
-      // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // Reduce the final score if the amount of reviews is low
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (app.scores?.steamCount < 100) score *= 0.7
       else if (app.scores?.steamCount < 1000) score *= 0.8
       else if (app.scores?.steamCount < 3000) score *= 0.9

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Tue May 07 2024
+ * Modified: Thu 05 September 2024 - 12:01:30
  */
 
 import importer from '~/utils/importer'
@@ -62,6 +62,11 @@ async function autoSync() {
     return
   }
 
+  if ($nuxt.$app.count.library == 0) {
+    log('♾️ AutoSync cancelled - No games in library')
+    return
+  }
+
   $nuxt.$app.updating = true
 
   await sync({
@@ -76,7 +81,7 @@ async function autoSync() {
   if (data.apps.toImport.length == 0 && data.apps.toUpdate.length == 0) {
     log('✨ importer', 'No games to import or update')
 
-    $nuxt.$auth.local.steam_updated_at = dates.now()
+    $nuxt.$auth.me.steam_updated_at = dates.now()
     $nuxt.$auth.updateAccount('steam_updated_at')
 
     $nuxt.$app.updating = false

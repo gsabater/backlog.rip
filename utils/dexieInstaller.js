@@ -1,15 +1,13 @@
+/*
+ * @file:    \utils\dexieInstaller.js
+ * @desc:    ...
+ * ----------------------------------------------
+ * Created Date: 27th November 2023
+ * Modified: Thu 12 September 2024 - 09:31:09
+ */
+
 export class DexieInstaller {
   defaultStates = [
-    // {
-    //   id: 4,
-    //   order: 0,
-    //   key: 'favorites',
-    //   color: '#ff3d5f',
-    //   name: 'Favorites',
-    //   description:
-    //     'A category for games that the user particularly enjoyed or would recommend. This is useful for revisiting or suggesting to others.',
-    // },
-
     {
       id: 1,
       order: 1,
@@ -107,11 +105,12 @@ export class DexieInstaller {
   async checkin() {
     const config = {
       debug: false,
+      cloud: false,
+      pinned: true,
+      hidden: true,
+      favorites: true,
       autosync_steam: false,
 
-      pinned: true,
-      favorites: true,
-      hidden: true,
       menu: {
         states: [1, 2, 3],
       },

@@ -3,24 +3,24 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Sat May 04 2024
+ * Modified: 30 July 2024 - 12:22:18
  */
 
 //+-------------------------------------------------
 // Codex: List of events
-// ⚡ search:palette
+// ✨ search:palette
 //
-// ⚡ game:modal
-// ⚡ game:manager
+// ✨ game:modal
+// ✨ game:manager
 //
-// ⚡ state:change
+// ✨ state:change
 //
-// ⚡ confirm:show
+// ✨ confirm:show
 //
-// ⚡ app.render
+// ✨ app.render
 //
-// ⚡ data:ready
-// ⚡ data:updated
+// ✨ data:ready
+// ✨ data:updated
 //
 //+-------------------------------------------------
 
@@ -31,7 +31,7 @@ export default defineNuxtPlugin(() => {
   window.$mitt = emitter
 
   emitter.on('*', (e, payload) => {
-    log('🔔 ' + e, payload)
+    log('✨ ' + e, payload)
     // console.info(emitter.all)
   })
 

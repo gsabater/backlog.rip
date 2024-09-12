@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Fri Apr 26 2024
+ * Modified: Tue 10 September 2024 - 22:58:12
  */
 
 let $nuxt = null
@@ -22,6 +22,12 @@ export default {
   //+-------------------------------------------------
   now() {
     return new Date().toISOString()
+  },
+
+  timestamp() {
+    let $nuxt = useNuxtApp()
+    let date = $nuxt.$dayjs()
+    return date.format('YYYY-MM-DD HH:mm:ss')
   },
 
   //+-------------------------------------------------
@@ -105,6 +111,38 @@ export default {
   },
 
   //+-------------------------------------------------
+  // dynamicTimeAgo()
+  // like this.hoursAgo() but works with seconds until years
+  // -----
+  // Created on Wed Aug 21 2024
+  //+-------------------------------------------------
+  dynamicTimeAgo(time) {
+    if (!time) return false
+    if (!$nuxt) $nuxt = useNuxtApp()
+
+    const now = $nuxt.$dayjs()
+    const ref = $nuxt.$dayjs(time)
+
+    let seconds = now.diff(ref, 'seconds')
+    if (seconds < 60) return `${seconds}s`
+
+    let minutes = Math.floor(seconds / 60)
+    if (minutes < 60) return `${minutes}m`
+
+    let hours = Math.floor(minutes / 60)
+    if (hours < 24) return `${hours}h`
+
+    let days = Math.floor(hours / 24)
+    if (days < 30) return `${days}d`
+
+    let months = Math.floor(days / 30)
+    if (months < 12) return `${months}mo`
+
+    let years = Math.floor(months / 12)
+    return `${years}y`
+  },
+
+  //+-------------------------------------------------
   // timeAgo()
   // Displays a time ago string using dayjs
   // -----
@@ -116,6 +154,6 @@ export default {
 
     // const timeAgo = formatTimeAgo(time)
     const timeAgo = $nuxt.$dayjs(time).fromNow()
-    return timeAgo
+    return timeAgo ?? 'xxx'
   },
 }

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd February 2024
- * Modified: Thu Apr 11 2024
+ * Modified: Thu 15 August 2024 - 12:55:33
  */
 
 import { useMagicKeys, whenever } from '@vueuse/core'
@@ -28,7 +28,7 @@ let $tree = {
 
 async function init() {
   if (!$nuxt) $nuxt = useNuxtApp()
-  log('🔅 Registering events')
+  log('🔅 Registering interface interactions')
 
   registerMagicKeys()
 
@@ -59,7 +59,7 @@ async function init() {
 // Created on Thu Mar 21 2024
 //+-------------------------------------------------
 function register(component, methods) {
-  log('🔅 ' + component + ' registered')
+  log('🔅 ' + component + ' component registered')
   $tree[component] = methods
 }
 

@@ -37,7 +37,7 @@ aside .dropdown-menu {
   }
 
   & .router-link-active {
-    background-color: var(--tblr-dropdown-link-active-bg);
+    background-color: rgb(152 135 227 / 8%); // var(--tblr-dropdown-link-active-bg);
     color: var(--tblr-dropdown-link-color);
   }
 }

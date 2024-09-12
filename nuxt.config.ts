@@ -1,23 +1,30 @@
-/**
- * @project: backlog
+/*
  * @file:    \nuxt.config.ts
  * @desc:    https://nuxt.com/docs/api/configuration/nuxt-config
  *           https://codybontecou.com/how-to-use-vuetify-with-nuxt-3.html
+ *           https://nitro.unjs.io/deploy/providers/cloudflare
+ *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified:
+ * Modified: Thu 12 September 2024 - 17:30:40
  */
 
-import { transformAssetUrls } from 'vite-plugin-vuetify'
+// import vuetify from 'vite-plugin-vuetify'
+// import { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
-  compatibilityDate: '2024-07-04',
+  ssr: true,
+  // nitro: {
+  //   // preset: 'static'
+  //   // preset: 'cloudflare-pages',
+  // },
 
-  // ssr: false,
+  compatibilityDate: '2024-09-01',
   sourcemap: { server: false, client: true },
 
   features: {
     devLogs: false,
+    inlineStyles: false,
   },
 
   experimental: {
@@ -36,13 +43,10 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/devtools',
     '@nuxtjs/seo',
-    // '@nuxtjs/supabase',
     '@pinia/nuxt',
     '@vueuse/nuxt',
 
-    // ['@pinia/nuxt', {
-    //   autoImports: ['defineStore', 'mapStores', 'acceptHMRUpdate']
-    // }],
+    'vuetify-nuxt-module'
   ],
 
   // Auto import pinia stores
@@ -58,18 +62,18 @@ export default defineNuxtConfig({
 
   css: [
     //'vuetify/lib/styles/main.sass',
-    '@mdi/font/css/materialdesignicons.min.css',
+    // '@mdi/font/css/materialdesignicons.min.css',
     '@/assets/scss/main.scss',
   ],
   // 'animate.css/animate.min.css'
 
   build: {
-    transpile: ['vue-sonner', 'rxjs', 'vuetify'],
+    transpile: [
+      'vue-sonner',
+      'rxjs',
+      // 'vuetify'
+    ],
   },
-
-  // supabase: {
-  //   redirect: false,
-  // },
 
   content: {
     // ... options
@@ -84,9 +88,17 @@ export default defineNuxtConfig({
     },
   },
 
+  vuetify: {
+    moduleOptions: {
+      styles: { configFile: './assets/scss/settings.scss' },
+    },
+    vuetifyOptions: './vuetify.config.js',
+  },
+
   //+-------------------------------------------------
   // Seo Modules and configuration
   //+-------------------------------------------------
+
   site: {
     url: 'https://backlog.rip',
     name: 'Backlog.rip',
@@ -94,9 +106,8 @@ export default defineNuxtConfig({
     defaultLocale: 'en', // not needed if you have @nuxtjs/i18n installed
   },
 
-  // ogImage: {
-  //   enabled: false
-  // },
+  ogImage: { enabled: false },
+
   sitemap: {
     enabled: true,
     exclude: ['/tabler*', '/account/**', '/dev/**'],
@@ -125,7 +136,7 @@ export default defineNuxtConfig({
   // },
 
   webpack: {
-    extractCSS: true,
+    // extractCSS: true,
   },
 
   vite: {
@@ -135,20 +146,32 @@ export default defineNuxtConfig({
 
     css: {},
 
-    plugins: [],
+    plugins: [
+      {
+        name: 'ignore-css-warnings',
+        enforce: 'post',
+        configResolved(config) {
+          const originalWarn = config.logger.warn;
+          config.logger.warn = (...args) => {
+            if (typeof args[0] === 'string' && args[0].includes('@charset must precede all other statements')) {
+              // Ignore the specific warning
+              return;
+            }
+            // For all other warnings, call the original warn method
+            originalWarn.apply(config.logger, args);
+          };
+        },
+      },
+    ],
 
     vue: {
       template: {
-        transformAssetUrls,
+        // transformAssetUrls,
         // compilerOptions: {
         //   isCustomElement: (tag) => ['ninja-keys'].includes(tag),
         // },
       },
     },
-  },
-
-  nitro: {
-    preset: 'static',
   },
 
   devtools: {

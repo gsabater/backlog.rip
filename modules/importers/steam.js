@@ -140,10 +140,10 @@ export default {
   //+-------------------------------------------------
   async getUserdata() {
     let url = 'https://api.backlog.rip/fetch/steam/userdata'
-    let jxr = await $axios.get(url + '?steamid=' + $account.steam)
+    let xhr = await $axios.get(url + '?steamid=' + $account.steam)
 
-    if (jxr.data.status == 'success') {
-      return jxr.data?.fetch?.data || {}
+    if (xhr.data.status == 'success') {
+      return xhr.data?.fetch?.data || {}
     }
   },
 
@@ -156,11 +156,11 @@ export default {
   //+-------------------------------------------------
   async getGames() {
     let url = 'https://api.backlog.rip/fetch/steam/games'
-    let jxr = await $axios.get(url + '?steamid=' + $account.steam)
+    let xhr = await $axios.get(url + '?steamid=' + $account.steam)
 
-    if (jxr.data.status == 'success') {
+    if (xhr.data.status == 'success') {
       // xDDDD
-      return jxr.data?.fetch?.data?.games || []
+      return xhr.data?.fetch?.data?.games || []
     }
   },
 
@@ -172,10 +172,10 @@ export default {
   //+-------------------------------------------------
   async getSteamBacklog() {
     let url = 'https://api.backlog.rip/fetch/steam-backlog'
-    let jxr = await $axios.get(url + '?steamid=' + $account.steam)
+    let xhr = await $axios.get(url + '?steamid=' + $account.steam)
 
-    if (jxr.data.status == 'success') {
-      return jxr.data?.fetch || {}
+    if (xhr.data.status == 'success') {
+      return xhr.data?.fetch || {}
     }
   },
 

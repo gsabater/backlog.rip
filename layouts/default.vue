@@ -18,6 +18,8 @@
       >{{ $app.v }}
 ---
 {{ $app.api }}
+--
+{{ cloudStore.status }}
     </pre>
 
     <!--
@@ -73,7 +75,7 @@
           *+--------------------------------- -->
         <NuxtLink
           to="/"
-          class="d-none d-lg-flex py-3"
+          class="d-none d-lg-flex py-3 text-decoration-none"
           style="
             display: flex;
             align-items: center;
@@ -508,12 +510,12 @@
             <b-dropdown trigger="mouseenter focus click hover manual" placement="bottom">
               <span class="dropdown-header">Add games to your library</span>
               <div class="dropdown-item" @click.stop="$mitt.emit('game:add')">
-                <Icon size="18" class="me-2 text-muted">SquareRoundedPlus</Icon>
+                <Icon size="16" class="me-2 text-muted">SquareRoundedPlus</Icon>
                 Manually
                 <!-- <small class="text-secondary ms-auto me-0">Insert</small> -->
               </div>
               <NuxtLink to="/import/steam" class="dropdown-item">
-                <Icon size="18" class="me-2 text-muted">BrandSteam</Icon>
+                <Icon size="16" class="me-2 text-muted">BrandSteam</Icon>
                 Import your Steam account
               </NuxtLink>
               <!-- <NuxtLink to="/library" class="dropdown-item">
@@ -531,20 +533,167 @@
 
         <div
           class="d-none d-md-flex navbar-nav flex-row order-md-last align-items-center">
-          <div class="mx-3">
+          <!--
+            *+---------------------------------
+            *| Design modes
+            *| Light and dark toggler
+            *+---------------------------------
+          -->
+          <div v-if="$app.dev" class="mx-3">
             <div
-              v-tippy="'Change theme'"
+              v-tippy="'Go back to dark'"
               class="nav-link cursor-pointer px-0 hide-theme-dark"
               @click="changeTheme('dark')">
               <Icon>Moon</Icon>
             </div>
 
             <div
-              xv-tippy="'Enable light mode'"
+              v-tippy="'Enable light mode'"
               class="nav-link cursor-pointer px-0 hide-theme-light"
               @click="changeTheme('light')">
               <Icon>Sun</Icon>
             </div>
+          </div>
+
+          <!--
+            *+---------------------------------
+            *| Cloud status
+            *| Indicator for the cloud Sync
+            *+---------------------------------
+          -->
+          <div v-if="$auth.config.cloud" class="mx-3">
+            <!-- <div class="nav-item dropdown d-none d-md-flex me-3">
+              <a
+                href="#"
+                class="nav-link px-0"
+                data-bs-toggle="dropdown"
+                tabindex="-1"
+                aria-label="Show notifications"
+                aria-expanded="false">
+                <Icon width="1.5" style="color: green">CloudCheck</Icon>
+                <!-- <span class="badge bg-red"></span> - ->
+                <span class="badge bg-success"></span>
+              </a>
+            </div> -->
+
+            <div
+              class="avatar avatar-sm rounded-circle"
+              :class="{
+                'gray-600': $cloud.is == 'disconnected',
+                'bg-teal-lt': $cloud.is == 'connecting',
+                'bg-teal-lt': $cloud.is == 'syncing',
+                'bg-green-lt': $cloud.is == 'syncing:done',
+                'bg-orange-lt': $cloud.is == 'conflict',
+                'bg-red-lt': $cloud.is == 'error',
+              }"
+              style="
+                --tblr-bg-opacity: 0.3;
+                border: 1px solid;
+                outline: 1px solid #00000085;
+                outline-offset: -1px;
+              ">
+              <Icon v-if="$cloud.is == 'disconnected'" size="18" width="1.5">
+                CloudOff
+              </Icon>
+              <Icon v-if="$cloud.is == 'conflict'" size="18" width="1.5">
+                CloudExclamation
+              </Icon>
+              <Icon v-if="$cloud.is == 'error'" size="18" width="1.5">CloudOff</Icon>
+              <Icon v-if="$cloud.is == 'connecting'" size="18" width="1.5">Point</Icon>
+              <Icon v-if="$cloud.is == 'syncing'" size="18" width="1.5">CloudRain</Icon>
+              <Icon v-if="$cloud.is == 'syncing:done'" size="18" width="1.5">
+                CloudCheck
+              </Icon>
+            </div>
+
+            <b-dropdown
+              trigger="mouseenter focus click hover manual"
+              placement="bottom"
+              style="min-width: 230px">
+              <!-- <span class="dropdown-header">Add games to your library</span>
+              <div class="dropdown-item" @click.stop="$mitt.emit('game:add')">
+                <Icon size="16" class="me-2 text-muted">SquareRoundedPlus</Icon>
+                Manually
+                <small class="text-secondary ms-auto me-0">Insert</small>
+              </div> -->
+              <div v-if="$cloud.is == 'error'" class="dropdown-item">
+                <div class="d-flex align-items-center">
+                  <div
+                    class="avatar avatar-sm rounded-circle bg-red-lt"
+                    style="
+                      --tblr-bg-opacity: 0.3;
+                      border: 1px solid;
+                      outline: 1px solid #00000085;
+                      outline-offset: -1px;
+                    ">
+                    <Icon size="18" width="1.5">CloudOff</Icon>
+                  </div>
+                  <div class="ms-3">
+                    <div class="text-body">Something went wrong</div>
+                    <small class="text-secondary" style="white-space: normal">
+                      Looks like there was an error syncing your account with the cloud.
+                      Please try again by reloading the page.
+                      <br />
+                      If the problem persists, please contact us on Discord.
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="$cloud.is == 'syncing:done'" class="dropdown-item">
+                <div class="d-flex align-items-center">
+                  <div
+                    class="avatar avatar-sm rounded-circle bg-green-lt"
+                    style="
+                      --tblr-bg-opacity: 0.3;
+                      border: 1px solid;
+                      outline: 1px solid #00000085;
+                      outline-offset: -1px;
+                    ">
+                    <Icon size="18" width="1.5">CloudCheck</Icon>
+                  </div>
+                  <div class="ms-3">
+                    <a href="javascript:void(0)" class="text-body">Syncronized</a>
+                    <div class="text-secondary" v-tippy="$auth.cloud.updated_at">
+                      Last backup
+                      {{ dates.dynamicTimeAgo($auth.cloud.updated_at) }} ago
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="$cloud.is !== 'syncing:done'" class="dropdown-item">
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-orange badge-blink"></span>
+                  <div class="ms-3">
+                    <div class="text-secondary text-capitalize">{{ $cloud.status }}</div>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="dropdown-divider"></div> -->
+              <!-- <div>
+                <small class="text-secondary d-block" style="white-space: normal">
+                  Cloud saves are disabled. You can use the application as you want, but
+                  you won't be able to access your data on another device.
+                </small>
+              </div> -->
+              <!-- <NuxtLink to="/library" class="dropdown-item">
+                Library
+                <small class="text-secondary ms-auto me-0">
+                  {{ format.num($app.count.library) }}
+                </small>
+              </NuxtLink>
+              <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink> -->
+              <div class="dropdown-divider"></div>
+              <NuxtLink to="/account/cloud" class="dropdown-item">
+                <Icon size="16" class="me-2 text-muted">CloudComputing</Icon>
+                Usage and history
+              </NuxtLink>
+              <!-- <NuxtLink to="/journal" class="dropdown-item">
+                <Icon size="16" class="me-2 text-muted">CloudCog</Icon>
+                Cloud settings
+              </NuxtLink> -->
+            </b-dropdown>
           </div>
 
           <div class="d-none d-md-block nav-item dropdown align-self-center">
@@ -569,7 +718,7 @@
                     {{ format.num($app.count.library) }}
                   </small>
                 </NuxtLink>
-                <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
+                <!-- <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink> -->
                 <div class="dropdown-divider"></div>
                 <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
                 <NuxtLink to="/account/preferences" class="dropdown-item">
@@ -604,7 +753,7 @@
 
       <slot />
 
-      <footer class="footer footer-transparent d-print-none">
+      <footer class="footer footer-transparent d-print-none d-none">
         <div class="container-xl">
           <div class="row text-center align-items-center flex-row-reverse">
             <div class="col-lg-auto ms-lg-auto">
@@ -691,7 +840,10 @@
     <search-palette></search-palette>
 
     <game-add></game-add>
+    <!-- <v-layout>
+    </v-layout> -->
     <game-details></game-details>
+    <dialog-cloud-conflicts></dialog-cloud-conflicts>
     <!-- <b-backdrop></b-backdrop> -->
     <!-- <ModalsContainer /> -->
 
@@ -808,7 +960,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 24 July 2024 - 15:06:55
+ * Modified: Thu 12 September 2024 - 16:57:05
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'
@@ -831,7 +983,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useStateStore),
+    ...mapStores(useStateStore, useCloudStore),
     ...mapState(useStateStore, ['states']),
 
     //+-------------------------------------------------

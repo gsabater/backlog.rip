@@ -39,51 +39,110 @@
           *| Inner dropdown with states
           *+--------------------------------- -->
         <div class="dropdown-item">
-          <div style="width: 30px">
-            <Icon size="18" class="text-muted" width="1.5">Background</Icon>
+          <div class="d-flex nope-justify-content-center" style="width: 30px">
+            <span
+              v-if="app.state"
+              class="status-dot status-dot-animated"
+              style="margin-left: 5px"
+              :style="{ 'background-color': state?.color || 'transparent' }"></span>
+            <Icon v-else size="16" width="1" class="text-muted">Background</Icon>
           </div>
 
-          <span>Assign a state</span>
+          <span>
+            {{ app.state ? state.name : 'Assign a state' }}
+          </span>
 
           <span class="text-muted ms-auto">
-            <Icon size="14">CaretRightFilled</Icon>
+            <Icon size="12">CaretRightFilled</Icon>
           </span>
           <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
             <div
               v-for="(state, i) in states"
               :key="'state' + i"
-              class="dropdown-item px-2"
+              class="dropdown-item"
               :class="{ active: app.state == state.id }"
               @click="setState(state)">
-              <div
+              <!-- <div
                 v-if="app.state"
                 class="selection"
                 style="margin-right: 0.55rem; transform: translateY(-1px)">
                 <!-- <input
                   type="checkbox"
                   class="form-check-input"
-                  style="transform: scale(0.8)" /> -->
+                  style="transform: scale(0.8)" /> - ->
                 <Icon v-if="app.state == state.id" style="color: var(--tblr-primary)">
                   SquareCheck
                 </Icon>
                 <Icon v-else style="color: #666">Square</Icon>
-              </div>
-              <div class="content d-flex align-items-center w-100 px-1">
+              </div> -->
+              <div class="d-flex justify-center" style="width: 30px">
                 <span
                   class="status-dot me-2"
                   :style="{ 'background-color': state.color || '' }"
                   :class="{ 'status-dot-animated': app.state == state.id }"></span>
+              </div>
+              <div>
+                {{ state.name }}
 
-                <span class="me-4">
-                  {{ state.name }}
-                </span>
+                <div
+                  v-if="app.state == state.id"
+                  class="text-muted"
+                  style="font-size: 0.75rem">
+                  <span
+                    v-if="
+                      app && app.is && app.is.state && app.is.state['state_' + state.id]
+                    ">
+                    {{ dates.timeAgo(app.is.state['state_' + state.id] * 1000) }}
+                  </span>
+
+                  <code class="mx-2">
+                    <Icon size="10" width="1" class="">ArrowBack</Icon>
+                    Undo
+                  </code>
+                </div>
+              </div>
+
+              <tippy class="text-muted ms-auto cursor-help" :content="state.description">
+                <span class="form-help">?</span>
+              </tippy>
+
+              <!-- <tippy
+                class="text-muted ms-auto cursor-help ps-4"
+                :content="state.description">
+                <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
+                  HelpSmall
+                </Icon>
+              </tippy> -->
+              <!-- <div
+                class="content d-flex align-items-center w-100 px-1"
+                :class="{ 'control-hover': app.state }">
+                <div>
+                  <span
+                    class="status-dot me-2"
+                    :style="{ 'background-color': state.color || '' }"
+                    :class="{ 'status-dot-animated': app.state == state.id }"></span>
+
+                  <span class="me-4" nope:class="{ 'hide-hover': app.state == state.id }">
+                    {{ state.name }}
+                  </span>
+                  <small
+                    class="d-block text-muted pe-4 me-4"
+                    style="margin-left: -2px"
+                    v-if="app.state == state.id">
+                    <Icon size="12" width="1" style="margin-right: 2px; margin-top: -1px">
+                      ToggleLeft
+                    </Icon>
+                    Click again to reset
+                  </small>
+                </div>
 
                 <tippy
+                  v-if="state.description"
                   class="text-muted ms-auto ms-1 cursor-help"
                   :content="state.description">
                   <span class="form-help">?</span>
                 </tippy>
-              </div>
+              </div> -->
             </div>
           </b-dropdown>
         </div>
@@ -94,8 +153,8 @@
           *| Click to add a game to library
           *+--------------------------------- -->
         <div v-if="!app.is || !app.is.lib" @click="addToLibrary" class="dropdown-item">
-          <div class="d-flex" style="width: 30px">
-            <Icon size="18" class="text-muted" width="1.5">SquareRoundedPlus</Icon>
+          <div class="d-flex nope-justify-content-center" style="width: 30px">
+            <Icon size="17" width="1.5" class="text-muted">SquareRoundedPlus</Icon>
           </div>
 
           <span>Add to your library</span>
@@ -114,16 +173,25 @@
           *+--------------------------------- -->
         <div @click="setState({ id: 'fav' })" class="dropdown-item">
           <template v-if="app.is && app.is.fav">
-            <div class="d-flex" style="width: 30px">
-              <Icon size="18" width="1.5" style="color: red; fill: pink">Heart</Icon>
+            <div class="d-flex nope-justify-content-center" style="width: 30px">
+              <Icon
+                size="17"
+                width="1.5"
+                style="
+                  color: red;
+                  fill: #ff000094;
+                  filter: drop-shadow(1px 1px 6px #00000069);
+                ">
+                Heart
+              </Icon>
             </div>
-            <span>Remove favorite</span>
+            <span>No longer favorite</span>
           </template>
 
           <template v-else>
-            <div class="d-flex" style="width: 30px">
-              <Icon size="18" width="1.5" class="text-muted">Heart</Icon>
-              <!-- <Icon size="18" width="1.5" class="text-muted">BookmarkPlus</Icon> -->
+            <div class="d-flex nope-justify-content-center" style="width: 30px">
+              <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
+              <!-- <Icon size="17" width="1.5" class="text-muted">BookmarkPlus</Icon> -->
             </div>
 
             <span>Add to favorites</span>
@@ -143,15 +211,24 @@
           *+--------------------------------- -->
         <div @click="setState({ id: 'pinned' })" class="dropdown-item">
           <template v-if="app.is && app.is.pinned">
-            <div class="d-flex" style="width: 30px">
-              <Icon size="18" width="1.5" class="text-green">BookmarkFilled</Icon>
+            <div class="d-flex nope-justify-content-center" style="width: 30px">
+              <Icon
+                size="17"
+                width="1.5"
+                style="
+                  fill: #1f4112d9 !important;
+                  filter: drop-shadow(rgba(0, 0, 0, 0.41) 1px 1px 6px);
+                  stroke: #0b651c;
+                ">
+                BookmarkFilled
+              </Icon>
             </div>
             <span>Unpin</span>
           </template>
 
           <template v-else>
-            <div class="d-flex" style="width: 30px">
-              <Icon size="18" width="1.5" class="text-muted">BookmarkPlus</Icon>
+            <div class="d-flex nope-justify-content-center" style="width: 30px">
+              <Icon size="17" width="1.5" class="text-muted">BookmarkPlus</Icon>
             </div>
 
             <span>Pin this</span>
@@ -160,7 +237,7 @@
           <tippy
             :allow-h-t-m-l="true"
             class="text-muted ms-auto cursor-help"
-            content="Add this game to a special list for quick access. This does not add the game to your library">
+            content="Add this game to a special list for quick access ~ This does not add the game to your library">
             <span class="form-help">?</span>
           </tippy>
         </div>
@@ -175,8 +252,8 @@
           v-if="app.is && !app.is.hidden"
           @click="setState({ id: 'hidden' })"
           class="dropdown-item">
-          <div class="d-flex" style="width: 30px">
-            <Icon size="18" class="text-muted" width="1.5">Cancel</Icon>
+          <div class="d-flex nope-justify-content-center" style="width: 30px">
+            <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
           </div>
 
           <span>Hide this game</span>
@@ -195,8 +272,8 @@
           *+--------------------------------- -->
         <template v-if="app.is && app.is.lib">
           <div class="dropdown-item" @click="deleteme">
-            <div class="d-flex" style="width: 30px">
-              <Icon size="18" class="text-muted" width="2">PlaylistX</Icon>
+            <div class="d-flex nope-justify-content-center" style="width: 30px">
+              <Icon size="17" width="1.5" class="text-muted">PlaylistX</Icon>
             </div>
 
             <span>Remove from library</span>
@@ -217,14 +294,14 @@
           *| xxx
           *+--------------------------------- -->
           <div class="dropdown-item">
-            <div style="width: 30px">
-              <Icon size="18" class="text-muted" width="2">Code</Icon>
+            <div class="d-flex nope-justify-content-center" style="width: 30px">
+              <Icon size="17" width="1.5" class="text-muted">Code</Icon>
             </div>
 
             <span>Debug</span>
 
             <span class="text-muted ms-auto">
-              <Icon size="14">CaretRightFilled</Icon>
+              <Icon size="12">CaretRightFilled</Icon>
             </span>
             <b-dropdown placement="right-start">
               <div
@@ -236,6 +313,37 @@
               </div>
             </b-dropdown>
           </div>
+
+          <div class="dropdown-item" v-if="!ui.isRightClick">
+            <div class="d-flex nope-justify-content-center" style="width: 30px">
+              <Icon size="17" class="text-muted">Mouse</Icon>
+            </div>
+
+            <div>
+              <span href="javascript:void(0)" class="dropdown-header p-0">
+                Did you know?
+              </span>
+              <small class="d-block text-secondary">
+                Open this menu with right click on the game
+              </small>
+            </div>
+          </div>
+
+          <!-- <div class="dropdown-item">
+            <div class="d-flex align-items-center">
+              <div
+                class="avatar avatar-sm rounded-circle bg-green-lt"
+                style="--tblr-bg-opacity: 0.3">
+                <Icon size="17" width="1.2">MouseFilled</Icon>
+              </div>
+              <div class="ms-3">
+                <a href="javascript:void(0)" class="text-body">Did you know?</a>
+                <small class="d-block text-secondary">
+                  you can open this menu with right click
+                </small>
+              </div>
+            </div>
+          </div> -->
         </template>
       </div>
     </template>
@@ -265,7 +373,7 @@
       <label
         v-for="(state, i) in states"
         :key="'state' + i"
-        class="dropdown-item ps-1"
+        class="dropdown-item"
         @click="setState(state)">
         <div class="d-flex justify-center" style="width: 30px">
           <Icon v-if="isFav(state.name)" style="color: red; fill: pink">Heart</Icon>
@@ -321,7 +429,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: 24 July 2024 - 12:06:25
+ * Modified: Wed 11 September 2024 - 19:17:22
  **/
 
 export default {
@@ -334,9 +442,8 @@ export default {
       app: {},
 
       ui: {
-        top: '0px',
-        left: '0px',
         backdrop: false,
+        isRightClick: false,
       },
     }
   },
@@ -344,6 +451,10 @@ export default {
   computed: {
     ...mapStores(useDataStore, useStateStore, useGameStore),
     ...mapState(useStateStore, ['states']),
+
+    state() {
+      return this.states.find((state) => state.id == this.app.state)
+    },
   },
 
   methods: {
@@ -375,6 +486,7 @@ export default {
       this.appUUID = app
       this.app = this.dataStore.get(app)
       this.ui.backdrop = true
+      this.ui.isRightClick = event.button !== 0 || event.type == 'contextmenu'
 
       this.$refs.tippy.show()
     },
@@ -417,13 +529,6 @@ export default {
 
       this.hide()
     },
-
-    // onChange() {
-    //   // console.warn('onChange', value, this.modelValue)
-    //   this.$emit('change', this.value)
-    //   this.$emit('update:modelValue', this.value)
-    //   if (this.value == null) this.$emit('clear', null)
-    // },
 
     deleteme() {
       this.dataStore.delete(this.appUUID)

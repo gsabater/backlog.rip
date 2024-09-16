@@ -15,7 +15,7 @@
 
   <div class="card">
     <div class="card-body">
-      <h2 class="mb-3">Library management</h2>
+      <h2 class="mb-2">Library management</h2>
       <p class="card-subtitle">
         Settings available to tailor your categorization options
       </p>
@@ -152,7 +152,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th July 2024
- * Modified: 19 July 2024 - 14:10:15
+ * Modified: Wed 11 September 2024 - 19:21:51
  **/
 
 export default {

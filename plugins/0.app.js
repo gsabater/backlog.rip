@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Tue Jul 09 2024
+ * Modified: Tue 10 September 2024 - 16:12:27
  */
 
 // import { reactive } from 'vue'
@@ -19,9 +19,10 @@ let $data = null
 let $game = null
 let $state = null
 let $repos = null
+let $cloud = null
 
 let app = {
-  v: '0.14.0 β', //β
+  v: '0.15.0 β', //β
 
   // Global app state
   // Controls modules boundaries
@@ -77,7 +78,7 @@ let app = {
   // Has every message received from the app
   // Used to debug and review messages
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  log: ['wip'],
+  log: [],
 }
 
 //+-------------------------------------------------
@@ -146,6 +147,7 @@ async function init() {
 async function initClient() {
   if (!$user) $user = useUserStore()
   if (!$data) $data = useDataStore()
+  if (!$cloud) $cloud = useCloudStore()
   if (!$state) $state = useStateStore()
 
   const breakpoints = useBreakpoints({
@@ -177,14 +179,19 @@ async function initClient() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   await $data.init()
-  $state.init()
+  await $state.init()
+
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Connect to the cloud
+  // This process is tightly coupled with the user account
+  // But also needs the local data to be loaded
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  $cloud.connect()
 
   detectEnvironment()
 
-  await delay(300)
+  await delay(333)
   app.ready = true
-
-  // console.warn('load most popular now')
 }
 
 export default defineNuxtPlugin(() => {

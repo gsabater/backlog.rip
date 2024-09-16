@@ -3,11 +3,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Tue Feb 27 2024
+ * Modified: 30 July 2024 - 17:14:46
  */
 
 export default defineNuxtPlugin(() => {
   const userStore = useUserStore()
+  if (window) window.$auth = userStore
 
   return {
     provide: {

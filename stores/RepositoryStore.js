@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Mon Jul 01 2024
+ * Modified: Wed 11 September 2024 - 18:58:10
  */
 
 let $nuxt = null
@@ -35,7 +35,7 @@ export const useRepositoryStore = defineStore('repository', {
     //+-------------------------------------------------
     hot() {
       if (this._hot.length === 0) this.load('hot')
-      return this._hot
+      return this._hot.slice(0, 7)
     },
 
     //+-------------------------------------------------
@@ -69,19 +69,19 @@ export const useRepositoryStore = defineStore('repository', {
       if (this.loaded.includes('genres')) return
       this.loaded.push('genres')
 
-      const jxr = await $nuxt.$axios.get(`repository/genres.json`)
-      if (jxr.status) {
+      const xhr = await $nuxt.$axios.get(`repository/genres.json`)
+      if (xhr.status) {
         // this.loaded.push('genres')
-        this._genres = jxr.data
+        this._genres = xhr.data
       }
 
       log(
         '❇️ Genres loaded',
-        `${jxr.data.length} genres loaded from API`,
-        jxr.data[Math.floor(Math.random() * jxr.data.length)]
+        `${xhr.data.length} genres loaded from API`,
+        xhr.data[Math.floor(Math.random() * xhr.data.length)]
       )
 
-      return jxr.data
+      return xhr.data
     },
 
     searchGenres(query) {
@@ -97,9 +97,9 @@ export const useRepositoryStore = defineStore('repository', {
     // Created on Thu Jun 27 2024
     //+-------------------------------------------------
     async searchGames(query) {
-      const jxr = await $nuxt.$axios.post(`search/global`, { query })
-      if (jxr.status) {
-        return jxr.data
+      const xhr = await $nuxt.$axios.post(`search/global`, { query })
+      if (xhr.status) {
+        return xhr.data
       }
 
       return []
@@ -117,11 +117,11 @@ export const useRepositoryStore = defineStore('repository', {
       if (!$nuxt.$app.ready) return []
       if (this.loaded.includes(`${repo}`)) return
 
-      const jxr = await $nuxt.$axios.get(`repository/${repo}.json`)
-      if (jxr.status) {
+      const xhr = await $nuxt.$axios.get(`repository/${repo}.json`)
+      if (xhr.status) {
         this.loaded.push(repo)
-        $data.process(jxr.data, 'api')
-        if (this[`_${repo}`]) this[`_${repo}`] = jxr.data
+        $data.process(xhr.data, 'api')
+        if (this[`_${repo}`]) this[`_${repo}`] = xhr.data
       }
     },
 
@@ -135,9 +135,9 @@ export const useRepositoryStore = defineStore('repository', {
       if (!batch) return
       if (this.loaded.includes(`top:${batch}`)) return
 
-      const jxr = await $nuxt.$axios.get(`repository/top-${batch}.json`)
-      if (jxr.status) {
-        $data.process(jxr.data, 'api')
+      const xhr = await $nuxt.$axios.get(`repository/top-${batch}.json`)
+      if (xhr.status) {
+        $data.process(xhr.data, 'api')
         this.loaded.push(`top:${batch}`)
       }
     },

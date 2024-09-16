@@ -2,7 +2,7 @@
   <div
     v-if="app && app.uuid"
     class="card-game"
-    :class="app.state ? 'has-state' + app.state : ''"
+    nope-class="app.state ? 'has-state' + app.state : ''"
     :uuid="app.uuid">
     <div class="card-game__cover" @click.stop="showGameModal">
       <div
@@ -16,7 +16,13 @@
         {{ app.error }}
       </div>
       <template v-else>
-        <BState :app="app.uuid" :state="app.state" :label="false"></BState>
+        <BState
+          :app="app.uuid"
+          :state="app.state"
+          :label="false"
+          :fav="app.is.fav"
+          :pinned="app.is.pinned"
+          :hidden="app.is.hidden"></BState>
         <game-asset
           ref="cover"
           :app="app"
@@ -90,36 +96,6 @@
         {{ dates.minToHours(app.hltb.main / 60) }}
       </small>
     </div>
-    <!-- <div class="card-body">
-                    <div class="d-flex align-items-center">
-                      <div class="subheader">Sales</div>
-                      <div class="ms-auto lh-1">
-                        <div class="dropdown">
-                          <a class="dropdown-toggle text-secondary" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Last 7 days</a>
-                          <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item active" href="#">Last 7 days</a>
-                            <a class="dropdown-item" href="#">Last 30 days</a>
-                            <a class="dropdown-item" href="#">Last 3 months</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="h1 mb-3">75%</div>
-                    <div class="d-flex mb-2">
-                      <div>Conversion rate</div>
-                      <div class="ms-auto">
-                        <span class="text-green d-inline-flex align-items-center lh-1">
-                          7%
-                          <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 17l6 -6l4 4l8 -8"></path><path d="M14 7l7 0l0 7"></path></svg>
-                        </span>
-                      </div>
-                    </div>
-                    <div class="progress progress-sm">
-                      <div class="progress-bar bg-primary" style="width: 75%" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="75% Complete">
-                        <span class="visually-hidden">75% Complete</span>
-                      </div>
-                    </div>
-                  </div> -->
   </div>
 </template>
 
@@ -129,7 +105,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri Jul 12 2024
+ * Modified: Wed 11 September 2024 - 17:45:38
  **/
 
 export default {
@@ -149,8 +125,6 @@ export default {
   data() {
     return {
       app: {},
-
-      ui: {},
     }
   },
 
@@ -183,10 +157,38 @@ export default {
       this.app.state = payload.state
       this.$forceUpdate()
     })
+
+    this.$mitt.on('pinned:change', (payload) => {
+      if (payload.uuid != this.app.uuid) return
+      this.app.is.pinned = payload.pinned
+      this.$forceUpdate()
+    })
+
+    this.$mitt.on('fav:change', (payload) => {
+      if (payload.uuid != this.app.uuid) return
+      this.app.is.fav = payload.fav
+      this.$forceUpdate()
+    })
+
+    this.$mitt.on('data:deleted', (payload) => {
+      if (payload.uuid != this.app.uuid) return
+
+      this.app.state = null
+      this.app.is.fav = false
+      this.app.is.lib = false
+      this.app.is.dirty = false
+      this.app.is.pinned = false
+      this.app.is.hidden = false
+
+      this.$forceUpdate()
+    })
   },
 
   beforeUnmount() {
+    this.$mitt.off('fav:change')
+    this.$mitt.off('data:deleted')
     this.$mitt.off('state:change')
+    this.$mitt.off('pinned:change')
   },
 }
 </script>

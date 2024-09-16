@@ -17,6 +17,7 @@ logs
 .DS_Store
 .fleet
 .idea
+
 # Local env files
 .env
 .env.*
@@ -25,6 +26,6 @@ logs
 .assets/P22 Mackinac.zip
 .assets/exports/*
 .assets/Mackinac/*
-.assets/bruno-postman/*
+.dev/*
 .bruno/*
 pages/dev/*

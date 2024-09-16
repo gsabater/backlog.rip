@@ -15,7 +15,7 @@
             </span>
           </p>
 
-          <div class="my-5">
+          <div class="my-3">
             <div class="row g-3 justify-center">
               <div class="col-auto">&nbsp;</div>
               <div class="col-auto">
@@ -31,7 +31,7 @@
               </div>
             </div>
 
-            <p class="text-muted my-4" style="font-size: 0.75rem">
+            <p class="text-muted my-3" style="font-size: 0.75rem">
               <NuxtLink to="/changelog" class="link-secondary link-underline-opacity-0">
                 Version
                 <!-- <Icon size="16" width="1.8" style="transform: translateY(-1px)">Beta</Icon> -->
@@ -165,7 +165,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Thu May 09 2024
+ * Modified: Wed 11 September 2024 - 18:57:17
  **/
 
 export default {

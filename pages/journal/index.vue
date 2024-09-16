@@ -129,7 +129,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Thu Jun 13 2024
+ * Modified: Thu 05 September 2024 - 16:12:05
  **/
 
 export default {
@@ -260,8 +260,8 @@ export default {
     },
 
     async getData() {
-      const jxr = await this.journalStore.list()
-      this.db.data = jxr
+      const xhr = await this.journalStore.list()
+      this.db.data = xhr
     },
 
     async init() {

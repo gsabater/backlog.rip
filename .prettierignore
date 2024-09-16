@@ -1,2 +1,4 @@
 components/svgs/index.vue
 *.md
+*.json
+

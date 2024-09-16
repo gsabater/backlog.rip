@@ -4,6 +4,15 @@
   position: relative;
   will-change: transform brightness;
   transition: all 0.1s ease-in-out;
+  filter: brightness(0.88);
+
+  will-change: transform brightness;
+  transition: all 0.1s ease-in-out;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-2px);
+  }
 
   &__cover {
     width: 100%;
@@ -73,6 +82,21 @@
       // box-shadow: rgba(0, 0, 0, 0.36) 1px 1px 3px;
     }
 
+    &:after {
+      position: absolute;
+      content: '';
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 10;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      pointer-events: none;
+
+      opacity: 0.7;
+      filter: blur(50px);
+    }
+
     &:before {
       content: '';
       width: 100%;
@@ -128,20 +152,6 @@
 //   background-size: 400%;
 //   z-index: -1;
 // }
-
-.card-game:after {
-  opacity: 0.7;
-  filter: blur(50px);
-}
-
-.card-game:hover {
-  transform: translateY(-3px);
-
-  & .card-game__cover {
-    // opacity: 1;
-    // filter: brightness(1);
-  }
-}
 
 /*
 .card.card-game::after {

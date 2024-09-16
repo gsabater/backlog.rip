@@ -23,11 +23,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th January 2024
- * Modified: Sun Jan 21 2024
+ * Modified: Fri 06 September 2024 - 12:02:54
  **/
 
-import { useVuelidate } from '@vuelidate/core'
-import { required } from '@vuelidate/validators'
+// import { useVuelidate } from '@vuelidate/core'
+// import { required } from '@vuelidate/validators'
 
 export default {
   props: [],
@@ -35,7 +35,7 @@ export default {
 
   data() {
     return {
-      v$: useVuelidate(),
+      // v$: useVuelidate(),
       item: {},
       action: 'create',
 

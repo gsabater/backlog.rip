@@ -7,10 +7,10 @@
       </template>
 
       <v-form ref="form" v-model="ui.isValid">
-        <v-card-text class="px-8 mb-3">
+        <v-card-text class="px-5 mb-3">
           <div class="row g-4">
             <div class="col-12 col-md-6">
-              <div class="mb-4">
+              <div class="mb-3">
                 <div class="form-label">Name</div>
                 <!-- <h4 class="card-title mb-2">Username2</h4> -->
                 <v-text-field
@@ -21,7 +21,7 @@
                   :rules="[(v) => !!v || 'This field is required']" />
               </div>
 
-              <div class="mb-4">
+              <div class="mb-3">
                 <label class="form-label">Additional info</label>
                 <textarea
                   v-model="item.description"
@@ -29,7 +29,7 @@
                   rows="4"></textarea>
               </div>
 
-              <!-- <div class="mb-4">
+              <!-- <div class="mb-3">
                 <label class="form-label">Show on sidebar</label>
                 <div class="m-0">
                   <label class="form-check form-switch form-switch-lg">
@@ -109,7 +109,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th June 2024
- * Modified: 19 July 2024 - 11:44:50
+ * Modified: Fri 23 August 2024 - 19:53:34
  **/
 
 export default {

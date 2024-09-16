@@ -72,7 +72,7 @@ Selected
       <div class="col">
         <div class="btn" style="padding: 0.35rem 0.85rem">
           <Icon class="me-2" size="16">ColorFilter</Icon>
-          Filter by
+          <small>Apply filters</small>
 
           <Icon class="text-muted" size="15" style="transform: translateX(8px)">
             Selector
@@ -143,6 +143,10 @@ Selected
                           Heart
                         </Icon> -->
                       <!-- v-else -->
+
+                      <!-- <Icon style="color: var(--tblr-primary)">SquareCheck</Icon>
+                      <Icon style="color: #666">Square</Icon> -->
+
                       <span
                         class="badge me-2"
                         :style="{ 'background-color': param.color || '' }"></span>
@@ -155,6 +159,12 @@ Selected
                         class="text-muted ms-auto ms-2 cursor-help"
                         :content="param.description">
                         <Icon size="16" stroke="1">HelpCircleFilled</Icon>
+                      </tippy>
+                      <tippy
+                        :allow-h-t-m-l="true"
+                        class="text-muted ms-auto cursor-help"
+                        content="Add this game to a special list for quick access. This does not add the game to your library">
+                        <span class="form-help">?</span>
                       </tippy>
                     </template>
 
@@ -563,7 +573,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Thu Jun 20 2024
+ * Modified: Wed 14 August 2024 - 17:58:12
  **/
 
 export default {

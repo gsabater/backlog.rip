@@ -1,8 +1,8 @@
 <template>
   <div class="card">
     <div class="card-body">
-      <h2 class="mb-3">Account</h2>
-      <p class="card-subtitle">Profile details and personal settings</p>
+      <h2 class="mb-2">Account</h2>
+      <p class="card-subtitle">Preferences and profile details</p>
       <!-- <div class="row align-items-center">
         <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url(./static/avatars/000m.jpg)"></span>
         </div>
@@ -13,13 +13,14 @@
             Delete avatar
           </a></div>
       </div> -->
+
       <!-- <h3 class="card-title mt-4">Your profile</h3> -->
       <div class="row g-3">
         <div class="col-md-12 nope-col-lg-8">
           <div class="form-label">Your username</div>
           <!-- <h4 class="card-title mb-2">Username2</h4> -->
           <v-text-field
-            v-model="$auth.local.username"
+            v-model="$auth.me.username"
             density="comfortable"
             persistent-hint
             hint="This is only you display name"
@@ -96,7 +97,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 19 July 2024 - 14:06:55
+ * Modified: Wed 11 September 2024 - 19:21:35
  **/
 
 export default {

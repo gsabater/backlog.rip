@@ -38,8 +38,7 @@
                         {{ genre.name }}
                       </div>
                       <div class="col-auto text-secondary">
-                        <Icon>ChevronRight</Icon>
-                        <!-- <b-btn>View games</b-btn> -->
+                        <Icon size="12">CaretRightFilled</Icon>
                       </div>
                     </div>
                   </NuxtLink>
@@ -61,7 +60,7 @@ import { useRepositoryStore } from '../../stores/RepositoryStore'
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 15th January 2024
- * Modified: Fri May 03 2024
+ * Modified: Wed 11 September 2024 - 19:09:22
  **/
 
 export default {

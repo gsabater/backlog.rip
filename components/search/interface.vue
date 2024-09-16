@@ -63,6 +63,10 @@
         </div>
         <p class="text-muted text-center w-50">
           <!-- <hr class="my-2" > -->
+          <template v-if="$app.dev">
+            Loaded X games of X (lib/api) (info): The amount of games loaded, when
+            searching, more games are added from the api
+          </template>
           <template v-if="stats.results > 0">
             Showing up to
             <strong>{{ showing }} of {{ format.num(stats.results) }}</strong>
@@ -90,7 +94,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 23 July 2024 - 15:58:47
+ * Modified: Wed 11 September 2024 - 19:10:55
  **/
 
 export default {
@@ -133,7 +137,7 @@ export default {
 
         show: {
           page: 1,
-          perPage: 28,
+          perPage: 42,
 
           display: 'grid',
           card: ['default'],

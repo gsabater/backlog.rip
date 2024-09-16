@@ -65,7 +65,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 24 July 2024 - 13:23:40
+ * Modified: Thu 05 September 2024 - 16:41:46
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -120,7 +120,7 @@ export default {
         if (props.disabled) return
         if (Object.keys(props.filters).length === 0) return
 
-        log('✨🔥 search:start - from:', source || 'direct')
+        log('🪡🔥 search:start - from:', source || 'direct')
 
         emit('search:start', source)
         filter()
@@ -162,8 +162,13 @@ export default {
       // if (source == 'all') stats.amount = this.$app.count.api
       // stats.source = props.source
 
+      if (props.source == 'library' && Object.keys(source).length == 0) {
+        log('Canceling the search because of empty library')
+        return
+      }
+
       log(
-        `⚡ Filtering "${props.source}" with ${Object.keys(source).length} apps with filters`,
+        `🛞 Filtering "${props.source}" with ${Object.keys(source).length} apps with filters`,
         JSON.stringify(props.filters)
       )
 
@@ -251,7 +256,7 @@ export default {
     // Updated on Tue Jan 09 2024
     //+-------------------------------------------------
     // _search(source = null) {
-    //   log('✨🔥 Search: init from: ', source || 'direct run')
+    //   log('🪡🔥 Search: init from: ', source || 'direct run')
 
     //   if (Object.keys(this.filters).length === 0) return
     //   // this.$emit('loading', false)
@@ -364,13 +369,13 @@ export default {
 
     this.$mitt.on('data:updated', () => {
       if (!$app.ready) return
-      if (this.$app.dev) log('✨ Search from event', 'data:updated')
+      if (this.$app.dev) log('🪡 Search from event', 'data:updated')
       this.search('event')
     })
 
     this.$mitt.on('data:deleted', () => {
       if (!$app.ready) return
-      if (this.$app.dev) log('✨ Search from event', 'data:deleted')
+      if (this.$app.dev) log('🪡 Search from event', 'data:deleted')
       this.search('event')
     })
   },

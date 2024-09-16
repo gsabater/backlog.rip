@@ -64,7 +64,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 2nd February 2024
- * Modified: Sat Feb 17 2024
+ * Modified: 24 July 2024 - 16:30:52
  **/
 
 import Dexie from 'dexie'
@@ -74,7 +74,9 @@ definePageMeta({
 })
 
 const db = new Dexie('backlog.rip')
-await db.open()
+if (window && window.indexedDB) {
+  await db.open()
+}
 
 const log = ref('')
 const step = ref(0)

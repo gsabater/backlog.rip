@@ -7,7 +7,7 @@
       </template>
 
       <v-form ref="form" v-model="ui.isValid" @submit.prevent="search">
-        <v-card-text class="px-8 mb-3">
+        <v-card-text class="px-5 mb-2">
           <div class="row g-3">
             <div class="col-12 m-0">
               <div class="text-secondary">
@@ -65,9 +65,9 @@
 
                         <template v-if="isInLibrary(item)">
                           <Icon size="15" style="transform: translateY(-1px)">
-                            Cancel
+                            Forbid
                           </Icon>
-                          This game is already on your library
+                          This game is already in your library
                         </template>
 
                         <div class="d-flex g-2" v-else>
@@ -187,7 +187,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 26th June 2024
- * Modified: 23 July 2024 - 17:19:10
+ * Modified: Thu 12 September 2024 - 16:42:34
  **/
 
 //+-------------------------------------------------
@@ -271,9 +271,9 @@ export default {
       this.ui.empty = false
       this.ui.loading = true
 
-      let jxr = await this.repositoryStore.searchGames(this.item.name)
-      if (!jxr.length) this.ui.empty = true
-      this.db.items = jxr
+      let xhr = await this.repositoryStore.searchGames(this.item.name)
+      if (!xhr.length) this.ui.empty = true
+      this.db.items = xhr
 
       this.ui.loading = false
     },

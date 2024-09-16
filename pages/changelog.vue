@@ -1,7 +1,7 @@
 <template>
   <div class="page-header d-print-none py-3">
     <div class="container">
-      <div class="row g-2 align-items-center text-center mb-4">
+      <div class="row g-2 align-items-center text-center mb-3">
         <div class="col">
           <h1 class="mb-1">Changelog</h1>
           <div class="page-pretitle">
@@ -96,7 +96,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th January 2024
- * Modified: Thu Apr 04 2024
+ * Modified: Wed 11 September 2024 - 19:20:30
  **/
 
 export default {

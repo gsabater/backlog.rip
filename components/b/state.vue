@@ -5,7 +5,7 @@
     :class="{ 'cursor-pointer': manager }"
     style="border-radius: 4px"
     :style="{ '--tblr-status-color': st.color }"
-    @click.stop="manage($event)">
+    @click.stop="showManager($event)">
     <span
       v-if="from"
       :style="{ color: oldst.color + ' !important' }"
@@ -13,6 +13,25 @@
       {{ oldst.name || 'Not in your backlog' }}
       <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon>
     </span>
+
+    <Icon
+      v-if="pinned"
+      size="17"
+      width="1.5"
+      style="
+        fill: #1f4112d9 !important;
+        filter: drop-shadow(rgba(0, 0, 0, 0.41) 1px 1px 6px);
+        stroke: #0b651c;
+      ">
+      BookmarkFilled
+    </Icon>
+    <Icon
+      v-if="fav"
+      size="17"
+      width="1.5"
+      style="color: red; fill: #ff000094; filter: drop-shadow(1px 1px 6px #00000069)">
+      Heart
+    </Icon>
 
     <span class="status-dot" :class="{ 'status-dot-animated': pulse && state }"></span>
     <template v-if="label">
@@ -31,11 +50,11 @@
  * <BState :state="state"></BState>
  * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Thu Apr 11 2024
+ * Modified: Wed 11 September 2024 - 13:14:58
  **/
 
 export default {
-  name: 'State',
+  name: 'BState',
   props: {
     app: {
       type: String,
@@ -45,6 +64,21 @@ export default {
     state: {
       type: [String, Number],
       default: null,
+    },
+
+    fav: {
+      type: Boolean,
+      default: false,
+    },
+
+    pinned: {
+      type: Boolean,
+      default: false,
+    },
+
+    hidden: {
+      type: Boolean,
+      default: false,
     },
 
     from: {
@@ -94,12 +128,12 @@ export default {
 
   methods: {
     //+-------------------------------------------------
-    // manage()
+    // showManager()
     // Invoques the game manager
     // -----
     // Created on Sat Jan 06 2024
     //+-------------------------------------------------
-    manage($event) {
+    showManager($event) {
       if (!this.manager) return
 
       this.$mitt.emit('game:manager', {

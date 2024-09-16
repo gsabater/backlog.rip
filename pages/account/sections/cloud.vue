@@ -130,12 +130,14 @@
           <td>Games</td>
           <td>
             {{ $cloud.backup.games || 0 }}
-            <small class="text-muted me-3">/ 500</small>
+            <small class="text-muted me-3">/ ∞</small>
 
             <tippy
               :allow-h-t-m-l="true"
               class="text-muted ms-auto cursor-help"
-              content="The amount of games in your library. This includes favorites and hidden games.">
+              content="<p>The amount of games in your library. This includes favorites and hidden games. </p>
+              <p>Currently, there is no limit on the number of backed-up games, but future
+              limits may apply based on server resources.</p>">
               <span class="form-help">?</span>
             </tippy>
           </td>
@@ -144,10 +146,10 @@
               <div
                 class="progress-bar"
                 :class="{
-                  'bg-primary': $cloud.backup.games < 500,
-                  'bg-red': $cloud.backup.games >= 500,
+                  'bg-primary': $cloud.backup.games < 3000,
+                  'bg-red': $cloud.backup.games >= 3000,
                 }"
-                :style="`width: ${($cloud.backup.games / 500) * 100}%`"></div>
+                :style="`width: ${($cloud.backup.games / 3000) * 100}%`"></div>
             </div>
           </td>
         </tr>
@@ -156,13 +158,13 @@
           <td>States</td>
           <td>
             {{ $cloud.backup.states || 0 }}
-            <small class="text-muted">/ 10</small>
+            <small class="text-muted">/ 100</small>
           </td>
           <td class="w-50">
             <div class="progress progress">
               <div
                 class="progress-bar bg-primary"
-                :style="`width: ${($cloud.backup.states / 10) * 100}%`"></div>
+                :style="`width: ${($cloud.backup.states / 100) * 100}%`"></div>
             </div>
           </td>
         </tr>
@@ -307,7 +309,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th August 2024
- * Modified: Thu 12 September 2024 - 16:57:36
+ * Modified: Mon 16 September 2024 - 17:23:00
  **/
 
 export default {

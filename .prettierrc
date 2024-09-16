@@ -10,7 +10,7 @@
   "printWidth": 90,
   "eslintIntegration": true,
   "arrowParens": "always",
-  "disableLanguages": [
+  "disableLanguages": [ 
     "json",
     "jsonc"
   ],

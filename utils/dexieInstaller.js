@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th November 2023
- * Modified: Thu 12 September 2024 - 09:31:09
+ * Modified: Thu 12 September 2024 - 19:08:53
  */
 
 export class DexieInstaller {
@@ -105,7 +105,7 @@ export class DexieInstaller {
   async checkin() {
     const config = {
       debug: false,
-      cloud: false,
+      cloud: true,
       pinned: true,
       hidden: true,
       favorites: true,

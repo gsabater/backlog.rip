@@ -171,7 +171,30 @@
           </table>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4" v-if="ui.complete">
+          <div class="col-10 mx-auto text-center">
+            <div class="text-secondary mb-3">
+              Your local data has been syncronized with the cloud. You can close this
+              window, but it's recommended to reload the application.
+            </div>
+            <v-btn
+              color="green-darken-2 mb-3"
+              block
+              @click="ui.show = false"
+              variant="tonal">
+              <Icon size="16" width="1" class="mx-2">Checks</Icon>
+              Accept changes
+            </v-btn>
+            <small class="text-muted d-block mb-2">
+              If you have any issues, please contact me on
+              <a href="https://discord.gg/F2sPE5B" target="_blank" class="text-primary">
+                Discord
+              </a>
+            </small>
+          </div>
+        </div>
+
+        <div class="row g-4" v-else>
           <div class="col-12" v-if="ui.loading">
             <v-progress-linear
               color="deep-purple accent-4"
@@ -188,7 +211,7 @@
               block
               @click="download"
               variant="tonal">
-              <Icon size="18" width="1" class="ms-2">WorldDownload</Icon>
+              <Icon size="18" width="1" class="mx-2">WorldDownload</Icon>
               Download cloud data
             </v-btn>
           </div>
@@ -199,7 +222,7 @@
               block
               @click="upload"
               variant="tonal">
-              <Icon size="18" width="1" class="ms-2">WorldUpload</Icon>
+              <Icon size="18" width="1" class="mx-2">WorldUpload</Icon>
               Upload local
             </v-btn>
           </div>
@@ -215,7 +238,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 23rd August 2024
- * Modified: Sat 07 September 2024 - 16:14:02
+ * Modified: Mon 16 September 2024 - 17:22:53
  **/
 
 export default {
@@ -226,6 +249,7 @@ export default {
 
       show: false,
       loading: false,
+      complete: false,
     },
   }),
 
@@ -235,16 +259,18 @@ export default {
   },
 
   methods: {
-    download() {
+    async download() {
       this.ui.action = 'Downloading...'
       this.ui.loading = true
-      this.stateStore.resolve('download')
+      await this.cloudStore.resolve('download')
+      this.ui.complete = true
     },
 
-    upload() {
+    async upload() {
       this.ui.action = 'Uploading...'
       this.ui.loading = true
-      this.stateStore.resolve('upload')
+      await this.cloudStore.resolve('upload')
+      this.ui.complete = true
     },
   },
 

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Thu 12 September 2024 - 15:39:34
+ * Modified: Mon 16 September 2024 - 17:23:02
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -83,7 +83,7 @@ export const useCloudStore = defineStore('cloud', {
       log('⚡ cloud:syncing')
       this.status = 'syncing'
 
-      // await delay(500)
+      await delay(500)
 
       // Prepare and analyze the backup
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -242,12 +242,13 @@ export const useCloudStore = defineStore('cloud', {
       }
 
       // Case 2: Hashes differ between cloud and client
-      // Verify data integrity to download or conflict
+      // This should only happen when as a conflict resolution
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let latest = this.backups[0]
       if (latest.hash !== this.client.hash) {
-        console.warn('2.1. Hashes do not match', latest.hash, this.client.hash)
-        debugger
+        console.warn('2.1. Conflict resolution... ')
+        await this.analyze()
+
         return
       }
 
@@ -262,7 +263,7 @@ export const useCloudStore = defineStore('cloud', {
         let timeAgo = $nuxt.$moment().diff($nuxt.$moment(backup.created_at), 'hours')
         if (timeAgo > 12) {
           this.backup.hash = this.makeHash()
-          this.backup.created_at = dates.timestamp()
+          // this.backup.created_at = dates.timestamp()
         }
       }
 
@@ -304,7 +305,7 @@ export const useCloudStore = defineStore('cloud', {
       this.b['hash.h'] = hash || this.backup.hash
 
       log(
-        `⚡ integrity ~ Account (${this.b.account}) ~ States (${this.b.states}) ~ Library (${this.b.library})`
+        `⚡ integrity ~ ${this.client.hash} ※◈ ${this.backup.hash} ~ Account (${this.b.account}) ~ States (${this.b.states}) ~ Library (${this.b.library})`
       )
     },
 
@@ -320,28 +321,11 @@ export const useCloudStore = defineStore('cloud', {
 
       if (type == 'new') {
         this.backup.hash = this.makeHash()
-        this.backup.created_at = dates.timestamp()
+        // this.backup.created_at = dates.timestamp()
       }
 
       if (type == 'latest') {
         this.backup = { ...this.backups[0] }
-      }
-
-      return
-
-      if (this.backup.hash) return
-
-      let latest = this.backups[0]
-      let backup = this.backups.find((backup) => backup.hash == this.client.hash)
-      if (latest.hash !== this.client.hash) return 'restore'
-
-      this.backup = { ...backup }
-      this.b.hash = this.backup.hash
-
-      let timeAgo = $nuxt.$moment().diff($nuxt.$moment(backup.created_at), 'hours')
-      if (timeAgo > 24) {
-        this.backup.hash = Math.random().toString(36).substring(2, 10)
-        this.backup.created_at = dates.timestamp()
       }
     },
 
@@ -364,6 +348,7 @@ export const useCloudStore = defineStore('cloud', {
         return
       }
 
+      let latest = this.backups[0]
       if (!this.backups.find((backup) => backup.hash == this.backup.hash)) {
         this.backups.unshift(this.backup)
       }
@@ -375,14 +360,44 @@ export const useCloudStore = defineStore('cloud', {
 
       $user.cloud.updated_at = dates.timestamp()
       this.backup.updated_at = dates.timestamp()
-      $user.putAccount($user.cloud, 'cloud')
 
+      if (latest.hash !== this.backup.hash) {
+        this.backup.created_at = dates.timestamp()
+      }
+
+      $user.putAccount($user.cloud, 'cloud')
       // $nuxt.$toast.success('Your data has been syncronized')
     },
 
     conflict() {
       this.status = 'conflict'
       $nuxt.$mitt.emit('cloud:conflict')
+    },
+
+    //+-------------------------------------------------
+    // resolve()
+    // Resolves the conflict by downloading or uploading
+    // the data from the cloud
+    // -----
+    // Created on Fri Sep 13 2024
+    //+-------------------------------------------------
+    async resolve(action) {
+      this.status = 'syncing'
+      this.b.conflict = null
+
+      if (action == 'upload') {
+        let hash = this.makeHash('new')
+        this.backup.hash = hash
+        $user.cloud.hash = hash
+      }
+
+      let dimensions = Object.keys(this.dimensions)
+      for (let dimension of dimensions) {
+        this.client[dimension] = `0.${action}`
+      }
+
+      await this.sync()
+      return true
     },
 
     //+-------------------------------------------------
@@ -400,8 +415,13 @@ export const useCloudStore = defineStore('cloud', {
         console.warn(this.b[dimension + '.clo.hash'])
       }
 
-      if (this.b[dimension] == 'up') await this[this.dimensions[dimension]['up']]()
-      if (this.b[dimension] == 'down') await this[this.dimensions[dimension]['down']]()
+      if (this.b[dimension].includes('up')) {
+        await this[this.dimensions[dimension]['up']]()
+      }
+
+      if (this.b[dimension].includes('down')) {
+        await this[this.dimensions[dimension]['down']]()
+      }
     },
 
     //+-------------------------------------------------
@@ -445,7 +465,9 @@ export const useCloudStore = defineStore('cloud', {
       this.backup.sign_account = sign.full
 
       if (sign.hash == this.b['account.clo.hash']) {
-        log('⚡ account integrity hash checked, no upload required')
+        log(
+          '⚡ account ~ The integrity hash has been compared and no syncronization is needed'
+        )
         return
       }
 
@@ -481,7 +503,7 @@ export const useCloudStore = defineStore('cloud', {
       this.backup.sign_states = sign.full
 
       if (sign.hash == this.b['states.clo.hash']) {
-        log('⚡ states integrity hash checked, no upload required')
+        log('⚡ states ~ The integrity hash has been compared and no sync')
         return
       }
 
@@ -521,18 +543,18 @@ export const useCloudStore = defineStore('cloud', {
 
       this.backup.enabled = true
       this.backup.games = games.length
-      this.backup.sign_library = sign.full
 
       if (sign.hash == this.b['library.clo.hash']) {
-        log('⚡ library integrity hash checked, no upload required')
+        log('⚡ library ~ The integrity hash has been compared and no sync')
         return
       }
 
       // Upload the blob to the cloud
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       log('⚡ uploading library...')
+      this.backup.sign_library = sign.full
 
-      let date = $nuxt.$moment(this.b['library.clo.at'] * 1000).format('YYYY-MM-DD')
+      let date = $nuxt.$moment(sign.time * 1000).format('YYYY-MM-DD')
       let { xhr, error } = await this.$sb.storage
         .from('libraries')
         .upload(`${this.backup.user_id}/${date}.json`, blob, {
@@ -655,7 +677,7 @@ export const useCloudStore = defineStore('cloud', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let json = await this.parseJSONFromBlob(data)
 
-      await $nuxt.$db.games.clear()
+      $data.emptyLibrary()
       await $nuxt.$db.games.bulkPut(json)
 
       await $data.loadLibrary(true)
@@ -694,9 +716,11 @@ export const useCloudStore = defineStore('cloud', {
     // -----
     // Created on Fri Sep 06 2024
     //+-------------------------------------------------
-    makeHash() {
+    makeHash(create = false) {
       let old = this.backup.hash
       let version = old.includes('.') ? old.split('.')[0] : 0
+      if (create) version = 0
+
       let versioned = parseInt(version) + 1
 
       return `${versioned}.${Math.random().toString(36).substring(2, 10)}`
@@ -753,7 +777,11 @@ export const useCloudStore = defineStore('cloud', {
 
       // Backup (upload) data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (signed && client && (clientAt >= cloudAt || clientHash === 'update')) {
+      if (
+        signed &&
+        client &&
+        (clientAt >= cloudAt || clientHash === 'update' || clientHash == 'upload')
+      ) {
         log(`⚡ ${dimension} ⇢ outdated (up)`, clientAt, cloudAt)
         this.b[dimension] = 'up'
         return 'up'
@@ -761,7 +789,12 @@ export const useCloudStore = defineStore('cloud', {
 
       // Restore (download) the account
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (signed && (dimension !== 'library' || $data.library().length === 0)) {
+      if (
+        signed &&
+        (dimension !== 'library' ||
+          $data.library().length === 0 ||
+          clientHash === 'download')
+      ) {
         log(`⚡ ${dimension} ⇢ out of sync (down)`, clientAt, cloudAt)
         this.b[dimension] = 'down'
 

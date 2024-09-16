@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Wed 11 September 2024 - 17:42:47
+ * Modified: Mon 16 September 2024 - 17:23:05
  */
 
 let $nuxt = null
@@ -729,6 +729,44 @@ export const useDataStore = defineStore('data', {
         `${games.length} apps in local DB`,
         games[Math.floor(Math.random() * games.length)]
       )
+    },
+
+    //+-------------------------------------------------
+    // emptyLibrary()
+    // Empties the library, clearing Dexie DB and related indexes
+    // -----
+    // Created on Fri Sep 13 2024
+    //+-------------------------------------------------
+    async emptyLibrary() {
+      let library = this.library()
+
+      library.forEach((item) => {
+        delete data[item.uuid]
+
+        // Delete indexes
+        delete index.ed[index.ed.indexOf(item.uuid)]
+        delete index.igdb[item.id.igdb]
+        delete index.steam[item.id.steam]
+      })
+
+      // Clear Dexie DB
+      await $nuxt.$db.games.clear()
+
+      // Clear related indexes
+      index.lib = []
+      index.fav = []
+      index.pinned = []
+      index.hidden = []
+
+      // Update counters
+      $nuxt.$app.count.data = Object.keys(data).length || 0
+      $nuxt.$app.count.library = 0
+
+      // Emit event
+      $nuxt.$mitt.emit('library:emptied')
+      console.warn('🗑️ Library emptied')
+
+      this.loaded = this.loaded.filter((item) => item !== 'library')
     },
 
     //+-------------------------------------------------

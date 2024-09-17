@@ -113,7 +113,7 @@
     </div>
   </div>
 
-  <div v-if="$auth.config.cloud" class="card mb-3">
+  <div v-if="$auth.config.cloud && $cloud.is == 'syncing:done'" class="card mb-3">
     <div class="card-body">
       <h2 class="card-title mb-2">Cloud usage and quota</h2>
       <p class="card-subtitle">Amount of data stored in the cloud.</p>
@@ -221,7 +221,7 @@
     </table>
   </div>
 
-  <div v-if="$auth.config.cloud" class="card mb-3">
+  <div v-if="$auth.config.cloud && $cloud.is == 'syncing:done'" class="card mb-3">
     <div class="card-body">
       <h2 class="card-title mb-2">Syncronization history</h2>
       <p class="card-subtitle">Your latest backups</p>
@@ -309,7 +309,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th August 2024
- * Modified: Mon 16 September 2024 - 17:23:00
+ * Modified: Tue 17 September 2024 - 13:33:11
  **/
 
 export default {

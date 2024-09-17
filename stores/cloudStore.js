@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Mon 16 September 2024 - 17:23:02
+ * Modified: Tue 17 September 2024 - 13:24:15
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -718,7 +718,7 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     makeHash(create = false) {
       let old = this.backup.hash
-      let version = old.includes('.') ? old.split('.')[0] : 0
+      let version = old && old.includes('.') ? old.split('.')[0] : 0
       if (create) version = 0
 
       let versioned = parseInt(version) + 1

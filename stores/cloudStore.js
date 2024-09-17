@@ -3,10 +3,11 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Tue 17 September 2024 - 13:24:15
+ * Modified: Tue 17 September 2024 - 19:51:44
  */
 
 import { createClient } from '@supabase/supabase-js'
+import { DexieInstaller } from '~/utils/dexieInstaller'
 
 let $nuxt = null
 let $data = null
@@ -305,7 +306,7 @@ export const useCloudStore = defineStore('cloud', {
       this.b['hash.h'] = hash || this.backup.hash
 
       log(
-        `⚡ integrity ~ ${this.client.hash} ※◈ ${this.backup.hash} ~ Account (${this.b.account}) ~ States (${this.b.states}) ~ Library (${this.b.library})`
+        `⚡ integrity ~ ${this.client.hash} ◈◈◈ ${this.backup.hash} ~ Account (${this.b.account}) ~ States (${this.b.states}) ~ Library (${this.b.library})`
       )
     },
 
@@ -339,15 +340,6 @@ export const useCloudStore = defineStore('cloud', {
       delete this.backup.id
       delete this.backup.enabled
 
-      const { data, error } = await this.$sb
-        .from('cloud')
-        .upsert(this.backup, { onConflict: ['hash'] })
-
-      if (error) {
-        console.warn('storeBackup', error)
-        return
-      }
-
       let latest = this.backups[0]
       if (!this.backups.find((backup) => backup.hash == this.backup.hash)) {
         this.backups.unshift(this.backup)
@@ -361,8 +353,17 @@ export const useCloudStore = defineStore('cloud', {
       $user.cloud.updated_at = dates.timestamp()
       this.backup.updated_at = dates.timestamp()
 
-      if (latest.hash !== this.backup.hash) {
+      if (latest?.hash !== this.backup.hash || !this.backup.created_at) {
         this.backup.created_at = dates.timestamp()
+      }
+
+      const { data, error } = await this.$sb
+        .from('cloud')
+        .upsert(this.backup, { onConflict: ['hash'] })
+
+      if (error) {
+        console.warn('storeBackup', error)
+        return
       }
 
       $user.putAccount($user.cloud, 'cloud')
@@ -436,6 +437,7 @@ export const useCloudStore = defineStore('cloud', {
         JSON.stringify({
           account: { ...$nuxt.$auth.me },
           config: { ...$nuxt.$auth.config },
+          sub: this.sub,
         })
       )
 
@@ -466,14 +468,14 @@ export const useCloudStore = defineStore('cloud', {
 
       if (sign.hash == this.b['account.clo.hash']) {
         log(
-          '⚡ account ~ The integrity hash has been compared and no syncronization is needed'
+          '⚡ account ~ The integrity hash has been compared with the cloud and no syncronization is needed'
         )
         return
       }
 
       // Upload the data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      log('⚡ uploading account...')
+      log('⚡ uploading account...', JSON.stringify(data))
       const { xhr, error } = await this.$sb.from('cloud_accounts').upsert(
         {
           user_id: this.sub,
@@ -493,13 +495,39 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     async backupStates() {
       let data = await $nuxt.$db.states.toArray()
+      let installer = new DexieInstaller()
+      let baseStates = installer.defaultStates
+
+      let unique = data.filter((state) => {
+        let found = baseStates.find((base) => base.id == state.id)
+        if (!found) return true
+
+        if (
+          found.id != state.id ||
+          found.order != state.order ||
+          found.key != state.key ||
+          found.color != state.color ||
+          found.name != state.name ||
+          found.description != state.description
+        )
+          return true
+
+        return false
+      })
+
+      // Default states
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (!unique.length) {
+        log('⚡ states ~ The states are default so no sync is needed')
+        return
+      }
 
       // Compare and assign signatures
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let sign = await this.makeSignature(data)
+      let sign = await this.makeSignature(unique)
 
       this.backup.enabled = true
-      this.backup.states = data.length
+      this.backup.states = unique.length
       this.backup.sign_states = sign.full
 
       if (sign.hash == this.b['states.clo.hash']) {
@@ -514,7 +542,7 @@ export const useCloudStore = defineStore('cloud', {
         {
           user_id: this.sub,
           signature: sign.hash,
-          data: JSON.stringify(data),
+          data: JSON.stringify(unique),
           updated_at: dates.timestamp(),
         },
         { onConflict: ['signature'] }
@@ -769,7 +797,7 @@ export const useCloudStore = defineStore('cloud', {
 
       // We're ok
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (signed && client == signed) {
+      if (signed && client === signed) {
         // log(`⚡ ${dimension} ⇢ syncronized (ok)`)
         this.b[dimension] = 'ok'
         return 'ok'
@@ -778,9 +806,10 @@ export const useCloudStore = defineStore('cloud', {
       // Backup (upload) data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (
-        signed &&
-        client &&
-        (clientAt >= cloudAt || clientHash === 'update' || clientHash == 'upload')
+        !signed ||
+        (client && clientAt >= cloudAt) ||
+        clientHash === 'update' ||
+        clientHash == 'upload'
       ) {
         log(`⚡ ${dimension} ⇢ outdated (up)`, clientAt, cloudAt)
         this.b[dimension] = 'up'

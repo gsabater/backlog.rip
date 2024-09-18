@@ -27,7 +27,7 @@
             @change="update('account', 'username')" />
         </div>
 
-        <div class="my-2"></div>
+        <!-- <div class="my-2"></div>
 
         <label class="form-label pb-2">Developer options</label>
         <p class="card-subtitle">Enable debugging and help us improve the platform</p>
@@ -43,7 +43,7 @@
               Developer mode is off
             </span>
           </label>
-        </div>
+        </div> -->
         <!-- </div>
           <h3 class="card-title mt-4">Email</h3>
       <p class="card-subtitle">
@@ -97,7 +97,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 11 September 2024 - 19:21:35
+ * Modified: Wed 18 September 2024 - 09:57:40
  **/
 
 export default {

@@ -579,7 +579,7 @@
             <div
               class="avatar avatar-sm rounded-circle"
               :class="{
-                'gray-600': $cloud.is == 'disconnected',
+                'gray-600': $cloud.is == 'local',
                 'bg-teal-lt': $cloud.is == 'connecting',
                 'bg-teal-lt': $cloud.is == 'syncing',
                 'bg-green-lt': $cloud.is == 'syncing:done',
@@ -588,20 +588,24 @@
               }"
               style="
                 --tblr-bg-opacity: 0.3;
-                border: 1px solid;
-                outline: 1px solid #00000085;
+                border: 1px solid rgb(255 255 255 / 15%);
+                outline: rgba(0, 0, 0, 0.52) solid 1px;
                 outline-offset: -1px;
+                background-color: rgb(0 0 0 / 15%);
               ">
-              <Icon v-if="$cloud.is == 'disconnected'" size="18" width="1.5">
-                CloudOff
-              </Icon>
-              <Icon v-if="$cloud.is == 'conflict'" size="18" width="1.5">
+              <span
+                v-if="$cloud.is == 'local'"
+                class="status-dot status-dot-animated"
+                style="--tblr-status-color: green"></span>
+
+              <!-- <Icon v-if="$cloud.is == 'local'" size="14" width="1.5">DatabaseSmile</Icon> -->
+              <Icon v-if="$cloud.is == 'conflict'" size="14" width="1.5">
                 CloudExclamation
               </Icon>
-              <Icon v-if="$cloud.is == 'error'" size="18" width="1.5">CloudOff</Icon>
-              <Icon v-if="$cloud.is == 'connecting'" size="18" width="1.5">Point</Icon>
-              <Icon v-if="$cloud.is == 'syncing'" size="18" width="1.5">CloudRain</Icon>
-              <Icon v-if="$cloud.is == 'syncing:done'" size="18" width="1.5">
+              <Icon v-if="$cloud.is == 'error'" size="14" width="1.5">CloudOff</Icon>
+              <Icon v-if="$cloud.is == 'connecting'" size="14" width="1.5">Point</Icon>
+              <Icon v-if="$cloud.is == 'syncing'" size="14" width="1.5">CloudRain</Icon>
+              <Icon v-if="$cloud.is == 'syncing:done'" size="14" width="1.5">
                 CloudCheck
               </Icon>
             </div>
@@ -640,7 +644,7 @@
                 </div>
               </div>
 
-              <div v-if="$cloud.is == 'syncing:done'" class="dropdown-item">
+              <div v-if="$cloud.is == 'syncing:done'" class="dropdown-item disabled">
                 <div class="d-flex align-items-center">
                   <div
                     class="avatar avatar-sm rounded-circle bg-green-lt"
@@ -662,7 +666,22 @@
                 </div>
               </div>
 
-              <div v-if="$cloud.is !== 'syncing:done'" class="dropdown-item">
+              <div v-if="$cloud.is == 'local'" class="dropdown-item disabled">
+                <div class="d-flex align-items-center">
+                  <div>
+                    <h4 class="text-secondary m-0">Local-only database</h4>
+                    <small class="text-secondary" style="white-space: normal">
+                      Your data is stored directly in your browser's IndexedDB and is not
+                      synced to the cloud. This means it is only accessible on this device
+                      and by you.
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                v-else-if="$cloud.is !== 'syncing:done'"
+                class="dropdown-item disabled">
                 <div class="d-flex align-items-center">
                   <span class="badge bg-orange badge-blink"></span>
                   <div class="ms-3">
@@ -685,10 +704,12 @@
               </NuxtLink>
               <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink> -->
               <div class="dropdown-divider"></div>
+
               <NuxtLink to="/account/cloud" class="dropdown-item">
                 <Icon size="16" class="me-2 text-muted">CloudComputing</Icon>
-                Usage and history
+                {{ $cloud.is == 'local' ? 'Enable cloud saves' : 'Usage and history' }}
               </NuxtLink>
+
               <!-- <NuxtLink to="/journal" class="dropdown-item">
                 <Icon size="16" class="me-2 text-muted">CloudCog</Icon>
                 Cloud settings
@@ -960,7 +981,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu 12 September 2024 - 16:57:05
+ * Modified: Wed 18 September 2024 - 13:24:57
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Thu 12 September 2024 - 15:43:17
+ * Modified: Wed 18 September 2024 - 13:24:58
  */
 
 let $nuxt = null
@@ -134,7 +134,10 @@ export const useUserStore = defineStore('user', {
 
           // Try to persist the user data
           // and avoid the need to login again
-          this.register()
+          await this.register()
+
+          // Connect to the cloud if the user has it enabled
+          if (this.config.cloud && $cloud.is == 'local') $cloud.connect()
         }
       } catch (e) {
         debugger

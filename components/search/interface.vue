@@ -94,7 +94,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 11 September 2024 - 19:10:55
+ * Modified: Wed 18 September 2024 - 11:10:40
  **/
 
 export default {
@@ -292,10 +292,10 @@ export default {
   mounted() {
     this.init()
 
-    // this.$mitt.on('data:updated', () => {
-    //   log('✨ Search: event -> data:updated')
-    //   this.search('event')
-    // })
+    this.$mitt.on('data:updated', () => {
+      this.ui.ping++
+      this.$forceUpdate()
+    })
 
     // this.$mitt.on('data:ready', () => {
     //   log('✨ Search: event -> data:ready')
@@ -307,7 +307,7 @@ export default {
   },
 
   beforeUnmount() {
-    this.$mitt.off('data:ready')
+    // this.$mitt.off('data:ready')
     this.$mitt.off('data:updated')
   },
 }

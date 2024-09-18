@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th November 2023
- * Modified: Thu 12 September 2024 - 19:08:53
+ * Modified: Wed 18 September 2024 - 15:23:52
  */
 
 export class DexieInstaller {
@@ -11,7 +11,8 @@ export class DexieInstaller {
     {
       id: 1,
       order: 1,
-      key: 'backlog',
+      key: true,
+      slug: 'backlog',
       color: '#ff0000',
       name: 'Backlog',
       description:
@@ -21,7 +22,8 @@ export class DexieInstaller {
     {
       id: 2,
       order: 2,
-      key: 'playing',
+      key: true,
+      slug: 'playing',
       color: '#800080',
       name: 'Currently Playing',
       description:
@@ -31,7 +33,8 @@ export class DexieInstaller {
     {
       id: 3,
       order: 3,
-      key: 'completed',
+      key: true,
+      slug: 'completed',
       color: '#249b25',
       name: 'Completed',
       description:
@@ -41,6 +44,7 @@ export class DexieInstaller {
     {
       id: 5,
       order: 5,
+      slug: 'on-hold',
       color: '#c76f1c',
       name: 'On-Hold',
       description:
@@ -50,6 +54,7 @@ export class DexieInstaller {
     {
       id: 6,
       order: 6,
+      slug: 'abandoned',
       color: '#808080',
       name: 'Abandoned',
       description:
@@ -59,6 +64,7 @@ export class DexieInstaller {
     {
       id: 7,
       order: 7,
+      slug: 'replayable',
       color: '#8682dd',
       name: 'Replayable',
       description:

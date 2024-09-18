@@ -41,7 +41,7 @@
         <div class="dropdown-item">
           <div class="d-flex nope-justify-content-center" style="width: 30px">
             <span
-              v-if="app.state"
+              v-if="app.state && state"
               class="status-dot status-dot-animated"
               style="margin-left: 5px"
               :style="{ 'background-color': state?.color || 'transparent' }"></span>
@@ -49,7 +49,7 @@
           </div>
 
           <span>
-            {{ app.state ? state.name : 'Assign a state' }}
+            {{ app.state && state ? state.name : 'Assign a state' }}
           </span>
 
           <span class="text-muted ms-auto">
@@ -429,7 +429,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Wed 11 September 2024 - 19:17:22
+ * Modified: Wed 18 September 2024 - 15:11:46
  **/
 
 export default {

@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card mb-3">
     <div class="card-body">
       <h2 class="mb-2">Library management</h2>
       <p class="card-subtitle">
@@ -144,6 +144,23 @@
       </div>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h2 class="mb-2">Developer options</h2>
+      <p class="card-subtitle">Enable debugging and help us improve the platform</p>
+
+      <div class="form-check form-switch form-switch-lg">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          v-model="$auth.config.debug"
+          @change="storeConfig('debug')" />
+        <span class="form-check-label form-check-label-on">Debugging enabled</span>
+        <span class="form-check-label form-check-label-off">Developer mode is off</span>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -152,7 +169,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th July 2024
- * Modified: Wed 11 September 2024 - 19:21:51
+ * Modified: Wed 18 September 2024 - 09:57:47
  **/
 
 export default {
@@ -171,7 +188,8 @@ export default {
     //+-------------------------------------------------
     async storeConfig(field) {
       this.$auth.storeConfig(field)
-      this.$toast.success('Sidebar updated')
+      // this.$toast.success('Sidebar updated')
+      this.$toast.success('Your preferences have been updated')
     },
 
     async init() {},

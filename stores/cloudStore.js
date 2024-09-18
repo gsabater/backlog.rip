@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Tue 17 September 2024 - 19:51:44
+ * Modified: Wed 18 September 2024 - 13:35:56
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -17,7 +17,7 @@ let $state = null
 //+-------------------------------------------------
 // Cloud status
 //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// - disconnected
+// - local
 // - connecting
 // - conflict
 // - error
@@ -27,7 +27,7 @@ let $state = null
 
 export const useCloudStore = defineStore('cloud', {
   state: () => ({
-    status: 'disconnected',
+    status: 'local',
 
     sub: null, // Subject uuid defined in the cloud
     jwt: null, // JWT token identifying the user
@@ -131,7 +131,7 @@ export const useCloudStore = defineStore('cloud', {
           $user.jwt,
           $user
         )
-        this.status = 'disconnected'
+        this.status = 'local'
         return false
       }
 
@@ -301,7 +301,7 @@ export const useCloudStore = defineStore('cloud', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       this.b.hash = this.backup.hash
 
-      const [version, hash] = this.backup.hash.split('.')
+      const [version, hash] = this.backup.hash?.split('.')
       this.b['hash.v'] = parseInt(version) ?? 0
       this.b['hash.h'] = hash || this.backup.hash
 
@@ -495,39 +495,39 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     async backupStates() {
       let data = await $nuxt.$db.states.toArray()
-      let installer = new DexieInstaller()
-      let baseStates = installer.defaultStates
+      // let installer = new DexieInstaller()
+      // let baseStates = installer.defaultStates
 
-      let unique = data.filter((state) => {
-        let found = baseStates.find((base) => base.id == state.id)
-        if (!found) return true
+      // let unique = data.filter((state) => {
+      //   let found = baseStates.find((base) => base.id == state.id)
+      //   if (!found) return true
 
-        if (
-          found.id != state.id ||
-          found.order != state.order ||
-          found.key != state.key ||
-          found.color != state.color ||
-          found.name != state.name ||
-          found.description != state.description
-        )
-          return true
+      //   if (
+      //     found.id != state.id ||
+      //     found.order != state.order ||
+      //     found.key != state.key ||
+      //     found.color != state.color ||
+      //     found.name != state.name ||
+      //     found.description != state.description
+      //   )
+      //     return true
 
-        return false
-      })
+      //   return false
+      // })
 
       // Default states
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (!unique.length) {
+      if (!data.length) {
         log('⚡ states ~ The states are default so no sync is needed')
         return
       }
 
       // Compare and assign signatures
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let sign = await this.makeSignature(unique)
+      let sign = await this.makeSignature(data)
 
       this.backup.enabled = true
-      this.backup.states = unique.length
+      this.backup.states = data.length
       this.backup.sign_states = sign.full
 
       if (sign.hash == this.b['states.clo.hash']) {
@@ -542,7 +542,7 @@ export const useCloudStore = defineStore('cloud', {
         {
           user_id: this.sub,
           signature: sign.hash,
-          data: JSON.stringify(unique),
+          data: JSON.stringify(data),
           updated_at: dates.timestamp(),
         },
         { onConflict: ['signature'] }

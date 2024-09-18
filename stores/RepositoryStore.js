@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Wed 11 September 2024 - 18:58:10
+ * Modified: Wed 18 September 2024 - 12:56:00
  */
 
 let $nuxt = null
@@ -35,7 +35,7 @@ export const useRepositoryStore = defineStore('repository', {
     //+-------------------------------------------------
     hot() {
       if (this._hot.length === 0) this.load('hot')
-      return this._hot.slice(0, 7)
+      return this._hot.sort(() => Math.random() - 0.5).slice(0, 7)
     },
 
     //+-------------------------------------------------

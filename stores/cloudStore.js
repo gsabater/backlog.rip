@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Wed 18 September 2024 - 13:35:56
+ * Modified: Thu 19 September 2024 - 19:26:29
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -247,7 +247,8 @@ export const useCloudStore = defineStore('cloud', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let latest = this.backups[0]
       if (latest.hash !== this.client.hash) {
-        console.warn('2.1. Conflict resolution... ')
+        log('⚡ 2.1. Conflict resolution... ')
+        await this.prepareBackup('latest')
         await this.analyze()
 
         return
@@ -301,9 +302,11 @@ export const useCloudStore = defineStore('cloud', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       this.b.hash = this.backup.hash
 
-      const [version, hash] = this.backup.hash?.split('.')
-      this.b['hash.v'] = parseInt(version) ?? 0
-      this.b['hash.h'] = hash || this.backup.hash
+      if (this.backup?.hash) {
+        const [version, hash] = this.backup.hash.split('.') ?? [0, 'xxx']
+        this.b['hash.v'] = parseInt(version) ?? 0
+        this.b['hash.h'] = hash || this.backup.hash
+      }
 
       log(
         `⚡ integrity ~ ${this.client.hash} ◈◈◈ ${this.backup.hash} ~ Account (${this.b.account}) ~ States (${this.b.states}) ~ Library (${this.b.library})`
@@ -603,7 +606,7 @@ export const useCloudStore = defineStore('cloud', {
     // Created on Tue Aug 20 2024
     //+-------------------------------------------------
     cleanGame(game) {
-      let whitelist = ['uuid', 'name', 'id', 'is', 'state', 'cover']
+      let whitelist = ['uuid', 'name', 'id', 'is', 'state', 'cover', 'playtime']
       let clean = {}
       for (const key in game) {
         if (whitelist.includes(key)) clean[key] = game[key]
@@ -783,8 +786,8 @@ export const useCloudStore = defineStore('cloud', {
     // Created on Fri Aug 30 2024
     //+-------------------------------------------------
     integrityCheck(dimension) {
-      const signed = this.backup?.['sign_' + dimension]
       const client = this.client?.[dimension]
+      const signed = this.backup?.['sign_' + dimension]
 
       // Extract parts from client and backup dimensions
       const [cloudAt = 0, cloudHash] = signed?.split('.') || []

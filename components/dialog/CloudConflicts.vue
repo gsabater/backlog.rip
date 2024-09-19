@@ -209,10 +209,10 @@
               :disabled="ui.loading"
               color="deep-purple-lighten-2"
               block
-              @click="download"
+              @click="upload"
               variant="tonal">
-              <Icon size="18" width="1" class="mx-2">WorldDownload</Icon>
-              Download cloud data
+              <Icon size="18" width="1" class="mx-2">WorldUpload</Icon>
+              Upload local
             </v-btn>
           </div>
           <div class="col-6">
@@ -220,10 +220,10 @@
               :disabled="ui.loading"
               color="deep-purple-lighten-2"
               block
-              @click="upload"
+              @click="download"
               variant="tonal">
-              <Icon size="18" width="1" class="mx-2">WorldUpload</Icon>
-              Upload local
+              <Icon size="18" width="1" class="mx-2">WorldDownload</Icon>
+              Download cloud data
             </v-btn>
           </div>
         </div>
@@ -238,7 +238,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 23rd August 2024
- * Modified: Mon 16 September 2024 - 17:22:53
+ * Modified: Thu 19 September 2024 - 19:32:01
  **/
 
 export default {

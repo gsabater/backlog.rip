@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Mon 16 September 2024 - 17:23:05
+ * Modified: Fri 20 September 2024 - 14:09:44
  */
 
 let $nuxt = null
@@ -169,6 +169,17 @@ export const useDataStore = defineStore('data', {
       }
 
       return library.map((uuid) => data[uuid]).filter(Boolean)
+    },
+
+    //+-------------------------------------------------
+    // steam_library()
+    // Returns the library of steam games
+    // -----
+    // Created on Fri Sep 20 2024
+    //+-------------------------------------------------
+    steam_library(as = null) {
+      let library = this.library()
+      return library.filter((item) => item.id.steam)
     },
 
     //+-------------------------------------------------

@@ -98,7 +98,7 @@
                   </small> -->
                 </td>
                 <td>
-                  {{ $cloud.backup.games || 0 }}
+                  {{ format.num($cloud.backup.games) }}
                   <small
                     class="text-muted d-inline-block cursor-help"
                     v-tippy="
@@ -238,7 +238,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 23rd August 2024
- * Modified: Thu 19 September 2024 - 19:32:01
+ * Modified: Fri 20 September 2024 - 08:51:22
  **/
 
 export default {

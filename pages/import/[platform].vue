@@ -700,7 +700,7 @@
                             v-tippy="'Updating your play time on Steam'"
                             class="status small my-0 me-2"
                             style="font-size: 0.775rem; border-radius: 4px">
-                            Played
+                            <span v-if="app.playtime_forever > 0">Played</span>
                             {{ dates.minToHours(app.playtime_forever, 'Not played') }}
                           </div>
 
@@ -719,7 +719,7 @@
                             <Icon size="14" style="transform: translateY(-2px)">
                               ClockHour3
                             </Icon>
-                            Played
+                            <span v-if="app.playtime_forever > 0">Played</span>
                             {{ dates.minToHours(app.playtime_forever, 'Not played') }}
                           </small>
                           <div
@@ -902,7 +902,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Thu 29 August 2024 - 10:20:53
+ * Modified: Fri 20 September 2024 - 14:25:19
  **/
 
 const importer = null

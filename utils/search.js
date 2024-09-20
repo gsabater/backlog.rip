@@ -3,7 +3,7 @@
  * @desc:    Handles search filtering and sorting
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: 24 July 2024 - 13:44:40
+ * Modified: Fri 20 September 2024 - 10:20:51
  */
 
 export default {
@@ -32,7 +32,10 @@ export default {
       if (filters?.states?.length) {
         const { states } = filters
 
-        if (!states.includes(app.state)) {
+        // Special case: check if -1 is in the states array
+        const withNoState = states.includes(-1)
+
+        if (!states.includes(app.state) && !(withNoState && !app.state)) {
           filtered.push(uuid)
           continue
         }

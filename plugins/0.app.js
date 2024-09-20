@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Thu 19 September 2024 - 19:33:56
+ * Modified: Fri 20 September 2024 - 15:45:31
  */
 
 // import { reactive } from 'vue'
@@ -22,7 +22,7 @@ let $repos = null
 let $cloud = null
 
 let app = {
-  v: '0.15.5 β', //β
+  v: '0.15.6 β', //β
 
   // Global app state
   // Controls modules boundaries
@@ -106,9 +106,12 @@ async function toggleSidebar($nuxt) {
 // Detects the environment and sets the app.dev and app.env
 // -----
 // Created on Fri Jan 12 2024
+// Updated on Fri Sep 20 2024 - Added app.wip for localhost
 //+-------------------------------------------------
+
 function detectEnvironment() {
   if (window.location.hostname == 'localhost') {
+    app.wip = true
     app.env = 'local'
   }
 

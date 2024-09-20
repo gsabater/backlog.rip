@@ -155,15 +155,15 @@ Selected
                         {{ param.name }}
                       </span>
 
-                      <tippy
+                      <!-- <tippy
                         class="text-muted ms-auto ms-2 cursor-help"
                         :content="param.description">
                         <Icon size="16" stroke="1">HelpCircleFilled</Icon>
-                      </tippy>
+                      </tippy> -->
                       <tippy
                         :allow-h-t-m-l="true"
                         class="text-muted ms-auto cursor-help"
-                        content="Add this game to a special list for quick access. This does not add the game to your library">
+                        :content="param.description">
                         <span class="form-help">?</span>
                       </tippy>
                     </template>
@@ -510,8 +510,16 @@ Selected
               </template>
             </div>
             <div
-              class="btn d-flex align-items-center disabled border-end-0 border-start-0">
+              class="btn d-flex align-items-center border-end-0 border-start-0 cursor-pointer"
+              v-tippy="{ content: 'Filter by ' + key }">
               is
+              <b-tippy-sheety ref="filters">
+                <div class="b-menu dropdown-menu show">
+                  <span class="dropdown-header">
+                    <span class="text-muted">Choose a filter</span>
+                  </span>
+                </div>
+              </b-tippy-sheety>
             </div>
             <div class="btn d-flex align-items-center">
               <template v-if="param.length == 1">
@@ -573,7 +581,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Wed 14 August 2024 - 17:58:12
+ * Modified: Thu 19 September 2024 - 16:45:04
  **/
 
 export default {
@@ -681,6 +689,13 @@ export default {
       return format.num(this.$app.count.library)
     },
 
+    //+-------------------------------------------------
+    // picked()
+    // Returns an array of available options based on the
+    // current selected filer (this.option)
+    // -----
+    // Created on Thu Sep 19 2024
+    //+-------------------------------------------------
     picked() {
       const options = []
       if (!this.option?.data) return options
@@ -692,6 +707,17 @@ export default {
           options.push(option)
         }
       })
+
+      // Special case for states
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (this.option.data == 'states') {
+        options.unshift({
+          id: -1,
+          color: '#000000',
+          name: 'No state',
+          description: 'Games without a state',
+        })
+      }
 
       if (this.option.opSort)
         options.sort((a, b) => a[this.option.opSort].localeCompare(b[this.option.opSort]))

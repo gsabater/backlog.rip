@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Thu 29 August 2024 - 14:53:36
+ * Modified: Fri 20 September 2024 - 14:10:11
  */
 
 import axios from 'axios'
@@ -161,7 +161,8 @@ export default {
     try {
       x.log('Check 4.1: Get local library')
       data.library = await $nuxt.$db.games.where('steam_id').above(0).toArray()
-      x.log(`🆗 Library loaded`)
+      data.library = $data.steam_library()
+      x.log(`🆗 Library loaded`, data.library.length)
 
       x.log('Check 4.2: Get userdata')
       data.user = await steam.getUserdata()
@@ -214,7 +215,7 @@ export default {
 
     x.log('Check 5.1: Preparing Array of library IDs')
     apps.libIDs = x.data.library.reduce((acc, el) => {
-      acc[el.steam_id] = el
+      acc[el.id.steam] = el
       return acc
     }, {})
 

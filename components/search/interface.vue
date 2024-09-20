@@ -94,7 +94,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 18 September 2024 - 11:10:40
+ * Modified: Thu 19 September 2024 - 12:57:14
  **/
 
 export default {
@@ -238,10 +238,12 @@ export default {
     // Created on Tue Nov 14 2023
     // Updated on Sun Jan 28 2024 - Added slug param
     // Updated on Sun Jul 14 2024 - Use slug for special filters
+    // Updated on Thu Sep 19 2024 - In library, sort by playtime
     //+-------------------------------------------------
     mergeFilters() {
       const loaded = {}
 
+      // Dinamically add a genre as
       if (this.slug && this.genres.length) {
         const genre = this.genres.find((g) => g.slug == this.slug)
         if (genre) loaded.genres = [genre.id]
@@ -254,6 +256,12 @@ export default {
 
       if (this.slug && ['pinned', 'hidden', 'favorites'].includes(this.slug)) {
         loaded.is = this.slug
+      }
+
+      // In library, sort by playtime
+      if (this.isLibrary) {
+        loaded.sortBy = 'playtime'
+        loaded.sortDir = 'desc'
       }
 
       this.f = {

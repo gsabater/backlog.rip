@@ -1,9 +1,15 @@
 <template>
   <div
-    v-if="app && app.uuid"
+    ref="card"
     class="card-game"
-    nope-class="app.state ? 'has-state' + app.state : ''"
-    :uuid="app.uuid">
+    :uuid="app.uuid"
+    :class="[
+      app.state ? 'is-state_' + app.state : '',
+      {
+        'is-bordered': $auth.config.game_state_borders,
+        'is-tracking': tracking,
+      },
+    ]">
     <div class="card-game__cover" @click.stop="showGameModal">
       <div
         v-if="app.error"
@@ -20,15 +26,15 @@
           :app="app.uuid"
           :state="app.state"
           :label="false"
-          :fav="app.is.fav"
-          :pinned="app.is.pinned"
-          :hidden="app.is.hidden"></BState>
+          :fav="app.is?.fav || false"
+          :pinned="app.is?.pinned || false"
+          :hidden="app.is?.hidden || false" />
         <game-asset
           ref="cover"
           :app="app"
           asset="cover"
           fallback="banner"
-          :priority="['steam', 'igdb']"></game-asset>
+          :priority="['steam', 'igdb']" />
       </template>
     </div>
 
@@ -105,14 +111,24 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 11 September 2024 - 17:45:38
+ * Modified: Wed 25 September 2024 - 16:56:52
  **/
 
 export default {
-  name: 'Game',
+  name: 'GameCard',
   props: {
+    data: {
+      type: Object,
+      default: null,
+    },
+
     uuid: {
       type: [String, Object],
+      default: null,
+    },
+
+    api: {
+      type: [String],
       default: null,
     },
 
@@ -120,11 +136,26 @@ export default {
       type: [Array, Boolean],
       default: false,
     },
+
+    tracking: {
+      type: [Boolean, Number],
+      default: false,
+    },
+
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
     return {
-      app: {},
+      app: {
+        _: {},
+        is: {},
+        id: {},
+      },
+      animationFrame: null,
     }
   },
 
@@ -132,8 +163,16 @@ export default {
     ...mapStores(useDataStore),
   },
 
+  watch: {
+    '$app.ready': function () {
+      this.init()
+    },
+  },
+
   methods: {
     showGameModal() {
+      if (this.disabled) return
+
       this.$mitt.emit('game:modal', {
         uuid: this.app.uuid,
         $list: this.$parent,
@@ -141,16 +180,96 @@ export default {
     },
 
     manage($event) {
+      if (this.disabled) return
       this.$mitt.emit('game:manager', $event, this.app.uuid)
     },
 
-    async getData() {
-      this.app = this.dataStore.get(this.uuid?.uuid || this.uuid)
+    loadApiData() {
+      console.warn('Loading API for ', this.api)
+
+      // make an api call
+    },
+
+    //+-------------------------------------------------
+    // initTracking()
+    // Appends a mouse event listener to the card
+    // -----
+    // Created on Tue Sep 24 2024
+    //+-------------------------------------------------
+    initTracking() {
+      const el = this.$refs.card
+
+      el.addEventListener('mousemove', this.onMouseUpdate)
+      el.addEventListener('mouseenter', this.onMouseUpdate)
+      el.addEventListener('mouseleave', this.resetProps)
+    },
+
+    //+-------------------------------------------------
+    // setProp()
+    // Sets the CSS values to the card
+    // -----
+    // Created on Tue Sep 24 2024
+    //+-------------------------------------------------
+    setProp(el, prop, value) {
+      el.style.setProperty(prop, value)
+    },
+
+    //+-------------------------------------------------
+    // onMouseUpdate()
+    // Updates the CSS values to the card
+    // -----
+    // Created on Tue Sep 24 2024
+    //+-------------------------------------------------
+    onMouseUpdate(e) {
+      if (this.animationFrame) {
+        cancelAnimationFrame(this.animationFrame)
+      }
+      this.animationFrame = requestAnimationFrame(() => {
+        const el = this.$refs.card
+        const width = el.offsetWidth
+        const XRel = e.pageX - el.offsetLeft
+        const YRel = e.pageY - el.offsetTop
+
+        const strength = typeof this.tracking == 'number' ? this.tracking : 4
+
+        const YAngle = -(0.5 - XRel / width) * strength
+        const XAngle = (0.5 - YRel / width) * strength
+
+        this.setProp(el, '--dy', `${YAngle}deg`)
+        this.setProp(el, '--dx', `${XAngle}deg`)
+      })
+    },
+
+    resetProps() {
+      if (this.animationFrame) {
+        cancelAnimationFrame(this.animationFrame)
+        this.animationFrame = null
+      }
+      const el = this.$refs.card
+      el.style.setProperty('--dy', '0')
+      el.style.setProperty('--dx', '0')
+    },
+
+    //+-------------------------------------------------
+    // init()
+    // Loads data from dataStore and sets to this.app
+    // -----
+    // Created on Nov 16 2023
+    // Updated on Tue Sep 24 2024 - Added data and api props
+    //+-------------------------------------------------
+    async init() {
+      if (!this.$app.ready) return
+
+      if (this.api) this.loadApiData()
+      if (this.data) this.app = this.dataStore.prepareToData(this.data)
+      if (this.uuid) this.app = this.dataStore.get(this.uuid?.uuid || this.uuid)
+
+      if (this.tracking) this.initTracking()
     },
   },
 
   mounted() {
-    this.getData()
+    this.init()
 
     this.$mitt.on('state:change', (payload) => {
       if (payload.uuid != this.app.uuid) return
@@ -189,6 +308,11 @@ export default {
     this.$mitt.off('data:deleted')
     this.$mitt.off('state:change')
     this.$mitt.off('pinned:change')
+
+    const el = this.$refs.card
+    el.removeEventListener('mousemove', this.onMouseUpdate)
+    el.removeEventListener('mouseenter', this.onMouseUpdate)
+    el.removeEventListener('mouseleave', this.resetProps)
   },
 }
 </script>

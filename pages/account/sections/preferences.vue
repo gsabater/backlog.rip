@@ -15,6 +15,48 @@
 
   <div class="card mb-3">
     <div class="card-body">
+      <h2 class="mb-2">Visibility options</h2>
+      <p class="card-subtitle">Preferences to customize your experience</p>
+
+      <div class="row g-3">
+        <div class="col-md-8">
+          <div class="mb-3">
+            <div class="form-label pb-2">Accesibility</div>
+
+            <label class="form-check form-switch cursor-pointer pb-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                v-model="$auth.config.game_state_borders"
+                @change="storeConfig('game_state_borders')" />
+              <span class="form-check-label">Display state borders</span>
+              <span class="form-check-description">
+                Adds colored borders to game cards, visually indicating their current
+                state. Those borders are more visible when the cursor is over the game.
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div
+          class="col-md-4"
+          style="display: flex; flex-direction: column; align-items: center">
+          <b-game
+            :data="{
+              steam_id: '292030',
+              name: 'The Witcher® 3: Wild Hunt',
+              state: 1,
+            }"
+            tracking
+            :disabled="true"
+            style="max-width: 115px; transform: translateY(-25px)"></b-game>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
       <h2 class="mb-2">Library management</h2>
       <p class="card-subtitle">
         Settings available to tailor your categorization options
@@ -47,6 +89,13 @@
                 </Icon>
                 Favorites
               </span>
+
+              <!--
+              TODO: add texts for when is disabled
+              <span class="form-check-label form-check-label-on">Debugging enabled</span>
+              <span class="form-check-label form-check-label-off">Developer mode is off</span>
+              -->
+
               <span class="form-check-description">
                 A special list for your favorite games. This list can be used to generate
                 suggestions.
@@ -169,7 +218,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th July 2024
- * Modified: Wed 18 September 2024 - 09:57:47
+ * Modified: Wed 25 September 2024 - 16:57:11
  **/
 
 export default {

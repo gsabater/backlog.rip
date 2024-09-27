@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Wed 11 September 2024 - 19:08:39
+ * Modified: Thu 26 September 2024 - 17:59:40
  */
 
 let $nuxt = null
@@ -83,7 +83,7 @@ export const useGameStore = defineStore('game', {
     //+-------------------------------------------------
     async update(uuid, data) {
       let game = null
-      if (uuid === true) {
+      if (uuid === true || uuid.includes('temp:')) {
         console.error('🔥', uuid, data)
       }
 

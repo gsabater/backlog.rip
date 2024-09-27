@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Thu 19 September 2024 - 19:26:29
+ * Modified: Thu 26 September 2024 - 11:48:40
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -183,7 +183,7 @@ export const useCloudStore = defineStore('cloud', {
       )
 
       const { data } = this.$sb.auth.onAuthStateChange((event, session) => {
-        console.log(event, session)
+        // console.log(event, session)
 
         if (event === 'INITIAL_SESSION') {
           // handle initial session

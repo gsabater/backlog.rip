@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Fri 20 September 2024 - 14:09:44
+ * Modified: Thu 26 September 2024 - 15:42:55
  */
 
 let $nuxt = null
@@ -281,6 +281,8 @@ export const useDataStore = defineStore('data', {
     // Created on Wed May 01 2024
     //+-------------------------------------------------
     searchHash(f = {}) {
+      f.string = f.string?.trim()
+
       let emptyString = !f.string || f.string?.length < 3
       let dirty = ['genres', 'anotherArrayProperty'].some(
         (prop) => Array.isArray(f[prop]) && f[prop].length > 0
@@ -321,12 +323,13 @@ export const useDataStore = defineStore('data', {
       }
 
       search[hash] = true
-      const xhr = await $nuxt.$axios.get(`repository/${hash}.json`)
+      const xhr = await $nuxt.$axios.get(`search/${hash}.json`)
       if (xhr.status) {
         log('🪂 Data from API', xhr.data)
-
         await this.process(xhr.data, 'api')
       }
+
+      return true
     },
 
     //+-------------------------------------------------
@@ -360,6 +363,7 @@ export const useDataStore = defineStore('data', {
           item.is_api = true
           item.api_id = item.api_id || item.uuid
           // item.id.api = item.id.api || item.uuid
+          if (!item.uuid) item.uuid = `temp:${format.stringToslug(item.name)}`
         }
 
         // Games coming from the library
@@ -406,18 +410,19 @@ export const useDataStore = defineStore('data', {
           debugger
         }
 
-        let uuid = this.isIndexed(item)
+        let appUUID = this.isIndexed(item)
+        if (appUUID === true) return
 
-        if (uuid === true) return
-        if (!uuid) this.toData(item)
-        else $game.update(uuid, { ...item, trigger: true })
+        if (!appUUID) this.toData(item)
+        else $game.update(appUUID, { ...item, trigger: true })
       })
 
       $nuxt.$app.count.data = Object.keys(data).length || 0
       $nuxt.$app.count.library = this.countLibrary() // index.lib.length || 0
 
       if (context.includes('update:')) return
-      // console.warn('🌈 data:updated', apps.length)
+      if (!$nuxt.$app.ready) return
+
       $nuxt.$mitt.emit('data:updated', 'loaded:' + apps.length)
     },
 

@@ -3,12 +3,12 @@
     <v-card :loading="ui.loading">
       <template v-slot:title>
         <Icon>Background</Icon>
-        States
+        <span class="font-serif mx-2">States</span>
       </template>
 
       <v-form ref="form" v-model="ui.isValid">
-        <v-card-text class="px-5 mb-3">
-          <div class="row g-4">
+        <v-card-text style="padding: 0px 24px 16px">
+          <div class="row">
             <div class="col-12 col-md-6">
               <div class="mb-3">
                 <div class="form-label">Name</div>
@@ -48,7 +48,7 @@
                 </div>
               </div> -->
             </div>
-            <div class="col-12 col-md-6 d-flex justify-content-center">
+            <div class="col-12 col-md-6 d-flex">
               <v-color-picker
                 v-model="item.color"
                 elevation="3"
@@ -71,24 +71,23 @@
 
         <v-card-actions
           v-if="!ui.loading"
-          class="p-2"
-          style="border-top: 1px dashed rgb(204 204 204 / 20%)">
-          <v-spacer></v-spacer>
-          <v-btn
+          style="padding: 16px 24px; background: #00000015">
+          <!-- <v-spacer></v-spacer> -->
+          <!-- <v-btn
             variant="plain"
             class="mx-2"
             @click="ui.show = false"
             :disabled="ui.loading">
             Close
-          </v-btn>
+          </v-btn> -->
           <v-btn
+            block
+            :disabled="ui.loading"
             color="primary"
-            class="ms-2 px-5"
-            elevation="1"
-            variant="elevated"
+            variant="tonal"
             @click="submit"
-            :disabled="ui.loading">
-            Save
+            style="text-transform: uppercase">
+            Save changes
           </v-btn>
         </v-card-actions>
         <v-card-actions v-else>
@@ -109,7 +108,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th June 2024
- * Modified: Fri 23 August 2024 - 19:53:34
+ * Modified: Fri 11 October 2024 - 15:54:08
  **/
 
 export default {
@@ -246,7 +245,7 @@ export default {
       let index = this.item.index || 0
       let action = this.item.action
       let payload = { ...this.item }
-      payload.slug = format.stringToslug(payload.name)
+      payload.slug = format.stringToSlug(payload.name)
 
       try {
         if (action == 'create') await this.stateStore.create(payload)

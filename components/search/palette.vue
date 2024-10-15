@@ -188,6 +188,7 @@
     :disabled="!ui.show"
     :filters="{
       string: searchString,
+      source: 'all',
       sortBy: 'score',
       sortDir: 'desc',
       show: {
@@ -209,7 +210,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th March 2024
- * Modified: Thu Jul 11 2024
+ * Modified: Tue 01 October 2024 - 16:34:56
  **/
 
 export default {

@@ -1,35 +1,6 @@
 <template>
-  <pre
-    v-if="items.length"
-    class="my-3"
-    style="
-      position: fixed;
-      bottom: 10px;
-      left: 230px;
-      z-index: 9999;
-      max-height: 120vh;
-      overflow-y: scroll;
-      background: rgba(13, 12, 42, 0.5);
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      width: auto;
-    "><h3>Search results ({{ items.length }})</h3>
-    --
-    {{ filters }}
-</pre>
-
   <slot name="body" :items="items">
-    <div v-if="items.length" class="row row-deck row-cards row-games-list">
-      <template v-for="(app, i) in items" :key="'card' + i">
-        <div
-          class="col col-6 col-sm-4 col-md-3 col-lg-custom pt-1 pb-3"
-          style="padding-left: 0.75rem; padding-right: 0.75rem">
-          <b-game :key="app" :uuid="app" :body="cardBody"></b-game>
-        </div>
-      </template>
-
-      <!-- <div class="page-header">
+    <!-- <div class="page-header">
         <div class="row align-items-center">
           <div class="col-auto">
             <span class="avatar avatar-md">90</span>
@@ -55,6 +26,47 @@
           </div>
         </div>
       </div> -->
+
+    <div v-if="items.length || loading" class="row row-deck row-cards row-games-list">
+      <template v-for="(app, i) in items" :key="'card' + i">
+        <div
+          class="col col-6 col-sm-4 col-md-3 col-lg-custom pt-1 pb-3"
+          style="padding-left: 0.75rem; padding-right: 0.75rem">
+          <b-game :key="app" :uuid="app" :body="cardBody" tracking></b-game>
+        </div>
+      </template>
+
+      <div
+        v-if="loading"
+        class="col col-6 col-sm-4 col-md-3 col-lg-custom pt-1 pb-3"
+        style="padding-left: 0.75rem; padding-right: 0.75rem">
+        <div class="card-game" style="">
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background-color: #a1c6cb0f;
+              padding: 20px;
+              border: 1px dashed #777777;
+              z-index: 23333;
+              width: 100%;
+              position: relative;
+              cursor: pointer;
+              border-radius: 2px;
+              aspect-ratio: 27 / 40;
+              flex-direction: column;
+              box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
+            ">
+            <h2>Loading</h2>
+            <v-progress-linear
+              color="deep-purple-accent-4"
+              height="6"
+              indeterminate
+              rounded></v-progress-linear>
+          </div>
+        </div>
+      </div>
     </div>
   </slot>
 </template>
@@ -65,7 +77,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 05 September 2024 - 16:41:46
+ * Modified: Wed 02 October 2024 - 15:38:44
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -81,30 +93,26 @@ export default {
       default: false,
     },
 
-    source: {
-      type: [String, Array],
-      default: 'all', // 'library', []
-    },
-
     filters: {
       type: Object,
       default: () => ({}),
     },
+
+    // Not used yet, left for reference
+    // source: {
+    //   type: [String, Array],
+    //   default: 'all', // 'library', []
+    // },
   },
 
   emits: ['search:start', 'search:end'],
 
   setup(props, { emit }) {
+    const $nuxt = useNuxtApp()
     const $data = useDataStore()
+    const $search = useSearchStore()
 
     const items = ref([])
-    const stats = {
-      amount: 0, // amount of apps as source
-      results: 0, // amount of apps after filtering
-      filtered: 0, // amount of apps filtered out
-
-      time: 0, // time it took to filter and sort
-    }
 
     //+-------------------------------------------------
     // search()
@@ -116,26 +124,38 @@ export default {
     // Updated on Mon Mar 25 2024 - useThrottleFn
     //+-------------------------------------------------
     const search = useThrottleFn(
-      (source = null) => {
+      async (source = null) => {
         if (props.disabled) return
         if (Object.keys(props.filters).length === 0) return
 
-        log('🪡🔥 search:start - from:', source || 'direct')
-
+        $search.loading = true
         emit('search:start', source)
+        log('🪡 search:start', source || 'direct')
+
         filter()
-        emit('search:end')
+
+        log('⇢ search:app', $search.stats)
 
         // Perform a search on the API
         // Only allowd sources will be searched
         const sources = ['all', 'palette']
-        if (sources.includes(props.source)) {
+        if (sources.includes(props.filters.source)) {
           // console.warn(
           //   'comprobar otros filtros y trabajar en optimizar el payload',
           //   'genre, released, sortby: name, score,released, hltb'
           // )
 
-          $data.search({ ...props.filters })
+          $search.stats.api_start = performance.now()
+          await $data.search({ ...props.filters })
+          $search.stats.api_end = performance.now()
+
+          emit('search:end')
+          $search.loading = false
+          log('⇢ search:end:api', $search.stats)
+        } else {
+          emit('search:end')
+          $search.loading = false
+          log('⇢ search:end:app', $search.stats)
         }
       },
       1000,
@@ -156,35 +176,40 @@ export default {
       // do again?
       // if (!$data.isReady) return
 
-      const start = performance.now()
+      // $search.stats.start = performance.now()
       const source = getSource()
+      // stats.source = props.filters.source
 
-      // if (source == 'all') stats.amount = this.$app.count.api
-      // stats.source = props.source
+      // Stop execution if there is nothing to filter
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // if (
+      //   props.filters.source == 'library' &&
+      //   history.amount == 0 &&
+      //   Object.keys(source).length == 0
+      // ) {
+      //   log('🔥 Canceling the search because of empty library ... no really, needs work')
+      //   // return
+      // }
 
-      if (props.source == 'library' && Object.keys(source).length == 0) {
-        log('Canceling the search because of empty library')
-        return
-      }
+      log(`⇢ Filtering "${props.filters.source}" (${Object.keys(source).length} apps)`)
+      log('⇢ Filters applied', JSON.stringify(props.filters))
 
-      log(
-        `🛞 Filtering "${props.source}" with ${Object.keys(source).length} apps with filters`,
-        JSON.stringify(props.filters)
-      )
-
-      stats.amount = Object.keys(source).length
-      if (props.source.length == 0) return
+      $search.stats.apps = Object.keys(source).length
+      if (props.filters.source == 'all') $search.stats.apps = $nuxt.$app.count.api
+      if (props.filters.source.length == 0) return
 
       const searched = searchFn.filter(source, props.filters, { source: props.source })
       const paged = searchFn.paginate(searched.items, props.filters.show)
-      const end = performance.now()
 
       items.value = paged
 
-      stats.time = end - start
-      stats.results = searched.results
-      stats.filtered = searched.filtered || 0
+      // $search.stats.time = end - start
+      $search.stats.end = performance.now()
+      $search.stats.results = searched.results
+      $search.stats.filtered = searched.filtered || 0
 
+      $search.history.items = searched.items
+      // debugger
       // this.$forceUpdate()
     }
 
@@ -197,11 +222,11 @@ export default {
     const getSource = () => {
       // Source is an array of fixed items
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (Array.isArray(props.source)) return props.source
+      // if (Array.isArray(props.source)) return props.source
 
       // Source is all games
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (props.source == 'all') return $data.list()
+      if (props.filters.source == 'all') return $data.list()
 
       // The source is the library but...
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -211,7 +236,7 @@ export default {
       if (props.filters.is == 'favorites') return $data.library('object')
     }
 
-    return { search, items, stats }
+    return { search, items, loading: $search.loading }
   },
 
   data() {
@@ -340,6 +365,8 @@ export default {
 
   computed: {
     cardBody() {
+      console.warn('🔴 cardBody', this.filters.show.card)
+      return []
       let show = [...this.filters.show.card]
 
       if (show.length == 1 && show.includes('default')) {
@@ -369,15 +396,14 @@ export default {
 
     this.$mitt.on('data:updated', () => {
       if (!$app.ready) return
-      if (this.$app.dev) log('🪡 Search from event', 'data:updated')
-      this.search('event')
+      this.search('data:updated')
     })
 
-    this.$mitt.on('data:deleted', () => {
-      if (!$app.ready) return
-      if (this.$app.dev) log('🪡 Search from event', 'data:deleted')
-      this.search('event')
-    })
+    // this.$mitt.on('data:deleted', () => {
+    //   if (!$app.ready) return
+    //   if (this.$app.dev) log('🪡 Search from event', 'data:deleted')
+    //   this.search('data:deleted')
+    // })
   },
 
   beforeUnmount() {

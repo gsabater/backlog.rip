@@ -77,7 +77,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 02 October 2024 - 15:38:44
+ * Modified: Wed 16 October 2024 - 14:30:55
  **/
 
 // import { useThrottleFn } from '@vueuse/core'
@@ -105,7 +105,7 @@ export default {
     // },
   },
 
-  emits: ['search:start', 'search:end'],
+  emits: ['search:ready', 'search:start', 'search:end'],
 
   setup(props, { emit }) {
     const $nuxt = useNuxtApp()
@@ -360,6 +360,7 @@ export default {
     init() {
       // this.loadRepositories()
       // this.search('onmounted')
+      this.$emit('search:ready')
     },
   },
 

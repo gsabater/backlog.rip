@@ -3,7 +3,7 @@
  * @desc:    Handles search filtering and sorting
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Fri 20 September 2024 - 10:20:51
+ * Modified: Wed 25 September 2024 - 17:43:38
  */
 
 export default {
@@ -191,12 +191,12 @@ export default {
       }
     }
 
-    log(
-      '✅ Filter done (amount, first, data[first])',
-      items.length,
-      items[0],
-      window.db?.d?.[items[0]]
-    )
+    // log(
+    //   '✅ Filter done (amount, first, data[first])',
+    //   items.length,
+    //   items[0],
+    //   window.db?.d?.[items[0]]
+    // )
 
     let sorted = this.sort(toSort, filters)
 
@@ -215,7 +215,7 @@ export default {
   //+-------------------------------------------------
   sort(items, filters) {
     const { sortBy, sortDir } = filters
-    log('🔸 Sorting results by', sortBy)
+    log('⇢ Sorting by', sortBy, sortDir)
 
     // SortBy: name
     // Using app.name

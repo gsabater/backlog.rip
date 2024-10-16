@@ -1,5 +1,5 @@
 <template>
-  <div class="card mb-3" style="padding: 1rem">
+  <div class="card mb-3" style="padding: 0.5rem">
     <div class="card-body">
       <div>
         <div class="d-flex mb-3">
@@ -38,16 +38,17 @@
           </div>
         </div>
 
+        <div class="col"></div>
+
         <div
-          class="col-md-4"
+          class="col-md-3"
           style="display: flex; flex-direction: column; align-items: center">
           <b-game
             :data="{
               steam_id: '292030',
               name: 'The Witcher® 3: Wild Hunt',
-              state: 1,
+              state: 3,
             }"
-            tracking
             :disabled="true"
             style="max-width: 115px; transform: translateY(-25px)"></b-game>
         </div>
@@ -218,7 +219,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th July 2024
- * Modified: Wed 25 September 2024 - 16:57:11
+ * Modified: Mon 30 September 2024 - 13:35:38
  **/
 
 export default {

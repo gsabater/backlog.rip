@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Thu 26 September 2024 - 11:48:40
+ * Modified: Tue 08 October 2024 - 13:53:30
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -152,6 +152,12 @@ export const useCloudStore = defineStore('cloud', {
       $data ??= useDataStore()
       $user ??= useUserStore()
       $state ??= useStateStore()
+
+      if ($nuxt.$app.offline) {
+        log('⚡ Cloud sync is disabled in offline mode')
+        this.status = 'offline'
+        return
+      }
 
       if ($nuxt.$auth.config.cloud == false) {
         log('⚡ Cloud sync is disabled in the user settings')

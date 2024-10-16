@@ -53,14 +53,12 @@
 </template>
 
 <script>
-import { useRepositoryStore } from '../../stores/RepositoryStore'
-
 /**
  * @file:    \pages\genres\index.vue
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 15th January 2024
- * Modified: Wed 11 September 2024 - 19:09:22
+ * Modified: Fri 27 September 2024 - 16:43:21
  **/
 
 export default {

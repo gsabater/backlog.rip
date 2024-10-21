@@ -60,7 +60,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 30th November 2023
- * Modified: Sun Jan 28 2024
+ * Modified: Thu 17 October 2024 - 17:30:47
  **/
 
 export default {
@@ -101,6 +101,7 @@ export default {
       default: false,
     },
   },
+
   emits: ['update:model-value', 'save'],
 
   data() {

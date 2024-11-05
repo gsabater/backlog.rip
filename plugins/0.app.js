@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Tue 05 November 2024 - 17:47:18
+ * Modified: Tue 05 November 2024 - 19:43:58
  */
 
 // import { reactive } from 'vue'
@@ -32,6 +32,7 @@ let app = {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   wip: false,
   dev: false,
+  beta: false,
 
   ready: false,
   offline: false,
@@ -120,6 +121,10 @@ function detectEnvironment() {
   if (window.location.hostname == 'localhost') {
     app.wip = true
     app.env = 'local'
+  }
+
+  if (window.location?.origin?.includes('beta.')) {
+    app.beta = true
   }
 
   if ($nuxt.$auth.config.debug) {

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: Tue 05 November 2024 - 17:38:12
+ * Modified: Tue 05 November 2024 - 20:10:29
  */
 
 import { find } from 'rxjs'
@@ -209,14 +209,14 @@ export const useListStore = defineStore('list', {
         list = this.lists.find((item) => item.uuid == list.uuid)
       }
 
-      console.warn(
-        list.name,
-        app.name,
-        app.uuid,
-        app.id?.api,
-        list.games.some((item) => item.uuid == app.uuid || item.uuid == app.id?.api),
-        list.games
-      )
+      // console.warn(
+      //   list.name,
+      //   app.name,
+      //   app.uuid,
+      //   app.id?.api,
+      //   list.games.some((item) => item.uuid == app.uuid || item.uuid == app.id?.api),
+      //   list.games
+      // )
 
       return list.games.some((item) => item.uuid == app.uuid || item.uuid == app.id?.api)
 

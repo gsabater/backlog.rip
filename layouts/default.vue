@@ -416,6 +416,33 @@
           <input type="text" />
         </h1> -->
 
+        <v-alert
+          v-if="$app.beta || true"
+          :icon="false"
+          type="warning"
+          variant="text"
+          density="compact">
+          You are viewing the Beta version of Backlog.rip. This version is still in
+          development and may contain (even more) bugs or errors.
+
+          <v-btn
+            size="small"
+            color="primary"
+            variant="tonal"
+            class="mx-2"
+            @click="goTo('https://discord.gg/F2sPE5B', { external: true })">
+            Discord
+          </v-btn>
+          <v-btn
+            size="small"
+            color="primary"
+            variant="tonal"
+            class="mx-2"
+            @click="goTo('https://backlog.rip', { external: true })">
+            Main site
+          </v-btn>
+        </v-alert>
+
         <div class="d-flex">
           <button
             class="navbar-toggler"
@@ -1026,7 +1053,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Mon 04 November 2024 - 16:51:23
+ * Modified: Tue 05 November 2024 - 20:08:00
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'
@@ -1065,8 +1092,8 @@ export default {
   },
 
   methods: {
-    goTo(route) {
-      navigateTo(route)
+    goTo(route, options = {}) {
+      navigateTo(route, options)
 
       // this.$router.push(route)
     },

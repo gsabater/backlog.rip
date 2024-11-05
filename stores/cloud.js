@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Tue 08 October 2024 - 13:53:30
+ * Modified: Thu 24 October 2024 - 15:02:17
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -873,6 +873,16 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     is() {
       return this.status // == 'syncing:done' ? 'ok' : this.status
+    },
+
+    //+-------------------------------------------------
+    // enabled()
+    // boolean to check if the user has cloud enabled
+    // -----
+    // Created on Thu Oct 24 2024
+    //+-------------------------------------------------
+    enabled() {
+      return this.jwt && this.status !== 'local' && this.status !== 'offline'
     },
 
     //+-------------------------------------------------

@@ -1,11 +1,9 @@
-/* eslint-disable no-unused-vars */
-
 /*
  * @file:    \stores\stateStore.js
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Wed 11 September 2024 - 17:49:31
+ * Modified: Tue 15 October 2024 - 15:39:39
  */
 
 let $nuxt = null
@@ -448,10 +446,11 @@ export const useStateStore = defineStore('state', {
     // Created on Sat Feb 10 2024
     //+-------------------------------------------------
     async init() {
-      if (!$nuxt) $nuxt = useNuxtApp()
+      $nuxt ??= useNuxtApp()
+      $cloud ??= useCloudStore()
+
       if (!$data) $data = useDataStore()
       if (!$game) $game = useGameStore()
-      $cloud ??= useCloudStore()
       if (!$journal) $journal = useJournalStore()
 
       await this.load()

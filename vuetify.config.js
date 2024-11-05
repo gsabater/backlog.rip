@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Fri 23 August 2024 - 19:36:14
+ * Modified: Thu 17 October 2024 - 14:23:58
  */
 
 import { md2 } from 'vuetify/blueprints'
@@ -50,6 +50,12 @@ export default defineVuetifyConfiguration({
       style: [{ background: '#20222b' }],
     },
 
-    VSelect: { variant: 'outlined' },
+    VSelect: {
+      flat: true,
+      class: '',
+      variant: 'solo',
+      density: 'compact',
+      hideDetails: 'auto',
+    },
   },
 })

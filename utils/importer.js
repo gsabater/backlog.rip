@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Wed 02 October 2024 - 09:52:10
+ * Modified: Wed 30 October 2024 - 17:55:12
  */
 
 import axios from 'axios'
@@ -152,8 +152,8 @@ export default {
       library: [],
 
       // TODO: things that will be imported
+      // lists: [],
       // states: [],
-      // collections: [],
       // data.backlog will be defined as well from steam.onScan
       steambacklog: {}, // quick dirty hack
     }

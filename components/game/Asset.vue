@@ -1,5 +1,5 @@
 <template>
-  <img loading="lazy" :src="assetUrl(showing)" @error="showAnother" />
+  <img loading="lazy" :src="src" @error="showAnother" @load="emitLoaded" />
 </template>
 
 <script>
@@ -13,16 +13,16 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: 23 July 2024 - 10:43:05
+ * Modified: Tue 05 November 2024 - 17:42:37
  **/
 
 export default {
   name: 'GameAsset',
   props: {
-    uuid: {
-      type: String,
-      default: null,
-    },
+    // uuid: {
+    //   type: String,
+    //   default: null,
+    // },
 
     app: {
       type: Object,
@@ -43,7 +43,14 @@ export default {
       type: String,
       default: null,
     },
+
+    adapt: {
+      type: Array,
+      default: () => [],
+    },
   },
+
+  emits: ['loaded'],
 
   data() {
     return {
@@ -55,6 +62,8 @@ export default {
           logo: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/logo.png',
           cover: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/library_600x900.jpg',
           banner: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/header.jpg',
+          header:
+            'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/%ID%/header_292x136.jpg',
           icon: 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/%ID%/%ICON%.jpg',
           gen: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/page_bg_generated_v6b.jpg',
           background: 'https://cdn.akamai.steamstatic.com/steam/apps/%ID%/page.bg.jpg',
@@ -78,9 +87,16 @@ export default {
       const fallback = []
 
       this.priority.forEach((source) => {
+        const resource = this.resources[source]
+
+        if (!resource) return
         if (source == 'igdb' && !this.app.cover) return
-        if (this.resources[source]) assets.push(this.resources[source][this.asset])
-        if (this.resources[source]) fallback.push(this.resources[source][this.fallback])
+
+        const asset = resource[this.asset]
+        const fallb = resource[this.fallback]
+
+        if (asset) assets.push(asset)
+        if (fallb) fallback.push(fallb)
       })
 
       // if (this.asset == 'cover' && this.priority.includes('steam')) {
@@ -93,6 +109,10 @@ export default {
       // }
 
       return assets.concat(fallback)
+    },
+
+    src() {
+      return this.assetUrl(this.showing)
     },
   },
 
@@ -110,7 +130,10 @@ export default {
     },
 
     showAnother() {
+      // console.warn('show another', this.app.uuid, this.assets)
+      if (this.showing == -1) return
       if (this.showing < this.assets.length - 1) this.showing++
+      else this.showing = -1
     },
 
     //+-------------------------------------------------
@@ -120,10 +143,17 @@ export default {
     // If the url is detected to be a banner, adapt the parent
     // -----
     // Created on Tue Feb 06 2024
+    // Updated on Tue Nov 05 2024 - Added timestamp and null values
     //+-------------------------------------------------
     assetUrl(index) {
+      if (index == -1) {
+        this.adaptForIGDB()
+        return '/img/illustrations/wU08XKouRlOjqQsczsNQiw.webp'
+      }
+
       const cover = this.app?.cover
       const assets = this.assets[index]
+      // console.warn('assetUrl', index, this.app.uuid, this.asset, this.is, assets, cover)
 
       if (!assets) return
       let theUrl = null
@@ -142,7 +172,7 @@ export default {
         this.adaptForIGDB(theUrl)
       }
 
-      return theUrl
+      return theUrl + '?t=' + this.$app.t
     },
 
     //+-------------------------------------------------
@@ -160,18 +190,18 @@ export default {
       container.style.backgroundImage = `url(${url})`
     },
 
-    adaptForIGDB(url) {
+    adaptForIGDB() {
       if (!this.$el) return
+      const container = this.$el.closest('div')
+      if (!container) return
+
       this.$el.style.backgroundSize = 'cover'
+      container.classList.remove('is-banner')
     },
 
-    init() {
-      this.getData()
+    emitLoaded() {
+      this.$emit('loaded', this.src)
     },
-  },
-
-  mounted() {
-    // this.init()
   },
 }
 </script>

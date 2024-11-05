@@ -1,5 +1,5 @@
 <template>
-  <div class="card mb-3" style="padding: 1rem">
+  <div class="card mb-3" style="padding: 0.5rem">
     <div class="card-body">
       <div>
         <div class="d-flex mb-3">
@@ -78,6 +78,10 @@
       </div>
     </div>
   </div>
+
+  <a href="/games/card-and-board-game" class="btn btn-outline-primary">
+    <span class="btn-text">asdasdasd</span>
+  </a>
 
   <div class="card">
     <div v-if="states.length">
@@ -191,11 +195,7 @@
     @stored="$forceUpdate()"
     @deleted="$forceUpdate()" /> -->
 
-  <dialog-crud-states
-    ref="crud"
-    @close="selected = null"
-    @stored="onStored"
-    @deleted="$forceUpdate()" />
+  <dialog-crud-states ref="crud" @stored="onStored" @deleted="$forceUpdate()" />
 </template>
 
 <script>
@@ -204,7 +204,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Tue 27 August 2024 - 17:12:44
+ * Modified: Thu 10 October 2024 - 19:59:34
  **/
 
 export default {

@@ -79,8 +79,29 @@ Selected
     *| Second line
     *| Select souce and apply filters
     *+--------------------------------- -->
+  <div class="col-auto">
+    <div style="background: rgb(30 31 41 / 80%); border-radius: 4px; padding: 4px">
+      <v-btn
+        @click="browse('all')"
+        size="small"
+        color="blue-grey-lighten-1"
+        :variant="f.source == 'all' ? 'tonal' : 'plain'">
+        <Icon v-if="f.source == 'all'" size="12" class="text-muted me-1">Cards</Icon>
+        All games
+      </v-btn>
+      <v-btn
+        @click="browse('library')"
+        size="small"
+        :variant="f.source == 'library' ? 'tonal' : 'plain'">
+        <Icon v-if="f.source == 'library'" size="12" class="text-muted me-1">
+          LayoutDashboard
+        </Icon>
+        Library
+      </v-btn>
+    </div>
+  </div>
   <div class="col-6 d-flex align-items-center">
-    <div class="btn-group btn-group-sm filters__source">
+    <!-- <div class="btn-group btn-group-sm filters__source">
       <div
         class="btn d-flex align-items-center border-end-0"
         :class="{ active: f.source == 'all' }"
@@ -101,22 +122,30 @@ Selected
         </Icon>
         <small>Library</small>
       </div>
-    </div>
+    </div> -->
 
     <!-- <Icon class="text-muted mx-2">MinusVertical</Icon> -->
     <!-- <div style="border-right: 1px dashed #ccc; margin: 10px"></div> -->
-    <div class="text-muted mx-3"><Icon size="14">Spaces</Icon></div>
 
-    <div class="btn btn-sm me-2" style="background: transparent">
-      <!-- <Icon class="me-2" size="16">ColorFilter</Icon> -->
-      <small>Apply filters</small>
+    <v-btn
+      id="⚓filters"
+      variant="text"
+      size="small"
+      class="me-2"
+      color="blue-grey-lighten-1">
+      Apply filters
 
-      <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
-        Selector
+      <Icon class="text-muted" size="14" width="2" style="transform: translate(5px, 1px)">
+        ChevronDown
       </Icon>
 
-      <b-tippy-sheety @closed="reset" ref="filters">
-        <div class="b-menu dropdown-menu show">
+      <b-tippy-sheety
+        to="#⚓filters"
+        ref="filters"
+        trigger="click"
+        :autoclose="150"
+        @closed="reset">
+        <div class="b-menu dropdown-menu show" style="letter-spacing: normal">
           <template v-if="ui.step == 'pick'">
             <span class="dropdown-header">
               <span class="text-muted">Choose a filter</span>
@@ -127,7 +156,7 @@ Selected
               class="dropdown-item"
               @click="pick(param)">
               <div style="width: 30px">
-                <Icon>{{ param.icon }}</Icon>
+                <Icon size="16" class="me-1">{{ param.icon }}</Icon>
               </div>
               <span>{{ param.label }}</span>
             </div>
@@ -184,7 +213,12 @@ Selected
                   <!-- <Icon style="color: var(--tblr-primary)">SquareCheck</Icon>
                       <Icon style="color: #666">Square</Icon> -->
 
+                  <template v-if="param.id == -1">
+                    <Icon size="12" class="me-1">CircleOff</Icon>
+                  </template>
+
                   <span
+                    v-else
                     class="badge me-2"
                     :style="{ 'background-color': param.color || '' }"></span>
 
@@ -224,7 +258,13 @@ Selected
               </div>
             </div>
 
-            <template v-if="$app.dev && option.by == 'released'">
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item" @click="ui.step = 'pick'">
+              <Icon class="me-2" size="16">ArrowLeft</Icon>
+              <span class="me-4">Apply more filters</span>
+            </div>
+
+            <template v-if="$app.wip && option.by == 'released'">
               <div class="hr-text mt-2 mb-3">Or pick</div>
               <div style="transform: scale(0.9)">
                 <!-- <div>
@@ -285,8 +325,17 @@ Selected
                 </div> -->
         </div>
       </b-tippy-sheety>
+    </v-btn>
+    <!-- <div class="btn btn-sm me-2" style="background: transparent">
+      <small>Apply filters</small>
 
-      <!-- <tippy
+      <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+        Selector
+      </Icon>
+
+
+
+     <tippy
             ref="tippyFilter"
             to="parent"
             tag="div"
@@ -305,189 +354,41 @@ Selected
 
               </div>
             </template>
-          </tippy> -->
-    </div>
+          </tippy>
+    </div> -->
 
-    <div class="btn btn-sm" style="background: transparent">
-      <!-- <Icon class="me-2" size="16">ColorFilter</Icon> -->
+    <v-btn
+      id="⚓sortby"
+      variant="text"
+      size="small"
+      class="me-2"
+      color="blue-grey-lighten-1">
+      Sorting by
+      <strong class="ps-1">
+        {{ sortLabel[f.sortBy] ?? '...' }}
+        {{ !f.sortBy || !f.sortDir ? '' : f.sortDir == 'asc' ? '(Asc)' : '(Desc)' }}
+      </strong>
+
+      <Icon class="text-muted" size="14" width="2" style="transform: translate(5px, 1px)">
+        ChevronDown
+      </Icon>
+
+      <b-tippy-sheety to="#⚓sortby" :autoclose="150" trigger="click">
+        <search-sort-menu :f="f" @sort="sortBy" />
+      </b-tippy-sheety>
+    </v-btn>
+
+    <!-- <div class="btn btn-sm" style="background: transparent">
       <small>
         Sorting by
         <strong>
           {{ sortLabel[f.sortBy] ?? '...' }}
-          {{
-            f.sortBy == 'rand' || !f.sortBy ? '' : f.sortDir == 'asc' ? '(Asc)' : '(Desc)'
-          }}
         </strong>
       </small>
       <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
         Selector
       </Icon>
-      <b-tippy-sheety>
-        <!-- <tippy
-            ref="tippySort"
-            to="parent"
-            tag="div"
-            content-tag="div"
-            :animate-fill="true"
-            :interactive="true"
-            :interactive-debounce="55"
-            animation="scale-subtle"
-            placement="bottom-start"
-            trigger="click"
-            theme="filters">
-            <template #content="{ hide }"> -->
-        <div class="b-menu dropdown-menu show" style="min-width: 280px">
-          <span class="dropdown-header">
-            <span class="text-muted">General sorting</span>
-          </span>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'rand' }"
-            @click="sortBy('rand')">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon size="16" width="2" class="me-1" :icon="'Dice' + ui.dice"></Icon>
-            </div>
-
-            <div class="pe-3">Random</div>
-            <tippy
-              class="text-muted ms-auto cursor-help ps-4"
-              :content="'Every click triggers a re-sort!'">
-              <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-                HelpSmall
-              </Icon>
-            </tippy>
-          </label>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'name' }"
-            @click="sortBy('name', 'asc', true)">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon
-                size="16"
-                width="2"
-                class="me-1"
-                :icon="
-                  f.sortDir == 'asc' ? 'SortAscendingLetters' : 'SortDescendingLetters'
-                "></Icon>
-            </div>
-            <div>
-              Name
-              <div
-                v-if="f.sortBy == 'name'"
-                class="text-muted"
-                style="font-size: 0.75rem">
-                {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
-                <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-              </div>
-            </div>
-          </label>
-
-          <div class="dropdown-divider"></div>
-
-          <span class="dropdown-header">
-            <span class="text-muted">By Score</span>
-          </span>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'score' }"
-            @click="sortBy('score', 'desc', true)">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon size="16" class="me-1">Universe</Icon>
-            </div>
-            <div>
-              Median score
-              <div
-                v-if="f.sortBy == 'score'"
-                class="text-muted"
-                style="font-size: 0.75rem">
-                {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
-                <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-              </div>
-            </div>
-            <tippy
-              class="text-muted ms-auto cursor-help ps-4"
-              :content="'The median score is ....'">
-              <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-                HelpSmall
-              </Icon>
-            </tippy>
-          </label>
-
-          <div class="dropdown-divider"></div>
-
-          <span class="dropdown-header">
-            <span class="text-muted">By Time</span>
-          </span>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'released' }"
-            @click="sortBy('released', 'desc', true)">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon size="16" class="me-1">CalendarDot</Icon>
-            </div>
-            <div>
-              Release date
-              <div
-                v-if="f.sortBy == 'released'"
-                class="text-muted"
-                style="font-size: 0.75rem">
-                {{ f.sortDir == 'asc' ? 'Oldest' : 'Newest' }}
-                <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-              </div>
-            </div>
-          </label>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'playtime' }"
-            @click="sortBy('playtime', 'desc', true)">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon size="16" class="me-1">AlarmAverage</Icon>
-            </div>
-            <div>
-              Your playtime
-              <div
-                v-if="f.sortBy == 'playtime'"
-                class="text-muted"
-                style="font-size: 0.75rem">
-                {{ f.sortDir == 'asc' ? 'Unplayed' : 'Most played' }}
-                <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-              </div>
-            </div>
-          </label>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'hltb' }"
-            @click="sortBy('hltb', 'desc', true)">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon size="16" class="me-1">TimeDuration30</Icon>
-            </div>
-            <div>
-              How long to beat
-              <div
-                v-if="f.sortBy == 'hltb'"
-                class="text-muted"
-                style="font-size: 0.75rem">
-                {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
-                <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-              </div>
-            </div>
-            <tippy
-              class="text-muted ms-auto cursor-help ps-4"
-              :content="'How long to beat is a metric that measures how much time is needed to complete a game. Data provided from howlongtobeat.com'">
-              <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-                HelpSmall
-              </Icon>
-            </tippy>
-          </label>
-        </div>
-      </b-tippy-sheety>
-    </div>
+    </div> -->
 
     <!-- <div class="text-muted mx-3"><Icon size="14">Spaces</Icon></div>
 
@@ -579,7 +480,9 @@ Selected
             trigger="click"
             theme="filters">
             <template #content="{ hide }"> -->
-        <div class="b-menu dropdown-menu show" style="min-width: 280px">
+        <div
+          class="b-menu dropdown-menu show"
+          style="min-width: 280px; letter-spacing: normal">
           <span class="dropdown-header">
             <span class="text-muted">General sorting</span>
           </span>
@@ -1260,7 +1163,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Wed 02 October 2024 - 16:33:36
+ * Modified: Wed 30 October 2024 - 17:40:05
  **/
 
 export default {
@@ -1407,7 +1310,7 @@ export default {
           id: -1,
           color: '#000000',
           name: 'No state',
-          description: 'Games without a state',
+          description: 'Display games without a state',
         })
       }
 
@@ -1528,16 +1431,12 @@ export default {
     // -----
     // Created on Sun Mar 17 2024
     //+-------------------------------------------------
-    sortBy(by, dir = 'desc', toggle = false) {
-      if (toggle && this.f.sortBy == by) {
+    sortBy(sort) {
+      if (sort.toggle && this.f.sortBy == sort.by) {
         this.f.sortDir = this.f.sortDir == 'asc' ? 'desc' : 'asc'
       } else {
-        this.f.sortBy = by
-        this.f.sortDir = dir
-      }
-
-      if (by == 'rand') {
-        this.ui.dice = Math.floor(Math.random() * 6) + 1
+        this.f.sortBy = sort.by
+        this.f.sortDir = sort.dir
       }
 
       // this.$refs.tippySort.hide()

@@ -5,40 +5,40 @@
 //
 //+-------------------------------------------------
 
-@import '../../node_modules/@tabler/core/dist/css/tabler.css';
-// @import '../../node_modules/@tabler/core/dist/css/tabler-flags.css';
-// @import '../../node_modules/@tabler/core/dist/css/tabler-payments.css';
-@import '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
-@import '../../node_modules/@tabler/core/dist/css/demo.css';
+@use '../../node_modules/@tabler/core/dist/css/tabler.css';
+// @use '../../node_modules/@tabler/core/dist/css/tabler-flags.css';
+// @use '../../node_modules/@tabler/core/dist/css/tabler-payments.css';
+@use '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
+@use '../../node_modules/@tabler/core/dist/css/demo.css';
 
-@import 'extend';
-@import 'overrides/tabler';
-@import 'overrides/vuetify';
+@use 'extend';
+@use 'overrides/tabler-overrides';
+@use 'overrides/vuetify';
 
 //+-------------------------------------------------
 // Mixins and default CSS
 //+-------------------------------------------------
 
-@import 'base';
-@import 'colors';
-@import 'borders';
+@use 'base';
+@use 'colors';
+@use 'borders';
 
-@import 'mixins/cards';
-@import 'mixins/buttons';
+@use 'mixins/cards';
+@use 'mixins/buttons';
 
 //+-------------------------------------------------
 // Partials
 //+-------------------------------------------------
 
-@import 'partials/nav';
-@import 'partials/home';
-@import 'partials/search';
-@import 'partials/palette';
+@use 'partials/nav';
+@use 'partials/home';
+@use 'partials/search';
+@use 'partials/palette';
 
-@import 'partials/base/_menus';
-@import 'partials/base/_sidebar';
-@import 'partials/base/_lists';
-@import 'partials/base/_modal';
+@use 'partials/base/_menus';
+@use 'partials/base/_sidebar';
+@use 'partials/base/_lists';
+@use 'partials/base/_modal';
 
 //+-------------------------------------------------
 // Components
@@ -46,11 +46,11 @@
 // to promote reusability and organization in stylesheets.
 //+-------------------------------------------------
 
-@import 'components/b-menu';
-@import 'components/b-game';
-@import 'components/b-list';
-@import 'components/b-game-details';
-@import 'components/b-game-details-old';
-@import 'components/b-game-manager';
+@use 'components/b-menu';
+@use 'components/b-game';
+@use 'components/b-list';
+@use 'components/b-game-details';
+@use 'components/b-game-details-old';
+@use 'components/b-game-manager';
 
-@import 'dev';
+@use 'dev';

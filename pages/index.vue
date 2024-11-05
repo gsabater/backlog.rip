@@ -104,7 +104,12 @@
         </div>
       </div>
 
-      <gameList :apps="hot" cols="6" class="py-2 justify-content-center"></gameList>
+      <!-- <gameList :apps="hot" cols="6" class="py-2 justify-content-center"></gameList> -->
+      <search-results
+        ref="hotGames"
+        :disabled="false"
+        :source="hot"
+        class="py-2 justify-content-center" />
     </div>
   </section>
 
@@ -165,7 +170,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Wed 11 September 2024 - 18:57:17
+ * Modified: Wed 30 October 2024 - 17:31:24
  **/
 
 export default {

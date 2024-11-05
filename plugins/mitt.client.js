@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Thu 19 September 2024 - 16:50:30
+ * Modified: Wed 30 October 2024 - 17:50:38
  */
 
 //+-------------------------------------------------
@@ -14,6 +14,9 @@
 // ✨ game:manager
 //
 // ✨ state:change
+//
+// ✨ list:create
+// ✨ list:edit
 //
 // ✨ confirm:show
 //

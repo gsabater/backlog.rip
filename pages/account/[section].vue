@@ -17,6 +17,7 @@
 import me from './sections/me'
 import logs from './sections/logs'
 import cloud from './sections/cloud'
+import lists from './sections/lists'
 import states from './sections/states'
 import linked from './sections/linked'
 import history from './sections/history'
@@ -29,6 +30,7 @@ export default {
     me,
     logs,
     cloud,
+    lists,
     states,
     linked,
     history,

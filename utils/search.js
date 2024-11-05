@@ -3,7 +3,7 @@
  * @desc:    Handles search filtering and sorting
  * -------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Wed 25 September 2024 - 17:43:38
+ * Modified: Wed 30 October 2024 - 17:27:04
  */
 
 export default {
@@ -23,12 +23,12 @@ export default {
     let re = /(?:^|[ ]):([a-zA-Z]+)/gm
     let searchString = filters?.string?.toLowerCase().replace(re, '').trim()
 
-    for (const uuid in source) {
-      const app = source[uuid]
+    for (const index in source) {
+      const app = source[index]
 
       // ✨ Filter: Backlog state
       // Match with app.state
-      //+---------------------------------------
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.states?.length) {
         const { states } = filters
 
@@ -36,36 +36,36 @@ export default {
         const withNoState = states.includes(-1)
 
         if (!states.includes(app.state) && !(withNoState && !app.state)) {
-          filtered.push(uuid)
+          filtered.push(app.uuid)
           continue
         }
       }
 
       // ✨ App is...
       // Filter apps based on filters.is
-      //+---------------------------------------
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.is) {
         if (filters.is == 'favorites' && !app.is?.fav) {
-          filtered.push(uuid)
+          filtered.push(app.uuid)
           continue
         }
 
         if (filters.is == 'pinned' && !app.is?.pinned) {
-          filtered.push(uuid)
+          filtered.push(app.uuid)
           continue
         }
 
         if (filters.is == 'hidden' && !app.is?.hidden) {
-          filtered.push(uuid)
+          filtered.push(app.uuid)
           continue
         }
       }
 
       // ✨ Filter: Hidden games
       // Remove any games hidden
-      //+---------------------------------------
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (app.is?.hidden && filters.is !== 'hidden') {
-        filtered.push(uuid)
+        filtered.push(app.uuid)
         // console.warn('🛑 Skipping hidden app', app.name, app)
         continue
       }
@@ -84,7 +84,7 @@ export default {
 
       // ✨ Filter: Name
       // Match with on app.name and store IDs
-      //+---------------------------------------
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.string?.length > 0) {
         let appName = app.name ? app.name : ''
         appName = appName.toString().toLowerCase()
@@ -96,7 +96,7 @@ export default {
           // counters.skip++
           // data.hidden.string.push(id.steam)
 
-          filtered.push(uuid)
+          filtered.push(app.uuid)
           // console.warn(
           //   '🛑 Skipping: String not found in name',
           //   searchString,
@@ -109,10 +109,10 @@ export default {
 
       // ✨ Filter: Genres
       // Include only apps with genres
-      //+---------------------------------------
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.genres?.length) {
         if (!app.genres?.some((item) => filters?.genres.includes(item))) {
-          filtered.push(uuid)
+          filtered.push(app.uuid)
           // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
 
           continue
@@ -121,24 +121,24 @@ export default {
 
       // ✨ Sort By: Released at
       // Include only apps with release date
-      //+---------------------------------------
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.released > 0 || filters?.sortBy == 'released') {
         if (!app.released_at) {
-          filtered.push(uuid)
+          filtered.push(app.uuid)
           // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
 
           continue
         }
 
         if (app.released_at > now) {
-          filtered.push(uuid)
+          filtered.push(app.uuid)
           // console.warn('🛑 Skipping because released in the future', filters.released, app.released_at
 
           continue
         }
 
         if (app.released_at < filters.released) {
-          filtered.push(uuid)
+          filtered.push(app.uuid)
           // console.warn('🛑 Skipping because released before', filters.released, app.released_at)
 
           continue
@@ -148,10 +148,10 @@ export default {
       // ✨ Sort By: HLTB
       // Include only apps with HLTB time
       // Sort by HLTB.main
-      //+---------------------------------------
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.sortBy == 'hltb') {
         if (!app.hltb?.main) {
-          filtered.push(uuid)
+          filtered.push(app.uuid)
           // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
 
           continue
@@ -160,34 +160,38 @@ export default {
 
       // Finally,
       // Modify and add the app to items
-      //+---------------------------------------
-      items.push(uuid)
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      items.push(app.uuid)
 
       // Index: toSort
       // Create an index of elements to sort
-      //+---------------------------------------
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.sortBy == 'rand') {
-        toSort.push({ uuid, val: Math.random() })
+        toSort.push({ uuid: app.uuid, val: Math.random() })
       }
 
       if (filters?.sortBy == 'name') {
-        toSort.push({ uuid, val: app.name?.toString().toLowerCase() || '' })
+        toSort.push({ uuid: app.uuid, val: app.name?.toString().toLowerCase() || '' })
       }
 
       if (filters?.sortBy == 'score') {
-        toSort.push({ uuid, val: app._?.score || 0 })
+        toSort.push({ uuid: app.uuid, val: app._?.score || 0 })
       }
 
       if (filters?.sortBy == 'released') {
-        toSort.push({ uuid, val: app.released_at || 0 })
+        toSort.push({ uuid: app.uuid, val: app.released_at || 0 })
       }
 
       if (filters?.sortBy == 'playtime') {
-        toSort.push({ uuid, val: app.playtime?.steam || 0 })
+        toSort.push({ uuid: app.uuid, val: app.playtime?.steam || 0 })
       }
 
       if (filters?.sortBy == 'hltb') {
-        toSort.push({ uuid, val: app.hltb?.main || 0 })
+        toSort.push({ uuid: app.uuid, val: app.hltb?.main || 0 })
+      }
+
+      if (!filters?.sortBy || filters?.sortBy == 'user') {
+        toSort.push({ uuid: app.uuid })
       }
     }
 
@@ -215,11 +219,11 @@ export default {
   //+-------------------------------------------------
   sort(items, filters) {
     const { sortBy, sortDir } = filters
-    log('⇢ Sorting by', sortBy, sortDir)
+    // log('⇢ Sorting by', sortBy, sortDir)
 
     // SortBy: name
     // Using app.name
-    //+---------------------------------------
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (filters?.sortBy == 'name') {
       return items
         .sort((a, b) => {
@@ -233,7 +237,7 @@ export default {
 
     // SortBy: numeric value
     // Using app.playtime // score // rand
-    //+---------------------------------------
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (['rand', 'hltb', 'score', 'playtime', 'released'].includes(sortBy)) {
       return items
         .sort((a, b) => {
@@ -244,11 +248,21 @@ export default {
         .map((item) => item.uuid)
     }
 
-    // Left as a helper
-    debugger
+    // SortBy: user
+    // Just return the items
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    return items.map((item) => item.uuid)
   },
 
+  //+-------------------------------------------------
+  // paginate()
+  //
+  // -----
+  // Created on Mon Feb 12 2024
+  //+-------------------------------------------------
   paginate(items, options) {
+    if (!options) return items
+
     if (!items || items.length == 0) return []
 
     const { page, perPage } = options

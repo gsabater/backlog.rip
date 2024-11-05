@@ -1,108 +1,179 @@
 <template>
-  <div
-    ref="card"
-    class="card-game"
-    :uuid="app.uuid"
-    :class="[
-      app.state ? 'is-state_' + app.state : '',
-      {
-        'is-bordered': $auth.config.game_state_borders,
-        'is-tracking': tracking,
-      },
-    ]">
-    <div class="card-game__cover" @click.stop="showGameModal">
-      <div
-        v-if="app.error"
-        style="
-          color: rgba(152, 75, 75, 0.716);
-          font-size: 1rem;
-          text-align: center;
-          z-index: 666;
-        ">
-        {{ app.error }}
+  <slot>
+    <!--
+      *+---------------------------------
+      *| Card type list
+      *| Displays a list to be used with .list-group
+      *+--------------------------------- -->
+    <div
+      v-if="type == 'list'"
+      v-bind="$attrs"
+      class="list-group-item text-decoration-none game game--list">
+      <div class="row align-items-center">
+        <slot name="game:prepend"></slot>
+        <div class="col-auto text-secondary">
+          <div class="game__cover">
+            <game-asset
+              :app="app"
+              asset="banner"
+              fallback="cover"
+              :priority="['steam', 'igdb']" />
+          </div>
+        </div>
+        <div class="col">
+          <span class="font-serif">{{ app.name }}</span>
+          <div class="v-list-item-subtitle">
+            <slot name="details">
+              <small class="text-muted me-2">
+                {{ app._.released_at ?? '--' }}
+              </small>
+
+              <small
+                v-if="display.includes('score') && app.score"
+                class="details__secondary text-muted me-2">
+                <Icon
+                  size="12"
+                  width="1.5"
+                  style="transform: translateY(-1px); margin-right: 0px">
+                  Diamond
+                </Icon>
+                {{ app.score ?? 'Unscored' }}
+                <!-- <template v-if="$app.dev">-- {{ app._.score }}</template> -->
+              </small>
+            </slot>
+          </div>
+        </div>
+
+        <slot name="actions"></slot>
+
+        <!-- <div class="col-auto text-secondary">
+            <v-btn variant="tonal" icon="mdi-chevron-right" size="small">
+              <Icon>ChevronRight</Icon>
+            </v-btn>
+          </div> -->
       </div>
-      <template v-else>
-        <BState
-          :app="app.uuid"
-          :state="app.state"
-          :label="false"
-          :fav="app.is?.fav || false"
-          :pinned="app.is?.pinned || false"
-          :hidden="app.is?.hidden || false" />
-        <game-asset
-          ref="cover"
-          :app="app"
-          asset="cover"
-          fallback="banner"
-          :priority="['steam', 'igdb']" />
-      </template>
     </div>
 
-    <div v-if="body" class="card-game__details">
-      <span
-        v-if="body.includes('name') || body.includes('default')"
-        class="details__name font-serif d-block">
-        {{ app.name }}
-      </span>
+    <!--
+      *+---------------------------------
+      *| Card type card
+      *| A card to be used in a row with cols
+      *+--------------------------------- -->
+    <div
+      v-if="type == 'card'"
+      v-bind="$attrs"
+      ref="card"
+      class="card-game"
+      :uuid="app.uuid"
+      :class="[
+        app.state ? 'is-state_' + app.state : '',
+        {
+          'is-bordered': $auth.config.game_state_borders,
+          'is-tracking': tracking,
+        },
+      ]">
+      <slot name="game:prepend"></slot>
 
-      <small
-        v-if="body.includes('score') && app.score"
-        class="details__secondary text-muted">
-        <Icon
-          size="12"
-          width="1.8"
-          style="transform: translateY(-1px); margin-right: 3px">
-          Universe
-        </Icon>
-        {{ app.score ?? 'Unscored' }}
-        <template v-if="$app.dev">-- {{ app._.score }}</template>
-      </small>
+      <div class="card-game__cover" @click.stop="action">
+        <div
+          v-if="app.error"
+          style="
+            color: rgba(152, 75, 75, 0.716);
+            font-size: 1rem;
+            text-align: center;
+            z-index: 666;
+          ">
+          {{ app.error }}
+        </div>
+        <template v-else>
+          <BState
+            v-if="!disabled"
+            :app="app.uuid"
+            :state="app.state"
+            :label="false"
+            :fav="app.is?.fav || false"
+            :pinned="app.is?.pinned || false"
+            :hidden="app.is?.hidden || false" />
+          <game-asset
+            ref="cover"
+            :app="app"
+            asset="cover"
+            fallback="banner"
+            :priority="['steam', 'igdb']" />
+        </template>
+      </div>
 
-      <small
-        v-if="body.includes('released')"
-        class="d-block details__secondary text-muted">
-        <Icon
-          size="12"
-          width="1.8"
-          style="transform: translateY(-1px); margin-right: 3px">
-          Calendar
-        </Icon>
-        {{ app._.released_at }}
-      </small>
+      <slot name="game:details">
+        <div v-if="display.length" class="card-game__details">
+          <slot name="details:prepend"></slot>
 
-      <small
-        v-if="body.includes('playtime')"
-        class="d-block details__secondary text-muted">
-        <Icon
-          size="12"
-          width="1.8"
-          style="transform: translateY(-1px); margin-right: 3px">
-          ClockHour3
-        </Icon>
+          <span
+            v-if="display.includes('name') || display.includes('*')"
+            class="details__name font-serif d-block">
+            {{ app.name }}
+          </span>
 
-        <span style="font-size: 0.775rem">
-          <template v-if="app._.playtime == 0">Not played</template>
-          <template v-else>
-            Played
-            {{ dates.minToHours(app._.playtime, 'Not played') }}
-            <!-- {{ dates.timeAgo(app.playtime.steam_last * 1000) }} -->
-          </template>
-        </span>
-      </small>
+          <small
+            v-if="display.includes('score') && app.score"
+            class="details__secondary text-muted">
+            <Icon
+              size="13"
+              width="1.5"
+              style="transform: translateY(-1px); margin-right: 3px">
+              Diamond
+            </Icon>
+            {{ app.score ?? 'Unscored' }}
+            <template v-if="$app.dev">-- {{ app._.score }}</template>
+          </small>
 
-      <small
-        v-if="body.includes('hltb') && app.hltb && app.hltb.main"
-        class="d-block details__secondary text-muted">
-        <Icon
-          size="12"
-          width="1.8"
-          style="transform: translateY(-1px); margin-right: 3px">
-          SquareRoundedCheck
-        </Icon>
-        {{ dates.minToHours(app.hltb.main / 60) }}
-      </small>
+          <small
+            v-if="display.includes('released')"
+            class="d-block details__secondary text-muted">
+            <Icon
+              size="12"
+              width="1.8"
+              style="transform: translateY(-1px); margin-right: 3px">
+              Calendar
+            </Icon>
+            {{ app._.released_at }}
+          </small>
+
+          <small
+            v-if="display.includes('playtime')"
+            class="d-block details__secondary text-muted">
+            <Icon
+              size="12"
+              width="1.8"
+              style="transform: translateY(-1px); margin-right: 3px">
+              ClockHour3
+            </Icon>
+
+            <span style="font-size: 0.775rem">
+              <template v-if="app._.playtime == 0">Not played</template>
+              <template v-else>
+                Played
+                {{ dates.minToHours(app._.playtime, 'Not played') }}
+                <!-- {{ dates.timeAgo(app.playtime.steam_last * 1000) }} -->
+              </template>
+            </span>
+          </small>
+
+          <small
+            v-if="display.includes('hltb') && app.hltb && app.hltb.main"
+            class="d-block details__secondary text-muted">
+            <Icon
+              size="12"
+              width="1.8"
+              style="transform: translateY(-1px); margin-right: 3px">
+              SquareRoundedCheck
+            </Icon>
+            {{ dates.minToHours(app.hltb.main / 60) }}
+          </small>
+          <slot name="details:append"></slot>
+        </div>
+      </slot>
     </div>
-  </div>
+  </slot>
 </template>
 
 <script>
@@ -111,17 +182,24 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 25 September 2024 - 16:56:52
+ * Modified: Wed 30 October 2024 - 11:29:14
  **/
 
 export default {
   name: 'GameCard',
   props: {
-    data: {
-      type: Object,
-      default: null,
+    // type
+    // Defines the general layout of the item
+    // Values: card, list, table
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    type: {
+      type: String,
+      default: 'card',
     },
 
+    // uuid
+    // Used to locate the app in $data
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     uuid: {
       type: [String, Object],
       default: null,
@@ -129,6 +207,14 @@ export default {
 
     api: {
       type: [String],
+      default: null,
+    },
+
+    // data
+    // Uses the object as the app data
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    data: {
+      type: Object,
       default: null,
     },
 
@@ -146,6 +232,15 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    // display
+    // Is an array of strings used to specify which
+    // components to show. If the value is an empty
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    display: {
+      type: Array,
+      default: () => ['*'],
+    },
   },
 
   data() {
@@ -155,6 +250,7 @@ export default {
         is: {},
         id: {},
       },
+
       animationFrame: null,
     }
   },
@@ -170,7 +266,11 @@ export default {
   },
 
   methods: {
-    showGameModal() {
+    show(slot) {
+      return this.display.includes('*') || this.display.includes(slot)
+    },
+
+    action() {
       if (this.disabled) return
 
       this.$mitt.emit('game:modal', {
@@ -179,7 +279,7 @@ export default {
       })
     },
 
-    manage($event) {
+    manager($event) {
       if (this.disabled) return
       this.$mitt.emit('game:manager', $event, this.app.uuid)
     },
@@ -198,6 +298,7 @@ export default {
     //+-------------------------------------------------
     initTracking() {
       const el = this.$refs.card
+      if (!el) return
 
       el.addEventListener('mousemove', this.onMouseUpdate)
       el.addEventListener('mouseenter', this.onMouseUpdate)
@@ -310,6 +411,8 @@ export default {
     this.$mitt.off('pinned:change')
 
     const el = this.$refs.card
+    if (!el) return
+
     el.removeEventListener('mousemove', this.onMouseUpdate)
     el.removeEventListener('mouseenter', this.onMouseUpdate)
     el.removeEventListener('mouseleave', this.resetProps)

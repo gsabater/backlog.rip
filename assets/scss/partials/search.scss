@@ -1,8 +1,30 @@
 .filters-bar {
+  & .btn {
+    font-size: 85.714285%;
+  }
+
   & .btn.disabled {
     background-color: var(--tblr-btn-bg);
     font-weight: 100;
     opacity: 0.7;
     border-color: var(--tblr-btn-border-color);
+  }
+}
+
+.filters__source {
+  .btn {
+    background-color: transparent;
+    opacity: 0.7;
+  }
+
+  .btn.active {
+    border-color: var(--tblr-btn-hover-border-color);
+    color: inherit;
+    background-color: var(--tblr-btn-bg);
+
+    border-color: var(--tblr-btn-border-color);
+  }
+
+  .btn:hover {
   }
 }

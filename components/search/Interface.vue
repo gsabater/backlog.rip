@@ -4,7 +4,7 @@
     style="
       position: fixed;
       top: 10px;
-      left: 10px;
+      right: 10px;
       z-index: 9999;
       overflow-y: auto;
       background: rgba(0, 0, 0, 0.5);
@@ -49,7 +49,7 @@
         <div class="ms-4 text-h6">3/9</div>
       </div> -->
 
-      <!--
+      <!--#
         *+---------------------------------
         *| Empty block
         *| Message when there are no results
@@ -106,7 +106,7 @@
               <template v-else>with your filters</template>
             </p>
             <p class="empty-subtitle text-secondary">
-              We haven't found any games that match the current search.
+              We haven't found any games for the current search
               <template v-if="isLibrary">
                 You can either
                 <strong>Import your steam games</strong>
@@ -115,7 +115,7 @@
               </template>
             </p>
             <p v-if="!isLibrary" class="empty-subtitle text-secondary">
-              This search includes all games in your library and all
+              The results include all games in your library as well as all
               <a href="https://www.igdb.com" target="_blank">
                 <img
                   class="mx-2 text-muted"
@@ -151,10 +151,10 @@
                 ◈ Or you can ◈
               </div>
               <p class="empty-title mb-2 font-serif" style="font-weight: 300">
-                Create your own games
+                Create your own game
               </p>
               <p class="empty-subtitle text-secondary">
-                You can create your own games for yourself.
+                You can just create a game for yourself.
               </p>
               <div class="empty-action mt-2">
                 <b-btn class="btn-sm btn-primary" @click="addCustom">
@@ -204,7 +204,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 26 September 2024 - 17:47:22
+ * Modified: Mon 04 November 2024 - 16:50:18
  **/
 
 export default {
@@ -245,7 +245,7 @@ export default {
           page: 1,
           perPage: 42,
 
-          display: 'grid',
+          layout: 'grid',
           card: ['default'],
         },
       },
@@ -335,9 +335,11 @@ export default {
     // Updated on Sun Jan 28 2024 - Added slug param
     // Updated on Sun Jul 14 2024 - Use slug for special filters
     // Updated on Thu Sep 19 2024 - In library, sort by playtime
+    // Updated on Fri Oct 25 2024 - Dynamically attempt to find the genre
     //+-------------------------------------------------
-    mergeFilters() {
-      const loaded = {}
+    async mergeFilters() {
+      let loaded = {}
+      let slugged = false
 
       // Set the search source to "library"
       // And set special library filters
@@ -346,22 +348,32 @@ export default {
         loaded.sortBy = 'playtime'
         loaded.sortDir = 'desc'
       }
+
       if (this.slug && ['pinned', 'hidden', 'favorites'].includes(this.slug)) {
         loaded.is = this.slug
-      }
-
-      // Dynamically add genre as a filter
-      // When the slug is set and found in the genres array
-      if (this.slug && this.genres.length) {
-        const genre = this.genres.find((g) => g.slug == this.slug)
-        if (genre) loaded.genres = [genre.id]
+        slugged = true
       }
 
       // Dynamically add state as a filter
       // When the slug is set and found in the states array
       if (this.slug && this.states.length) {
         const state = this.states.find((g) => g.slug == this.slug)
-        if (state) loaded.states = [state.id]
+        if (state) {
+          loaded.states = [state.id]
+          slugged = true
+        }
+      }
+
+      // Dynamically add genre as a filter
+      // When the slug is set and found in the genres array
+      if (this.slug && !slugged) {
+        let genres = null
+
+        if (!this.genres.length) genres = await this.repositoryStore.getGenres()
+        else genres = this.genres
+
+        const genre = genres.find((g) => g.slug == this.slug)
+        if (genre) loaded.genres = [genre.id]
       }
 
       this.f = {

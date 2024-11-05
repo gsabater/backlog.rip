@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Sun Feb 04 2024
+ * Modified: Wed 09 October 2024 - 11:24:52
  */
 
 import Dexie from 'dexie'
@@ -20,13 +20,14 @@ import { importDB, exportDB, importInto, peakImportFile } from 'dexie-export-imp
 
 let db = new Dexie('backlog.rip')
 
-let ver = 11
+let ver = 12
 let sch = {
   account: 'uuid',
   config: '&key',
-  games: '&uuid,api_id,steam_id',
+  lists: '&uuid',
+  games: '&uuid',
   buffer: '&uuid',
-  states: '++id,order,name',
+  states: '++id',
   journal: '++id,event,ref',
 
   // Version 9

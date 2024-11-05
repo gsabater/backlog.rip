@@ -142,6 +142,25 @@
   }
 }
 
+.games-group {
+  user-select: none;
+
+  & .game--list {
+    & .game__cover {
+      z-index: 1;
+      outline: 1px solid rgba(255, 255, 255, 0.15);
+      outline-offset: -1px;
+      box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
+      max-width: 100px;
+      max-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+  }
+}
+
 // .card-game:before {
 //   content: '';
 //   position: absolute;

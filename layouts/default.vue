@@ -14,7 +14,7 @@
         padding: 10px;
         border-radius: 5px;
       "
-      @click="$app.dev = false"
+      @click="($app.dev = false), ($app.wip = false)"
       >{{ $app.v }}
 ---
 {{ $app.api }}
@@ -92,7 +92,7 @@
               width: auto;
               filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
             " />
-          <h1 class="navbar-brand navbar-brand-autodark mt-0 pt-0">Backlog.rip</h1>
+          <!-- <h1 class="navbar-brand navbar-brand-autodark mt-0 pt-0">Backlog.rip</h1> -->
         </NuxtLink>
 
         <!--
@@ -125,7 +125,7 @@
 
           <div class="dropdown-divider"></div>
 
-          <NuxtLink to="/dashboard" class="dropdown-item">
+          <NuxtLink v-if="$app.wip" to="/dashboard" class="dropdown-item">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">Components</Icon>
             </span>
@@ -142,13 +142,28 @@
             </small>
           </NuxtLink>
 
-          <div class="dropdown-divider"></div>
+          <!-- <div class="dropdown-divider"></div>
+          <span class="dropdown-header control-hover" style="pointer-events: all">
+            <Icon
+              style="float: right; outline: none; transform: translateX(4px)"
+              class="ms-auto text-secondary show-hover cursor-pointer"
+              size="16"
+              v-tippy="'Create a new list'"
+              @click.prevent="$mitt.emit('list:create')">
+              SquareRoundedPlus
+            </Icon>
+            <span class="text-muted my-2">Your Lists</span>
+          </span> -->
 
+          <div class="dropdown-divider"></div>
+          <span class="dropdown-header">
+            <span class="text-muted my-2">Your library</span>
+          </span>
           <NuxtLink to="/library" class="dropdown-item control-hover">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">LayoutDashboard</Icon>
             </span>
-            <span class="nav-link-title">Your library</span>
+            <span class="nav-link-title">Library</span>
 
             <small class="ms-auto text-secondary hide-hover">
               {{ format.num($app.count.library) }}
@@ -156,12 +171,37 @@
 
             <Icon
               style="outline: none; transform: translateX(4px)"
-              class="ms-auto text-secondary show-hover"
+              class="ms-auto me-1 text-secondary show-hover cursor-pointer"
               size="15"
               v-tippy="'Configure'"
               @click.prevent="goTo('/account/preferences')">
               Settings2
             </Icon>
+          </NuxtLink>
+
+          <NuxtLink to="/account/lists" class="dropdown-item control-hover">
+            <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+              <Icon size="16">Mist</Icon>
+            </span>
+
+            <span class="nav-link-title">Your lists</span>
+
+            <small class="ms-auto text-secondary hide-hover">
+              {{ format.num($app.count.lists) }}
+            </small>
+
+            <Icon
+              style="float: right; outline: none; transform: translateX(4px)"
+              class="ms-auto me-1 text-secondary show-hover cursor-pointer"
+              size="15"
+              v-tippy="'Create a new list'"
+              @click.prevent="$mitt.emit('list:create')">
+              SquareRoundedPlus
+            </Icon>
+
+            <!-- <small class="ms-auto text-secondary hide-hover">
+              {{ format.num($app.count.library) }}
+            </small> -->
           </NuxtLink>
 
           <NuxtLink
@@ -189,9 +229,10 @@
             :to="'/library/' + state.slug"
             :key="'state' + i"
             class="dropdown-item ps-3">
-            <div class="content d-flex align-items-center w-100 px-1">
+            <div class="content d-flex align-items-center w-100 ps-1">
               <span
                 class="status-dot me-2"
+                style="transform: translateX(-4px)"
                 :style="{ 'background-color': state.color || '' }"></span>
 
               <span class="ps-1 me-4">
@@ -215,14 +256,12 @@
             </div>
           </NuxtLink>
 
-          <!-- <div class="dropdown-divider"></div>
-
           <NuxtLink to="/import/steam" class="dropdown-item mt-1">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">SquareRoundedPlus</Icon>
             </span>
-            <span class="nav-link-title">Import your games</span>
-          </NuxtLink> -->
+            <span class="nav-link-title">Syncronize your Steam library</span>
+          </NuxtLink>
         </div>
       </div>
 
@@ -259,21 +298,35 @@
           </div>
         </div>
 
-        <!-- <div v-else class="px-3 mt-2 mb-3" @click.stop="$mitt.emit('search:palette')">
+        <div v-else class="px-3 mt-2 mb-3" @click.stop="$mitt.emit('search:palette')">
           <div class="input-group input-group-flat input-palette">
             <span class="input-group-text">
-              <Icon size="16" class="me-1">Search</Icon>
+              <Icon size="14" class="me-1">Search</Icon>
             </span>
             <input
               type="text"
               class="form-control"
               autocomplete="off"
-              placeholder="Search" />
+              placeholder="Search"
+              style="pointer-events: none" />
             <span class="input-group-text">
               <kbd style="font-size: 0.6rem">Ctrl K</kbd>
             </span>
           </div>
-        </div> -->
+        </div>
+
+        <!-- <button
+          style="transform: scale(0.9)"
+          class="form-control d-flex align-items-center cursor-pointer"
+          @click.stop="$mitt.emit('search:palette')">
+          <Icon size="16" class="text-secondary mx-1">Search</Icon>
+          <div class="flex-fill">
+            <span class="form-control-placeholder text-secondary ms-3 me-6">
+              Quick search…
+            </span>
+          </div>
+          <span class="v-kbd">Control + K</span>
+        </button> -->
 
         <div class="row w-100 mb-3">
           <div class="col col d-flex justify-content-center">
@@ -473,36 +526,20 @@
             </div>
           </div> -->
 
-          <button
+          <!-- <button
             style="transform: scale(0.9)"
             class="form-control d-flex align-items-center cursor-pointer"
             @click.stop="$mitt.emit('search:palette')">
-            <!-- <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon icon-tabler icon-tabler-search icon form-control-icon"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-label="Quick search">
-              <circle cx="10" cy="10" r="7"></circle>
-              <line x1="21" y1="21" x2="15" y2="15"></line>
-            </svg> -->
             <Icon size="16" class="text-secondary mx-1">Search</Icon>
             <div class="flex-fill">
               <span class="form-control-placeholder text-secondary ms-3 me-6">
                 Quick search…
               </span>
             </div>
-            <!-- <span class="badge bg-purple-lt">Control + K</span> -->
             <span class="v-kbd">Control + K</span>
-          </button>
+          </button> -->
 
-          <div class="dropdown">
+          <!-- <div class="dropdown">
             <div class="btn dropdown-toggle" style="transform: scale(0.9)">
               <span class="me-2">Add games</span>
             </div>
@@ -512,23 +549,14 @@
               <div class="dropdown-item" @click.stop="$mitt.emit('game:add')">
                 <Icon size="16" class="me-2 text-muted">SquareRoundedPlus</Icon>
                 Manually
-                <!-- <small class="text-secondary ms-auto me-0">Insert</small> -->
+                <small class="text-secondary ms-auto me-0">Insert</small>
               </div>
               <NuxtLink to="/import/steam" class="dropdown-item">
                 <Icon size="16" class="me-2 text-muted">BrandSteam</Icon>
                 Import your Steam account
               </NuxtLink>
-              <!-- <NuxtLink to="/library" class="dropdown-item">
-                Library
-                <small class="text-secondary ms-auto me-0">
-                  {{ format.num($app.count.library) }}
-                </small>
-              </NuxtLink>
-              <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
-              <div class="dropdown-divider"></div>
-              <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink> -->
             </b-dropdown>
-          </div>
+          </div> -->
         </div>
 
         <div
@@ -739,6 +767,12 @@
                     {{ format.num($app.count.library) }}
                   </small>
                 </NuxtLink>
+                <NuxtLink to="/account/lists" class="dropdown-item">
+                  Lists
+                  <small class="text-secondary ms-auto me-0">
+                    {{ format.num($app.count.lists) }}
+                  </small>
+                </NuxtLink>
                 <!-- <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink> -->
                 <div class="dropdown-divider"></div>
                 <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
@@ -855,16 +889,19 @@
   </div>
 
   <client-only>
-    <helpers-notification />
+    <common-notification />
 
-    <game-manager></game-manager>
-    <search-palette></search-palette>
-
-    <game-add></game-add>
     <!-- <v-layout>
     </v-layout> -->
-    <game-details></game-details>
-    <dialog-cloud-conflicts></dialog-cloud-conflicts>
+    <game-add />
+    <game-details />
+    <game-manager />
+
+    <cloud-conflict />
+    <list-crud-dialog />
+    <!-- <list-cover id="cover-helper" /> -->
+
+    <search-palette></search-palette>
     <!-- <b-backdrop></b-backdrop> -->
     <!-- <ModalsContainer /> -->
 
@@ -879,10 +916,18 @@
       descriptionClassName: 'my-toast-description',
     }" />
 
-    <!-- <SpeedInsights v-if="!$app.dev" /> -->
-
+    <!-- TODO: Make this a component -->
     <component :is="'style'" id="dynamic-style" type="text/css">
       <template v-if="!$app.dev">pre{ display: none !important; }</template>
+      :root{
+      <template v-for="(state, i) in states">
+        --bckg-state-{{ state.id }}: {{ state.color }};
+      </template>
+      }
+      <template v-for="(state, i) in states">
+        .is-state_{{ state.id }}{ --bckg-state-color: {{ state.color }}; border-color:
+        {{ state.color }}; }
+      </template>
     </component>
   </client-only>
 
@@ -981,7 +1026,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed 18 September 2024 - 13:24:57
+ * Modified: Mon 04 November 2024 - 16:51:23
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

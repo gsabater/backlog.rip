@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd February 2024
- * Modified: Thu 15 August 2024 - 12:55:33
+ * Modified: Mon 04 November 2024 - 17:33:06
  */
 
 import { useMagicKeys, whenever } from '@vueuse/core'
@@ -35,7 +35,8 @@ async function init() {
   document.addEventListener('contextmenu', function (event) {
     console.log('Right-clicked ', event)
 
-    let trigger = event.target.closest('.card-game')
+    let trigger =
+      event.target.closest('.card-game') || event.target.closest('.game--list')
     let attr = trigger?.getAttribute('uuid') || null
 
     if (trigger && attr) {

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Wed 18 September 2024 - 13:24:58
+ * Modified: Thu 24 October 2024 - 15:01:09
  */
 
 let $nuxt = null
@@ -68,7 +68,7 @@ export const useUserStore = defineStore('user', {
       log('🥸 User logged in as ' + this.user.username, this.user)
 
       this.is.checked = true
-      if (this.jwt) this.is.cloud = true
+      // if (this.jwt) this.is.cloud = true -- replaced by user.has_cloud
       if (this.bearer) this.is.logged = true
 
       return true

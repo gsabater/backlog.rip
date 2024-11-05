@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th November 2023
- * Modified: Thu 19 September 2024 - 12:15:14
+ * Modified: Fri 11 October 2024 - 15:54:35
  */
 
 export class DexieInstaller {
@@ -183,7 +183,7 @@ export class DexieInstaller {
 
       return {
         ...state,
-        slug: format.stringToslug(state.name),
+        slug: format.stringToSlug(state.name),
         updated_at: dates.now(),
       }
     })

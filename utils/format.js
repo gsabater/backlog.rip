@@ -3,7 +3,7 @@
  * @desc:    All format functions not related to dates
  * -------------------------------------------
  * Created Date: 12th November 2023
- * Modified: Fri 11 October 2024 - 15:54:40
+ * Modified: Tue 29 October 2024 - 10:56:21
  */
 
 export default {
@@ -51,6 +51,7 @@ export default {
       .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
       .replace(/\s+/g, '-') // collapse whitespace and replace by -
       .replace(/-+/g, '-') // collapse dashes
+      .replace(/^-+|-+$/g, '') // Remove dashes from the start and end
 
     return str
   },

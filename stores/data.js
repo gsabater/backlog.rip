@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu 26 September 2024 - 15:42:55
+ * Modified: Fri 25 October 2024 - 12:03:09
  */
 
 let $nuxt = null
@@ -303,7 +303,6 @@ export const useDataStore = defineStore('data', {
       const json = JSON.stringify(f)
       const hash = btoa(json)
 
-      console.warn('🪂 Search hash', hash, f)
       return hash
     },
 
@@ -315,12 +314,12 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     async search(filters) {
       let hash = this.searchHash(filters)
-
       if (!hash) return
+
       if (search[hash]) {
         log('🛑 Search', hash, 'already done')
         return
-      }
+      } else log('🪂 Searching hash', hash, filters)
 
       search[hash] = true
       const xhr = await $nuxt.$axios.get(`search/${hash}.json`)
@@ -349,13 +348,13 @@ export const useDataStore = defineStore('data', {
 
         // Debug on
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // if (item.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') {
-        // if (item.name == 'DOOM') {
-        //   // if (item.steam_id == '292030') {
-        // if (context == 'add:new') {
-        //   console.warn('✨ ' + item.name, item, context)
-        //   debugger
-        // }
+        if (false && item.uuid == '3861490d-f31a-43a2-a3cc-2e8e2ae6dab7') {
+          // if (item.name == 'DOOM') {
+          //   // if (item.steam_id == '292030') {
+          // if (context == 'add:new') {
+          //   console.warn('✨ ' + item.name, item, context)
+          debugger
+        }
 
         // Flag games coming from API as is_api
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -363,7 +362,7 @@ export const useDataStore = defineStore('data', {
           item.is_api = true
           item.api_id = item.api_id || item.uuid
           // item.id.api = item.id.api || item.uuid
-          if (!item.uuid) item.uuid = `temp:${format.stringToslug(item.name)}`
+          if (!item.uuid) item.uuid = `local:${format.stringToSlug(item.name)}`
         }
 
         // Games coming from the library
@@ -386,7 +385,7 @@ export const useDataStore = defineStore('data', {
         }
 
         if (context?.includes('update:')) {
-          if (item.is.lib) item.is.dirty = true
+          if (item.is?.lib) item.is.dirty = true
           this.toData(item)
           return
         }
@@ -405,6 +404,13 @@ export const useDataStore = defineStore('data', {
           return
         }
 
+        // Populate the data from a list
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // if (context?.includes('list:')) {
+        //   this.toData(item)
+        //   return
+        // }
+
         if (item.trigger) {
           console.log('this shouldnt happen, delete trigger here and under', item)
           debugger
@@ -420,8 +426,9 @@ export const useDataStore = defineStore('data', {
       $nuxt.$app.count.data = Object.keys(data).length || 0
       $nuxt.$app.count.library = this.countLibrary() // index.lib.length || 0
 
-      if (context.includes('update:')) return
       if (!$nuxt.$app.ready) return
+      if (context.includes('list:')) return
+      if (context.includes('update:')) return
 
       $nuxt.$mitt.emit('data:updated', 'loaded:' + apps.length)
     },
@@ -795,12 +802,20 @@ export const useDataStore = defineStore('data', {
     async loadApiStatus() {
       if (this.loaded.includes('api')) return
 
-      const xhr = await $nuxt.$axios.get(`get/status.json`)
-      if (xhr.status) {
-        $nuxt.$app.api = xhr.data
-        $nuxt.$app.count.api = xhr.data?.games?.total || 0
-        this.loaded.push('api')
+      try {
+        const xhr = await $nuxt.$axios.get(`get/status.json`)
+        if (xhr.status) {
+          $nuxt.$app.api = xhr.data
+          $nuxt.$app.count.api = xhr.data?.games?.total || 0
+        }
+      } catch (error) {
+        log('Could not establish connection with the API, working on offline mode')
+        $nuxt.$app.api = {}
+        $nuxt.$app.offline = true
+        $nuxt.$app.count.api = 0
       }
+
+      this.loaded.push('api')
     },
 
     //+-------------------------------------------------

@@ -24,6 +24,12 @@ Inside your singular feature directories, you can name components in plural form
 ### Descriptive Component Names:
 Use component names that clearly describe their purpose, regardless of singular or plural form, to enhance readability.
 
+## 4. Component Naming Convention
+In our project, components are named to reflect their primary functionality and type, ensuring clarity and consistency throughout the codebase. When creating new components, the naming convention follows a FeatureType pattern, where:
+
+Feature: Describes the primary action or functionality of the component (e.g., SortBy, View, Dialog).
+Type: Describes the type or structure of the component (e.g., Menu, Form, Card).
+
 components/
 ├── blog/
 │   ├── Editor.vue

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th December 2023
- * Modified: Tue Feb 27 2024
+ * Modified: Wed 06 November 2024 - 12:28:38
  */
 
 import VueTippy from 'vue-tippy'
@@ -23,6 +23,7 @@ import 'tippy.js/themes/translucent.css'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(VueTippy, {
+    componentSingleton: 'tippy-singleton', // => <tippy-singleton/>,
     defaultProps: {
       arrow: false,
 

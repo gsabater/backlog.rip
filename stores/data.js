@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Fri 25 October 2024 - 12:03:09
+ * Modified: Wed 06 November 2024 - 11:54:23
  */
 
 let $nuxt = null
@@ -294,6 +294,7 @@ export const useDataStore = defineStore('data', {
 
       delete f.mods
       delete f.show
+      delete f.source
       delete f.states
 
       if (emptyString) delete f.string

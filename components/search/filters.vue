@@ -1163,7 +1163,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Wed 30 October 2024 - 17:40:05
+ * Modified: Wed 06 November 2024 - 12:08:45
  **/
 
 export default {
@@ -1297,7 +1297,7 @@ export default {
 
       this['_' + this.option.data].forEach((option) => {
         let title = option[this.option.opTitle]
-        title = title.toLowerCase()
+        title = title?.toLowerCase() || ''
         if (title.includes(this.ui.findOption.toLowerCase())) {
           options.push(option)
         }

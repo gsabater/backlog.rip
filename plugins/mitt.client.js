@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Wed 30 October 2024 - 17:50:38
+ * Modified: Wed 06 November 2024 - 12:45:10
  */
 
 //+-------------------------------------------------
@@ -18,7 +18,7 @@
 // ✨ list:create
 // ✨ list:edit
 //
-// ✨ confirm:show
+// ✨ ask:confirm
 //
 // ✨ app.render
 //

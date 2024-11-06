@@ -7,9 +7,9 @@
     :trigger="trigger"
     :placement="placement"
     :interactive="true"
-    :interactive-debounce="45"
+    :interactive-debounce="debounce"
     animation="shift-away-subtle"
-    :duration="[200, 250]"
+    :duration="duration"
     theme="dropdown">
     <!-- <template #default="{ state }">
       <div>{{ state }}</div>
@@ -29,7 +29,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Thu Jul 11 2024
+ * Modified: Wed 06 November 2024 - 12:27:42
  **/
 
 export default {
@@ -51,6 +51,18 @@ export default {
       type: String,
       default: 'bottom-start',
       options: ['start', 'end', 'right-start'],
+    },
+
+    duration: {
+      type: Array,
+      default: () => [200, 250],
+    },
+
+    // Default value in vuetippy is 0
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    debounce: {
+      type: Number,
+      default: 45,
     },
   },
 

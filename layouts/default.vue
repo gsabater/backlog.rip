@@ -258,9 +258,12 @@
 
           <NuxtLink to="/import/steam" class="dropdown-item mt-1">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-              <Icon size="16">SquareRoundedPlus</Icon>
+              <Icon size="16">Refresh</Icon>
             </span>
-            <span class="nav-link-title">Syncronize your Steam library</span>
+            <span class="nav-link-title">
+              Steam library sync
+              <!-- <Icon size="10" width="1" class="ms-1">Refresh</Icon> -->
+            </span>
           </NuxtLink>
         </div>
       </div>
@@ -417,7 +420,7 @@
         </h1> -->
 
         <v-alert
-          v-if="$app.beta || true"
+          v-if="$app.beta"
           :icon="false"
           type="warning"
           variant="text"
@@ -917,6 +920,7 @@
 
   <client-only>
     <common-notification />
+    <common-confirmDialog />
 
     <!-- <v-layout>
     </v-layout> -->
@@ -1053,7 +1057,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Tue 05 November 2024 - 20:08:00
+ * Modified: Wed 06 November 2024 - 12:43:23
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

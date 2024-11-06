@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Wed 30 October 2024 - 16:07:41
+ * Modified: Wed 06 November 2024 - 13:36:42
  */
 
 let $nuxt = null
@@ -68,11 +68,6 @@ export const useGameStore = defineStore('game', {
 
       return app
     },
-
-    // async delete(id) {
-    //   const $nuxt = useNuxtApp()
-    //   await $nuxt.$db.states.delete(id)
-    // },
 
     //+-------------------------------------------------
     // update()

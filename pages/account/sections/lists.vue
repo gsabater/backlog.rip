@@ -111,6 +111,7 @@
                 <b-dropdown
                   trigger="mouseenter focus click hover manual"
                   placement="bottom-end"
+                  :debounce="15"
                   style="min-width: 180px">
                   <div
                     class="dropdown-item"
@@ -123,12 +124,20 @@
                     <Icon size="16" class="me-2 text-muted">Replace</Icon>
                     Modify list
                   </div>
-                  <!-- <div
+                  <div class="dropdown-divider"></div>
+                  <div
                     class="dropdown-item text-red"
-                    @click.stop="$mitt.emit('game:add')">
+                    @click.stop="
+                      $mitt.emit('ask:confirm', {
+                        item,
+                        title: 'Delete list',
+                        message: 'Are you sure you want to delete this list?',
+                        onConfirm: () => $mitt.emit('list:delete', { item }),
+                      })
+                    ">
                     <Icon size="16" class="me-2 text-red">Trash</Icon>
                     Delete list
-                  </div> -->
+                  </div>
                 </b-dropdown>
               </div>
             </div>
@@ -224,7 +233,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: Mon 04 November 2024 - 17:12:57
+ * Modified: Wed 06 November 2024 - 13:30:10
  **/
 
 export default {

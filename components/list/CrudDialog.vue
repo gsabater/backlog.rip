@@ -168,10 +168,11 @@
 <script>
 /**
  * @file:    \components\dialog\crud\lists.vue
- * @desc:    ...
+ * @desc:    This component sits at the bottom of the default layout
+ *           and is used as a crud proxy for listStore via $mitt events
  * ----------------------------------------------
  * Created Date: 20th September 2024
- * Modified: Mon 04 November 2024 - 17:13:51
+ * Modified: Wed 06 November 2024 - 13:40:08
  **/
 
 export default {
@@ -266,6 +267,18 @@ export default {
     },
 
     //+-------------------------------------------------
+    // delete()
+    // Calls for deletion on the store and notifies
+    // -----
+    // Created on Wed Nov 06 2024
+    //+-------------------------------------------------
+    async delete(item) {
+      if (!item.uuid) return
+      await this.listStore.delete(item.uuid)
+      this.$toast.success('The list has been deleted')
+    },
+
+    //+-------------------------------------------------
     // validate()
     // Validates, using only vuetify form and rules
     // -----
@@ -327,6 +340,10 @@ export default {
 
     this.$mitt.on('list:edit', (payload) => {
       this.edit(payload.item)
+    })
+
+    this.$mitt.on('list:delete', (payload) => {
+      this.delete(payload.item)
     })
   },
 }

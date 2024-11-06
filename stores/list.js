@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: Tue 05 November 2024 - 20:10:29
+ * Modified: Wed 06 November 2024 - 13:43:02
  */
 
 import { find } from 'rxjs'
@@ -123,6 +123,19 @@ export const useListStore = defineStore('list', {
     },
 
     //+-------------------------------------------------
+    // delete()
+    // Deletes a list in the $db and $cloud
+    // -----
+    // Created on Wed Nov 06 2024
+    //+-------------------------------------------------
+    async delete(id) {
+      await $nuxt.$db.lists.delete(id)
+      await this.load(true)
+
+      return true
+    },
+
+    //+-------------------------------------------------
     // addToList()
     // Adds a game to a list
     // -----
@@ -187,11 +200,6 @@ export const useListStore = defineStore('list', {
         }
       )
     },
-
-    // async delete(id) {
-    //   const $nuxt = useNuxtApp()
-    //   await $nuxt.$db.lists.delete(id)
-    // },
 
     //+-------------------------------------------------
     // hasApp()

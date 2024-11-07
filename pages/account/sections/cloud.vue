@@ -1,6 +1,6 @@
 <template>
   <div class="card mb-3">
-    <div class="card-body" style="padding: 2.2rem">
+    <div class="card-body" style="padding: 1.6rem">
       <div>
         <div class="d-flex mb-3">
           <h1 class="m-0">Cloud Sync</h1>
@@ -176,7 +176,14 @@
           <td>States</td>
           <td>
             {{ $cloud.backup.states || 0 }}
-            <small class="text-muted">/ 100</small>
+            <small class="text-muted me-3">/ ∞</small>
+
+            <tippy
+              :allow-h-t-m-l="true"
+              class="text-muted ms-auto cursor-help"
+              content="Currently, there is no limit on the number of backed-up lists, but future limits may apply based on server resources.">
+              <span class="form-help">?</span>
+            </tippy>
           </td>
           <td class="w-50">
             <div class="progress progress">
@@ -191,7 +198,7 @@
           <td>Account and settings</td>
           <td>
             <small>
-              <span class="badge bg-success"></span>
+              <span class="badge bg-success me-1"></span>
               Synced
             </small>
           </td>
@@ -199,6 +206,23 @@
             <div class="progress progress">
               <div class="progress-bar bg-green" style="width: 100%"></div>
             </div>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Lists</td>
+          <td>
+            <!-- {{ $cloud.backup.games || 0 }}
+            <small class="text-muted">/ 25</small> -->
+          </td>
+          <td class="w-50">
+            <!-- <div class="progress progress">
+              <div class="progress-bar bg-primary" style="width: 24.9%"></div>
+            </div> -->
+            <small class="text-secondary">
+              <Icon size="14">Rotate2</Icon>
+              This syncronization is planned for a future update
+            </small>
           </td>
         </tr>
 
@@ -211,23 +235,6 @@
           <td class="w-50">
             <!-- <div class="progress progress">
               <div class="progress-bar bg-primary" style="width: 35.96%"></div>
-            </div> -->
-            <small class="text-secondary">
-              <Icon size="14">Rotate2</Icon>
-              This syncronization is planned for a future update
-            </small>
-          </td>
-        </tr>
-
-        <tr>
-          <td>Collections</td>
-          <td>
-            <!-- {{ $cloud.backup.games || 0 }}
-            <small class="text-muted">/ 25</small> -->
-          </td>
-          <td class="w-50">
-            <!-- <div class="progress progress">
-              <div class="progress-bar bg-primary" style="width: 24.9%"></div>
             </div> -->
             <small class="text-secondary">
               <Icon size="14">Rotate2</Icon>
@@ -327,7 +334,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th August 2024
- * Modified: Wed 18 September 2024 - 13:06:18
+ * Modified: Wed 16 October 2024 - 17:14:45
  **/
 
 export default {

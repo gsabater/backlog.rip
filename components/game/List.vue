@@ -1,4 +1,5 @@
 <template>
+  <div class="alert alert-danger">do not use this component</div>
   <div class="row row-deck row-cards row-games-list" v-bind="$attrs">
     <template v-for="(app, i) in items" :key="'card' + i">
       <div
@@ -52,7 +53,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th January 2024
- * Modified: Fri Apr 19 2024
+ * Modified: Thu 17 October 2024 - 15:32:39
  **/
 
 export default {
@@ -61,6 +62,11 @@ export default {
     apps: {
       type: [String, Array],
       default: null,
+    },
+
+    show: {
+      type: String,
+      default: 'grid',
     },
 
     cols: {

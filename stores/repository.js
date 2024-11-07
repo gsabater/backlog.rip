@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Wed 18 September 2024 - 12:56:00
+ * Modified: Fri 25 October 2024 - 11:52:49
  */
 
 let $nuxt = null
@@ -66,8 +66,7 @@ export const useRepositoryStore = defineStore('repository', {
     // Created on Mon Jan 15 2024
     //+-------------------------------------------------
     async getGenres() {
-      if (this.loaded.includes('genres')) return
-      this.loaded.push('genres')
+      if (this.loaded.includes('genres')) return this.genres
 
       const xhr = await $nuxt.$axios.get(`repository/genres.json`)
       if (xhr.status) {
@@ -81,6 +80,7 @@ export const useRepositoryStore = defineStore('repository', {
         xhr.data[Math.floor(Math.random() * xhr.data.length)]
       )
 
+      this.loaded.push('genres')
       return xhr.data
     },
 

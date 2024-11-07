@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Wed 11 September 2024 - 19:08:39
+ * Modified: Wed 06 November 2024 - 16:45:34
  */
 
 let $nuxt = null
@@ -68,11 +68,6 @@ export const useGameStore = defineStore('game', {
 
       return app
     },
-
-    // async delete(id) {
-    //   const $nuxt = useNuxtApp()
-    //   await $nuxt.$db.states.delete(id)
-    // },
 
     //+-------------------------------------------------
     // update()
@@ -250,6 +245,7 @@ export const useGameStore = defineStore('game', {
     // Created on Tue Feb 20 2024
     //+-------------------------------------------------
     _score(app) {
+      return app.score || 0
       let score = app.score || 0
 
       // Avoid very high scores not verified
@@ -289,6 +285,7 @@ export const useGameStore = defineStore('game', {
     },
 
     _dateReleasedAt(app) {
+      if (!app.released_at) return null
       return $nuxt.$moment(app.released_at * 1000).format('LL')
     },
 

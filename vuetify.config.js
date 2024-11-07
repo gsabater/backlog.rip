@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Fri 23 August 2024 - 19:36:14
+ * Modified: Thu 07 November 2024 - 11:43:43
  */
 
 import { md2 } from 'vuetify/blueprints'
@@ -46,10 +46,24 @@ export default defineVuetifyConfiguration({
       hideDetails: 'auto',
     },
 
+    VTextarea: {
+      flat: true,
+      class: '',
+      variant: 'solo',
+      density: 'compact',
+      hideDetails: 'auto',
+    },
+
     VCard: {
       style: [{ background: '#20222b' }],
     },
 
-    VSelect: { variant: 'outlined' },
+    VSelect: {
+      flat: true,
+      class: '',
+      variant: 'solo',
+      density: 'compact',
+      hideDetails: 'auto',
+    },
   },
 })

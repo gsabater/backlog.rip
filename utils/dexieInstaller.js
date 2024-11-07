@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th November 2023
- * Modified: Wed 18 September 2024 - 15:23:52
+ * Modified: Fri 11 October 2024 - 15:54:35
  */
 
 export class DexieInstaller {
@@ -117,6 +117,8 @@ export class DexieInstaller {
       favorites: true,
       autosync_steam: false,
 
+      game_state_borders: true,
+
       menu: {
         states: [1, 2, 3],
       },
@@ -181,7 +183,7 @@ export class DexieInstaller {
 
       return {
         ...state,
-        slug: format.stringToslug(state.name),
+        slug: format.stringToSlug(state.name),
         updated_at: dates.now(),
       }
     })

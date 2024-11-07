@@ -3,7 +3,7 @@
  * @desc:    All format functions not related to dates
  * -------------------------------------------
  * Created Date: 12th November 2023
- * Modified: Mon Mar 11 2024
+ * Modified: Tue 29 October 2024 - 10:56:21
  */
 
 export default {
@@ -27,13 +27,13 @@ export default {
   },
 
   //+-------------------------------------------------
-  // stringToslug()
+  // stringToSlug()
   // Returns a slug from a given string
   // -----
   // Created on Tue Jul 27 2021
   // Updated on Fri Aug 26 2022
   //+-------------------------------------------------
-  stringToslug(str) {
+  stringToSlug(str) {
     if (str === null || str === undefined) return ''
     if (typeof str !== 'string') return ''
 
@@ -51,6 +51,7 @@ export default {
       .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
       .replace(/\s+/g, '-') // collapse whitespace and replace by -
       .replace(/-+/g, '-') // collapse dashes
+      .replace(/^-+|-+$/g, '') // Remove dashes from the start and end
 
     return str
   },

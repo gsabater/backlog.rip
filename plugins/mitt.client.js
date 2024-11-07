@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: 30 July 2024 - 12:22:18
+ * Modified: Wed 06 November 2024 - 12:45:10
  */
 
 //+-------------------------------------------------
@@ -15,12 +15,15 @@
 //
 // ✨ state:change
 //
-// ✨ confirm:show
+// ✨ list:create
+// ✨ list:edit
+//
+// ✨ ask:confirm
 //
 // ✨ app.render
 //
-// ✨ data:ready
-// ✨ data:updated
+// ✨ data:ready     <- Fired when datastore is ready and loaded
+// ✨ data:updated   <- Fired when datastore is updated and has new data
 //
 //+-------------------------------------------------
 

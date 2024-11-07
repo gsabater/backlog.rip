@@ -4,18 +4,18 @@
       v-if="$app.ready"
       ref="tippy-sheety"
       theme="filters"
-      :trigger="trigger"
-      :placement="placement"
-      to="parent"
       tag="div"
       content-tag="div"
-      animation="scale-subtle"
-      :duration="[200, 250]"
-      :animate-fill="true"
+      :to="to"
+      :trigger="trigger"
+      :placement="placement"
       :interactive="true"
-      :interactive-debounce="55"
+      :interactive-debounce="autoclose"
+      :animate-fill="true"
+      animation="shift-away-subtle"
       :on-show="onShow"
       :on-hide="onHide">
+      <!-- :duration="[200, 250]" -->
       <template #content="{ state, hide }">
         <Teleport v-if="enabled" to=".bottom-sheet-teleport" :disabled="!useDrawer">
           <slot />
@@ -31,21 +31,28 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Thu May 09 2024
+ * Modified: Wed 30 October 2024 - 15:38:43
  **/
 
 export default {
   name: 'TippySheety',
   props: {
+    to: {
+      type: [String, Boolean],
+      default: 'parent',
+    },
+
     theme: {
       type: String,
       default: '',
       options: ['dropdown', 'card'],
     },
 
+    // If the trigger is click
+    // Then it won't close automatically on mouseout
     trigger: {
       type: String,
-      default: 'click',
+      default: 'mouseenter focus',
       options: ['click', 'hover', 'focus', 'manual'],
     },
 
@@ -53,6 +60,11 @@ export default {
       type: String,
       default: 'bottom-start',
       options: ['start', 'end', 'right-start'],
+    },
+
+    autoclose: {
+      type: [Number, Boolean],
+      default: false,
     },
   },
 

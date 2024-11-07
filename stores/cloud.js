@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Thu 19 September 2024 - 19:26:29
+ * Modified: Thu 24 October 2024 - 15:02:17
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -153,6 +153,12 @@ export const useCloudStore = defineStore('cloud', {
       $user ??= useUserStore()
       $state ??= useStateStore()
 
+      if ($nuxt.$app.offline) {
+        log('⚡ Cloud sync is disabled in offline mode')
+        this.status = 'offline'
+        return
+      }
+
       if ($nuxt.$auth.config.cloud == false) {
         log('⚡ Cloud sync is disabled in the user settings')
         this.status = 'disabled'
@@ -183,7 +189,7 @@ export const useCloudStore = defineStore('cloud', {
       )
 
       const { data } = this.$sb.auth.onAuthStateChange((event, session) => {
-        console.log(event, session)
+        // console.log(event, session)
 
         if (event === 'INITIAL_SESSION') {
           // handle initial session
@@ -867,6 +873,16 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     is() {
       return this.status // == 'syncing:done' ? 'ok' : this.status
+    },
+
+    //+-------------------------------------------------
+    // enabled()
+    // boolean to check if the user has cloud enabled
+    // -----
+    // Created on Thu Oct 24 2024
+    //+-------------------------------------------------
+    enabled() {
+      return this.jwt && this.status !== 'local' && this.status !== 'offline'
     },
 
     //+-------------------------------------------------

@@ -1,7 +1,7 @@
 <template>
   <component
-    :is="theIcon"
     v-bind="$attrs"
+    :is="theIcon"
     :size="size"
     :stroke-width="width"
     :class="{ 'icon-pulse': loader }" />
@@ -16,7 +16,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu Jul 11 2024
+ * Modified: Tue 15 October 2024 - 14:49:40
  **/
 
 import * as TablerIcons from '@tabler/icons-vue'

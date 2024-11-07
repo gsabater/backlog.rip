@@ -58,7 +58,7 @@
           <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
             <div
               v-for="(state, i) in states"
-              :key="'state' + i"
+              :key="'state-' + i"
               class="dropdown-item"
               :class="{ active: app.state == state.id }"
               @click="setState(state)">
@@ -149,6 +149,127 @@
 
         <!--
           *+---------------------------------
+          *| Lists block
+          *| Inner dropdown with lists
+          *+--------------------------------- -->
+        <div class="dropdown-item">
+          <div class="d-flex nope-justify-content-center" style="width: 30px">
+            <Icon size="18" width="1" class="text-muted">Books</Icon>
+          </div>
+
+          <span>Add to a list</span>
+
+          <span class="text-muted ms-auto">
+            <Icon size="12">CaretRightFilled</Icon>
+          </span>
+          <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
+            <div class="dropdown-item" @click="createList">
+              <div class="d-flex nope-justify-content-center" style="width: 30px">
+                <Icon size="17" width="1.5" class="text-muted">SquareRoundedPlus</Icon>
+              </div>
+
+              <span>Create a new list</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div
+              v-for="(list, i) in lists"
+              :key="'list-' + i"
+              class="dropdown-item control-hover"
+              @click="modifyList(list, app)">
+              <!-- <div
+                v-if="app.state"
+                class="selection"
+                style="margin-right: 0.55rem; transform: translateY(-1px)">
+                <!-- <input
+                  type="checkbox"
+                  class="form-check-input"
+                  style="transform: scale(0.8)" /> - ->
+                <Icon v-if="app.state == state.id" style="color: var(--tblr-primary)">
+                  SquareCheck
+                </Icon>
+                <Icon v-else style="color: #666">Square</Icon>
+              </div> -->
+
+              <div class="d-flex" style="width: 30px">
+                <Icon size="17" width="1.5" class="text-muted">Mist</Icon>
+              </div>
+
+              <div class="me-1">
+                {{ list.name }}
+              </div>
+
+              <template v-if="listHasApp(list, app)">
+                <small
+                  class="text-muted ms-auto hide-hover text-end"
+                  style="min-width: 40px">
+                  <Icon size="12" width="1">Check</Icon>
+                  Added
+                </small>
+                <small
+                  class="text-muted ms-auto show-hover text-end"
+                  style="min-width: 40px">
+                  Remove
+                </small>
+              </template>
+
+              <template v-else>
+                <small
+                  class="text-muted ms-auto hide-hover text-end"
+                  style="min-width: 40px">
+                  {{ list.games?.length || 0 }}
+                </small>
+                <small
+                  class="text-muted ms-auto show-hover text-end"
+                  style="min-width: 40px">
+                  Add
+                </small>
+              </template>
+
+              <!-- <tippy
+                class="text-muted ms-auto cursor-help ps-4"
+                :content="state.description">
+                <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
+                  HelpSmall
+                </Icon>
+              </tippy> -->
+              <!-- <div
+                class="content d-flex align-items-center w-100 px-1"
+                :class="{ 'control-hover': app.state }">
+                <div>
+                  <span
+                    class="status-dot me-2"
+                    :style="{ 'background-color': state.color || '' }"
+                    :class="{ 'status-dot-animated': app.state == state.id }"></span>
+
+                  <span class="me-4" nope:class="{ 'hide-hover': app.state == state.id }">
+                    {{ state.name }}
+                  </span>
+                  <small
+                    class="d-block text-muted pe-4 me-4"
+                    style="margin-left: -2px"
+                    v-if="app.state == state.id">
+                    <Icon size="12" width="1" style="margin-right: 2px; margin-top: -1px">
+                      ToggleLeft
+                    </Icon>
+                    Click again to reset
+                  </small>
+                </div>
+
+                <tippy
+                  v-if="state.description"
+                  class="text-muted ms-auto ms-1 cursor-help"
+                  :content="state.description">
+                  <span class="form-help">?</span>
+                </tippy>
+              </div> -->
+            </div>
+          </b-dropdown>
+        </div>
+
+        <div class="dropdown-divider"></div>
+
+        <!--
+          *+---------------------------------
           *| Add to library
           *| Click to add a game to library
           *+--------------------------------- -->
@@ -158,12 +279,12 @@
           </div>
 
           <span>Add to your library</span>
-          <tippy
+          <!-- <tippy
             :allow-h-t-m-l="true"
             class="text-muted ms-auto cursor-help"
-            content="Adding a game to your library will include it in your games collection">
+            content="Adding a game to your library will include it in your games list">
             <span class="form-help">?</span>
-          </tippy>
+          </tippy> -->
         </div>
 
         <!--
@@ -248,19 +369,27 @@
           *| Click to hide a game
           *+--------------------------------- -->
         <div class="dropdown-divider"></div>
-        <div
-          v-if="app.is && !app.is.hidden"
-          @click="setState({ id: 'hidden' })"
-          class="dropdown-item">
-          <div class="d-flex nope-justify-content-center" style="width: 30px">
-            <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
-          </div>
 
-          <span>Hide this game</span>
+        <div @click="setState({ id: 'hidden' })" class="dropdown-item">
+          <template v-if="app.is && app.is.hidden">
+            <div class="d-flex nope-justify-content-center" style="width: 30px">
+              <Icon size="17" width="1.5">Restore</Icon>
+            </div>
+            <span class="me-3">Restore visibility</span>
+          </template>
+
+          <template v-else>
+            <div class="d-flex nope-justify-content-center" style="width: 30px">
+              <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
+            </div>
+
+            <span>Hide this game</span>
+          </template>
+
           <tippy
             :allow-h-t-m-l="true"
             class="text-muted ms-auto cursor-help"
-            content="Hidden games will not be displayed in any list or search result.<br>Use this to hide games you don't want to see">
+            content="Hidden games will not be displayed in any list or search result ~ Those games are still part of your library, just hidden">
             <span class="form-help">?</span>
           </tippy>
         </div>
@@ -429,7 +558,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Wed 18 September 2024 - 15:11:46
+ * Modified: Wed 30 October 2024 - 17:53:16
  **/
 
 export default {
@@ -449,12 +578,13 @@ export default {
   },
 
   computed: {
-    ...mapStores(useDataStore, useStateStore, useGameStore),
+    ...mapStores(useDataStore, useStateStore, useGameStore, useListStore),
     ...mapState(useStateStore, ['states']),
+    ...mapState(useListStore, ['lists']),
 
-    state() {
-      return this.states.find((state) => state.id == this.app.state)
-    },
+    // state() {
+    //   return this.states.find((state) => state.id == this.app.state)
+    // },
   },
 
   methods: {
@@ -503,6 +633,7 @@ export default {
     //+-------------------------------------------------
     // addToLibrary()
     // Adds a game to the user library
+    // NOTE: There should be a method in dataStore that does this
     // -----
     // Created on Tue Jul 23 2024
     //+-------------------------------------------------
@@ -513,6 +644,42 @@ export default {
 
       this.gameStore.update(this.appUUID, { ...app })
       this.$nuxt.$toast.success(app.name + ' has been added to your library')
+
+      this.hide()
+    },
+
+    //+-------------------------------------------------
+    // modifyList()
+    // Modifies a list and adds or removes an item from it
+    // -----
+    // Created on Thu Oct 24 2024
+    //+-------------------------------------------------
+    async modifyList(list, app) {
+      await this.listStore.modify(list.uuid, app)
+      this.$nuxt.$toast.success(`${app.name} has been added to ${list.name}`)
+
+      this.hide()
+    },
+
+    //+-------------------------------------------------
+    // listHasApp()
+    // Looks if a list has an app
+    // -----
+    // Created on Fri Oct 25 2024
+    //+-------------------------------------------------
+    listHasApp(list, app) {
+      return this.listStore.hasApp(list, app)
+    },
+
+    //+-------------------------------------------------
+    // createList()
+    // Creates a new list
+    // -----
+    // Created on Thu Sep 19 2024
+    //+-------------------------------------------------
+    createList() {
+      let app = { ...this.app }
+      this.$mitt.emit('list:create')
 
       this.hide()
     },

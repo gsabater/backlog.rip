@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Fri 20 September 2024 - 14:23:32
+ * Modified: Thu 26 September 2024 - 16:03:54
  */
 
 let $nuxt = null
@@ -154,5 +154,17 @@ export default {
     // const timeAgo = formatTimeAgo(time)
     const timeAgo = $nuxt.$dayjs(time).fromNow()
     return timeAgo ?? 'xxx'
+  },
+
+  //+-------------------------------------------------
+  // microTime()
+  // Gets milliseconds, and returns a rounded value
+  // with "ms" or "s" suffix
+  // -----
+  // Created on Thu Sep 26 2024
+  //+-------------------------------------------------
+  microTime(ms) {
+    if (ms > 1000) return format.round(ms / 1000, 2) + 's'
+    return format.round(ms, 0) + 'ms'
   },
 }

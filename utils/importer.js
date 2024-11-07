@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Fri 20 September 2024 - 14:10:11
+ * Modified: Wed 30 October 2024 - 17:55:12
  */
 
 import axios from 'axios'
@@ -152,15 +152,14 @@ export default {
       library: [],
 
       // TODO: things that will be imported
+      // lists: [],
       // states: [],
-      // collections: [],
       // data.backlog will be defined as well from steam.onScan
       steambacklog: {}, // quick dirty hack
     }
 
     try {
       x.log('Check 4.1: Get local library')
-      data.library = await $nuxt.$db.games.where('steam_id').above(0).toArray()
       data.library = $data.steam_library()
       x.log(`🆗 Library loaded`, data.library.length)
 

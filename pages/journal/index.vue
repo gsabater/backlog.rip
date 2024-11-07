@@ -78,10 +78,13 @@
                         You have updated your library with
                         {{ item.data.games.length }} games
 
+                        <!--
+                        WIP disabled
                         <gameList
                           :apps="item.data.games"
                           cols="3"
                           class="pt-3"></gameList>
+                          -->
                       </div>
 
                       <small class="text-secondary d-inline-block border-top pt-2 mt-2">
@@ -129,7 +132,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Thu 05 September 2024 - 16:12:05
+ * Modified: Wed 30 October 2024 - 17:42:02
  **/
 
 export default {

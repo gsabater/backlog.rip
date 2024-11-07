@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Fri 20 September 2024 - 14:09:44
+ * Modified: Thu 07 November 2024 - 13:51:23
  */
 
 let $nuxt = null
@@ -281,6 +281,8 @@ export const useDataStore = defineStore('data', {
     // Created on Wed May 01 2024
     //+-------------------------------------------------
     searchHash(f = {}) {
+      f.string = f.string?.trim()
+
       let emptyString = !f.string || f.string?.length < 3
       let dirty = ['genres', 'anotherArrayProperty'].some(
         (prop) => Array.isArray(f[prop]) && f[prop].length > 0
@@ -292,6 +294,7 @@ export const useDataStore = defineStore('data', {
 
       delete f.mods
       delete f.show
+      delete f.source
       delete f.states
 
       if (emptyString) delete f.string
@@ -301,7 +304,6 @@ export const useDataStore = defineStore('data', {
       const json = JSON.stringify(f)
       const hash = btoa(json)
 
-      console.warn('🪂 Search hash', hash, f)
       return hash
     },
 
@@ -313,20 +315,21 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     async search(filters) {
       let hash = this.searchHash(filters)
-
       if (!hash) return
+
       if (search[hash]) {
         log('🛑 Search', hash, 'already done')
         return
-      }
+      } else log('🪂 Searching hash', hash, filters)
 
       search[hash] = true
-      const xhr = await $nuxt.$axios.get(`repository/${hash}.json`)
+      const xhr = await $nuxt.$axios.get(`search/${hash}.json`)
       if (xhr.status) {
         log('🪂 Data from API', xhr.data)
-
         await this.process(xhr.data, 'api')
       }
+
+      return true
     },
 
     //+-------------------------------------------------
@@ -344,15 +347,15 @@ export const useDataStore = defineStore('data', {
           return
         }
 
-        // Debug on
+        // Debugger
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // if (item.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') {
-        // if (item.name == 'DOOM') {
-        //   // if (item.steam_id == '292030') {
-        // if (context == 'add:new') {
-        //   console.warn('✨ ' + item.name, item, context)
-        //   debugger
-        // }
+        if ($nuxt.$app.wip && item.uuid == 'x31c5058d-4c96-418d-adc6-c9a78ac02e40') {
+          // if (item.name == 'DOOM') {
+          //   // if (item.steam_id == '292030') {
+          // if (context == 'add:new') {
+          //   console.warn('✨ ' + item.name, item, context)
+          debugger
+        }
 
         // Flag games coming from API as is_api
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -360,6 +363,14 @@ export const useDataStore = defineStore('data', {
           item.is_api = true
           item.api_id = item.api_id || item.uuid
           // item.id.api = item.id.api || item.uuid
+          if (!item.uuid) item.uuid = `local:${format.stringToSlug(item.name)}`
+        }
+
+        // Populate the data from a list
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (context?.includes('list:')) {
+          item.is_api = true
+          item.api_id = item.uuid
         }
 
         // Games coming from the library
@@ -382,7 +393,7 @@ export const useDataStore = defineStore('data', {
         }
 
         if (context?.includes('update:')) {
-          if (item.is.lib) item.is.dirty = true
+          if (item.is?.lib) item.is.dirty = true
           this.toData(item)
           return
         }
@@ -406,18 +417,20 @@ export const useDataStore = defineStore('data', {
           debugger
         }
 
-        let uuid = this.isIndexed(item)
+        let appUUID = this.isIndexed(item)
+        if (appUUID === true) return
 
-        if (uuid === true) return
-        if (!uuid) this.toData(item)
-        else $game.update(uuid, { ...item, trigger: true })
+        if (!appUUID) this.toData(item)
+        else $game.update(appUUID, { ...item, trigger: true })
       })
 
       $nuxt.$app.count.data = Object.keys(data).length || 0
       $nuxt.$app.count.library = this.countLibrary() // index.lib.length || 0
 
+      if (!$nuxt.$app.ready) return
+      if (context.includes('list:')) return
       if (context.includes('update:')) return
-      // console.warn('🌈 data:updated', apps.length)
+
       $nuxt.$mitt.emit('data:updated', 'loaded:' + apps.length)
     },
 
@@ -790,12 +803,20 @@ export const useDataStore = defineStore('data', {
     async loadApiStatus() {
       if (this.loaded.includes('api')) return
 
-      const xhr = await $nuxt.$axios.get(`get/status.json`)
-      if (xhr.status) {
-        $nuxt.$app.api = xhr.data
-        $nuxt.$app.count.api = xhr.data?.games?.total || 0
-        this.loaded.push('api')
+      try {
+        const xhr = await $nuxt.$axios.get(`get/status.json`)
+        if (xhr.status) {
+          $nuxt.$app.api = xhr.data
+          $nuxt.$app.count.api = xhr.data?.games?.total || 0
+        }
+      } catch (error) {
+        log('Could not establish connection with the API, working on offline mode')
+        $nuxt.$app.api = {}
+        $nuxt.$app.offline = true
+        $nuxt.$app.count.api = 0
       }
+
+      this.loaded.push('api')
     },
 
     //+-------------------------------------------------

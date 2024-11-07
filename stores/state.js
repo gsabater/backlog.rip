@@ -1,11 +1,9 @@
-/* eslint-disable no-unused-vars */
-
 /*
  * @file:    \stores\stateStore.js
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Wed 11 September 2024 - 17:49:31
+ * Modified: Wed 06 November 2024 - 22:57:18
  */
 
 let $nuxt = null
@@ -28,6 +26,8 @@ export const useStateStore = defineStore('state', {
     backlog: [], // Holds index for special state 'backlog'
     playing: [], // Holds index for special state 'playing'
     completed: [], // Holds index for special state 'completed'
+
+    undeletable: [1, 2, 3],
 
     meta: {
       loaded: false,
@@ -363,6 +363,18 @@ export const useStateStore = defineStore('state', {
     },
 
     //+-------------------------------------------------
+    // canBeDeleted()
+    // Returns true if the state can be deleted
+    // -----
+    // Created on Wed Nov 06 2024
+    //+-------------------------------------------------
+    canBeDeleted(state) {
+      if (this.undeletable.includes(state.id)) return false
+
+      return true
+    },
+
+    //+-------------------------------------------------
     // indexLibrary()
     // Creates an index Array of UUIDs for each state
     // keyed by the state's id
@@ -419,6 +431,7 @@ export const useStateStore = defineStore('state', {
     // -----
     // Created on Sat Jan 06 2024
     // Updated on Wed Jun 19 2024 - Reload
+    // Updated on Wed Nov 06 2024 - Handle repeated order values
     //+-------------------------------------------------
     async load(reload = false) {
       if (this.meta.loaded && !reload) return
@@ -426,19 +439,24 @@ export const useStateStore = defineStore('state', {
       const states = await $nuxt.$db.states.toArray()
 
       this.states = states.sort((a, b) => a.order - b.order)
-      this.keyed = states.reduce((obj, state) => {
-        state.key = 'state_' + state.id // state.key ||
+      this.keyed = states.reduce((obj, state, index) => {
+        state.key = state.key || `state_${state.id}`
+        if (state.order != index) {
+          state.order = index
+          $nuxt.$db.states.put(state)
+        }
+
         obj[state.id] = state
         return obj
       }, {})
-
-      this.meta.loaded = true
 
       log(
         '❇️ States loaded',
         `${states.length} states in local DB`,
         states[Math.floor(Math.random() * states.length)]
       )
+
+      this.meta.loaded = true
     },
 
     //+-------------------------------------------------
@@ -448,10 +466,11 @@ export const useStateStore = defineStore('state', {
     // Created on Sat Feb 10 2024
     //+-------------------------------------------------
     async init() {
-      if (!$nuxt) $nuxt = useNuxtApp()
+      $nuxt ??= useNuxtApp()
+      $cloud ??= useCloudStore()
+
       if (!$data) $data = useDataStore()
       if (!$game) $game = useGameStore()
-      $cloud ??= useCloudStore()
       if (!$journal) $journal = useJournalStore()
 
       await this.load()

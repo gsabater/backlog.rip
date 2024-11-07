@@ -1,6 +1,5 @@
 <template>
   <!-- <pre v-if="false">
-  layout: {{ layout }}
   Attrs: {{ $attrs }}
   </pre> -->
   <component v-bind="$attrs" :is="component" :to="to" :class="colorAndVariant">
@@ -14,7 +13,7 @@
  * @desc:    https://preview.tabler.io/buttons.html
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Wed Mar 06 2024
+ * Modified: Thu 17 October 2024 - 14:35:51
  **/
 import { NuxtLink } from '#components'
 

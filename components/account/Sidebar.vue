@@ -61,6 +61,13 @@
 
   <ul class="nav nav-pills nav-vertical">
     <li class="nav-item">
+      <NuxtLink to="/account/lists" class="nav-link">
+        <Icon class="me-2">Mist</Icon>
+        Lists
+      </NuxtLink>
+    </li>
+
+    <li class="nav-item">
       <NuxtLink to="/account/states" class="nav-link">
         <Icon class="me-2">Background</Icon>
         States

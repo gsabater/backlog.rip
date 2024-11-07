@@ -7,11 +7,26 @@
   filter: brightness(0.88);
 
   will-change: transform brightness;
-  transition: all 0.1s ease-in-out;
+  // transition: all 0.1s ease-in-out;
+  transition: all 150ms linear;
 
   &:hover {
     filter: brightness(1.08);
     transform: translateY(-2px);
+  }
+
+  &.is-bordered &__cover {
+    outline: 1px solid var(--bckg-state-color);
+    /* outline-offset: 0px; */
+  }
+
+  &.is-bordered:hover &__cover {
+    outline: 2px solid var(--bckg-state-color);
+  }
+
+  &.is-tracking &__cover {
+    transform: perspective(525px) translateZ(0) rotateX(var(--dx)) rotateY(var(--dy));
+    transition: all 150ms linear;
   }
 
   &__cover {
@@ -39,8 +54,8 @@
     // background: linear-gradient(0deg, #000, #272727);
 
     // outline: 1px solid rgba(0, 0, 0, 0.3);
-    outline: 1px solid rgba(255, 255, 255, 0.15);
-    outline-offset: -1px;
+    // outline: 1px solid rgba(255, 255, 255, 0.15);
+    // outline-offset: -1px;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
 
     &.is-banner {
@@ -51,9 +66,6 @@
     &.is-banner img {
       margin: 15px;
       border-radius: 2px;
-      outline: 1px solid rgba(255, 255, 255, 0.15);
-      outline-offset: -1px;
-      box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
     }
 
     &:not(.is-banner) img {
@@ -73,8 +85,8 @@
       //   // border-radius: 4px;
       //   // max-width: 100%;
       //   // max-height: 100%;
-      // outline: 1px solid rgba(255, 255, 255, 0.15);
-      // outline-offset: -1px;
+      outline: 1px solid rgba(255, 255, 255, 0.15);
+      outline-offset: -1px;
       // box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
 
       // outline: rgba(255, 255, 255, 0.65) solid 2px;
@@ -127,6 +139,25 @@
     padding: 0.25rem 0.5rem;
     background: #66738266;
     transform: scale(0.9);
+  }
+}
+
+.games-group {
+  user-select: none;
+
+  & .game--list {
+    & .game__cover {
+      z-index: 1;
+      outline: 1px solid rgba(255, 255, 255, 0.15);
+      outline-offset: -1px;
+      box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.36);
+      max-width: 100px;
+      max-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
   }
 }
 

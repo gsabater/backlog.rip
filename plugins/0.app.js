@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Fri 20 September 2024 - 15:45:31
+ * Modified: Thu 07 November 2024 - 12:15:42
  */
 
 // import { reactive } from 'vue'
@@ -17,19 +17,25 @@ let $nuxt = null
 let $user = null
 let $data = null
 let $game = null
+let $list = null
 let $state = null
 let $repos = null
 let $cloud = null
+let $search = null
 
 let app = {
-  v: '0.15.6 β', //β
+  v: '0.16.4 β', //β
+  t: Date.now(),
 
   // Global app state
   // Controls modules boundaries
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   wip: false,
   dev: false,
+  beta: false,
+
   ready: false,
+  offline: false,
 
   // $db.status
   // can be true when is ready or a status
@@ -52,7 +58,9 @@ let app = {
   count: {
     api: 0,
     data: 0,
+
     library: 0,
+    lists: 0,
 
     states: {
       backlog: 0,
@@ -115,6 +123,10 @@ function detectEnvironment() {
     app.env = 'local'
   }
 
+  if (window.location?.origin?.includes('beta.')) {
+    app.beta = true
+  }
+
   if ($nuxt.$auth.config.debug) {
     app.dev = true
   }
@@ -131,7 +143,9 @@ function detectEnvironment() {
 async function init() {
   if (!$nuxt) $nuxt = useNuxtApp()
   if (!$game) $game = useGameStore()
-  if (!$repos) $repos = useRepositoryStore()
+
+  $repos ??= useRepositoryStore()
+  $search ??= useSearchStore()
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Initialize stores
@@ -140,6 +154,7 @@ async function init() {
 
   $game.init()
   $repos.init()
+  $search.init()
 }
 
 //+-------------------------------------------------
@@ -152,7 +167,8 @@ async function initClient() {
   if (!$user) $user = useUserStore()
   if (!$data) $data = useDataStore()
   if (!$cloud) $cloud = useCloudStore()
-  if (!$state) $state = useStateStore()
+  $list ??= useListStore()
+  $state ??= useStateStore()
 
   const breakpoints = useBreakpoints({
     sm: 0,
@@ -184,6 +200,7 @@ async function initClient() {
 
   await $data.init()
   await $state.init()
+  await $list.init()
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Connect to the cloud

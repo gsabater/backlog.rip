@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Wed 06 November 2024 - 13:36:42
+ * Modified: Wed 06 November 2024 - 16:45:34
  */
 
 let $nuxt = null
@@ -285,6 +285,7 @@ export const useGameStore = defineStore('game', {
     },
 
     _dateReleasedAt(app) {
+      if (!app.released_at) return null
       return $nuxt.$moment(app.released_at * 1000).format('LL')
     },
 

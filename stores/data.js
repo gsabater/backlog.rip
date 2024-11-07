@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Wed 06 November 2024 - 11:54:23
+ * Modified: Thu 07 November 2024 - 13:51:23
  */
 
 let $nuxt = null
@@ -347,9 +347,9 @@ export const useDataStore = defineStore('data', {
           return
         }
 
-        // Debug on
+        // Debugger
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (false && item.uuid == '3861490d-f31a-43a2-a3cc-2e8e2ae6dab7') {
+        if ($nuxt.$app.wip && item.uuid == 'x31c5058d-4c96-418d-adc6-c9a78ac02e40') {
           // if (item.name == 'DOOM') {
           //   // if (item.steam_id == '292030') {
           // if (context == 'add:new') {
@@ -364,6 +364,13 @@ export const useDataStore = defineStore('data', {
           item.api_id = item.api_id || item.uuid
           // item.id.api = item.id.api || item.uuid
           if (!item.uuid) item.uuid = `local:${format.stringToSlug(item.name)}`
+        }
+
+        // Populate the data from a list
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (context?.includes('list:')) {
+          item.is_api = true
+          item.api_id = item.uuid
         }
 
         // Games coming from the library
@@ -404,13 +411,6 @@ export const useDataStore = defineStore('data', {
           this.toData(item)
           return
         }
-
-        // Populate the data from a list
-        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // if (context?.includes('list:')) {
-        //   this.toData(item)
-        //   return
-        // }
 
         if (item.trigger) {
           console.log('this shouldnt happen, delete trigger here and under', item)

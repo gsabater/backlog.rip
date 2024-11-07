@@ -1,9 +1,5 @@
 <template>
-  <div class="row gx-1 mb-3 align-items-center">
-    <!-- <div class="col-12">
-      <h2>Search shit</h2>
-    </div> -->
-
+  <div class="row gx-1 mb-1 align-items-center">
     <div class="col-auto" v-if="false && !ui.showSearch">
       <!-- <div class="btn" size="small" style="background: rgb(30 31 41 / 20%)">
         <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
@@ -116,7 +112,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: Wed 30 October 2024 - 15:45:54
+ * Modified: Wed 06 November 2024 - 16:41:00
  **/
 
 export default {

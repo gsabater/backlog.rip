@@ -8,7 +8,8 @@
     <div
       v-if="type == 'list'"
       v-bind="$attrs"
-      class="list-group-item text-decoration-none game game--list">
+      class="list-group-item text-decoration-none game game--list"
+      @click.stop="handleAction">
       <div class="row align-items-center">
         <slot name="game:prepend"></slot>
         <div class="col-auto text-secondary">
@@ -24,13 +25,13 @@
           <span class="font-serif">{{ app.name }}</span>
           <div class="v-list-item-subtitle">
             <slot name="details">
-              <small class="text-muted me-2">
-                {{ app._.released_at ?? '--' }}
+              <small v-if="display.includes('released')" class="text-muted me-2">
+                {{ app._.released_at ?? '' }}
               </small>
 
               <small
                 v-if="display.includes('score') && app.score"
-                class="details__secondary text-muted me-2">
+                class="text-muted me-2">
                 <Icon
                   size="12"
                   width="1.5"
@@ -74,7 +75,7 @@
       ]">
       <slot name="game:prepend"></slot>
 
-      <div class="card-game__cover" @click.stop="action">
+      <div class="card-game__cover" @click.stop="handleAction">
         <div
           v-if="app.error"
           style="
@@ -113,9 +114,7 @@
             {{ app.name }}
           </span>
 
-          <small
-            v-if="display.includes('score') && app.score"
-            class="details__secondary text-muted">
+          <small v-if="display.includes('score') && app.score" class="text-muted">
             <Icon
               size="13"
               width="1.5"
@@ -126,9 +125,7 @@
             <template v-if="$app.dev">-- {{ app._.score }}</template>
           </small>
 
-          <small
-            v-if="display.includes('released')"
-            class="d-block details__secondary text-muted">
+          <small v-if="display.includes('released')" class="d-block text-muted">
             <Icon
               size="12"
               width="1.8"
@@ -138,9 +135,7 @@
             {{ app._.released_at }}
           </small>
 
-          <small
-            v-if="display.includes('playtime')"
-            class="d-block details__secondary text-muted">
+          <small v-if="display.includes('playtime')" class="d-block text-muted">
             <Icon
               size="12"
               width="1.8"
@@ -160,7 +155,7 @@
 
           <small
             v-if="display.includes('hltb') && app.hltb && app.hltb.main"
-            class="d-block details__secondary text-muted">
+            class="d-block text-muted">
             <Icon
               size="12"
               width="1.8"
@@ -182,7 +177,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 30 October 2024 - 11:29:14
+ * Modified: Wed 06 November 2024 - 17:21:44
  **/
 
 export default {
@@ -233,6 +228,11 @@ export default {
       default: false,
     },
 
+    action: {
+      type: [String, Function],
+      default: 'default',
+    },
+
     // display
     // Is an array of strings used to specify which
     // components to show. If the value is an empty
@@ -270,8 +270,19 @@ export default {
       return this.display.includes('*') || this.display.includes(slot)
     },
 
-    action() {
-      if (this.disabled) return
+    //+-------------------------------------------------
+    // handleAction()
+    //
+    // -----
+    // Updated on Wed Nov 06 2024 - Defined custom action
+    //+-------------------------------------------------
+    handleAction() {
+      if (this.disabled || !this.action) return
+
+      if (typeof this.action === 'function') {
+        this.action(this.app)
+        return
+      }
 
       this.$mitt.emit('game:modal', {
         uuid: this.app.uuid,

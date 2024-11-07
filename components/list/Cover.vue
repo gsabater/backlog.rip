@@ -1,5 +1,5 @@
 <template>
-  <div class="cover-container">
+  <div v-if="games.length" class="cover-container">
     <!--
       *+---------------------------------
       *| Flex layout
@@ -389,7 +389,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th October 2024
- * Modified: Tue 29 October 2024 - 15:21:33
+ * Modified: Wed 06 November 2024 - 17:00:58
  **/
 
 export default {

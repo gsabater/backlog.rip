@@ -7,179 +7,132 @@
         </div>
       </div>
       <p>
-        Here you can manage the states used to categorize your games. You can create more
-        states, edit existing ones, and delete the states you don't need anymore.Also, you
-        can also change the order in which they appear on the dropdown menus.
+        States help you track your progress through games in your collection. From
+        "Playing" to "Completed", they represent your current engagement with each game,
+        making it easy to know where you are with every title.
       </p>
       <p>
-        Some states are special and cannot be deleted. Those are used to generate
-        personalized recommendations and insights on your dashboard.
+        You can create custom states, edit existing ones, and arrange them in the order
+        that works best for you. While special states that power recommendations cannot be
+        deleted, you can freely manage any custom states you create to match your
+        preferences.
       </p>
     </div>
   </div>
 
-  <div
-    class="divider"
-    style="border-top: 1px dashed rgb(204 204 204 / 25%); margin: 2rem"></div>
-
-  <div class="card mb-4">
-    <div class="card-body">
-      <h2>New State</h2>
-      <!-- <p class="card-subtitle">Profile details and personal settings</p> -->
-
-      <!-- <h3 class="card-title mb-3">
-        <Icon style="transform: translateY(-2px)">Bookmark</Icon>
-        Pinned games
-      </h3>
-      <p class="card-subtitle mb-2">
-        Enable a special category for pinned games.
-        <br />
-        This will allow you to quickly pin a game and access it from the sidebar.
-      </p>
-      <div class="mb-3">
-        <label class="form-check form-switch form-switch-lg">
-          <input
-            v-model="$auth.config.debug"
-            class="form-check-input"
-            type="checkbox"
-            @change="update('config', 'debug')" />
-          <span class="form-check-label form-check-label-on">Debugging enabled</span>
-          <span class="form-check-label form-check-label-off">Developer mode is off</span>
-        </label>
-      </div> -->
-
-      <!--
-      <h3 class="card-title mt-4">Public profile</h3>
-      <p class="card-subtitle">
-        Making your profile public means that anyone on the Dashkit network will be able
-        to find you.
-      </p>
-      <div>
-        <label class="form-check form-switch form-switch-lg">
-          <input class="form-check-input" type="checkbox" />
-          <span class="form-check-label form-check-label-on">
-            You're currently visible
-          </span>
-          <span class="form-check-label form-check-label-off">
-            You're currently invisible
-          </span>
-        </label>
-      </div>
-      -->
-      <!-- <div class="p-3"></div> -->
-      <!-- <h3 class="card-title mb-3">Create a new state</h3> -->
-      <p class="card-subtitle mb-4">
-        Create a new state to categorize your library. You can edit and delete it later.
-      </p>
-      <div>
-        <a class="btn btn-primary px-5" @click="$refs.crud.create()">
-          Create a new state
-        </a>
-      </div>
+  <div class="row mb-3">
+    <div class="col-6">
+      <v-btn variant="tonal" color="primary" @click="$refs.crud.create()">
+        Create a new state
+      </v-btn>
     </div>
   </div>
-
-  <a href="/games/card-and-board-game" class="btn btn-outline-primary">
-    <span class="btn-text">asdasdasd</span>
-  </a>
 
   <div class="card">
-    <div v-if="states.length">
+    <div v-if="states.length" class="list-group card-list-group">
       <template v-for="(item, i) in states" :key="item.id">
-        <div class="card-body">
-          <div v-if="item" class="row">
-            <div class="col-auto">
-              <!-- <span class="form-colorinput-color bg-lime"></span>
-              <span class="avatar">JL</span> -->
+        <div
+          class="list-group-item px-3"
+          style="padding-top: 0.8rem; padding-bottom: 0.8rem">
+          <div class="row g-3 align-items-center">
+            <div class="col-auto" style="align-self: baseline">
               <span :style="{ '--tblr-status-color': item.color || '' }">
                 <span class="status-dot status-dot-animated"></span>
               </span>
+              <div class="v-list-item-subtitle">&nbsp;</div>
             </div>
             <div class="col">
-              <div class="text-truncate mb-2">
-                <strong>{{ item.name }}</strong>
-              </div>
-              <div class="text-secondary">
-                {{ item.description }}
-                <!-- <span v-if="item.key" class="badge">
-                  This is your {{ item.key }}. It represents a unique state utilized for
-                  generating personalized recommendations and statistics.
-                </span> -->
+              <span class="font-serif">
+                {{ item.name }}
+                <small class="text-muted mx-2">
+                  {{ format.num(stateStore.count(item.id)) }} games
+                </small>
+              </span>
+              <div class="v-list-item-subtitle">
+                <small class="text-muted">
+                  {{ item.description }}
+                </small>
+                <!-- <small class="d-block text-muted mt-3">
+                  <Icon size="13" width="1.2">LayoutDashboard</Icon>
+                  There are  in this
+                  state
+                </small> -->
               </div>
             </div>
-            <div class="col-auto align-self-center">
-              <!-- <div>
-                <b-btn class="p-2 me-2">
-                  <Icon>Pencil</Icon>
-                </b-btn>
+            <div class="col-auto text-secondary">
+              <div class="d-flex">
+                <span
+                  v-tippy="'Display in sidebar'"
+                  class="btn-action cursor-pointer"
+                  @click="pinSidebar(item.id)">
+                  <Icon
+                    v-if="isPinned(item.id)"
+                    class="icon"
+                    size="13"
+                    style="color: #575ac6">
+                    BookmarkFilled
+                  </Icon>
+                  <Icon v-else class="icon" size="13" style="color: #575ac6">
+                    Bookmark
+                  </Icon>
+                </span>
 
-                <b-btn class="p-2 me-2">
-                  <Icon>ChevronUp</Icon>
-                </b-btn>
+                <div style="position: relative">
+                  <v-btn
+                    variant="text"
+                    icon="mdi-chevron-right"
+                    size="x-small"
+                    color="grey-lighten-1">
+                    <Icon size="18" width="2">DotsVertical</Icon>
+                  </v-btn>
+                  <b-dropdown
+                    trigger="mouseenter focus click hover manual"
+                    placement="bottom-end"
+                    :debounce="15"
+                    style="min-width: 180px">
+                    <template v-if="i > 0">
+                      <div class="dropdown-item" @click.stop="sort('up', item.id)">
+                        <Icon size="16" class="me-2 text-muted">ChevronUp</Icon>
+                        Move upwards
+                      </div>
+                    </template>
 
-                <b-btn class="p-2">
-                  <Icon>ChevronDown</Icon>
-                </b-btn>
-              </div> -->
-              <div>
-                <div class="d-flex">
-                  <span
-                    v-tippy="'Display list in the sidebar'"
-                    class="btn-action cursor-pointer"
-                    @click="pinSidebar(item.id)">
-                    <Icon
-                      v-if="isPinned(item.id)"
-                      class="icon"
-                      size="13"
-                      style="color: #575ac6">
-                      BookmarkFilled
-                    </Icon>
-                    <Icon v-else class="icon" size="13" style="color: #575ac6">
-                      Bookmark
-                    </Icon>
-                    <!-- <Icon class="icon">Pin</Icon>
-                    <Icon class="icon">PinnedFilled</Icon> -->
-                  </span>
+                    <template v-if="i < states.length - 1">
+                      <div class="dropdown-item" @click.stop="sort('down', item.id)">
+                        <Icon size="16" class="me-2 text-muted">ChevronDown</Icon>
+                        Move downwards
+                      </div>
+                    </template>
 
-                  <span
-                    v-if="i > 0"
-                    v-tippy="'Move upwards'"
-                    class="btn-action cursor-pointer"
-                    @click="sort('up', item.id)">
-                    <Icon class="icon">ChevronUp</Icon>
-                  </span>
+                    <div class="dropdown-item" @click.stop="edit(item)">
+                      <Icon size="16" class="me-2 text-muted">Pencil</Icon>
+                      Edit state
+                    </div>
 
-                  <span
-                    v-if="i < states.length - 1"
-                    v-tippy="'Move downwards'"
-                    class="btn-action cursor-pointer"
-                    @click="sort('down', item.id)">
-                    <Icon class="icon">ChevronDown</Icon>
-                  </span>
-
-                  <span
-                    v-tippy="'Edit'"
-                    class="btn-action cursor-pointer"
-                    :class="{ disabled: item.key }"
-                    @click="edit(item)">
-                    <Icon class="icon">Pencil</Icon>
-                  </span>
-
-                  <template v-if="!item.key || item.key.includes('state_')">
-                    <span
-                      v-tippy="'Delete'"
-                      class="btn-action cursor-pointer"
-                      :class="{ disabled: item.key }"
-                      @click="this.delete(item)">
-                      <Icon class="icon text" color="red">Trash</Icon>
-                    </span>
-                  </template>
-
-                  <template v-else>
-                    <span v-tippy="'This state cannot be deleted'" class="btn-action">
-                      <Icon class="icon" color="red" style="opacity: 0.5">TrashOff</Icon>
-                    </span>
-                  </template>
+                    <template v-if="stateStore.canBeDeleted(item)">
+                      <div class="dropdown-divider"></div>
+                      <div
+                        class="dropdown-item text-red"
+                        @click.stop="
+                          $mitt.emit('ask:confirm', {
+                            item,
+                            title: 'Delete state',
+                            message: 'Are you sure you want to delete this state?',
+                            onConfirm: () => this.delete(item),
+                          })
+                        ">
+                        <Icon size="16" class="me-2 text-red">Trash</Icon>
+                        Delete state
+                      </div>
+                    </template>
+                    <template v-else>
+                      <div class="dropdown-divider"></div>
+                      <div class="dropdown-item text-muted cursor-not-allowed">
+                        <Icon size="16" class="me-2">Trash</Icon>
+                        This state cannot be deleted
+                      </div>
+                    </template>
+                  </b-dropdown>
                 </div>
               </div>
             </div>
@@ -187,15 +140,30 @@
         </div>
       </template>
     </div>
+
+    <!-- <div
+      v-if="states.length === 0"
+      class="empty"
+      style="
+        border: 1px dashed #cccccc73;
+        border-radius: 4px;
+        height: auto;
+        padding: 2.5rem;
+      ">
+      <p class="empty-title mb-3 font-serif" style="font-weight: 300">
+        You don't have any custom states yet
+      </p>
+      <p class="empty-subtitle text-secondary">
+        Create your first custom state to get started.
+      </p>
+      <p class="empty-subtitle text-secondary">
+        States help you track your progress through games and generate personalized
+        recommendations.
+      </p>
+    </div> -->
   </div>
 
-  <!-- <states-crud-dialog
-    ref="crud"
-    @close="selected = null"
-    @stored="$forceUpdate()"
-    @deleted="$forceUpdate()" /> -->
-
-  <dialog-crud-states ref="crud" @stored="onStored" @deleted="$forceUpdate()" />
+  <state-crud-dialog ref="crud" @stored="onStored" @deleted="$forceUpdate()" />
 </template>
 
 <script>
@@ -204,7 +172,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Thu 10 October 2024 - 19:59:34
+ * Modified: Thu 07 November 2024 - 14:00:35
  **/
 
 export default {

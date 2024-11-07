@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Thu 17 October 2024 - 14:23:58
+ * Modified: Thu 07 November 2024 - 11:43:43
  */
 
 import { md2 } from 'vuetify/blueprints'
@@ -39,6 +39,14 @@ export default defineVuetifyConfiguration({
     },
 
     VTextField: {
+      flat: true,
+      class: '',
+      variant: 'solo',
+      density: 'compact',
+      hideDetails: 'auto',
+    },
+
+    VTextarea: {
       flat: true,
       class: '',
       variant: 'solo',

@@ -53,9 +53,12 @@
 
   <div class="row mb-3">
     <div class="col-6">
-      <a class="btn btn-primary px-3" @click="$mitt.emit('list:create')">
+      <v-btn variant="tonal" color="primary" @click="$mitt.emit('list:create')">
         Create a new list
-      </a>
+      </v-btn>
+      <!-- <a class="btn btn-primary px-3" @click="$mitt.emit('list:create')">
+        Create a new list
+      </a> -->
     </div>
     <!-- <div class="col-auto ms-auto">
       <v-btn variant="tonal" color="secondary" style="min-width: 40px" class="me-2">
@@ -233,7 +236,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: Wed 06 November 2024 - 13:30:10
+ * Modified: Wed 06 November 2024 - 14:01:05
  **/
 
 export default {

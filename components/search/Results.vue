@@ -42,7 +42,7 @@
             :uuid="app"
             :key="app"
             :body="cardBody"
-            :display="['name', 'score']"
+            :display="['name', 'score', 'released']"
             style="padding-top: 0.65rem; padding-bottom: 0.65rem">
             <template #game:prepend>
               <div class="col col-auto text-center px-1" style="min-width: 33px">
@@ -156,7 +156,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 30 October 2024 - 17:31:08
+ * Modified: Wed 06 November 2024 - 16:44:18
  **/
 
 // import { useThrottleFn } from '@vueuse/core'

@@ -1,7 +1,22 @@
 <template>
   <div class="page-body">
     <div class="container-xl">
-      <div class="row row-cards">
+      <div v-if="!ui.ready" class="row row-cards">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="subheader">Loading list</div>
+              </div>
+              <div class="h3 m-0">
+                {{ list.name }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="ui.ready" class="row row-cards">
         <div class="col-lg-2" style="width: 20%">
           <div class="p-2 pt-4">
             <ClientOnly>
@@ -16,6 +31,10 @@
               {{ list.games.length }} games
               <!-- 🔸 By @gsabater -->
             </p>
+
+            <small v-if="list.description" class="d-block text-muted my-3">
+              {{ list.description }}
+            </small>
           </div>
 
           <div v-if="mode == 'viewer'" class="d-flex justify-content-center mb-4">
@@ -42,12 +61,6 @@
               Save list
             </v-btn>
           </div>
-
-          <pre class="my-3">
-            x
-            {{ list }}
-            x
-          </pre>
         </div>
         <div class="col"></div>
         <div class="col-lg-9">
@@ -70,7 +83,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th September 2024
- * Modified: Tue 05 November 2024 - 10:14:06
+ * Modified: Thu 07 November 2024 - 11:59:18
  **/
 
 export default {
@@ -91,6 +104,7 @@ export default {
       mode: 'viewer',
 
       ui: {
+        ready: false,
         loading: false,
       },
     }
@@ -117,9 +131,19 @@ export default {
       navigateTo('/my/list/' + slug, { replace: true })
     },
 
-    loadData() {
+    //+-------------------------------------------------
+    // loadData()
+    // Requests the store to load the list from the slug
+    // -----
+    // Created on Tue Oct 15 2024
+    //+-------------------------------------------------
+    async loadData() {
+      this.ui.ready = false
+
       let slug = this.$route.params.slug[0]
-      this.listStore.use(slug)
+      await this.listStore.use(slug)
+
+      this.ui.ready = true
     },
 
     //+-------------------------------------------------

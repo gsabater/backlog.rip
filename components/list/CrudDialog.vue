@@ -9,15 +9,37 @@
       <v-form ref="form" v-model="ui.isValid">
         <v-card-text style="padding: 0px 24px 16px">
           <div class="row gy-2">
-            <div class="col-12 mb-3">
+            <div class="col-12 mb-1">
               <div class="form-label">Name your list</div>
               <v-text-field
                 ref="name"
                 v-model="item.name"
-                :rules="[(v) => !!v || 'This field is required']" />
+                counter
+                maxlength="50"
+                :rules="[
+                  (v) => v?.length <= 50 || 'Name must be less than 50 characters',
+                  (v) => !!v || 'Name is required',
+                  (v) => v?.length > 0 || 'Name cannot be empty',
+                ]" />
             </div>
 
-            <div class="col-12 mb-2">
+            <div class="col-12 mb-1">
+              <label class="form-label">Short description</label>
+              <v-textarea
+                v-model="item.description"
+                counter
+                maxlength="150"
+                :rules="[
+                  (v) =>
+                    !v ||
+                    v.length <= 150 ||
+                    'Description must be less than 150 characters',
+                  (v) => !v || v.length > 0 || 'Description cannot be empty if provided',
+                ]"
+                rows="2"></v-textarea>
+            </div>
+
+            <div class="col-12 mb-3">
               <label class="form-label">Visibility</label>
               <v-select
                 v-model="item.visibility"
@@ -27,14 +49,6 @@
                 persistent-hint
                 item-title="title"
                 item-value="value"></v-select>
-            </div>
-
-            <div v-if="$app.wip" class="col-12 mb-2">
-              <label class="form-label">Short description</label>
-              <textarea
-                v-model="item.description"
-                class="form-control"
-                rows="3"></textarea>
             </div>
 
             <div
@@ -172,7 +186,7 @@
  *           and is used as a crud proxy for listStore via $mitt events
  * ----------------------------------------------
  * Created Date: 20th September 2024
- * Modified: Wed 06 November 2024 - 13:40:08
+ * Modified: Thu 07 November 2024 - 11:56:34
  **/
 
 export default {
@@ -184,6 +198,7 @@ export default {
       visibility: 'private',
       sortBy: 'user',
       sortDir: 'desc',
+      description: '', // Add this to ensure the field is initialized
     },
 
     db: {
@@ -224,6 +239,7 @@ export default {
       this.item = { ...this.base }
       this.item.action = 'create'
       this.ui.show = true
+      this.ui.showMore = false
 
       this.$nextTick(() => {
         this.$refs.name.focus()
@@ -241,6 +257,7 @@ export default {
       this.item = { ...item }
       this.item.action = 'update'
       if (modal) this.ui.show = true
+      this.ui.showMore = false
 
       this.$nextTick(() => {
         this.$refs.name.focus()

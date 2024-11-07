@@ -14,6 +14,7 @@
               :uuid="element"
               :display="['name', 'score']"
               :key="element.uuid"
+              :action="null"
               style="padding-top: 0.65rem; padding-bottom: 0.65rem">
               <template #game:prepend>
                 <div
@@ -246,6 +247,7 @@
           type="list"
           :uuid="item"
           :display="['name', 'score']"
+          :action="null"
           style="padding-top: 0.65rem; padding-bottom: 0.65rem"
           class="px-3"
           :class="{
@@ -317,7 +319,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: Tue 05 November 2024 - 11:32:49
+ * Modified: Wed 06 November 2024 - 17:13:31
  **/
 
 // import { useAsyncData } from 'nuxt/app' // Import useAsyncData from Nuxt 3

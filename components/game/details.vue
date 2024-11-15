@@ -1,7 +1,608 @@
 <template>
+  <Transition
+    name="game-details"
+    @before-leave="ui.isClosing = true"
+    @after-leave="ui.isClosing = false">
+    <div v-if="ui.dialog" id="game-details" @click="hide">
+      <div class="game-details__backdrop"></div>
+      <div class="game-details__container">
+        <div class="game-details__content" @click.stop>
+          <button type="button" class="game-details__close" @click="hide">
+            <Icon width="2">X</Icon>
+          </button>
+          <div class="game-details__header">
+            <div
+              class="game-details__header-background"
+              :style="`
+                background-image: url(https://steamcdn-a.akamaihd.net/steam/apps/${app.id.steam || ''}/library_hero.jpg);
+              `">
+              <!-- <game-asset
+                ref="background"
+                :app="app"
+                asset="gen"
+                :priority="['steam']"></game-asset> -->
+            </div>
+
+            <div class="game-details__header-data row w-100 h-100 g-0 m-0">
+              <div
+                class="col-5 nope-offset-1 d-flex flex-column align-items-center"
+                style="position: relative">
+                <!-- <div
+                  class="col-auto px-3"
+                  style="display: flex; justify-content: flex-end">
+                  <game-asset
+                    ref="cover"
+                    id="sourceImage"
+                    :app="app"
+                    asset="cover"
+                    class="locandina"
+                    :priority="['steam', 'igdb']"></game-asset>
+                </div> -->
+
+                <game-asset
+                  ref="logo"
+                  :app="app"
+                  :priority="['steam']"
+                  asset="logo"
+                  class="mb-3"
+                  style="max-width: 300px; filter: drop-shadow(2px 3px 9px black)"
+                  :alt="app.name + '- Backlog.rip'"
+                  @loaded="ui.showTitle = false" />
+
+                <!-- <div
+                  class="_3ftcCC9ublF9tDz6nPW_Vb"
+                  style="
+                    background-image: url('https://shared.akamai.steamstatic.com//store_item_assets/steam/apps/275850/library_hero.jpg?t=1721300183');
+                    position: absolute;
+                    width: 100%;
+                    height: 650px;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position-x: center;
+                    -webkit-mask: linear-gradient(180deg, black 58%, rgba(0, 0, 0, 0) 95%),
+                      radial-gradient(
+                        15.77% 44.22% at 50% 104.95%,
+                        rgba(66, 66, 66, 0) 0%,
+                        #333333 100%
+                      ),
+                      radial-gradient(
+                        30.95% 86.8% at 30.69% 13.2%,
+                        rgba(66, 66, 66, 0.33) 0%,
+                        #333333 100%
+                      ),
+                      radial-gradient(
+                        51.31% 143.89% at 49.99% 24.75%,
+                        #000000 0%,
+                        #000000 52.6%,
+                        rgba(0, 0, 0, 0.18) 83.33%,
+                        rgba(0, 0, 0, 0) 95.31%
+                      ),
+                      radial-gradient(
+                        51.31% 143.89% at 49.99% 24.75%,
+                        #000000 0%,
+                        #000000 52.6%,
+                        rgba(0, 0, 0, 0.18) 83.33%,
+                        rgba(0, 0, 0, 0) 95.31%
+                      ),
+                      linear-gradient(180deg, #000000 90%, rgba(0, 0, 0, 0) 100%);
+                    mask: linear-gradient(180deg, black 58%, rgba(0, 0, 0, 0) 95%),
+                      radial-gradient(
+                        15.77% 44.22% at 50% 104.95%,
+                        rgba(66, 66, 66, 0) 0%,
+                        #333333 100%
+                      ),
+                      radial-gradient(
+                        30.95% 86.8% at 30.69% 13.2%,
+                        rgba(66, 66, 66, 0.33) 0%,
+                        #333333 100%
+                      ),
+                      radial-gradient(
+                        51.31% 143.89% at 49.99% 24.75%,
+                        #000000 0%,
+                        #000000 52.6%,
+                        rgba(0, 0, 0, 0.18) 83.33%,
+                        rgba(0, 0, 0, 0) 95.31%
+                      ),
+                      radial-gradient(
+                        51.31% 143.89% at 49.99% 24.75%,
+                        #000000 0%,
+                        #000000 52.6%,
+                        rgba(0, 0, 0, 0.18) 83.33%,
+                        rgba(0, 0, 0, 0) 95.31%
+                      ),
+                      linear-gradient(180deg, #000000 90%, rgba(0, 0, 0, 0) 100%);
+                    -webkit-mask-composite: source-in;
+                    mask-composite: source-in;
+                    transition: background-image 0.1s ease-out;
+                  "></div> -->
+
+                <h2 :class="{ 'sr-only': !ui.showTitle }">
+                  {{ app.name }}
+                </h2>
+
+                <div class="row px-2 my-3">
+                  <div class="text-center mb-3">
+                    <strong class="text-muted">2025</strong>
+                    <div class="d-inline-block px-2 opacity-50">🔸</div>
+                    <strong class="text-muted" v-tippy="'Median score'">
+                      <Icon size="12" width="1" style="transform: translateY(-2px)">
+                        StarFilled
+                      </Icon>
+                      {{ app.score }}
+                    </strong>
+
+                    <div class="d-inline-block px-2 opacity-50">🔸</div>
+                    <strong class="text-muted">Action</strong>
+                  </div>
+                  <div class="text-center">
+                    <v-btn variant="text" size="small" class="me-2" color="blue-grey">
+                      <Icon>Heart</Icon>
+                    </v-btn>
+                    <v-btn variant="tonal" size="small" class="me-2" color="blue-grey">
+                      Assign a state
+                      <Icon size="12" class="ms-2">ChevronDown</Icon>
+                    </v-btn>
+                    <v-btn class="me-2" variant="tonal" size="small" color="blue-grey">
+                      Add to a list
+                      <Icon size="12" class="ms-2">ChevronDown</Icon>
+                    </v-btn>
+
+                    <!-- <v-btn variant="tonal" size="small" class="me-2" color="blue-grey">
+                      <Icon>Settings</Icon>
+                    </v-btn> -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="col-6">
+                <img
+                  :src="`https://steamcdn-a.akamaihd.net/steam/apps/${app.id.steam || ''}/library_hero.jpg`"
+                  alt=""
+                  style="object-fit: cover" />
+                <game-asset
+                  ref="background"
+                  :app="app"
+                  asset="gen"
+                  :priority="['steam']"
+                  ></game-asset>
+              </div> -->
+            </div>
+
+            <!-- <div class="game-details__header-title">
+              <h1>{{ app.name }}</h1>
+            </div> -->
+          </div>
+          <div class="game-details__body">
+            <div class="game-details__body-sticky">
+              <div class="game-details__body-sticky-inner row">
+                <div class="col-auto">
+                  <game-asset
+                    ref="cover"
+                    :app="app"
+                    asset="cover"
+                    class="locandina"
+                    style="max-width: 60px; max-height: 90px"
+                    :priority="['steam', 'igdb']"></game-asset>
+                </div>
+                <div class="col">
+                  <h2>{{ app.name }}</h2>
+                  <br />
+                  <BState :app="app.uuid" :state="app.state"></BState>
+                </div>
+              </div>
+            </div>
+            <div class="game-details__body-content">
+              <div
+                class="game-details__body-content-bg"
+                :style="`
+                background-image: url(https://steamcdn-a.akamaihd.net/steam/apps/${app.id.steam || ''}/library_hero.jpg);
+              `"></div>
+              <div class="row w-100 h-100 m-0">
+                <div class="col-2">21323</div>
+                <div class="col-10 row">
+                  <div class="col-2 text-center"></div>
+                  <div class="col-10">
+                    <h1>{{ app.name }}</h1>
+
+                    <p
+                      class="text mb-2"
+                      :class="{ 'text-muted': !app.description }"
+                      style="
+                        text-align: justify;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 3;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                      "
+                      v-html="app.description || 'No description'"></p>
+
+                    <div class="col-12 my-4">
+                      <div class="game-gallery" id="game-gallery">
+                        <!-- Main large screenshot -->
+                        <a
+                          v-if="screenshots[0]"
+                          :href="screenshots[0].full"
+                          data-pswp-width="1000"
+                          data-pswp-height="1000"
+                          :data-id="0"
+                          @click.prevent="lightbox.loadAndOpen(0)"
+                          class="game-gallery__item game-gallery__item--main">
+                          <img
+                            :src="screenshots[0].thumb"
+                            :alt="`${app.name} screenshot 1`" />
+                        </a>
+
+                        <!-- 3 medium screenshots in a 2x2 grid -->
+                        <template v-for="index in 3" :key="index">
+                          <a
+                            v-if="screenshots[index]"
+                            :href="screenshots[index].full"
+                            data-pswp-width="300"
+                            data-pswp-height="300"
+                            :data-id="index"
+                            @click.prevent="lightbox.loadAndOpen(index)"
+                            class="game-gallery__item">
+                            <img
+                              :src="screenshots[index].thumb"
+                              :alt="`${app.name} screenshot ${index + 1}`" />
+                          </a>
+                        </template>
+
+                        <!-- View all button -->
+                        <a
+                          v-if="screenshots.length > 4"
+                          :href="screenshots[4].full"
+                          data-pswp-width="1000"
+                          data-pswp-height="1000"
+                          class="game-gallery__item game-gallery__item--view-all">
+                          <img
+                            v-if="screenshots[4]"
+                            :src="screenshots[4].thumb"
+                            :alt="`${app.name} screenshot 5`" />
+                          <div class="game-gallery__overlay">
+                            <span>View all {{ screenshots.length }} screenshots</span>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <!--
+                        *+---------------------------------
+                        *| Scores block
+                        *|
+                        *+--------------------------------- -->
+                      <div v-if="app.score" class="my-2">
+                        <h5>Scores</h5>
+                        <div class="d-flex align-items-center">
+                          <div
+                            v-tippy="'Median score'"
+                            class="d-flex align-items-center text-muted small me-4">
+                            <Icon size="16" width="1.8" class="me-1">Universe</Icon>
+
+                            {{ app.score }}
+                          </div>
+
+                          <div
+                            v-if="app.scores.igdb"
+                            v-tippy="'Aggregate reviews from multiple sources'"
+                            class="d-flex align-items-center text-muted small me-3">
+                            <Icon size="16" width="1.8" class="me-1">Stack2</Icon>
+                            {{ app.scores.igdb }}%
+                            <!-- <br />
+              <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
+                          </div>
+
+                          <!--
+                            *+---------------------------------
+                            *| Steam score
+                            *+---------------------------------
+                          -->
+                          <div
+                            v-if="app.scores.steamscoreAlt"
+                            v-tippy="'Reviews on Steam'"
+                            class="d-flex align-items-center text-muted small me-3">
+                            <Icon size="16" width="1.8" class="me-1">DiscountCheck</Icon>
+                            {{ app.scores.steamscore }}% · {{ app.scores.steamscoreAlt }}
+                            <!-- <br />
+              <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
+                          </div>
+
+                          <!--
+                            *+---------------------------------
+                            *| Metacritic
+                            *+---------------------------------
+                          -->
+                          <div
+                            v-if="app.scores.metascore"
+                            class="d-flex align-items-center text-muted small me-3">
+                            <div
+                              v-tippy="'Metacritic'"
+                              class="text-muted"
+                              style="
+                                display: flex;
+                                width: 23px;
+                                height: 23px;
+                                border-radius: 3px;
+                                align-items: center;
+                                justify-content: center;
+                                color: black !important;
+                              "
+                              :style="{
+                                'background-color': format.scoreToHuman(
+                                  app.scores.metascore,
+                                  'meta',
+                                  'color'
+                                ),
+                              }">
+                              {{ app.scores.metascore }}
+                            </div>
+                          </div>
+
+                          <!--
+                            *+---------------------------------
+                            *| Metacritic
+                            *+---------------------------------
+                          -->
+                          <div
+                            v-if="app.scores.userscore"
+                            class="d-flex align-items-center text-muted small me-3">
+                            <div
+                              v-tippy="'Metacritic users'"
+                              class="text-muted"
+                              style="
+                                display: flex;
+                                width: 23px;
+                                height: 23px;
+                                border-radius: 3px;
+                                align-items: center;
+                                justify-content: center;
+                                color: black !important;
+                              "
+                              :style="{
+                                'background-color': format.scoreToHuman(
+                                  app.scores.userscore,
+                                  'meta',
+                                  'color'
+                                ),
+                              }">
+                              {{ app.scores.userscore }}
+                            </div>
+                          </div>
+
+                          <!--
+                            *+---------------------------------
+                            *| Opencritic
+                            *+---------------------------------
+                          -->
+                          <div
+                            v-if="app.scores.oc"
+                            v-tippy="'Opencritic'"
+                            class="d-flex align-items-center small"
+                            style="color: black">
+                            <img
+                              :src="
+                                'https://steam-backlog.com/images/' +
+                                format.scoreToHuman(app.scores.oc, 'oc', 'label') +
+                                '-head.png'
+                              "
+                              style="
+                                max-width: 20px;
+                                max-height: 20px;
+                                margin-right: 3px;
+                              " />
+
+                            {{ app.scores.oc }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <div v-if="app.hltb && app.hltb.main" class="my-2">
+                        <h5>Time to beat</h5>
+                        <small v-tippy="'Main game'" class="text-muted me-5">
+                          <Icon
+                            size="18"
+                            width="2"
+                            style="transform: translateY(-2px)"
+                            class="">
+                            SquareRoundedCheck
+                          </Icon>
+
+                          {{ dates.minToHours(app.hltb.main / 60) }}
+                        </small>
+                        <small v-tippy="'Main game with extras'" class="text-muted me-5">
+                          <Icon
+                            size="18"
+                            width="2"
+                            style="transform: translateY(-2px)"
+                            class="">
+                            DiscountCheck
+                          </Icon>
+                          {{ dates.minToHours(app.hltb.extras / 60) }}
+                        </small>
+                        <small
+                          v-if="app.hltb.comp"
+                          v-tippy="'Completionist'"
+                          class="text-muted me-5">
+                          <Icon
+                            size="18"
+                            width="2"
+                            style="transform: translateY(-2px)"
+                            class="">
+                            Trophy
+                          </Icon>
+                          {{ dates.minToHours(app.hltb.comp / 60) }}
+                        </small>
+
+                        <a
+                          v-tippy="hltbSource ? 'Click to open' : null"
+                          :href="hltbSource || null"
+                          :target="hltbSource ? '_blank' : null"
+                          class="text-muted"
+                          :class="{ disabled: !hltbSource }">
+                          <Icon
+                            size="18"
+                            width="2"
+                            style="transform: translateY(-2px)"
+                            class="">
+                            Click
+                          </Icon>
+                          From HLTB
+                        </a>
+                      </div>
+                    </div>
+
+                    <div class="col-12" v-if="$app.wip">
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="datagrid">
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Registrar</div>
+                              <div class="datagrid-content">Third Party</div>
+                            </div>
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Nameservers</div>
+                              <div class="datagrid-content">Third Party</div>
+                            </div>
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Port number</div>
+                              <div class="datagrid-content">3306</div>
+                            </div>
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Expiration date</div>
+                              <div class="datagrid-content">–</div>
+                            </div>
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Creator</div>
+                              <div class="datagrid-content">
+                                <div class="d-flex align-items-center">
+                                  <span
+                                    class="avatar avatar-xs me-2 rounded"
+                                    style="
+                                      background-image: url('./static/avatars/000m.jpg');
+                                    "></span>
+                                  Paweł Kuna
+                                </div>
+                              </div>
+                            </div>
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Age</div>
+                              <div class="datagrid-content">15 days</div>
+                            </div>
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Edge network</div>
+                              <div class="datagrid-content">
+                                <span class="status status-green">Active</span>
+                              </div>
+                            </div>
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Avatars list</div>
+                              <div class="datagrid-content">
+                                <div class="avatar-list avatar-list-stacked">
+                                  <span
+                                    class="avatar avatar-xs rounded"
+                                    style="
+                                      background-image: url('./static/avatars/000m.jpg');
+                                    "></span>
+                                  <span class="avatar avatar-xs rounded">JL</span>
+                                  <span
+                                    class="avatar avatar-xs rounded"
+                                    style="
+                                      background-image: url('./static/avatars/002m.jpg');
+                                    "></span>
+                                  <span
+                                    class="avatar avatar-xs rounded"
+                                    style="
+                                      background-image: url('./static/avatars/003m.jpg');
+                                    "></span>
+                                  <span
+                                    class="avatar avatar-xs rounded"
+                                    style="
+                                      background-image: url('./static/avatars/000f.jpg');
+                                    "></span>
+                                  <span class="avatar avatar-xs rounded">+3</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Checkbox</div>
+                              <div class="datagrid-content">
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    checked="" />
+                                  <span class="form-check-label">Click me</span>
+                                </label>
+                              </div>
+                            </div>
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Icon</div>
+                              <div class="datagrid-content">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/check -->
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  class="icon text-green">
+                                  <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"></path>
+                                  <path d="M5 12l5 5l10 -10"></path>
+                                </svg>
+                                Checked
+                              </div>
+                            </div>
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Form control</div>
+                              <div class="datagrid-content">
+                                <input
+                                  type="text"
+                                  class="form-control form-control-flush"
+                                  placeholder="Input placeholder" />
+                              </div>
+                            </div>
+                            <div class="datagrid-item">
+                              <div class="datagrid-title">Longer description</div>
+                              <div class="datagrid-content">
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+  <div>
+    <canvas
+      id="canvas"
+      style="position: absolute; top: 0; left: 200px; z-index: 999"></canvas>
+    <div
+      id="colorDisplay"
+      style="width: 100px; height: 100px; position: absolute; top: 0; z-index: 999"></div>
+  </div>
   <VueFinalModal
+    v-if="false"
     v-model="ui.dialog"
-    class="game-details"
+    class="game-details_modal"
     content-class="game-details-content game-card"
     overlay-transition="vfm-fade"
     :lock-scroll="false"
@@ -15,7 +616,7 @@
     }">
     <div class="row w-100 h-100 g-0 m-0" v-if="app">
       <div
-        class="d-none d-md-flex col"
+        class="d-md-flex col"
         style="
           max-width: 440px;
           position: relative;
@@ -73,10 +674,7 @@
             </span>
             <br />
             Data provided by
-            <img
-              class="px-1"
-              src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNCIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDM0IDE2IiBmaWxsPSJub25lIj4KICAgIDxwYXRoCiAgICAgICAgZD0iTTYuNzE2ODVlLTA1IDAuMDAwOTExNDY4QzExLjMzMzEgMC4wMDA2ODM4MjMgMjIuNjY2NSAwLjAwMjUwNDA5IDMzLjk5OTggMEMzNCA1LjMzMzI2IDM0LjAwMDIgMTAuNjY2NyAzMy45OTk1IDE2QzMxLjc5MzcgMTUuNjUyNCAyOS41Nzc5IDE1LjM2MTIgMjcuMzU0IDE1LjE0ODJDMTkuMzI5MSAxNC4zNjg1IDExLjIxMjIgMTQuNDk5MSAzLjIxNzc4IDE1LjUzNjdDMi4xNDI1NyAxNS42NzMxIDEuMDcxMDkgMTUuODM1OSA2LjcxNjg1ZS0wNSAxNS45OTkzQy0wLjAwMDE2NTUxIDEwLjY2NjUgMC4wMDAyOTk4NDcgNS4zMzM3MSA2LjcxNjg1ZS0wNSAwLjAwMDkxMTQ2OFpNMS4wMDA4MiAwLjk4MDIzOEMxLjAwMTI4IDUuNjA1NzUgMS4wMDA4MiAxMC4yMzE1IDEuMDAwODIgMTQuODU3QzExLjU4NDcgMTMuMjcyMSAyMi40MTU0IDEzLjI3MDggMzIuOTk5IDE0Ljg1NzVDMzIuOTk5NyAxMC4yMzE1IDMyLjk5OTIgNS42MDU1MiAzMi45OTkyIDAuOTc5NTU1QzIyLjMzMyAwLjk4MTE0OSAxMS42NjY4IDAuOTgwMDEgMS4wMDA4MiAwLjk4MDIzOFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNOC4zMTkyNiA0LjYxOEM5LjAxMjg3IDMuOTU3MzcgOS45ODU5NCAzLjYwNTQ0IDEwLjk0OTcgMy42MjAyM0MxMS42MDc3IDMuNjE3OTYgMTIuMjc5NCAzLjcxODggMTIuODcxMiA0LjAxMjY5QzEzLjE3NjIgNC4xNjE1NyAxMy40NTQ5IDQuMzU2ODkgMTMuNzE1MSA0LjU3MTU2QzEzLjM4NzcgNC45NTgzMyAxMy4wNTc1IDUuMzQyNTkgMTIuNzMzOSA1LjczMjA5QzEyLjUzOTEgNS41ODkzNiAxMi4zNDk3IDUuNDM3MDYgMTIuMTM0MyA1LjMyNDE1QzExLjcwMTcgNS4wODUzNSAxMS4xOTIxIDUuMDAyNzIgMTAuNzAwNSA1LjAzNzc4QzEwLjA5ODggNS4wODgwOCA5LjU0ODI3IDUuNDQyOTggOS4yMjIyOCA1LjkzNDQ3QzguODAyMDcgNi41NTE4NCA4LjczNjY4IDcuMzY0MyA4Ljk5MTIzIDguMDU1NjZDOS4xNDUyNyA4LjQ3NTY2IDkuNDM5MzcgOC44NDgzMiA5LjgyNjc4IDkuMDg2MjFDMTAuMjEyMSA5LjMyODQyIDEwLjY4IDkuNDI1NjIgMTEuMTM0MiA5LjM5ODk5QzExLjYgOS4zODE0NiAxMi4wNzQyIDkuMjU3MTcgMTIuNDUzNSA4Ljk4NDY4QzEyLjQ0OTggOC42NTY4NyAxMi40NTM1IDguMzI4ODMgMTIuNDUxNiA4LjAwMTAyQzExLjkyOTcgOC4wMDIzOSAxMS40MDc2IDguMDAwNTcgMTAuODg1NyA4LjAwMTk0QzEwLjg4NDUgNy41NjIxMyAxMC44ODg1IDcuMTIyMzIgMTAuODgzOCA2LjY4MjczQzExLjkxMDQgNi42NzYzNiAxMi45MzcyIDYuNjg1MDEgMTMuOTYzOCA2LjY3ODQxQzEzLjk3MDEgNy42ODI1NSAxMy45NjMxIDguNjg2OTIgMTMuOTY3MyA5LjY5MTA2QzEzLjI2MDcgMTAuMjg3OSAxMi4zNjg4IDEwLjY3OTUgMTEuNDM3NCAxMC43Njg1QzEwLjUyODEgMTAuODY2MiA5LjU2OTQ0IDEwLjcwMjUgOC43OTQzOSAxMC4yMTE5QzguMTczMzcgOS44MjQ2OCA3LjY5MzU5IDkuMjMwNzYgNy40NDI1MyA4LjU1NDJDNy4xOTQ3MiA3Ljg4ODU3IDcuMTQ1ODYgNy4xNTUxIDcuMjg1IDYuNDYxMjRDNy40Mjk5NiA1Ljc2MzczIDcuNzkyNDcgNS4xMDk3MSA4LjMxOTI2IDQuNjE4WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+CiAgICA8cGF0aAogICAgICAgIGQ9Ik0zLjc4NzYxIDMuNzM5NTJDNC4zMDgxMSAzLjc0MDY2IDQuODI4NjEgMy43Mzg2MSA1LjM0OTEyIDMuNzQwNjZDNS4zNDc5NSA2LjA1MDc5IDUuMzQ5MTIgOC4zNjExNiA1LjM0ODY1IDEwLjY3MTVDNC44MjgzOCAxMC42NzEzIDQuMzA4MTEgMTAuNjcwNiAzLjc4Nzg0IDEwLjY3MThDMy43ODc2MSA4LjM2MTE2IDMuNzg4MDggNi4wNTAzNCAzLjc4NzYxIDMuNzM5NTJaIgogICAgICAgIGZpbGw9IndoaXRlIgogICAgLz4KICAgIDxwYXRoCiAgICAgICAgZD0iTTE1Ljg2NDMgMy43Mzk3NUMxNi44MTY1IDMuNzM5OTcgMTcuNzY4NiAzLjczOTc1IDE4LjcyMDcgMy43Mzk5N0MxOS41ODYzIDMuNzQ5MzEgMjAuNDYyOCA0LjAxMjAxIDIxLjE0MDEgNC41NDkwMkMyMS43MzIzIDUuMDEyMjggMjIuMTUyMiA1LjY3ODYgMjIuMzEyMyA2LjQwMzY0QzIyLjUwNjEgNy4yNzkxNiAyMi4zNzk4IDguMjMzOTEgMjEuODk5MyA5LjAwNDAzQzIxLjUxOCA5LjYyNDgxIDIwLjkxOSAxMC4xMDgxIDIwLjIzNDUgMTAuMzc5MkMxOS43NTQ5IDEwLjU2OTggMTkuMjM3NyAxMC42Njk5IDE4LjcyIDEwLjY3MTNDMTcuNzY4MyAxMC42NzEzIDE2LjgxNjUgMTAuNjcwOCAxNS44NjQ2IDEwLjY3MTVDMTUuODY0NiA4LjM2MDkzIDE1Ljg2NSA2LjA1MDM0IDE1Ljg2NDMgMy43Mzk3NVpNMTcuNDMwMyA1LjExNjU0QzE3LjQyNzkgNi41MDkyNyAxNy40MzA1IDcuOTAyIDE3LjQyODkgOS4yOTQ5NkMxNy43Mjc2IDkuMjk0NSAxOC4wMjY2IDkuMjk0NzMgMTguMzI1NCA5LjI5NDczQzE4LjU2NiA5LjI5MjkxIDE4LjgwODYgOS4zMDU4OCAxOS4wNDY5IDkuMjYyNjNDMTkuNTEzOSA5LjE5MTYxIDE5Ljk2MzkgOC45NzE5MyAyMC4yNzI3IDguNjE3NDlDMjAuNTQyNiA4LjMxMzgxIDIwLjY5OTQgNy45MjQzMSAyMC43NDY2IDcuNTI3MDdDMjAuNzkwNiA3LjEyMzY4IDIwLjc1NTcgNi43MDU3MyAyMC41OTU4IDYuMzI4NzVDMjAuNDMxMyA1LjkyODA5IDIwLjEyMzcgNS41ODUyNiAxOS43MzUyIDUuMzc5N0MxOS4zODQzIDUuMTg4NDggMTguOTc5IDUuMTE2MzEgMTguNTgwNiA1LjExNjA5QzE4LjE5NzIgNS4xMTcgMTcuODEzNyA1LjExNjA4IDE3LjQzMDMgNS4xMTY1NFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNMjQuMTgzOCAzLjc0NDA3QzI1LjE0NTkgMy43MzQwNiAyNi4xMDg5IDMuNzQyNzEgMjcuMDcxMyAzLjczOTc1QzI3LjMzNTYgMy43NDMzOSAyNy42MDA2IDMuNzI5MDUgMjcuODY0IDMuNzU1NjhDMjguMzMxOSAzLjc5ODI1IDI4LjgwNjEgMy45MzE4OCAyOS4xODA1IDQuMjE5MzlDMjkuNTA2IDQuNDY1MDIgMjkuNzM0NSA0LjgzMTc2IDI5Ljc5NzYgNS4yMzAzNkMyOS44NDMyIDUuNjA3MzQgMjkuODIyIDYuMDA4OTEgMjkuNjMyNCA2LjM0ODc4QzI5LjQ3MTEgNi42NTM2IDI5LjE5MzMgNi44Nzk4OCAyOC44OTQ2IDcuMDQ5N0MyOS4yOTI3IDcuMTk2MyAyOS42ODY0IDcuNDEyNTYgMjkuOTM0MiA3Ljc2MTMxQzMwLjE2NTIgOC4wODM0MyAzMC4yMzI3IDguNDkwNDYgMzAuMjEwMSA4Ljg3NjU1QzMwLjIwMDggOS4yNjkwMSAzMC4wNTQgOS42NjI2IDI5Ljc3OTIgOS45NTE5NEMyOS41MDE2IDEwLjI0ODYgMjkuMTIgMTAuNDMwOSAyOC43Mjg0IDEwLjUzNjhDMjguNDAxMSAxMC42MjMgMjguMDYyNSAxMC42Njc0IDI3LjcyMzcgMTAuNjcwNkMyNi41NDQ1IDEwLjY3MTUgMjUuMzY1MyAxMC42NzE4IDI0LjE4NjEgMTAuNjcwNkMyNC4xODQyIDguMzYxNjEgMjQuMTg4NiA2LjA1Mjg0IDI0LjE4MzggMy43NDQwN1pNMjUuNzA3OCA1LjA4MDM1QzI1LjcwOTQgNS41Njc1IDI1LjcwNjQgNi4wNTQ4OSAyNS43MDkyIDYuNTQyMjhDMjYuMjI1NyA2LjUzOTA5IDI2Ljc0MjMgNi41NDI5NiAyNy4yNTg4IDYuNTQwMjNDMjcuNDkzMSA2LjUyNzk0IDI3LjczNTggNi40OTUzOCAyNy45NDI5IDYuMzc5NzRDMjguMTA2NSA2LjI4OTE0IDI4LjIzMDcgNi4xMjY4MyAyOC4yNTUyIDUuOTQyNDRDMjguMjg5NiA1LjczNDYgMjguMjUzMSA1LjUwMTI2IDI4LjA5NzkgNS4zNDU3OEMyNy45MTEzIDUuMTU3NzQgMjcuNjMzIDUuMDk3NjUgMjcuMzc0OSA1LjA4MjYyQzI2LjgxOTMgNS4wNzgwNyAyNi4yNjM0IDUuMDgyNjIgMjUuNzA3OCA1LjA4MDM1Wk0yNS43MDc2IDcuODE1MjdDMjUuNzA4MyA4LjMyMTMyIDI1LjcwOSA4LjgyNzgzIDI1LjcwNzEgOS4zMzQxMUMyNi4yMDExIDkuMzM4NjcgMjYuNjk1MyA5LjMzNDU3IDI3LjE4OTUgOS4zMzU5M0MyNy40MzYxIDkuMzMyOTcgMjcuNjg1MyA5LjM0OTM2IDI3LjkyOTYgOS4zMDYzNEMyOC4xNDM3IDkuMjcyNjUgMjguMzY0NSA5LjE5Mzg4IDI4LjUwOSA5LjAyODYxQzI4LjY1NDcgOC44NjMxMSAyOC42ODUyIDguNjI3NzMgMjguNjQ4NiA4LjQxODk4QzI4LjYxOTUgOC4yNDE4NyAyOC41MDU4IDguMDgyNzUgMjguMzQ4NSA3Ljk5MTQ2QzI4LjEzNTEgNy44NjQ0NCAyNy44Nzk2IDcuODI0MzcgMjcuNjMzNCA3LjgxNjE4QzI2Ljk5MTUgNy44MTQzNiAyNi4zNDk1IDcuODE2MTggMjUuNzA3NiA3LjgxNTI3WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+Cjwvc3ZnPgo="
-              alt="" />
+            <img class="px-1" alt="" />
             and
             <span class="cursor-pointer">other sources (view)</span>
           </small>
@@ -622,14 +1220,12 @@
 </template>
 
 <script>
-import format from '../../utils/format'
-
 /**
  * @file:    \components\b\details.vue
- * @desc:    ...
+ * @desc:    ... https://davidwalsh.name/detect-sticky
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Sun 18 August 2024 - 18:28:44
+ * Modified: Fri 15 November 2024 - 22:10:58
  **/
 
 export default {
@@ -638,6 +1234,7 @@ export default {
     return {
       $list: null,
       timeline: [],
+      lightbox: null,
 
       status: {
         note: '',
@@ -650,6 +1247,8 @@ export default {
         layout: 'lite', // full
         dialog: false,
         loading: false,
+        isClosing: false,
+        showTitle: true,
       },
     }
   },
@@ -691,12 +1290,32 @@ export default {
 
       return 'https://howlongtobeat.com/game/' + this.app.source.providers.hltb
     },
+
+    screenshots() {
+      if (!this.app?.screenshots) return []
+
+      return this.app.screenshots.data.map((hash, i) => ({
+        id: i,
+        width: 1920,
+        height: 1080,
+
+        src: this.app.screenshots.base + hash + this.app.screenshots.full,
+        full: this.app.screenshots.base + hash + this.app.screenshots.full,
+        thumb: this.app.screenshots.base + hash + this.app.screenshots.thumb,
+      }))
+    },
   },
 
   methods: {
     async show() {
       this.ui.dialog = true
-      this.ui.layout == 'full'
+      this.ui.layout = 'full'
+      this.ui.showTitle = true
+
+      this.$nextTick(() => {
+        this.initLightbox()
+        // this.getCoverColor()
+      })
     },
 
     //+-------------------------------------------------
@@ -757,6 +1376,130 @@ export default {
     },
 
     //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Wed Nov 13 2024
+    //+-------------------------------------------------
+    getCoverColor() {
+      const img = document.getElementById('sourceImage')
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+      img.onload = function () {
+        canvas.width = img.naturalWidth
+        canvas.height = img.naturalHeight
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+        try {
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+          const data = imageData.data
+
+          let r = 0,
+            g = 0,
+            b = 0
+          const pixelCount = data.length / 4
+
+          for (let i = 0; i < data.length; i += 4) {
+            r += data[i]
+            g += data[i + 1]
+            b += data[i + 2]
+          }
+
+          r = Math.floor(r / pixelCount)
+          g = Math.floor(g / pixelCount)
+          b = Math.floor(b / pixelCount)
+
+          let color = `rgb(${r}, ${g}, ${b})`
+
+          // Ensure the color is dark enough
+          const luminance = 0.299 * r + 0.587 * g + 0.114 * b
+          if (luminance > 128) {
+            r = Math.floor(r * 0.5)
+            g = Math.floor(g * 0.5)
+            b = Math.floor(b * 0.5)
+            color = `rgb(${r}, ${g}, ${b})`
+          }
+
+          document.getElementById('colorDisplay').style.backgroundColor = color
+        } catch (e) {
+          console.warn('Could not get the color', e)
+        }
+      }
+    },
+
+    initLightbox() {
+      if (this.lightbox) {
+        this.lightbox.destroy()
+        this.lightbox = null
+      }
+
+      this.lightbox = new this.$PhotoSwipeLightbox({
+        // gallery: '#game-gallery',
+        // children: 'a',
+        dataSource: this.screenshots,
+        pswpModule: this.$PhotoSwipe,
+
+        showHideAnimationType: 'zoom',
+        bgOpacity: 0.6,
+        maxWidth: '90vw',
+        maxHeight: '90vh',
+
+        // Add click event handlers
+        // showHideOpacity: true,
+        tapAction: 'next',
+        imageClickAction: 'next',
+        closeOnVerticalDrag: true,
+        clickToCloseNonZoomable: true,
+
+        // Optional but recommended for better UX
+        // preloadFirstSlide: true,
+        // arrowPrev: false,
+        // arrowNext: false,
+        zoom: false,
+      })
+
+      const galleryEl = document.querySelector('#game-gallery')
+
+      this.lightbox.addFilter('thumbEl', (thumbEl, data, index) => {
+        const el = galleryEl.querySelector('[data-id="' + data.id + '"] img')
+        if (el) {
+          return el
+        }
+        return thumbEl
+      })
+
+      // This is the placeholder image, used while the image is loading
+      // displayed when the user clicks and the image zooms in
+      this.lightbox.addFilter('placeholderSrc', (placeholderSrc, slide) => {
+        const el = galleryEl.querySelector('[data-id="' + slide.data.id + '"] img')
+        if (el) {
+          return 'el.src'
+        }
+        return placeholderSrc
+      })
+
+      // this.lightbox.on('uiRegister', function () {
+      //   console.warn()
+      //   this.ui.registerElement({
+      //     name: 'custom-caption',
+      //     order: 9,
+      //     isButton: false,
+      //     appendTo: 'root',
+      //     html: 'Caption text',
+      //     onInit: (el, pswp) => {
+      //       pswp.on('change', () => {
+      //         const currSlideElement = pswp.currSlide.data.element
+      //         const caption = currSlideElement.getAttribute('data-caption')
+      //         el.innerHTML = caption || ''
+      //       })
+      //     },
+      //   })
+      // })
+
+      this.lightbox.init()
+    },
+
+    //+-------------------------------------------------
     // setNote()
     // update or create a note for the current app
     // TODO: if note is empty, delete note
@@ -771,6 +1514,10 @@ export default {
         description: 'Monday, January 3rd at 6:00pm',
       })
     },
+
+    async hide() {
+      this.ui.dialog = false // Just toggle the dialog, transition handles animation
+    },
   },
 
   mounted() {
@@ -780,3 +1527,12 @@ export default {
   },
 }
 </script>
+
+<style>
+img.pswp__img {
+  /* max-width: 95vw; */
+  /* max-height: 95vh; */
+  /* margin: auto; */
+  padding: 5vw;
+}
+</style>

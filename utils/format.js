@@ -3,7 +3,7 @@
  * @desc:    All format functions not related to dates
  * -------------------------------------------
  * Created Date: 12th November 2023
- * Modified: Tue 29 October 2024 - 10:56:21
+ * Modified: Wed 20 November 2024 - 21:46:42
  */
 
 export default {
@@ -24,6 +24,31 @@ export default {
     if (isNaN(n)) return num
 
     return num.toFixed(decimals)
+  },
+
+  compactNum(num) {
+    // Handle invalid inputs
+    if (num === null || num === undefined) return '0'
+    if (isNaN(num)) return '0'
+
+    const value = Number(num)
+    const absValue = Math.abs(value)
+
+    // Format millions
+    if (absValue >= 1000000) {
+      const formatted = (value / 1000000).toFixed(1)
+      const cleaned = formatted.endsWith('.0') ? formatted.slice(0, -2) : formatted
+      return `${cleaned}M`
+    }
+
+    // Format thousands
+    if (absValue >= 1000) {
+      const formatted = (value / 1000).toFixed(1)
+      const cleaned = formatted.endsWith('.0') ? formatted.slice(0, -2) : formatted
+      return `${cleaned}K`
+    }
+
+    return value.toString()
   },
 
   //+-------------------------------------------------
@@ -65,22 +90,22 @@ export default {
   scoreToHuman(score, source, response) {
     let ratings = {
       meta: [
-        { breakpoint: 75, color: '#54a72b80', label: 'Universal acclaim' },
-        { breakpoint: 50, color: '#b5902380', label: 'Generally favorable' },
-        { breakpoint: 20, color: '#ff000080', label: 'Mixed or average' },
-        { breakpoint: 0, color: '#ff000080', label: 'Generally unfavorable' },
+        { breakpoint: 75, color: '#54a72b', label: 'Universal acclaim' },
+        { breakpoint: 50, color: '#b59023', label: 'Generally favorable' },
+        { breakpoint: 20, color: '#ff0000', label: 'Mixed or average' },
+        { breakpoint: 0, color: '#ff0000', label: 'Generally unfavorable' },
       ],
       steam: [
-        { breakpoint: 80, color: '#66C0F480', label: 'Universal acclaim' },
-        { breakpoint: 70, color: '#66C0F480', label: 'Generally favorable' },
-        { breakpoint: 40, color: '#B9A07480', label: 'Mixed or average' },
-        { breakpoint: 0, color: '#A34C2580', label: 'Generally unfavorable' },
+        { breakpoint: 80, color: '#66C0F4', label: 'Universal acclaim' },
+        { breakpoint: 70, color: '#66C0F4', label: 'Generally favorable' },
+        { breakpoint: 40, color: '#B9A074', label: 'Mixed or average' },
+        { breakpoint: 0, color: '#A34C25', label: 'Generally unfavorable' },
       ],
       oc: [
-        { breakpoint: 84, color: '#fc430a80', label: 'mighty' },
-        { breakpoint: 75, color: '#9e00b480', label: 'strong' },
-        { breakpoint: 67, color: '#4aa1ce80', label: 'fair' },
-        { breakpoint: 0, color: '#80b06a80', label: 'weak' },
+        { breakpoint: 84, color: '#fc430a', label: 'mighty' },
+        { breakpoint: 75, color: '#9e00b4', label: 'strong' },
+        { breakpoint: 67, color: '#4aa1ce', label: 'fair' },
+        { breakpoint: 0, color: '#80b06a', label: 'weak' },
       ],
     }
 

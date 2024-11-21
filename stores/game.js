@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Thu 14 November 2024 - 17:50:05
+ * Modified: Mon 18 November 2024 - 15:12:08
  */
 
 let $nuxt = null
@@ -51,6 +51,28 @@ export const useGameStore = defineStore('game', {
 
       this.app = game
       if (uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') {
+        game.id.epic = '1245620'
+        game.id.gog = 'dqwdqwd'
+        game.has_demo = true
+
+        game.scores = {
+          metascore: '92',
+          igdb: 81,
+          igdbCount: 748,
+          steamscore: '85',
+          steamCount: '1106232',
+          steamscoreAlt: 'Very Positive',
+          userscore: 86,
+        }
+
+        game.languages = 'en,fr,de,pl,pt_BR,ru,es_ES,ja,zh_CN'
+
+        game.hltb = {
+          main: 109380,
+          extras: 215280,
+          comp: 527040,
+        }
+
         game.screenshots = {
           base: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1245620/ss_',
           thumb: '.600x338.jpg',

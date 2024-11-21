@@ -1,44 +1,46 @@
 <template>
-  <div
-    nopwv-tippy="manager ? 'Click to change' : ''"
-    class="status small"
-    :class="{ 'cursor-pointer': manager }"
-    style="border-radius: 4px"
-    :style="{ '--tblr-status-color': st.color }"
-    @click.stop="showManager($event)">
-    <span
-      v-if="from"
-      :style="{ color: oldst.color + ' !important' }"
-      style="font-size: 0.775rem">
-      {{ oldst.name || 'Not in your backlog' }}
-      <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon>
-    </span>
+  <slot name="container" :state="st">
+    <div
+      nopwv-tippy="manager ? 'Click to change' : ''"
+      class="status small"
+      :class="{ 'cursor-pointer': manager }"
+      style="border-radius: 4px"
+      :style="{ '--tblr-status-color': st.color }"
+      @click.stop="showManager($event)">
+      <span
+        v-if="from"
+        :style="{ color: oldst.color + ' !important' }"
+        style="font-size: 0.775rem">
+        {{ oldst.name || 'Not in your backlog' }}
+        <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon>
+      </span>
 
-    <Icon
-      v-if="pinned"
-      size="17"
-      width="1.5"
-      style="
-        fill: #1f4112d9 !important;
-        filter: drop-shadow(rgba(0, 0, 0, 0.41) 1px 1px 6px);
-        stroke: #0b651c;
-      ">
-      BookmarkFilled
-    </Icon>
-    <Icon
-      v-if="fav"
-      size="17"
-      width="1.5"
-      style="color: red; fill: #ff000094; filter: drop-shadow(1px 1px 6px #00000069)">
-      Heart
-    </Icon>
+      <Icon
+        v-if="pinned"
+        size="17"
+        width="1.5"
+        style="
+          fill: #1f4112d9 !important;
+          filter: drop-shadow(rgba(0, 0, 0, 0.41) 1px 1px 6px);
+          stroke: #0b651c;
+        ">
+        BookmarkFilled
+      </Icon>
+      <Icon
+        v-if="fav"
+        size="17"
+        width="1.5"
+        style="color: red; fill: #ff000094; filter: drop-shadow(1px 1px 6px #00000069)">
+        Heart
+      </Icon>
 
-    <span class="status-dot" :class="{ 'status-dot-animated': pulse && state }"></span>
-    <template v-if="label">
-      {{ st.name || 'Assign a state' }}
-      <slot />
-    </template>
-  </div>
+      <span class="status-dot" :class="{ 'status-dot-animated': pulse && state }"></span>
+      <template v-if="label">
+        {{ st.name || 'Assign a state' }}
+        <slot />
+      </template>
+    </div>
+  </slot>
 </template>
 
 <script>
@@ -50,7 +52,7 @@
  * <BState :state="state"></BState>
  * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Wed 11 September 2024 - 13:14:58
+ * Modified: Wed 20 November 2024 - 12:58:09
  **/
 
 export default {

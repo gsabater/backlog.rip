@@ -962,11 +962,57 @@
     </component>
   </client-only>
 
+  <!--
+    *+---------------------------------
+    *| SVG Filter
+    *| Grainy
+    *+--------------------------------- -->
   <svg width="0" height="0" style="display: none">
     <filter id="grainy" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency=".837"></feTurbulence>
       <feColorMatrix type="saturate" values="0"></feColorMatrix>
       <feBlend mode="multiply" in="SourceGraphic"></feBlend>
+    </filter>
+  </svg>
+
+  <!--
+    *+---------------------------------
+    *| SVG Filter
+    *| Ambilight
+    *+--------------------------------- -->
+  <svg width="0" height="0">
+    <filter
+      id="ambilight"
+      width="300%"
+      height="300%"
+      x="-0.75"
+      y="-0.75"
+      color-interpolation-filters="sRGB">
+      <feOffset in="SourceGraphic" result="source-copy"></feOffset>
+      <feColorMatrix
+        in="source-copy"
+        type="saturate"
+        values="1"
+        result="saturated-copy"></feColorMatrix>
+      <feColorMatrix
+        in="saturated-copy"
+        type="matrix"
+        values="1 0 0 0 0
+                     0 1 0 0 0
+                     0 0 1 0 0
+                     33 33 33 101 -132"
+        result="bright-colors"></feColorMatrix>
+      <feMorphology
+        in="bright-colors"
+        operator="dilate"
+        radius="2"
+        result="spread"></feMorphology>
+      <feGaussianBlur
+        in="spread"
+        stdDeviation="30"
+        result="ambilight-light"></feGaussianBlur>
+      <feOffset in="SourceGraphic" result="source"></feOffset>
+      <feComposite in="source" in2="ambilight-light" operator="over"></feComposite>
     </filter>
   </svg>
 
@@ -1057,7 +1103,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed 06 November 2024 - 12:43:23
+ * Modified: Thu 21 November 2024 - 16:27:30
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

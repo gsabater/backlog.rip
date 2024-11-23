@@ -90,7 +90,15 @@
 <script setup>
 import { markRaw, shallowRef, onMounted, computed } from 'vue'
 
-const { data, pending, error } = await useFetch('https://api.backlog.rip/sitemap.json')
+const { data } = await useAsyncData(
+  'sitemap',
+  () => $fetch('https://api.backlog.rip/sitemap.json'),
+  {
+    server: true,
+    lazy: false,
+    immediate: true,
+  }
+)
 
 const staticLinks = [
   { path: '/', name: 'Home' },

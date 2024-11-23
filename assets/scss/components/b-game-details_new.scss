@@ -3,14 +3,15 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 12th November 2024
- * Modified: Thu 21 November 2024 - 16:25:10
+ * Modified: Fri 22 November 2024 - 13:25:20
  **/
 
 //+-------------------------------------------------
 // Game details modal styles
 //+-------------------------------------------------
 
-#game-details {
+#game-details,
+#game-folio {
   display: flex;
   flex-direction: column;
   -webkit-box-pack: center;
@@ -40,7 +41,7 @@
 
     .game-details__content {
       position: relative;
-      width: 85vw;
+      width: 75vw;
       max-width: 1440px;
       margin-inline: auto;
       min-height: calc(100vh - 3vw);
@@ -407,6 +408,12 @@
       z-index: 1;
     }
   }
+}
+
+#game-folio {
+  position: relative;
+  border: 3px solid #e67671;
+  border-radius: 4px;
 }
 
 // Comment out or remove previous transition classes

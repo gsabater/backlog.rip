@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu 07 November 2024 - 13:51:23
+ * Modified: Sat 23 November 2024 - 15:18:53
  */
 
 let $nuxt = null
@@ -680,8 +680,10 @@ export const useDataStore = defineStore('data', {
     // Prepares an item before adding it to data
     // -----
     // Created on Thu Mar 07 2024
+    // Updated on Sat Nov 23 2024 - Added $gamestore for when is called in ssr
     //+-------------------------------------------------
     prepareToData(item) {
+      $game ??= useGameStore()
       item = $game.normalize(item)
 
       item._ = {

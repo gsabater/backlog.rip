@@ -75,7 +75,7 @@
       ]">
       <slot name="game:prepend"></slot>
 
-      <div class="card-game__cover" @click.stop="handleAction">
+      <a :href="gameURL" class="card-game__cover" @click.prevent.stop="handleAction">
         <div
           v-if="app.error"
           style="
@@ -102,7 +102,7 @@
             fallback="banner"
             :priority="['steam', 'igdb']" />
         </template>
-      </div>
+      </a>
 
       <slot name="game:details">
         <div v-if="display.length" class="card-game__details">
@@ -177,7 +177,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 06 November 2024 - 17:21:44
+ * Modified: Sat 23 November 2024 - 15:16:46
  **/
 
 export default {
@@ -257,6 +257,10 @@ export default {
 
   computed: {
     ...mapStores(useDataStore),
+
+    gameURL() {
+      return this.app.slug ? `/game/${this.app.slug}` : 'javascript:void(0)'
+    },
   },
 
   watch: {

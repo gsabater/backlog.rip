@@ -33,7 +33,6 @@
     </div>
   </div>
 
-  <game-details></game-details>
   <game-manager></game-manager>
   <ModalsContainer />
 
@@ -94,7 +93,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Wed Feb 14 2024
+ * Modified: Fri 22 November 2024 - 12:18:37
  **/
 
 export default {

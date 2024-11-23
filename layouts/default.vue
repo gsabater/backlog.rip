@@ -370,6 +370,12 @@
                   <Icon size="18" class="me-2">Broadcast</Icon>
                   Changelog
                 </NuxtLink>
+
+                <NuxtLink to="/sitemap" class="dropdown-item">
+                  <Icon size="18" class="me-2">Steam</Icon>
+                  Sitemap
+                </NuxtLink>
+
                 <span class="dropdown-header" style="text-transform: none">
                   <span class="text-muted my-4">
                     Version
@@ -925,7 +931,7 @@
     <!-- <v-layout>
     </v-layout> -->
     <game-add />
-    <game-details />
+    <game-dialog />
     <game-manager />
 
     <cloud-conflict />
@@ -1103,7 +1109,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu 21 November 2024 - 16:27:30
+ * Modified: Sat 23 November 2024 - 15:08:49
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

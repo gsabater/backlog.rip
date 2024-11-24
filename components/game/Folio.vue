@@ -202,12 +202,7 @@
               <textarea name="" id="" cols="30" rows="10">
                 You can add a note here. Use markdown to format your text.
               </textarea>
-              <div class="text-center">
-                Data provided by
-                <img class="px-1" alt="" />
-                and
-                <span class="cursor-pointer">other sources (view)</span>
-              </div>
+
               <div class="text-center">
                 There is something wrong with this game?
                 <a href="#" class="cursor-pointer">Report it</a>
@@ -230,8 +225,12 @@
                     {{ app.score }}
                   </strong>
 
-                  <div class="d-inline-block px-2 opacity-50">🔸</div>
-                  <strong class="text-muted">Action</strong>
+                  <client-only>
+                    <template v-if="genre">
+                      <div class="d-inline-block px-2 opacity-50">🔸</div>
+                      <strong class="text-muted">{{ genre.name }}</strong>
+                    </template>
+                  </client-only>
                 </div>
                 <div class="">
                   <b-state ref="bstate" :app="app.uuid" :state="app.state">
@@ -458,9 +457,9 @@
             </div>
 
             <!--
-                  *+---------------------------------
-                  *| Scores block
-                  *+--------------------------------- -->
+              *+---------------------------------
+              *| Scores block
+              *+--------------------------------- -->
             <div v-if="app.score" class="col-12 my-3">
               <h5>Scores</h5>
 
@@ -610,11 +609,6 @@
                   </div>
                 </div>
               </div>
-
-              <pre>
-                    {{ app.scores }}
-                  </pre
-              >
 
               <!-- Single line layout -->
               <div class="d-flex d-none align-items-center">
@@ -790,6 +784,110 @@
               </div>
             </div>
 
+            <client-only>
+              <div class="col-12 my-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="datagrid">
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Genres</div>
+                        <div class="datagrid-content" v-html="genres"></div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Nameservers</div>
+                        <div class="datagrid-content">Third Party</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Port number</div>
+                        <div class="datagrid-content">3306</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Expiration date</div>
+                        <div class="datagrid-content">–</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Creator</div>
+                        <div class="datagrid-content">
+                          <div class="d-flex align-items-center">
+                            <span class="avatar avatar-xs me-2 rounded"></span>
+                            Kuna
+                          </div>
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Age</div>
+                        <div class="datagrid-content">15 days</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Edge network</div>
+                        <div class="datagrid-content">
+                          <span class="status status-green">Active</span>
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Avatars list</div>
+                        <div class="datagrid-content">
+                          <div class="avatar-list avatar-list-stacked">
+                            <span class="avatar avatar-xs rounded"></span>
+                            <span class="avatar avatar-xs rounded">JL</span>
+                            <span class="avatar avatar-xs rounded"></span>
+                            <span class="avatar avatar-xs rounded"></span>
+                            <span class="avatar avatar-xs rounded"></span>
+                            <span class="avatar avatar-xs rounded">+3</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Checkbox</div>
+                        <div class="datagrid-content">
+                          <label class="form-check">
+                            <input class="form-check-input" type="checkbox" checked="" />
+                            <span class="form-check-label">Click me</span>
+                          </label>
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Icon</div>
+                        <div class="datagrid-content">
+                          <!-- Download SVG icon from http://tabler-icons.io/i/check -->
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon text-green">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M5 12l5 5l10 -10"></path>
+                          </svg>
+                          Checked
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Form control</div>
+                        <div class="datagrid-content">
+                          <input
+                            type="text"
+                            class="form-control form-control-flush"
+                            placeholder="Input placeholder" />
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Longer description</div>
+                        <div class="datagrid-content">
+                          Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </client-only>
+
             <div class="col-12 my-3 text-muted" style="zoom: 0.9">
               <h5>Data sources</h5>
 
@@ -885,9 +983,6 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
                 </svg>
               </a>
               <template v-if="app.hltb">
-                <pre>
-                  {{ app.hltb }}
-                </pre>
                 🔸
                 <a href="https://howlongtobeat.com" target="_blank">
                   <img
@@ -912,108 +1007,6 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
                   </svg>
                 </a>
               </template>
-            </div>
-
-            <div class="col-12 my-3" v-if="$app.wip">
-              <div class="card">
-                <div class="card-body">
-                  <div class="datagrid">
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Registrar</div>
-                      <div class="datagrid-content">Third Party</div>
-                    </div>
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Nameservers</div>
-                      <div class="datagrid-content">Third Party</div>
-                    </div>
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Port number</div>
-                      <div class="datagrid-content">3306</div>
-                    </div>
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Expiration date</div>
-                      <div class="datagrid-content">–</div>
-                    </div>
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Creator</div>
-                      <div class="datagrid-content">
-                        <div class="d-flex align-items-center">
-                          <span class="avatar avatar-xs me-2 rounded"></span>
-                          Paweł Kuna
-                        </div>
-                      </div>
-                    </div>
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Age</div>
-                      <div class="datagrid-content">15 days</div>
-                    </div>
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Edge network</div>
-                      <div class="datagrid-content">
-                        <span class="status status-green">Active</span>
-                      </div>
-                    </div>
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Avatars list</div>
-                      <div class="datagrid-content">
-                        <div class="avatar-list avatar-list-stacked">
-                          <span class="avatar avatar-xs rounded"></span>
-                          <span class="avatar avatar-xs rounded">JL</span>
-                          <span class="avatar avatar-xs rounded"></span>
-                          <span class="avatar avatar-xs rounded"></span>
-                          <span class="avatar avatar-xs rounded"></span>
-                          <span class="avatar avatar-xs rounded">+3</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Checkbox</div>
-                      <div class="datagrid-content">
-                        <label class="form-check">
-                          <input class="form-check-input" type="checkbox" checked="" />
-                          <span class="form-check-label">Click me</span>
-                        </label>
-                      </div>
-                    </div>
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Icon</div>
-                      <div class="datagrid-content">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/check -->
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          class="icon text-green">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                          <path d="M5 12l5 5l10 -10"></path>
-                        </svg>
-                        Checked
-                      </div>
-                    </div>
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Form control</div>
-                      <div class="datagrid-content">
-                        <input
-                          type="text"
-                          class="form-control form-control-flush"
-                          placeholder="Input placeholder" />
-                      </div>
-                    </div>
-                    <div class="datagrid-item">
-                      <div class="datagrid-title">Longer description</div>
-                      <div class="datagrid-content">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -1044,6 +1037,9 @@ export default {
 
   computed: {
     ...mapStores(useGameStore, useJournalStore),
+    ...mapState(useRepositoryStore, {
+      _genres: 'keyedGenres',
+    }),
 
     app() {
       let data = {
@@ -1073,9 +1069,25 @@ export default {
       }))
     },
 
+    genre() {
+      if (!this.app.genres) return
+
+      return this._genres[this.app.genres[0]]
+    },
+
+    genres() {
+      if (!this.app.genres) return
+
+      return this.app.genres
+        .map((id) => (this._genres[id] ? this._genres[id].name : undefined))
+        .filter(Boolean)
+        .join('<br>')
+
+      return app.genres.map((id) => this._genres[id]?.name).join(', ')
+    },
+
     //+-------------------------------------------------
-    // function()
-    //
+    // hltbSource()
     // -----
     // Created on Fri Nov 22 2024
     //+-------------------------------------------------

@@ -102,7 +102,7 @@ const { data } = await useAsyncData(
 
 const staticLinks = [
   { path: '/', name: 'Home' },
-  { path: '/about', name: 'About' },
+  // { path: '/about', name: 'About' },
   { path: '/games', name: 'Games' },
   { path: '/genres', name: 'Genres' },
   { path: '/sitemap', name: 'Sitemap' },
@@ -127,6 +127,7 @@ onMounted(() => {
         .filter(
           (game) => game.url && game.url !== '/game/' && game.url !== '/game' && game.name
         )
+        // .slice(0, 100)
         .map((game) => ({
           url: game.url,
           name: game.name,

@@ -6,8 +6,10 @@
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Sat 23 November 2024 - 17:30:52
+ * Modified: Sun 24 November 2024 - 16:22:14
  */
+
+import { defineNuxtConfig } from 'nuxt/config';
 
 // import vuetify from 'vite-plugin-vuetify'
 // import { transformAssetUrls } from 'vite-plugin-vuetify'
@@ -85,10 +87,6 @@ export default defineNuxtConfig({
     }
   },
 
-  // generate: {
-  //   routes: ['/sitemap'],
-  // },
-
   // content: {
   //   // ... options
   // },
@@ -120,17 +118,22 @@ export default defineNuxtConfig({
     defaultLocale: 'en', // not needed if you have @nuxtjs/i18n installed
   },
 
-  ogImage: { enabled: false },
 
   sitemap: {
-    enabled: true,
-    exclude: ['/tabler*', '/account/**', '/dev/**'],
     cacheMaxAgeSeconds: 3600 * 24,
+    exclude: ['/tabler*', '/account/**', '/dev/**'],
+
+    //   urls: async () => {
+    //     const urls = await fetch('https://api.backlog.rip/sitemap.xml')
+    //     return urls
+    //   }
 
     sources: [
       'https://api.backlog.rip/sitemap.xml',
     ],
   },
+
+  ogImage: { enabled: false },
 
   // robots: {
   //   enabled: false
@@ -188,7 +191,7 @@ export default defineNuxtConfig({
   },
 
   devtools: {
-    enabled: false,
+    enabled: true,
 
     vscode: {},
     timeline: {

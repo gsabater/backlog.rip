@@ -25,7 +25,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 18th December 2023
- * Modified: Fri 22 November 2024 - 14:26:09
+ * Modified: Sat 23 November 2024 - 19:43:40
  **/
 
 const route = useRoute()
@@ -33,7 +33,7 @@ const slug = computed(() => route.params.slug)
 const $data = useDataStore()
 
 const { data, pending, error } = await useFetch(
-  () => `https://api.backlog.rip/get/5c1c9b5a-1c02-4a56-85df-f0cf97929a48.json`
+  () => `https://api.backlog.rip/get/${slug.value}.json`
 )
 
 const app = $data.prepareToData({ ...unref(data) })
@@ -45,6 +45,8 @@ watchEffect(() => {
     // app: unref(app),
     // pending: unref(pending),
     // error: unref(error),
+
+    route: route.params,
     data: data.id,
     app: app.id,
   })

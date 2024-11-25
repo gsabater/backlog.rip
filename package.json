@@ -24,7 +24,7 @@
     "@nuxt/devtools": "^1.6.1",
     "@nuxt/eslint-config": "^0.7.1",
     "@nuxt/image": "^1.8.1",
-    "@nuxtjs/seo": "^2.0.0-rc.23",
+    "@nuxtjs/seo": "^2.0.2",
     "@trigger.dev/build": "^3.2.1",
     "@vueuse/core": "^11.3.0",
     "@vueuse/nuxt": "^11.3.0",

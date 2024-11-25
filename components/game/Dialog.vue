@@ -3,7 +3,7 @@
     name="game-details"
     @before-leave="ui.isClosing = true"
     @after-leave="ui.isClosing = false">
-    <div v-if="ui.dialog" id="game-details" @click="hide">
+    <div v-if="ui.dialog" id="game-details" @click="close">
       <div class="game-details__backdrop"></div>
       <div class="game-details__container">
         <game-folio :game="app" />
@@ -648,7 +648,7 @@
  * @desc:    ... https://davidwalsh.name/detect-sticky
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Fri 22 November 2024 - 13:26:22
+ * Modified: Mon 25 November 2024 - 15:53:32
  **/
 
 export default {
@@ -657,7 +657,6 @@ export default {
     return {
       $list: null,
       timeline: [],
-      lightbox: null,
 
       status: {
         note: '',
@@ -667,6 +666,7 @@ export default {
 
       ui: {
         tab: 'info',
+        path: null,
         layout: 'lite', // full
         dialog: false,
         loading: false,
@@ -743,11 +743,6 @@ export default {
       this.ui.dialog = true
       this.ui.layout = 'full'
       this.ui.showTitle = true
-
-      this.$nextTick(() => {
-        this.initLightbox()
-        // this.getCoverColor()
-      })
     },
 
     //+-------------------------------------------------
@@ -769,11 +764,25 @@ export default {
     // Loads a game and shows the modal
     // -----
     // Created on Fri Apr 05 2024
+    // Updated on Mon Nov 25 2024 - Added URL replacement
     //+-------------------------------------------------
     async loadAndShow(payload) {
       this.$list = payload.$list
       this.load(payload.uuid)
       this.show()
+
+      this.$nextTick(() => {
+        if (this.app?.slug) {
+          this.ui.path = window.location.pathname
+
+          // Update URL without navigation using History API
+          const newUrl = `/game/${this.app.slug}`
+          window.history.pushState({ path: newUrl }, '', newUrl)
+
+          // Add back button listener
+          window.addEventListener('popstate', this.handlePopState)
+        }
+      })
 
       // const timeline = await this.journalStore.getForRef(app)
 
@@ -859,78 +868,6 @@ export default {
     //   }
     // },
 
-    initLightbox() {
-      if (this.lightbox) {
-        this.lightbox.destroy()
-        this.lightbox = null
-      }
-
-      this.lightbox = new this.$PhotoSwipeLightbox({
-        // gallery: '#game-gallery',
-        // children: 'a',
-        dataSource: this.screenshots,
-        pswpModule: this.$PhotoSwipe,
-
-        showHideAnimationType: 'zoom',
-        bgOpacity: 0.6,
-        maxWidth: '90vw',
-        maxHeight: '90vh',
-
-        // Add click event handlers
-        // showHideOpacity: true,
-        tapAction: 'next',
-        imageClickAction: 'next',
-        closeOnVerticalDrag: true,
-        clickToCloseNonZoomable: true,
-
-        // Optional but recommended for better UX
-        // preloadFirstSlide: true,
-        // arrowPrev: false,
-        // arrowNext: false,
-        zoom: false,
-      })
-
-      const galleryEl = document.querySelector('#game-gallery')
-
-      this.lightbox.addFilter('thumbEl', (thumbEl, data, index) => {
-        const el = galleryEl.querySelector('[data-id="' + data.id + '"] img')
-        if (el) {
-          return el
-        }
-        return thumbEl
-      })
-
-      // This is the placeholder image, used while the image is loading
-      // displayed when the user clicks and the image zooms in
-      this.lightbox.addFilter('placeholderSrc', (placeholderSrc, slide) => {
-        const el = galleryEl.querySelector('[data-id="' + slide.data.id + '"] img')
-        if (el) {
-          return 'el.src'
-        }
-        return placeholderSrc
-      })
-
-      // this.lightbox.on('uiRegister', function () {
-      //   console.warn()
-      //   this.ui.registerElement({
-      //     name: 'custom-caption',
-      //     order: 9,
-      //     isButton: false,
-      //     appendTo: 'root',
-      //     html: 'Caption text',
-      //     onInit: (el, pswp) => {
-      //       pswp.on('change', () => {
-      //         const currSlideElement = pswp.currSlide.data.element
-      //         const caption = currSlideElement.getAttribute('data-caption')
-      //         el.innerHTML = caption || ''
-      //       })
-      //     },
-      //   })
-      // })
-
-      this.lightbox.init()
-    },
-
     //+-------------------------------------------------
     // setNote()
     // update or create a note for the current app
@@ -947,15 +884,40 @@ export default {
       })
     },
 
-    async hide() {
-      this.ui.dialog = false // Just toggle the dialog, transition handles animation
+    //+-------------------------------------------------
+    // close()
+    // Restores the URL, closes the dialog and removes the events
+    // -----
+    // Created on Mon Nov 25 2024
+    //+-------------------------------------------------
+    close() {
+      this.restoreUrl()
+      window.removeEventListener('popstate', this.handlePopState)
+
+      // Just toggle the dialog, transition handles the animation
+      this.ui.dialog = false
+    },
+
+    restoreUrl() {
+      if (this.ui.path) {
+        window.history.replaceState({ path: this.ui.path }, '', this.ui.path)
+        this.ui.path = null
+      }
+    },
+
+    handlePopState(event) {
+      event?.preventDefault() // Prevent actual back navigation
+      this.close() // Close dialog when back button is pressed
     },
   },
 
   mounted() {
-    this.$mitt.on('game:modal', (payload) => {
-      this.loadAndShow(payload)
-    })
+    this.$mitt.on('game:modal', this.loadAndShow)
+  },
+
+  beforeDestroy() {
+    this.$mitt.off('game:modal', this.loadAndShow)
+    window.removeEventListener('popstate', this.handlePopState)
   },
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="game-details__content" v-if="app.uuid">
+  <div class="game-details__content" v-if="app.uuid" @click.stop.prevent="() => {}">
     <!-- <pre>
       {{ app }}
     </pre> -->
@@ -1028,6 +1028,7 @@ export default {
   data() {
     return {
       state: '1',
+      lightbox: null,
 
       ui: {
         showTitle: true,
@@ -1106,15 +1107,92 @@ export default {
     //   this.state = 5
     // },
 
+    initLightbox() {
+      debugger
+      if (this.lightbox) {
+        this.lightbox.destroy()
+        this.lightbox = null
+      }
+
+      this.lightbox = new this.$PhotoSwipeLightbox({
+        // gallery: '#game-gallery',
+        // children: 'a',
+        dataSource: this.screenshots,
+        pswpModule: this.$PhotoSwipe,
+
+        showHideAnimationType: 'zoom',
+        bgOpacity: 0.6,
+        maxWidth: '90vw',
+        maxHeight: '90vh',
+
+        // Add click event handlers
+        // showHideOpacity: true,
+        tapAction: 'next',
+        imageClickAction: 'next',
+        closeOnVerticalDrag: true,
+        clickToCloseNonZoomable: true,
+
+        // Optional but recommended for better UX
+        // preloadFirstSlide: true,
+        // arrowPrev: false,
+        // arrowNext: false,
+        zoom: false,
+      })
+
+      const galleryEl = document.querySelector('#game-gallery')
+
+      this.lightbox.addFilter('thumbEl', (thumbEl, data, index) => {
+        const el = galleryEl.querySelector('[data-id="' + data.id + '"] img')
+        if (el) {
+          return el
+        }
+        return thumbEl
+      })
+
+      // This is the placeholder image, used while the image is loading
+      // displayed when the user clicks and the image zooms in
+      this.lightbox.addFilter('placeholderSrc', (placeholderSrc, slide) => {
+        const el = galleryEl.querySelector('[data-id="' + slide.data.id + '"] img')
+        if (el) {
+          return 'el.src'
+        }
+        return placeholderSrc
+      })
+
+      // this.lightbox.on('uiRegister', function () {
+      //   console.warn()
+      //   this.ui.registerElement({
+      //     name: 'custom-caption',
+      //     order: 9,
+      //     isButton: false,
+      //     appendTo: 'root',
+      //     html: 'Caption text',
+      //     onInit: (el, pswp) => {
+      //       pswp.on('change', () => {
+      //         const currSlideElement = pswp.currSlide.data.element
+      //         const caption = currSlideElement.getAttribute('data-caption')
+      //         el.innerHTML = caption || ''
+      //       })
+      //     },
+      //   })
+      // })
+
+      this.lightbox.init()
+    },
+
     init() {
       this.state = 3
-      this.load()
+
+      this.$nextTick(() => {
+        this.initLightbox()
+        // this.getCoverColor()
+      })
     },
   },
 
   mounted() {
     this.state = 2
-    // this.init()
+    this.init()
   },
 }
 </script>

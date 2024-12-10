@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Wed 06 November 2024 - 22:57:18
+ * Modified: Tue 26 November 2024 - 13:05:09
  */
 
 let $nuxt = null
@@ -452,7 +452,7 @@ export const useStateStore = defineStore('state', {
 
       log(
         '❇️ States loaded',
-        `${states.length} states in local DB`,
+        `${states.length} states in DB`,
         states[Math.floor(Math.random() * states.length)]
       )
 

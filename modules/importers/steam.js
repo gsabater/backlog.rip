@@ -1,11 +1,10 @@
-/**
- * @project: backlog.rip
- * @file:    \modules\importers\steam-public.js
+/*
+ * @file:    \modules\importers\steam.js
  * @desc:    Utility helper to make requests to and return a list of games
- * -------------------------------------------
- * Created Date: 27th November 2022
- * Modified: Mon Mar 13 2023
- **/
+ * ----------------------------------------------
+ * Created Date: 16th November 2023
+ * Modified: Tue 10 December 2024 - 17:48:32
+ */
 
 let $log = null
 let $axios = null
@@ -13,32 +12,47 @@ let $account = null
 
 export default {
   //+-------------------------------------------------
-  // Module manifest
+  // Module manifest v1.2
   // ---
   // This object is used to define the module
   // and its capabilities to the importer plugin
   //+-------------------------------------------------
 
   manifest: {
-    name: 'Steam library importer',
+    v: 2,
+    ver: '1.4',
+    name: 'Steam library integration',
     author: 'Gaspar S.',
-
-    version: '1.3',
-    updated_at: '2024-04-25',
-
-    store: 'Steam',
-    source: 'steam',
-
+    updated_at: '2024-12-05',
     description:
-      'Syncronize all your games and playtime for every game on your library, including free games.',
+      'Syncronize all your games and playtime for every game on Steam, including free games.',
+    url: 'https://github.com/gsabater/backlog.rip/blob/master/modules/importers/steam.js',
 
+    source: {
+      key: 'steam',
+      type: 'store',
+      name: 'Steam',
+      logo: '/img/logos/steam.png',
+      // showName: false,
+    },
+
+    requires: 'steamID',
     games: true,
+    states: false,
     account: true,
     wishlist: false,
+    autoupdates: true,
+
+    // Defines that map[0] in remote data,
+    // should be map[1] in id object
+    map: ['appid', 'steam'],
+    sortBy: 'playtime_forever',
+
+    // sync: ['name', 'playtime', 'last_played'],
 
     requeriments: [
       {
-        name: 'User has a public profile',
+        title: 'User has a public profile',
         description: 'Check if the user has a public profile',
       },
     ],
@@ -62,9 +76,85 @@ export default {
     $account = account
 
     $axios.defaults.headers.common['Authorization'] = 'Bearer ' + account.bearer
-    $log('🆗 Connection established')
+    $log('🆗 Connection established', {
+      account,
+    })
 
     return true
+  },
+
+  //+-------------------------------------------------
+  // getUserdata()
+  // Calls backend to retrieve user profile data
+  // -----
+  // Created on Thu Dec 08 2022
+  // Updated on Mon Mar 13 2023
+  //+-------------------------------------------------
+  async getUserdata() {
+    let url = 'https://api.backlog.rip/fetch/steam/userdata'
+    let xhr = await $axios.get(url + '?steamid=' + $account.account)
+
+    if (xhr.data.status == 'success') {
+      return xhr.data?.fetch?.data || {}
+    }
+  },
+
+  //+-------------------------------------------------
+  // getLibrary()
+  // Calls backend to retrieve user games
+  // Must return an array even if empty
+  // -----
+  // Created on Thu Dec 08 2022
+  //+-------------------------------------------------
+  async getLibrary() {
+    let url = 'https://api.backlog.rip/fetch/steam/games'
+    let xhr = await $axios.get(url + '?steamid=' + $account.account)
+
+    if (xhr.data.status == 'success') {
+      return xhr.data?.fetch?.data?.games || []
+    }
+  },
+
+  //+-------------------------------------------------
+  // hasUpdates()
+  // Returns false if there are no updates
+  // Returns an object with the updates if there are
+  // -----
+  // Created on Wed Jan 24 2024
+  // Updated on Tue Dec 10 2024 - Use new format
+  //+-------------------------------------------------
+  hasUpdates(app, db) {
+    let updates = {}
+    let changes = false
+
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Update: name
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    updates.name = db?.name || app.name
+
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Update: playtime
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if (app.playtime_forever > 0 && db?.playtime?.steam !== app.playtime_forever) {
+      changes = true
+      updates.playtime = {
+        from: db?.playtime?.steam,
+        to: app.playtime_forever,
+      }
+    }
+
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Update: Last played on steam
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if (app.rtime_last_played > 0 && db?.playtime?.steam_last !== app.rtime_last_played) {
+      changes = true
+      updates.last_played = {
+        from: db?.playtime?.steam_last,
+        to: app.rtime_last_played,
+      }
+    }
+
+    return changes ? updates : false
   },
 
   //+-------------------------------------------------
@@ -89,106 +179,58 @@ export default {
     app.playtime.steam = data.playtime_forever
     app.playtime.steam_last = data.rtime_last_played
 
+    delete app.last_played
+    delete app.enabled
+    delete app.appid
+    delete app.data
+
     return app
   },
 
+  // //+-------------------------------------------------
+  // // getSteamBacklog()
+  // //
+  // // -----
+  // // Created on Mon Feb 12 2024
+  // //+-------------------------------------------------
+  // async getSteamBacklog() {
+  //   let url = 'https://api.backlog.rip/fetch/steam-backlog'
+  //   let xhr = await $axios.get(url + '?steamid=' + $account.steam)
+
+  //   if (xhr.data.status == 'success') {
+  //     return xhr.data?.fetch || {}
+  //   }
+  // },
+
+  // //+-------------------------------------------------
+  // // onScan()
+  // // hook fired on the scan step.
+  // // Receives data and instance
+  // // -----
+  // // Created on Mon Feb 12 2024
+  // //+-------------------------------------------------
+  // async onScan(data, x) {
+  //   data.backlog = await this.getSteamBacklog()
+  //   return data.backlog
+  // },
+
   //+-------------------------------------------------
-  // hasUpdates()
-  // Receives a field and compares two objects
-  // Returns false if there are no updates
-  // Returns an object with the updates if there are
+  // linkAccount()
+  // Returns an account object with mapped data
   // -----
-  // Created on Wed Jan 24 2024
+  // Created on Tue Nov 26 2024
   //+-------------------------------------------------
-  hasUpdates(field, lib, app) {
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Update: playtime
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (field == 'playtime') {
-      if (app.playtime_forever > 0 && lib.playtime?.steam !== app.playtime_forever) {
-        return {
-          from: lib.playtime?.steam,
-          to: app.playtime_forever,
-        }
-      }
-    }
+  linkAccount(item, data) {
+    item.v = 1
+    item.data = data
 
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Update: Last played on steam
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (field == 'last_played') {
-      if (
-        app.rtime_last_played > 0 &&
-        lib.playtime?.steam_last !== app.rtime_last_played
-      ) {
-        return {
-          from: lib.playtime?.steam_last,
-          to: app.rtime_last_played,
-        }
-      }
-    }
+    item.avatar = data.avatarfull
+    item.account = data.steamid
+    item.username = data.personaname
+    item.updated_at = item.updated_at
+    item.created_at = item.created_at || dates.now()
 
-    return false
-  },
-
-  //+-------------------------------------------------
-  // getUserdata()
-  // Calls backend to retrieve user profile data
-  // -----
-  // Created on Thu Dec 08 2022
-  // Updated on Mon Mar 13 2023
-  //+-------------------------------------------------
-  async getUserdata() {
-    let url = 'https://api.backlog.rip/fetch/steam/userdata'
-    let xhr = await $axios.get(url + '?steamid=' + $account.steam)
-
-    if (xhr.data.status == 'success') {
-      return xhr.data?.fetch?.data || {}
-    }
-  },
-
-  //+-------------------------------------------------
-  // getGames()
-  // Calls backend to retrieve user games
-  // Must return an array even if empty
-  // -----
-  // Created on Thu Dec 08 2022
-  //+-------------------------------------------------
-  async getGames() {
-    let url = 'https://api.backlog.rip/fetch/steam/games'
-    let xhr = await $axios.get(url + '?steamid=' + $account.steam)
-
-    if (xhr.data.status == 'success') {
-      // xDDDD
-      return xhr.data?.fetch?.data?.games || []
-    }
-  },
-
-  //+-------------------------------------------------
-  // function()
-  //
-  // -----
-  // Created on Mon Feb 12 2024
-  //+-------------------------------------------------
-  async getSteamBacklog() {
-    let url = 'https://api.backlog.rip/fetch/steam-backlog'
-    let xhr = await $axios.get(url + '?steamid=' + $account.steam)
-
-    if (xhr.data.status == 'success') {
-      return xhr.data?.fetch || {}
-    }
-  },
-
-  //+-------------------------------------------------
-  // onScan()
-  // hook fired on the scan step.
-  // Receives data and instance
-  // -----
-  // Created on Mon Feb 12 2024
-  //+-------------------------------------------------
-  async onScan(data, x) {
-    data.backlog = await this.getSteamBacklog()
-    return data.backlog
+    return item
   },
 
   //+-------------------------------------------------

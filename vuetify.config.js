@@ -3,14 +3,19 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Thu 07 November 2024 - 11:43:43
+ * Modified: Mon 25 November 2024 - 17:35:05
  */
 
-import { md2 } from 'vuetify/blueprints'
+// import { md2 } from 'vuetify/blueprints'
 import { defineVuetifyConfiguration } from 'vuetify-nuxt-module/custom-configuration'
 
 export default defineVuetifyConfiguration({
   // blueprint: md2,
+
+  ssr: {
+    clientWidth: 100,
+  },
+
   theme: {
     defaultTheme: 'dark',
   },
@@ -34,8 +39,8 @@ export default defineVuetifyConfiguration({
     },
 
     VBtn: {
-      variant: 'elevated',
-      style: [{ textTransform: 'none' }],
+      variant: 'tonal',
+      style: [{ textTransform: 'none', textDecoration: 'none' }],
     },
 
     VTextField: {

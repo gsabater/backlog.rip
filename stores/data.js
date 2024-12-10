@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Sat 23 November 2024 - 15:18:53
+ * Modified: Wed 04 December 2024 - 14:29:13
  */
 
 let $nuxt = null
@@ -79,7 +79,7 @@ export const useDataStore = defineStore('data', {
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Methods to load data
-  // * loadLibrary()
+  // * loadGames()
   // * loadApiStatus()
   //
   // Methods to retrieve data
@@ -177,10 +177,10 @@ export const useDataStore = defineStore('data', {
     // -----
     // Created on Fri Sep 20 2024
     //+-------------------------------------------------
-    steam_library(as = null) {
-      let library = this.library()
-      return library.filter((item) => item.id.steam)
-    },
+    // steam_library(as = null) {
+    //   let library = this.library()
+    //   return library.filter((item) => item.id.steam)
+    // },
 
     //+-------------------------------------------------
     // pinned and hidden()
@@ -243,6 +243,11 @@ export const useDataStore = defineStore('data', {
         face: 'surprised',
         error: 'missing',
       }
+    },
+
+    findBySource(source, id) {
+      let uuid = index[source][id]
+      return data[uuid]
     },
 
     //+-------------------------------------------------
@@ -737,13 +742,13 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
-    // loadLibrary()
+    // loadGames()
     // Loads the entire library from indexedDB into memory
     // -----
     // Created on Fri Nov 17 2023
     // Updated on Sun Feb 25 2024
     //+-------------------------------------------------
-    async loadLibrary(reload = false) {
+    async loadGames(reload = false) {
       if (this.loaded.includes('library') && !reload) return
 
       let games = await $nuxt.$db.games.toArray()
@@ -751,7 +756,7 @@ export const useDataStore = defineStore('data', {
       this.loaded.push('library')
 
       log(
-        '🎴 Library loaded',
+        '🎴 local:games',
         `${games.length} apps in local DB`,
         games[Math.floor(Math.random() * games.length)]
       )
@@ -870,7 +875,7 @@ export const useDataStore = defineStore('data', {
       this.indexes = Object.keys(index)
 
       // Load and index local library
-      await this.loadLibrary()
+      await this.loadGames()
       await this.loadApiStatus()
 
       // Expose data to the window

@@ -3,20 +3,34 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Wed 30 October 2024 - 17:55:12
+ * Modified: Tue 10 December 2024 - 17:42:33
  */
 
 import axios from 'axios'
-import steam from '~/modules/importers/steam'
+// import steam from '~/modules/importers/steam'
 
 let $nuxt = null
 let $data = null
 let $game = null
+let $state = null
 let $axios = null
+let $library = null
 let $journal = null
 
-// Valid available and enabled sources
-let sources = ['steam']
+//+-------------------------------------------------
+// Import flow:
+//
+// 1. detect()
+// - Detects the platform and check if is valid
+//
+// 2. connect()
+// - Gives axios instance, user data and logs to the module
+//
+// 3. scan()
+// - Performs queries to fetch data
+// -----
+// Created on Thu Nov 28 2024
+//+-------------------------------------------------
 
 export default {
   //+-------------------------------------------------
@@ -27,59 +41,63 @@ export default {
   // +- available, and has the required methods
   // -----
   // Created on Mon Jan 22 2024
+  // Updated on Wed Nov 27 2024 - Simplified using $library
   //+-------------------------------------------------
   detect(x = {}) {
     log('💠 Importer(2): detect')
-    if (!$nuxt) $nuxt = useNuxtApp()
-    if (!$data) $data = useDataStore()
-    if (!$game) $game = useGameStore()
+    $nuxt ??= useNuxtApp()
+    $data ??= useDataStore()
+    $game ??= useGameStore()
+    $state ??= useStateStore()
+    $library ??= useLibraryStore()
 
     x.log(`💠🎨 source ID: ${x.source}`)
     let account = {}
 
     try {
       // Detect: Check if the source is valid
-      //+---------------------------------------
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       x.log('Detect 2.1: valid source')
-      if (!sources.includes(x.source)) {
+      if (!$library.integrations.includes(x.source)) {
         x.log(`💠 Source ${x.source} not supported`)
         return false
       }
 
       // Detect: The platform module is available
-      //+---------------------------------------
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       x.log('Detect 2.2: valid module')
-      if (steam == undefined) {
-        x.log('💠 The Steam library module is not available', 'error')
+      if ($library.module[x.source] == undefined) {
+        x.log('💠 The ' + x.source + ' module integration is not available', 'error')
         return false
       }
 
       // Detect: If the module is complete
       // And has all required methods to run
-      //+---------------------------------------
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       x.log('Detect 2.3: The module is complete')
       if (
-        steam.update === undefined ||
-        steam.getGames === undefined ||
-        steam.hasUpdates === undefined ||
-        steam.getUserdata === undefined
+        $library.module[x.source].update === undefined ||
+        $library.module[x.source].getLibrary === undefined ||
+        $library.module[x.source].hasUpdates === undefined ||
+        $library.module[x.source].getUserdata === undefined
       ) {
         x.log('The module module complete, some methods are not present', 'error')
         return false
       }
 
       // Detect: Detect if the user is logged in
-      //+---------------------------------------
-      x.log('Detect 2.4: valid user')
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      x.log('Detect 2.4: valid integration')
       if (
-        $nuxt.$auth.bearer &&
-        $nuxt.$auth.user[x.source] &&
-        $nuxt.$auth.user[x.source + '_data']
+        $library.linked[x.source]?.account
+        // $nuxt.$auth.bearer &&
+        // $nuxt.$auth.user[x.source] &&
+        // $nuxt.$auth.user[x.source + '_data']
       ) {
         account = {
-          ...$nuxt.$auth.user,
           bearer: $nuxt.$auth.bearer,
-          provider: $nuxt.$auth.user.steam_data,
+          ...$library.linked[x.source],
+          // structuredClone($library.linked[x.source]),
         }
       } else {
         account = { error: 'account:login' }
@@ -98,7 +116,7 @@ export default {
     }
 
     return {
-      module: steam,
+      // module: steam,
       account: account,
     }
   },
@@ -122,10 +140,22 @@ export default {
         timeout: 60000,
       })
 
+      // Connect: Generate a states object
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      x.states = $state.states
+      // {
+      //   states: $state.states,
+      //   backlog: $state.backlog,
+      //   playing: $state.playing,
+      //   completed: $state.completed,
+      // }
+
       // Connect: Give methods and data to the module
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       x.log('Connect 3.2: Connect with the module')
-      x.module.connect(x.account, $axios, x.log)
+      x.module.connect(x.account, $axios, x.log, {
+        states: x.states,
+      })
 
       x.log('✅ Connected and ready to start')
     } catch (e) {
@@ -142,6 +172,7 @@ export default {
   // -----
   // Created on Tue Jan 23 2024
   // Updated on Tue Apr 16 2024 - Added error handling
+  // Updated on Thu Nov 28 2024 - Simplified
   //+-------------------------------------------------
   async scan(x = {}) {
     x.log('💠 Importer(4): Starting data scan...')
@@ -149,35 +180,34 @@ export default {
     let data = {
       user: {},
       games: [],
-      library: [],
+      // library: [],
 
       // TODO: things that will be imported
       // lists: [],
       // states: [],
       // data.backlog will be defined as well from steam.onScan
-      steambacklog: {}, // quick dirty hack
+      // steambacklog: {}, // quick dirty hack
     }
 
     try {
-      x.log('Check 4.1: Get local library')
-      data.library = $data.steam_library()
-      x.log(`🆗 Library loaded`, data.library.length)
-
-      x.log('Check 4.2: Get userdata')
-      data.user = await steam.getUserdata()
+      // x.log('Check 4.1: Get local library')
+      // data.library = $data.steam_library()
+      // x.log(`🆗 Library loaded`, data.library.length)
+      x.log('Check 4.1: Get userdata')
+      data.user = await x.module.getUserdata()
       x.log(`🆗 Account userdata loaded`)
 
       x.log('Check 4.3: Get library')
-      data.games = await steam.getGames()
+      data.games = await x.module.getLibrary()
       x.log(`🆗 Games loaded`)
 
-      if (steam.onScan !== undefined) {
-        x.log('Check 4.4: onScan hook')
-        data.steambacklog = await steam.onScan(data, x)
-        x.log(`🆗 onScan hook executed`)
-      }
+      // if (x.module.onScan !== undefined) {
+      //   x.log('Check 4.4: onScan hook')
+      //   data.steambacklog = await x.module.onScan(data, x)
+      //   x.log(`🆗 onScan hook executed`)
+      // }
 
-      // this.data.wishlist = await steam.getWishlist()
+      // this.data.wishlist = await x.module.getWishlist()
       // x.log(`🎁 Wishlist received`)
     } catch (e) {
       x.log('Error getting user data', 'error', e)
@@ -205,76 +235,102 @@ export default {
   async prepare(x = {}) {
     x.log('💠 Importer(5): Preparing data ...')
 
-    let apps = {
-      libIDs: [],
-      toReview: [],
-      toImport: [],
-      toUpdate: [],
-    }
+    let map = x.module.manifest.map
+    // let sync = x.module.manifest.sync
+
+    let library = {}
+    let changes = []
+
+    // let apps = {
+    //   libIDs: [],
+    //   toReview: [],
+    //   toImport: [],
+    //   toUpdate: [],
+    // }
 
     x.log('Check 5.1: Preparing Array of library IDs')
-    apps.libIDs = x.data.library.reduce((acc, el) => {
-      acc[el.id.steam] = el
-      return acc
+    let data = $data.library()
+    let filtered = data.filter((item) => item.id[map[1]])
+
+    library = filtered.reduce((item, el) => {
+      item[el.id[map[1]]] = el
+      return item
     }, {})
 
-    //+-------------------------------------------------
-    // Categorize apps within the the library
-    // And create groups: review and update
-    // ---
-    // Review apps are apps that are not in the library
-    // Update apps are apps that are in the library and need updating
-    //+-------------------------------------------------
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Review all apps fetched by the connector
+    // And determine if they will be added, updated, etc
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     x.data.games.forEach((app) => {
-      if (app.appid in apps.libIDs) {
-        let add = false
-        const lib = apps.libIDs[app.appid]
+      let appid = app[map[0]]
+      let db = library[appid]
 
-        app.toUpdate = {
-          uuid: lib.uuid,
-        }
+      let synced = {}
+      let element = {
+        db: db,
+        data: app,
 
-        // // Update: is.owned
-        // //+---------------------------------------
-        // if (!lib.is?.owned) {
-        //   add = true
-        //   app.toUpdate.owned = true
-        // }
-
-        // Update: playtime
-        //+---------------------------------------
-        let newPlaytime = steam.hasUpdates('playtime', lib, app)
-        if (newPlaytime !== false) {
-          add = true
-          app.toUpdate.playtime = newPlaytime
-        }
-
-        // Update: last_played
-        //+---------------------------------------
-        let lastPlayed = steam.hasUpdates('last_played', lib, app)
-        if (lastPlayed !== false) {
-          add = true
-          app.toUpdate.last_played = lastPlayed
-        }
-
-        if (add) apps.toUpdate.push(app)
-      } else {
-        app.will_import = true
-        app.will_ignore = false
-
-        apps.toReview.push(app)
+        sourceID: appid,
+        uuid: db?.uuid || null,
       }
+
+      let sync = x.module.hasUpdates(app, db)
+      element.sync = sync
+      if (sync === false) return
+
+      // sync.forEach((key) => {
+      // synced[key] = x.module.hasUpdates(key, db, app)
+      // element[key] = synced[key]
+
+      // if (['name'].includes(key)) delete synced[key]
+      // let newPlaytime = x.module.hasUpdates('playtime', db, app)
+      // })
+
+      // Fill name value
+      if (!element.name) element.name = db?.name || app.name
+      if (!element.name) element.name = ''
+
+      // if (element.uuid && Object.values(synced).every((value) => value == false)) {
+      //   return
+      // }
+
+      // element.synced = synced
+      changes.push(element)
+
+      // Update: playtime
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // let newPlaytime = steam.hasUpdates('playtime', lib, app)
+      // if (newPlaytime !== false) {
+      //   add = true
+      //   app.toUpdate.playtime = newPlaytime
+      // }
+
+      // Update: last_played
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // let lastPlayed = steam.hasUpdates('last_played', lib, app)
+      // if (lastPlayed !== false) {
+      //   add = true
+      //   app.toUpdate.last_played = lastPlayed
+      // }
+
+      // if (add) apps.toUpdate.push(app)
+      // } else {
+      //   app.will_import = true
+      //   app.will_ignore = false
+
+      //   apps.toReview.push(app)
+      // }
     })
 
-    x.log('Check 5.2: Preparing an Array ready to import')
-    apps.toImport = apps.toReview.map((item) => {
-      return {
-        data: item,
-        ['steam' + '_id']: item.appid,
-      }
-    })
+    // x.log('Check 5.2: Preparing an Array ready to import')
+    // apps.toImport = apps.toReview.map((item) => {
+    //   return {
+    //     data: item,
+    //     ['steam' + '_id']: item.appid,
+    //   }
+    // })
 
-    return apps
+    return { library, changes }
   },
 
   //+-------------------------------------------------
@@ -289,30 +345,22 @@ export default {
 
     let uuids = []
     const items = []
+    let map = x.module.manifest.map
 
-    x.log('Check 6.1: Processing the array of new apps')
-    x.apps.toImport.forEach((item) => {
-      let app = $game.create(item)
-      app = steam.update(app, item.data)
+    x.log('Check 6.1: Processing the array of changes')
+    x.changes.forEach((item) => {
+      if (!item.enabled) return
 
+      let app = $data.findBySource(map[1], item.data[map[0]])
+      if (!app) app = $game.create({})
+
+      app = x.module.update(app, item.data)
       items.push(app)
-      uuids.push(app.uuid)
-    })
-
-    x.log('Check 6.2: Processing the array of updated apps')
-    console.warn('Apps to update', x.apps)
-    console.warn(uuids, items)
-
-    x.apps.toUpdate.forEach((el) => {
-      let $db = $data.get(el.toUpdate.uuid)
-      let app = steam.update($db, { ...el })
-
-      items.push(app)
-      uuids.push(app.uuid)
     })
 
     x.log('Check 6.2: Storing apps')
-    $data.process(items, 'import')
+    await $data.process(items, 'import')
+    await $state.indexLibrary('all')
 
     x.log('✅ Data stored')
 
@@ -321,7 +369,7 @@ export default {
     await $data.updateMissing()
 
     return {
-      uuids: uuids,
+      uuids: x.changes.map((x) => x.uuid),
     }
   },
 

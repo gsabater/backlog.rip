@@ -1108,7 +1108,7 @@ export default {
     // },
 
     initLightbox() {
-      debugger
+      // debugger
       if (this.lightbox) {
         this.lightbox.destroy()
         this.lightbox = null

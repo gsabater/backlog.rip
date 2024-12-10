@@ -256,12 +256,12 @@
             </div>
           </NuxtLink>
 
-          <NuxtLink to="/import/steam" class="dropdown-item mt-1">
+          <NuxtLink to="/import" class="dropdown-item mt-1">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">Refresh</Icon>
             </span>
             <span class="nav-link-title">
-              Steam library sync
+              Library sync
               <!-- <Icon size="10" width="1" class="ms-1">Refresh</Icon> -->
             </span>
           </NuxtLink>
@@ -1109,7 +1109,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Sat 23 November 2024 - 15:08:49
+ * Modified: Mon 25 November 2024 - 17:52:36
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

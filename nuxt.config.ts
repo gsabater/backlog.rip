@@ -6,7 +6,7 @@
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Sun 24 November 2024 - 16:22:14
+ * Modified: Mon 25 November 2024 - 17:48:30
  */
 
 import { defineNuxtConfig } from 'nuxt/config';
@@ -15,6 +15,7 @@ import { defineNuxtConfig } from 'nuxt/config';
 // import { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
+  compatibilityDate: '2024-08-15',
   ssr: true,
 
   nitro: {
@@ -25,7 +26,6 @@ export default defineNuxtConfig({
     }
   },
 
-  compatibilityDate: '2024-09-01',
   sourcemap: { server: false, client: true },
 
   features: {
@@ -57,6 +57,9 @@ export default defineNuxtConfig({
 
   // Auto import pinia stores
   imports: {
+    autoImport: true,
+    // injectAtEnd: true,
+
     dirs: ['./stores'],
     presets: [
       {
@@ -101,9 +104,8 @@ export default defineNuxtConfig({
   },
 
   vuetify: {
-    moduleOptions: {
-      styles: { configFile: './assets/scss/settings.scss' },
-    },
+    styles: { configFile: './assets/scss/settings.scss' },
+    prefixComposables: true,
     vuetifyOptions: './vuetify.config.js',
   },
 
@@ -163,21 +165,21 @@ export default defineNuxtConfig({
     css: {},
 
     plugins: [
-      {
-        name: 'ignore-css-warnings',
-        enforce: 'post',
-        configResolved(config) {
-          const originalWarn = config.logger.warn;
-          config.logger.warn = (...args) => {
-            if (typeof args[0] === 'string' && args[0].includes('@charset must precede all other statements')) {
-              // Ignore the specific warning
-              return;
-            }
-            // For all other warnings, call the original warn method
-            originalWarn.apply(config.logger, args);
-          };
-        },
-      },
+      // {
+      //   name: 'ignore-css-warnings',
+      //   enforce: 'post',
+      //   configResolved(config) {
+      //     const originalWarn = config.logger.warn;
+      //     config.logger.warn = (...args) => {
+      //       if (typeof args[0] === 'string' && args[0].includes('@charset must precede all other statements')) {
+      //         // Ignore the specific warning
+      //         return;
+      //       }
+      //       // For all other warnings, call the original warn method
+      //       originalWarn.apply(config.logger, args);
+      //     };
+      //   },
+      // },
     ],
 
     vue: {

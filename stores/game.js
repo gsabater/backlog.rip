@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Mon 18 November 2024 - 15:12:08
+ * Modified: Wed 04 December 2024 - 14:35:42
  */
 
 let $nuxt = null
@@ -169,12 +169,13 @@ export const useGameStore = defineStore('game', {
     // Creates a new item and normalizes it
     // -----
     // Created on Wed Apr 10 2024
+    // Created on Wed Dec 04 2024 - Mark uuid as local
     //+-------------------------------------------------
     create(data = {}) {
       let app = {}
 
       app = this.normalize({ ...data })
-      app.uuid = app.uuid || $nuxt.$uuid()
+      app.uuid = app.uuid || `local:${$nuxt.$uuid()}`
       app.is.lib = app.is.lib || dates.stamp()
 
       return app
@@ -345,6 +346,7 @@ export const useGameStore = defineStore('game', {
 
       delete game.epic_id
       delete game.trigger
+      delete game.enabled
       delete game.data
       return game
     },

@@ -1,5 +1,5 @@
 <template>
-  <slot name="body" :items="items">
+  <slot name="body" :items="items" v-bind="$attrs">
     <!-- <div class="page-header">
         <div class="row align-items-center">
           <div class="col-auto">
@@ -33,14 +33,14 @@
       *| scaffolding to use with b-game type list
       *+--------------------------------- -->
     <template v-if="layout == 'list'">
-      <div class="card mb-3" v-if="items.length || loading">
+      <div v-if="items.length || loading" class="card mb-3">
         <div class="list-group card-list-group games-group games--list">
           <!-- <template :key="app"> -->
           <b-game
             v-for="(app, i) in items"
+            :key="app"
             type="list"
             :uuid="app"
-            :key="app"
             :body="cardBody"
             :display="['name', 'score', 'released']"
             style="padding-top: 0.65rem; padding-bottom: 0.65rem">
@@ -156,10 +156,9 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 06 November 2024 - 16:44:18
+ * Modified: Thu 12 December 2024 - 16:27:59
  **/
 
-// import { useThrottleFn } from '@vueuse/core'
 import { useThrottleFn } from '@vueuse/core'
 import searchFn from '~/utils/search'
 
@@ -179,7 +178,7 @@ export default {
 
     source: {
       type: [Array],
-      default: [],
+      default: () => [],
     },
 
     // Not used yet, left for reference
@@ -329,6 +328,34 @@ export default {
     ...mapStores(useDataStore),
   },
 
+  computed: {
+    cardBody() {
+      // // console.warn('🔴 cardBody', this.filters.show.card)
+      // return []
+      const show = [...this.filters.show.card]
+
+      if (show.length == 1 && show.includes('default')) {
+        if (this.filters.sortBy == 'score') {
+          show.push('score')
+        }
+
+        if (this.filters.sortBy == 'released') {
+          show.push('released')
+        }
+
+        if (this.filters.sortBy == 'playtime') {
+          show.push('playtime')
+        }
+
+        if (this.filters.sortBy == 'hltb') {
+          show.push('hltb')
+        }
+      }
+
+      return show
+    },
+  },
+
   watch: {
     // filters: {
     //   handler() {
@@ -354,34 +381,6 @@ export default {
 
       if (!this.source.length) return
       this.search('init:array')
-    },
-  },
-
-  computed: {
-    cardBody() {
-      // console.warn('🔴 cardBody', this.filters.show.card)
-      return []
-      let show = [...this.filters.show.card]
-
-      if (show.length == 1 && show.includes('default')) {
-        if (this.filters.sortBy == 'score') {
-          show.push('score')
-        }
-
-        if (this.filters.sortBy == 'released') {
-          show.push('released')
-        }
-
-        if (this.filters.sortBy == 'playtime') {
-          show.push('playtime')
-        }
-
-        if (this.filters.sortBy == 'hltb') {
-          show.push('hltb')
-        }
-      }
-
-      return show
     },
   },
 

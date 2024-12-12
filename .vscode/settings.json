@@ -41,6 +41,12 @@
         "command": "npm run dev",
       },
 
+      {
+        "name": "⚓ install",
+        // "color": "green",
+        "command": "npm install",
+      },
+
       // {
       //   "name": "🛑 Commits en casa",
       //   "color": "orange",

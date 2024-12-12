@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Wed 04 December 2024 - 14:29:13
+ * Modified: Thu 12 December 2024 - 16:30:46
  */
 
 let $nuxt = null
@@ -59,9 +59,11 @@ let index = {
 export const useDataStore = defineStore('data', {
   state: () => ({
     // version defining data integrity
-    v: 10,
+    // v: 10,
 
     queue: [],
+    queueDelete: [],
+
     loaded: [],
     indexes: [],
   }),
@@ -95,8 +97,9 @@ export const useDataStore = defineStore('data', {
   //
   // Methods to persist data
   // * store() <-- Stores an array of items and updates indexes
-  // * storeQueue() <-- Stores the queue calling store()
   // * delete() <-- Deletes an item from the database
+  // * addToQueue() <-- Adds items to queue and runs the queue
+  // * storeQueue() <-- Stores the queue calling store()
   //
   // Utilities to manage data
   // * process() <- entry point for new data
@@ -368,7 +371,7 @@ export const useDataStore = defineStore('data', {
           item.is_api = true
           item.api_id = item.api_id || item.uuid
           // item.id.api = item.id.api || item.uuid
-          if (!item.uuid) item.uuid = `local:${format.stringToSlug(item.name)}`
+          // if (!item.uuid) item.uuid = `local:${format.stringToSlug(item.name)}`
         }
 
         // Populate the data from a list
@@ -448,40 +451,40 @@ export const useDataStore = defineStore('data', {
     // Updated on Tue Feb 27 2024
     // updated on Thu Jul 11 2024 - Clone the object
     //+-------------------------------------------------
-    prepareToStore(data) {
-      if (!data) {
-        console.error('🔥 Called prepareToStore without item', item)
+    prepareToStore(item) {
+      if (!item) {
+        console.error('🔥 Called prepareToStore without item')
         return
       }
 
-      let item = JSON.parse(JSON.stringify(data))
-      item.uuid = item.uuid || $nuxt.$uuid()
+      let app = JSON.parse(JSON.stringify(item))
+      app.uuid = app.uuid || `local:${$nuxt.$uuid()}`
 
-      item.is.lib = item.is.lib === 0 ? 0 : item.is.lib || dates.stamp()
+      app.is.lib = app.is.lib === 0 ? 0 : app.is.lib || dates.stamp()
 
-      // item.is = item.is || {}
+      // app.is = app.is || {}
 
-      // item.log = item.log || []
+      // app.log = app.log || []
 
       // // Default created at timestamp, should come from api
       // // But sometimes it doesn't or the game is created locally
-      // item.created_at = item.created_at || dates.now()
+      // app.created_at = app.created_at || dates.now()
 
       // Delete internal flags
       // Those are used for application logic
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      delete item.will_import
-      delete item.will_update
-      delete item.will_ignore
+      delete app.will_import
+      delete app.will_update
+      delete app.will_ignore
 
-      delete item.is_api
-      delete item.is.dirty
+      delete app.is_api
+      delete app.is.dirty
 
-      delete item._
-      delete item.data
-      delete item.source
+      delete app._
+      delete app.data
+      delete app.source
 
-      return item
+      return app
     },
 
     //+-------------------------------------------------
@@ -525,30 +528,64 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
+    // addToQueue()
+    // Adds an item to the queue
+    // -----
+    // Created on Wed Dec 11 2024
+    //+-------------------------------------------------
+    async addToQueue(id, action = 'add') {
+      if (this.queue.includes(id)) return
+
+      if (action == 'add') this.queue.push(id)
+      if (action == 'delete') this.queueDelete.push(id)
+
+      // log(
+      //   `⛓️ Adding ${id} to ${action} queue - Length: ${this.queue.length}/${this.queueDelete.length}`
+      // )
+
+      // Debounce the storeQueue call to batch process items
+      clearTimeout(this._storeTimeout)
+      this._storeTimeout = setTimeout(() => this.storeQueue(), 3000)
+    },
+
+    //+-------------------------------------------------
     // storeQueue()
     // A debounced call to store()
     // -----
     // Created on Sun Feb 25 2024
+    // Created on Thu Dec 12 2024 - Handle deletes
     //+-------------------------------------------------
-    async storeQueue() {
-      await delay(4000, true)
+    async storeQueue(amount) {
+      await delay(1000, true)
 
-      let amount = this.queue.length
-      if (!amount) return
+      let length = this.queue.length
+      let toDelete = this.queueDelete.length
+      if (length == 0 && toDelete == 0) return
 
-      console.warn('🪝 Storing', amount, 'games')
+      if (!amount || amount !== length) {
+        this.storeQueue(length)
+        return
+      }
+
+      log(`⛓️ Persisting queue on ${amount} games`)
       this.store(this.queue)
       this.queue = []
 
-      let text = 'Details have been updated in ' + amount
-      text += amount > 1 ? ' games' : ' game'
-      $nuxt.$toast.success(text, {
-        // description: 'Monday, January 3rd at 6:00pm',
-      })
+      if (toDelete > 0) {
+        log(`⛓️ Clearing queue of deletes ${toDelete}`)
+        $nuxt.$db.games
+        this.queueDelete = []
+      }
+
+      $cloud.update('library')
+      // let text = 'Details have been updated in ' + amount
+      // text += amount > 1 ? ' games' : ' game'
+      // $nuxt.$toast.success(text, {
+      //   // description: 'Monday, January 3rd at 6:00pm',
+      // })
 
       await delay(1000, true)
       this.storeQueue()
-      $cloud.update('library')
     },
 
     //+-------------------------------------------------
@@ -587,19 +624,19 @@ export const useDataStore = defineStore('data', {
     // Created on Thu Nov 30 2023
     // Updated on Thu Apr 25 2024 - Added id.api ref
     //+-------------------------------------------------
-    toIndex(item) {
-      if (item.id.api) index.api[item.id.api] = item.uuid
-      if (item.id.igdb) index.igdb[item.id.igdb] = item.uuid
-      if (item.id.steam) index.steam[item.id.steam] = item.uuid
+    toIndex(app) {
+      if (app.id.api) index.api[app.id.api] = app.uuid
+      if (app.id.igdb) index.igdb[app.id.igdb] = app.uuid
+      if (app.id.steam) index.steam[app.id.steam] = app.uuid
 
-      if ((this.isLibrary(item) || item.is.dirty) && !index.lib.includes(item.uuid)) {
-        index.lib.push(item.uuid)
+      if ((this.isLibrary(app) || app.is.dirty) && !index.lib.includes(app.uuid)) {
+        index.lib.push(app.uuid)
       }
 
-      index.ed.push(item.uuid)
+      index.ed.push(app.uuid)
 
-      // index.api[item.id.api] = index.api[item.id.api] || item.uuid
-      // index.steam[item.id.steam] = index.steam[item.id.steam] || item.uuid
+      // index.api[app.id.api] = index.api[app.id.api] || app.uuid
+      // index.steam[app.id.steam] = index.steam[app.id.steam] || app.uuid
     },
 
     //+-------------------------------------------------
@@ -608,8 +645,34 @@ export const useDataStore = defineStore('data', {
     // -----
     // Created on Wed Jul 24 2024
     //+-------------------------------------------------
-    setIndex(key, data) {
-      index[key] = data
+    setIndex(key, app) {
+      index[key] = app
+    },
+
+    //+-------------------------------------------------
+    // reIndex()
+    // Changes the index of an app and reindexes again
+    // -----
+    // Created on Thu Dec 12 2024
+    //+-------------------------------------------------
+    reIndex(local, uuid) {
+      let app = data[local]
+      // console.warn('reindex', local, uuid, app)
+      if (!app) return local
+
+      app.uuid = uuid
+      this.toIndex(app)
+
+      delete index.lib[index.lib.indexOf(local)]
+      delete this.queue[this.queue.indexOf(local)]
+
+      this.addToQueue(uuid)
+      this.addToQueue(local, 'delete')
+
+      // $nuxt.$db.games.delete(local)
+      // $nuxt.$db.games.put(app)
+
+      return uuid
     },
 
     //+-------------------------------------------------
@@ -731,13 +794,12 @@ export const useDataStore = defineStore('data', {
       data[game.uuid] = game
       this.toIndex(game)
 
+      // TODO: Semantically add another property like "toBeStored"
       if (game.is?.dirty) {
         delete game.is.dirty
         if (this.queue.includes(game.uuid)) return
 
-        console.warn('🔥 Queueing', game.uuid, 'to be stored, having ', this.queue.length)
-        this.queue.push(game.uuid)
-        this.storeQueue()
+        this.addToQueue(game.uuid)
       }
     },
 
@@ -838,7 +900,6 @@ export const useDataStore = defineStore('data', {
         .filter((game) => {
           // const needsUpdate = $game.needsUpdate(game)
           // return needsUpdate !== false
-
           if (!game.id.steam) return false
           if (!game.id.api) return true
           // if (game.description == undefined) return true
@@ -846,7 +907,8 @@ export const useDataStore = defineStore('data', {
           return false
         })
         .map((game) => game.id.steam)
-      console.warn('🔥 Updating missing games', missing)
+
+      log('🪂 Updating missing games', missing)
 
       const xhr = await $nuxt.$axios.post(`get/batch`, { steam: missing })
       if (xhr.status) {
@@ -879,7 +941,7 @@ export const useDataStore = defineStore('data', {
       await this.loadApiStatus()
 
       // Expose data to the window
-      window.db = {
+      window.$data = {
         x: this,
         d: data,
         index,

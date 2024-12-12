@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Wed 04 December 2024 - 14:35:42
+ * Modified: Thu 12 December 2024 - 16:31:22
  */
 
 let $nuxt = null
@@ -175,7 +175,7 @@ export const useGameStore = defineStore('game', {
       let app = {}
 
       app = this.normalize({ ...data })
-      app.uuid = app.uuid || `local:${$nuxt.$uuid()}`
+      app.uuid = app.uuid || `local::${$nuxt.$uuid()}`
       app.is.lib = app.is.lib || dates.stamp()
 
       return app
@@ -205,7 +205,8 @@ export const useGameStore = defineStore('game', {
       const update = this.needsUpdate(game, data)
       if (!update) return false
 
-      console.warn('🪝 updating as', update, game, data)
+      // log(`🌠 Update as ${update} for ${game.name}`)
+      // if (update == 'update:match') debugger
 
       // Update the game with the new data from the API
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -320,6 +321,7 @@ export const useGameStore = defineStore('game', {
     // For preparing data to be stored, use process() or prepareToStore()
     // -----
     // Created on Tue Feb 20 2024
+    // Created on Wed Dec 11 2024 - Normalize local uuids with API
     //+-------------------------------------------------
     normalize(game) {
       // game.v = $data.v
@@ -332,15 +334,21 @@ export const useGameStore = defineStore('game', {
       game.genres = game.genres || []
       game.playtime = game.playtime || {}
 
-      if (game.steam_id) game.steam_id = Number(game.steam_id)
-
       if (game.epic_id) game.id.epic = game.epic_id
+      if (game.steam_id) game.steam_id = Number(game.steam_id)
       if (game.id.steam) game.id.steam = Number(game.id.steam)
 
-      // if (game.is_api) {
-      //   game.api_id = game.uuid
-      //   game.uuid = game.api_id
-      // }
+      if (game.api_id) game.id.api = game.api_id
+      if (!game.uuid || game.uuid?.indexOf('local:') > -1) {
+        if (game.id.api) {
+          // game.uuid = game.id.api
+          game.uuid = $data.reIndex(game.uuid, game.id.api)
+        }
+        // if (game.is_api) {
+        //   game.api_id = game.uuid
+        //   game.uuid = game.api_id
+        // }
+      }
 
       // game.updated_at = game.updated_at || 0
 

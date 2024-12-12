@@ -12,7 +12,7 @@
             <div class="col-12 col-md-4">
               <h2 class="mb-2">Website pages</h2>
               <div class="card me-4">
-                <div class="list-group card-list-group">
+                <div class="list-group list-group-hoverable card-list-group">
                   <a
                     v-for="link in staticLinks"
                     :key="link.path"

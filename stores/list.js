@@ -3,10 +3,8 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: Wed 06 November 2024 - 13:43:02
+ * Modified: Thu 12 December 2024 - 16:32:00
  */
-
-import { find } from 'rxjs'
 
 let $nuxt = null
 let $data = null

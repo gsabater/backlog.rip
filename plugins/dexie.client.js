@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Wed 09 October 2024 - 11:24:52
+ * Modified: Tue 26 November 2024 - 13:01:16
  */
 
 import Dexie from 'dexie'
@@ -49,7 +49,7 @@ db.open().catch(async (e) => {
 
 //+-------------------------------------------------
 // check()
-// Chec, if indexeddb is supported
+// is indexeddb supported?
 // -----
 // Created on Fri Feb 02 2024
 //+-------------------------------------------------
@@ -59,7 +59,7 @@ function check() {
     return false
   }
 
-  log('💽 IndexedDB is supported')
+  log('💽 IndexedDB is supported. Using Dexie v' + Dexie.semVer)
   return true
 }
 
@@ -73,10 +73,8 @@ function check() {
 //+-------------------------------------------------
 function install() {
   if (check() === false) return
-  log('Using Dexie v' + Dexie.semVer)
 
   let installer = new DexieInstaller(db)
-
   installer.account()
   installer.states()
   installer.checkin()

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Tue 10 December 2024 - 17:42:33
+ * Modified: Thu 12 December 2024 - 15:14:17
  */
 
 import axios from 'axios'
@@ -365,7 +365,7 @@ export default {
     x.log('✅ Data stored')
 
     await delay(1500, true)
-    x.log('Updating missing data')
+    x.log('🪂 Updating missing data')
     await $data.updateMissing()
 
     return {

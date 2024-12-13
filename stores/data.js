@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu 12 December 2024 - 16:30:46
+ * Modified: Fri 13 December 2024 - 13:40:13
  */
 
 let $nuxt = null
@@ -17,14 +17,16 @@ let $cloud = null
 // ---
 // Data is the complete list of games loaded by the app
 // Updated every time a repository is loaded or a game is added
-// ---
-// Buffer is a top-list of games fetch from the api
-// ---
-// All items are indexed by uuid
 //+-------------------------------------------------
 
 let data = {}
-let buffer = {}
+let queue = {
+  add: [],
+  delete: [],
+}
+
+// Buffer is a top-list of games fetch from the api
+// let buffer = {}
 
 //+-------------------------------------------------
 // Repos
@@ -61,8 +63,8 @@ export const useDataStore = defineStore('data', {
     // version defining data integrity
     // v: 10,
 
-    queue: [],
-    queueDelete: [],
+    // queue: [],
+    // queueDelete: [],
 
     loaded: [],
     indexes: [],
@@ -532,15 +534,16 @@ export const useDataStore = defineStore('data', {
     // Adds an item to the queue
     // -----
     // Created on Wed Dec 11 2024
+    // Updated on Fri Dec 13 2024 - Use JS queue
     //+-------------------------------------------------
     async addToQueue(id, action = 'add') {
-      if (this.queue.includes(id)) return
+      if (queue.add.includes(id)) return
 
-      if (action == 'add') this.queue.push(id)
-      if (action == 'delete') this.queueDelete.push(id)
+      if (action == 'add') queue.add.push(id)
+      if (action == 'delete') queue.delete.push(id)
 
       // log(
-      //   `⛓️ Adding ${id} to ${action} queue - Length: ${this.queue.length}/${this.queueDelete.length}`
+      //   `⛓️ Adding ${id} to ${action} queue - Length: ${queue.add.length}/${queue.delete.length}`
       // )
 
       // Debounce the storeQueue call to batch process items
@@ -558,8 +561,8 @@ export const useDataStore = defineStore('data', {
     async storeQueue(amount) {
       await delay(1000, true)
 
-      let length = this.queue.length
-      let toDelete = this.queueDelete.length
+      let length = queue.add.length
+      let toDelete = queue.delete.length
       if (length == 0 && toDelete == 0) return
 
       if (!amount || amount !== length) {
@@ -568,13 +571,14 @@ export const useDataStore = defineStore('data', {
       }
 
       log(`⛓️ Persisting queue on ${amount} games`)
-      this.store(this.queue)
-      this.queue = []
+      this.store(queue.add)
+      queue.add = []
 
       if (toDelete > 0) {
         log(`⛓️ Clearing queue of deletes ${toDelete}`)
-        $nuxt.$db.games
-        this.queueDelete = []
+        debugger
+        // $nuxt.$db.games
+        // queue.delete = []
       }
 
       $cloud.update('library')
@@ -664,7 +668,7 @@ export const useDataStore = defineStore('data', {
       this.toIndex(app)
 
       delete index.lib[index.lib.indexOf(local)]
-      delete this.queue[this.queue.indexOf(local)]
+      delete queue.add[queue.add.indexOf(local)]
 
       this.addToQueue(uuid)
       this.addToQueue(local, 'delete')
@@ -757,6 +761,9 @@ export const useDataStore = defineStore('data', {
       item._ = {
         score: $game._score(item),
         playtime: $game._playtime(item),
+
+        created_at: $game._dateCreatedAt(item),
+        updated_at: $game._dateUpdatedAt(item),
         released_at: $game._dateReleasedAt(item),
 
         // owned: $game._owned(item), // WIP -> should return true if is[store] is there
@@ -768,13 +775,15 @@ export const useDataStore = defineStore('data', {
       }
 
       if (item.api_id) item.id.api = item.api_id
-      if (item.igdb_id) item.id.igdb = item.igdb_id
       if (item.xbox_id) item.id.xbox = item.xbox_id
+      if (item.igdb_id) item.id.igdb = item.igdb_id
       if (item.steam_id) item.id.steam = item.steam_id
+      if (item.igdb_slug) item.id.igdb_slug = item.igdb_slug
 
       delete item.api_id
       delete item.igdb_id
       delete item.xbox_id
+      delete item.igdb_slug
       delete item.platforms
 
       return item
@@ -797,7 +806,7 @@ export const useDataStore = defineStore('data', {
       // TODO: Semantically add another property like "toBeStored"
       if (game.is?.dirty) {
         delete game.is.dirty
-        if (this.queue.includes(game.uuid)) return
+        if (queue.add.includes(game.uuid)) return
 
         this.addToQueue(game.uuid)
       }
@@ -894,19 +903,22 @@ export const useDataStore = defineStore('data', {
     // Tries to follow similar logic than $game.needsUpdate()
     // -----
     // Created on Thu Apr 11 2024
+    // Updated on Fri Dec 13 2024 - Accept requested
     //+-------------------------------------------------
-    async updateMissing() {
-      let missing = Object.values(data)
-        .filter((game) => {
-          // const needsUpdate = $game.needsUpdate(game)
-          // return needsUpdate !== false
-          if (!game.id.steam) return false
-          if (!game.id.api) return true
-          // if (game.description == undefined) return true
+    async updateMissing(requested = null) {
+      let missing =
+        requested ||
+        Object.values(data)
+          .filter((game) => {
+            // const needsUpdate = $game.needsUpdate(game)
+            // return needsUpdate !== false
+            if (!game.id.steam) return false
+            if (!game.id.api) return true
+            // if (game.description == undefined) return true
 
-          return false
-        })
-        .map((game) => game.id.steam)
+            return false
+          })
+          .map((game) => game.id.steam)
 
       log('🪂 Updating missing games', missing)
 
@@ -944,6 +956,7 @@ export const useDataStore = defineStore('data', {
       window.$data = {
         x: this,
         d: data,
+        q: queue,
         index,
 
         get: this.get,

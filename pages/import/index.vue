@@ -3,7 +3,7 @@
     <div class="container-xl">
       <div class="row row-cards">
         <template v-for="(mod, platform) in libraryStore.module" :key="platform">
-          <div class="col-4" v-if="mod && mod.manifest">
+          <div v-if="mod && mod.manifest" class="col-4">
             <import-card :module="mod" :integration="integration(platform)">
               <template #card:action>
                 <template v-if="libraryStore.isLinked(platform)">
@@ -15,20 +15,28 @@
                   </NuxtLink>
                 </template>
                 <template v-else>
-                  <p class="text-secondary px-4 mx-3 mb-4">
+                  <div class="text-secondary mb-3">
                     Before you can syncronize your library with
-                    {{ mod.manifest.source.name }}, you need to link your account.
+                    <strong class="text-white font-serif">
+                      {{ mod.manifest.source.name }}
+                    </strong>
+                    , you need to link your account.
                     <br />
                     <br />
                     This is a safe process, and only your account ID will be shared with
                     us.
 
                     <!-- <div class="hr-text">See also</div> -->
-                  </p>
+                  </div>
 
                   <template v-if="mod.manifest.requires == 'steamID'">
-                    <a class="btn btn-github" href="https://api.backlog.rip/auth/steam">
-                      <Icon class="me-3">BrandSteam</Icon>
+                    <a
+                      class="btn btn-github w-100"
+                      href="https://api.backlog.rip/auth/steam">
+                      <img
+                        src="/img/logos/steam.png"
+                        style="max-height: 16px"
+                        class="me-2" />
                       Sign in with Steam
                     </a>
                   </template>
@@ -49,7 +57,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 25th November 2024
- * Modified: Tue 10 December 2024 - 17:45:55
+ * Modified: Thu 12 December 2024 - 16:50:44
  **/
 
 export default {

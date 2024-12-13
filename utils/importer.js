@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Thu 12 December 2024 - 15:14:17
+ * Modified: Fri 13 December 2024 - 13:28:30
  */
 
 import axios from 'axios'
@@ -227,26 +227,19 @@ export default {
 
   //+-------------------------------------------------
   // prepare()
-  // - appsToImport,
-  // - appsToUpdate
+  // - library, changes and missing
   // -----
   // Created on Tue Jan 23 2024
+  // Updated on Fri Dec 13 2024 - Request missing games
   //+-------------------------------------------------
   async prepare(x = {}) {
     x.log('💠 Importer(5): Preparing data ...')
 
     let map = x.module.manifest.map
-    // let sync = x.module.manifest.sync
 
     let library = {}
     let changes = []
-
-    // let apps = {
-    //   libIDs: [],
-    //   toReview: [],
-    //   toImport: [],
-    //   toUpdate: [],
-    // }
+    let missing = []
 
     x.log('Check 5.1: Preparing Array of library IDs')
     let data = $data.library()
@@ -263,9 +256,10 @@ export default {
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     x.data.games.forEach((app) => {
       let appid = app[map[0]]
-      let db = library[appid]
 
-      let synced = {}
+      let db = library[appid]
+      if (!db) missing.push(appid)
+
       let element = {
         db: db,
         data: app,
@@ -322,6 +316,12 @@ export default {
       // }
     })
 
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Preload missing games from the API
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    x.log('🪂 Requesting missing data')
+    $data.updateMissing(missing)
+
     // x.log('Check 5.2: Preparing an Array ready to import')
     // apps.toImport = apps.toReview.map((item) => {
     //   return {
@@ -363,10 +363,6 @@ export default {
     await $state.indexLibrary('all')
 
     x.log('✅ Data stored')
-
-    await delay(1500, true)
-    x.log('🪂 Updating missing data')
-    await $data.updateMissing()
 
     return {
       uuids: x.changes.map((x) => x.uuid),

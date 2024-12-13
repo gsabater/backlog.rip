@@ -156,7 +156,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 12 December 2024 - 16:27:59
+ * Modified: Thu 12 December 2024 - 16:51:47
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -332,7 +332,7 @@ export default {
     cardBody() {
       // // console.warn('🔴 cardBody', this.filters.show.card)
       // return []
-      const show = [...this.filters.show.card]
+      const show = [...(this.filters?.show?.card ?? [])]
 
       if (show.length == 1 && show.includes('default')) {
         if (this.filters.sortBy == 'score') {

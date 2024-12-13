@@ -22,7 +22,7 @@
           <h3 class="card-title mb-0">{{ integration?.username }}</h3>
         </div> -->
       </div>
-      <div class="d-flex align-items-center mb-4" v-if="integration?.username">
+      <div v-if="integration?.username" class="d-flex align-items-center mb-4">
         <div class="me-3">
           <span
             class="avatar avatar mb-1"
@@ -41,7 +41,7 @@
         {{ module?.manifest.description }}
       </div>
     </div>
-    <div class="card-body" style="padding: 1rem">
+    <div class="card-body" style="padding: 1.9rem">
       <slot name="card:action"></slot>
     </div>
     <slot name="card:footer">
@@ -86,7 +86,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 4th December 2024
- * Modified: Thu 05 December 2024 - 16:29:00
+ * Modified: Thu 12 December 2024 - 16:46:34
  **/
 
 export default {

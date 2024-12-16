@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Fri 13 December 2024 - 13:40:13
+ * Modified: Mon 16 December 2024 - 16:04:51
  */
 
 let $nuxt = null
@@ -483,6 +483,7 @@ export const useDataStore = defineStore('data', {
       delete app.is.dirty
 
       delete app._
+      delete app.date
       delete app.data
       delete app.source
 
@@ -756,19 +757,10 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     prepareToData(item) {
       $game ??= useGameStore()
+
       item = $game.normalize(item)
-
-      item._ = {
-        score: $game._score(item),
-        playtime: $game._playtime(item),
-
-        created_at: $game._dateCreatedAt(item),
-        updated_at: $game._dateUpdatedAt(item),
-        released_at: $game._dateReleasedAt(item),
-
-        // owned: $game._owned(item), // WIP -> should return true if is[store] is there
-        // date_owned: $game._dateOwned(item), // remove as makes no sense, just use is.lib
-      }
+      item._ = $game.normalize_(item)
+      item.date = $game.normalizeDate(item)
 
       if (item.is?.dirty) {
         item.uuid = item.uuid || $nuxt.$uuid()

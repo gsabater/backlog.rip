@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Thu 12 December 2024 - 17:50:43
+ * Modified: Mon 16 December 2024 - 16:00:07
  */
 
 let $nuxt = null
@@ -324,16 +324,32 @@ export const useGameStore = defineStore('game', {
     // Created on Wed Dec 11 2024 - Normalize local uuids with API
     //+-------------------------------------------------
     normalize(game) {
-      // game.v = $data.v
-
       game.id = game.id || {}
       game.is = game.is || {}
       game.log = game.log || []
-      game.time = game.time || {}
+      game.date = game.time || {}
+
       game.scores = game.scores || {}
       game.genres = game.genres || []
       game.playtime = game.playtime || {}
 
+      game = this.normalizeID(game)
+
+      // game.updated_at = game.updated_at || 0
+
+      delete game.trigger
+      delete game.enabled
+      delete game.data
+      return game
+    },
+
+    //+-------------------------------------------------
+    // normalizeID()
+    // Normalizes multiple ID fields
+    // -----
+    // Created on Mon Dec 16 2024
+    //+-------------------------------------------------
+    normalizeID(game) {
       if (game.epic_id) game.id.epic = game.epic_id
       if (game.steam_id) game.steam_id = Number(game.steam_id)
       if (game.id.steam) game.id.steam = Number(game.id.steam)
@@ -350,13 +366,41 @@ export const useGameStore = defineStore('game', {
         // }
       }
 
-      // game.updated_at = game.updated_at || 0
-
       delete game.epic_id
-      delete game.trigger
-      delete game.enabled
-      delete game.data
+
       return game
+    },
+
+    //+-------------------------------------------------
+    // normalize_()
+    // -----
+    // Created on Mon Dec 16 2024
+    //+-------------------------------------------------
+    normalize_(game) {
+      return {
+        score: this._score(game),
+        playtime: this._playtime(game),
+
+        created_at: this._dateCreatedAt(game),
+        updated_at: this._dateUpdatedAt(game),
+        released_at: this._dateReleasedAt(game),
+
+        // owned: this._owned(game), // WIP -> should return true if is[store] is there
+        // date_owned: this._dateOwned(game), // remove as makes no sense, just use is.lib
+      }
+    },
+
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Mon Dec 16 2024
+    //+-------------------------------------------------
+    normalizeDate(game) {
+      return {
+        released: this._dateReleasedAt(game),
+        releasedYear: this._dateReleasedAt(game, 'YYYY'),
+      }
     },
 
     //+-------------------------------------------------
@@ -406,9 +450,9 @@ export const useGameStore = defineStore('game', {
         .reduce((total, [, num]) => total + num, 0)
     },
 
-    _dateReleasedAt(app) {
+    _dateReleasedAt(app, format = 'LL') {
       if (!app.released_at) return null
-      return $nuxt.$moment(app.released_at * 1000).format('LL')
+      return $nuxt.$moment(app.released_at * 1000).format(format)
     },
 
     _dateCreatedAt(app) {

@@ -6,7 +6,7 @@
     <div v-if="ui.dialog" id="game-details" @click="close">
       <div class="game-details__backdrop"></div>
       <div class="game-details__container">
-        <game-folio :game="app" />
+        <game-folio :game="app" @close="close" />
       </div>
     </div>
   </Transition>
@@ -33,7 +33,7 @@
       'leave-to-class': 'details-modal-out',
       'leave-active-class': 'hunaa-menu-leave-active',
     }">
-    <div class="row w-100 h-100 g-0 m-0" v-if="app">
+    <div v-if="app" class="row w-100 h-100 g-0 m-0">
       <div
         class="d-md-flex col"
         style="
@@ -210,8 +210,8 @@
               <li style="font-size: 13px">{{ listOfGenres(app) }}</li>
               <li
                 v-if="app.released_at"
-                style="font-size: 13px"
-                v-tippy="dates.timeAgo(app.released_at)">
+                v-tippy="dates.timeAgo(app.released_at)"
+                style="font-size: 13px">
                 <Icon>Calendar</Icon>
                 First released on {{ app._.released_at }}
               </li>
@@ -648,7 +648,7 @@
  * @desc:    ... https://davidwalsh.name/detect-sticky
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Mon 25 November 2024 - 15:53:32
+ * Modified: Mon 16 December 2024 - 17:03:28
  **/
 
 export default {
@@ -695,8 +695,8 @@ export default {
       if (!this.app || !this.$data.$list || !this.$data.$list.items) return
 
       let index = null
-      let uuid = this.app.uuid
-      let list = this.$data.$list.items
+      const uuid = this.app.uuid
+      const list = this.$data.$list.items
 
       // Check if the list contains objects with a uuid property
       if (typeof list[0] === 'object' && 'uuid' in list[0]) {
@@ -915,7 +915,7 @@ export default {
     this.$mitt.on('game:modal', this.loadAndShow)
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.$mitt.off('game:modal', this.loadAndShow)
     window.removeEventListener('popstate', this.handlePopState)
   },

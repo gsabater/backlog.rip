@@ -1,9 +1,6 @@
 <template>
-  <div class="game-details__content" v-if="app.uuid" @click.stop.prevent="() => {}">
-    <!-- <pre>
-      {{ app }}
-    </pre> -->
-    <button type="button" class="game-details__close" @click="hide">
+  <div v-if="app.uuid" class="game-details__content" @click.stop.prevent="() => {}">
+    <button type="button" class="game-details__close" @click="$emit('close')">
       <Icon width="2">X</Icon>
     </button>
     <!-- <div
@@ -180,7 +177,7 @@
             <div
               class="cover ambilight"
               @click="
-                this.$mitt.emit('game:modal', {
+                $mitt.emit('game:modal', {
                   uuid: app.uuid,
                 })
               ">
@@ -191,6 +188,88 @@
                 class="locandina"
                 :priority="['steam', 'igdb']"></game-asset>
             </div>
+            <div class="mb-3">
+              <h3 class="mb-1">Your library</h3>
+              <div v-tippy="'Date added to your library'" class="mb-2">
+                <Icon
+                  size="16"
+                  width="1.2"
+                  class="me-1"
+                  style="transform: translateY(-1px)">
+                  CalendarWeek
+                </Icon>
+                Owned since
+                {{ app._.created_at }}
+              </div>
+              <div class="mb-2">
+                <div class="d-flex flex-direction-column">
+                  <div>
+                    <Icon
+                      size="16"
+                      width="1.2"
+                      class="me-1"
+                      style="transform: translateY(-1px)">
+                      ClockHour3
+                    </Icon>
+                    <template v-if="app._.playtime == 0">Not played</template>
+                    <template v-else>
+                      Played {{ dates.minToHours(app._.playtime) }}
+                    </template>
+                  </div>
+                  <div v-if="app._.playtime > 0" class="text-muted" style="zoom: 0.9">
+                    <div class="d-inline-block me-2" style="width: 15px">&nbsp;</div>
+                    Last played {{ dates.timeAgo(app.playtime.steam_last * 1000) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="my-2 py-1" style="zoom: 0.8">🔸🔸🔸</div>
+            <div class="mb-3 text-muted" style="zoom: 0.9">
+              <h5 class="mb-1">In Backlog.rip</h5>
+              <div
+                v-tippy="'The date when the game has been added to the website'"
+                class="mb-2">
+                <Icon size="16" width="1.2" class="me-1">Box</Icon>
+                Since {{ app._.created_at }}
+                <!-- {{ $moment(app.created_at).format('LL') }} -->
+              </div>
+
+              <div v-tippy="'The last update on metadata from data sources'" class="mb-2">
+                <Icon size="16" width="1.2" class="me-1">RotateClockwise2</Icon>
+                Updated {{ app._.updated_at }}
+                <!-- {{ $moment(app.created_at).format('LL') }} -->
+              </div>
+
+              <div class="mb-2">
+                <Icon size="16" width="1.2" class="me-1">Edit</Icon>
+                Edit missing or wrong data on
+                <a :href="`https://www.igdb.com/games/${app.igdb_slug}`" target="_blank">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="16"
+                    viewBox="0 0 34 16"
+                    fill="none"
+                    class="mx-1">
+                    <path
+                      d="M6.71685e-05 0.000911468C11.3331 0.000683823 22.6665 0.00250409 33.9998 0C34 5.33326 34.0002 10.6667 33.9995 16C31.7937 15.6524 29.5779 15.3612 27.354 15.1482C19.3291 14.3685 11.2122 14.4991 3.21778 15.5367C2.14257 15.6731 1.07109 15.8359 6.71685e-05 15.9993C-0.00016551 10.6665 0.000299847 5.33371 6.71685e-05 0.000911468ZM1.00082 0.980238C1.00128 5.60575 1.00082 10.2315 1.00082 14.857C11.5847 13.2721 22.4154 13.2708 32.999 14.8575C32.9997 10.2315 32.9992 5.60552 32.9992 0.979555C22.333 0.981149 11.6668 0.98001 1.00082 0.980238Z"
+                      fill="black" />
+                    <path
+                      d="M8.31926 4.618C9.01287 3.95737 9.98594 3.60544 10.9497 3.62023C11.6077 3.61796 12.2794 3.7188 12.8712 4.01269C13.1762 4.16157 13.4549 4.35689 13.7151 4.57156C13.3877 4.95833 13.0575 5.34259 12.7339 5.73209C12.5391 5.58936 12.3497 5.43706 12.1343 5.32415C11.7017 5.08535 11.1921 5.00272 10.7005 5.03778C10.0988 5.08808 9.54827 5.44298 9.22228 5.93447C8.80207 6.55184 8.73668 7.3643 8.99123 8.05566C9.14527 8.47566 9.43937 8.84832 9.82678 9.08621C10.2121 9.32842 10.68 9.42562 11.1342 9.39899C11.6 9.38146 12.0742 9.25717 12.4535 8.98468C12.4498 8.65687 12.4535 8.32883 12.4516 8.00102C11.9297 8.00239 11.4076 8.00057 10.8857 8.00194C10.8845 7.56213 10.8885 7.12232 10.8838 6.68273C11.9104 6.67636 12.9372 6.68501 13.9638 6.67841C13.9701 7.68255 13.9631 8.68692 13.9673 9.69106C13.2607 10.2879 12.3688 10.6795 11.4374 10.7685C10.5281 10.8662 9.56944 10.7025 8.79439 10.2119C8.17337 9.82468 7.69359 9.23076 7.44253 8.5542C7.19472 7.88857 7.14586 7.1551 7.285 6.46124C7.42996 5.76373 7.79247 5.10971 8.31926 4.618Z"
+                      fill="black" />
+                    <path
+                      d="M3.78761 3.73952C4.30811 3.74066 4.82861 3.73861 5.34912 3.74066C5.34795 6.05079 5.34912 8.36116 5.34865 10.6715C4.82838 10.6713 4.30811 10.6706 3.78784 10.6718C3.78761 8.36116 3.78808 6.05034 3.78761 3.73952Z"
+                      fill="black" />
+                    <path
+                      d="M15.8643 3.73975C16.8165 3.73997 17.7686 3.73975 18.7207 3.73997C19.5863 3.74931 20.4628 4.01201 21.1401 4.54902C21.7323 5.01228 22.1522 5.6786 22.3123 6.40364C22.5061 7.27916 22.3798 8.23391 21.8993 9.00403C21.518 9.62481 20.919 10.1081 20.2345 10.3792C19.7549 10.5698 19.2377 10.6699 18.72 10.6713C17.7683 10.6713 16.8165 10.6708 15.8646 10.6715C15.8646 8.36093 15.865 6.05034 15.8643 3.73975ZM17.4303 5.11654C17.4279 6.50927 17.4305 7.902 17.4289 9.29496C17.7276 9.2945 18.0266 9.29473 18.3254 9.29473C18.566 9.29291 18.8086 9.30588 19.0469 9.26263C19.5139 9.19161 19.9639 8.97193 20.2727 8.61749C20.5426 8.31381 20.6994 7.92431 20.7466 7.52707C20.7906 7.12368 20.7557 6.70573 20.5958 6.32875C20.4313 5.92809 20.1237 5.58526 19.7352 5.3797C19.3843 5.18848 18.979 5.11631 18.5806 5.11609C18.1972 5.117 17.8137 5.11608 17.4303 5.11654Z"
+                      fill="black" />
+                    <path
+                      d="M24.1838 3.74407C25.1459 3.73406 26.1089 3.74271 27.0713 3.73975C27.3356 3.74339 27.6006 3.72905 27.864 3.75568C28.3319 3.79825 28.8061 3.93188 29.1805 4.21939C29.506 4.46502 29.7345 4.83176 29.7976 5.23036C29.8432 5.60734 29.822 6.00891 29.6324 6.34878C29.4711 6.6536 29.1933 6.87988 28.8946 7.0497C29.2927 7.1963 29.6864 7.41256 29.9342 7.76131C30.1652 8.08343 30.2327 8.49046 30.2101 8.87655C30.2008 9.26901 30.054 9.6626 29.7792 9.95194C29.5016 10.2486 29.12 10.4309 28.7284 10.5368C28.4011 10.623 28.0625 10.6674 27.7237 10.6706C26.5445 10.6715 25.3653 10.6718 24.1861 10.6706C24.1842 8.36161 24.1886 6.05284 24.1838 3.74407ZM25.7078 5.08035C25.7094 5.5675 25.7064 6.05489 25.7092 6.54228C26.2257 6.53909 26.7423 6.54296 27.2588 6.54023C27.4931 6.52794 27.7358 6.49538 27.9429 6.37974C28.1065 6.28914 28.2307 6.12683 28.2552 5.94244C28.2896 5.7346 28.2531 5.50126 28.0979 5.34578C27.9113 5.15774 27.633 5.09765 27.3749 5.08262C26.8193 5.07807 26.2634 5.08262 25.7078 5.08035ZM25.7076 7.81527C25.7083 8.32132 25.709 8.82783 25.7071 9.33411C26.2011 9.33867 26.6953 9.33457 27.1895 9.33593C27.4361 9.33297 27.6853 9.34936 27.9296 9.30634C28.1437 9.27265 28.3645 9.19388 28.509 9.02861C28.6547 8.86311 28.6852 8.62773 28.6486 8.41898C28.6195 8.24187 28.5058 8.08275 28.3485 7.99146C28.1351 7.86444 27.8796 7.82437 27.6334 7.81618C26.9915 7.81436 26.3495 7.81618 25.7076 7.81527Z"
+                      fill="black" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
             <template v-if="$app.wip">
               <h3>Your library</h3>
               <ul>
@@ -198,15 +277,10 @@
                 <li>since {{ app.is.lib }}</li>
               </ul>
 
-              <h3>Add a note</h3>
-              <textarea name="" id="" cols="30" rows="10">
+              <!-- <h3>Add a note</h3>
+              <textarea id="" name="" cols="30" rows="10">
                 You can add a note here. Use markdown to format your text.
-              </textarea>
-
-              <div class="text-center">
-                There is something wrong with this game?
-                <a href="#" class="cursor-pointer">Report it</a>
-              </div>
+              </textarea> -->
             </template>
           </div>
           <div class="col-9 row" style="align-content: flex-start">
@@ -216,9 +290,9 @@
               </h1>
               <div class="row">
                 <div class="mb-3">
-                  <strong class="text-muted">2025</strong>
+                  <strong class="text-muted">{{ app.date.releasedYear }}</strong>
                   <div class="d-inline-block px-2 opacity-50">🔸</div>
-                  <strong class="text-muted" v-tippy="'Median score'">
+                  <strong v-tippy="'Median score'" class="text-muted">
                     <Icon size="12" width="1" style="transform: translateY(-2px)">
                       StarFilled
                     </Icon>
@@ -239,11 +313,11 @@
                         variant="tonal"
                         class="me-2"
                         :color="state.color || 'deep-purple-lighten-4'"
-                        @click.stop="$refs.bstate.showManager($event)"
                         :style="{
                           '--tblr-status-color': state.color,
                           'outline': '1px solid ' + state.color,
-                        }">
+                        }"
+                        @click.stop="$refs.bstate.showManager($event)">
                         <span
                           v-if="state.id"
                           class="status-dot status-dot-animated me-2"></span>
@@ -289,8 +363,8 @@
               <div class="btn-list">
                 <v-btn
                   v-if="app.id.steam"
-                  variant="tonal"
                   v-tippy="'Open Steam store page'"
+                  variant="tonal"
                   :href="'https://store.steampowered.com/app/' + app.id.steam"
                   target="_blank"
                   style="outline: rgb(108 122 145 / 40%) solid 1px">
@@ -320,8 +394,8 @@
 
                 <v-btn
                   v-if="app.id.xbox"
-                  variant="text"
                   v-tippy="'Open Xbox page'"
+                  variant="text"
                   :href="`https://www.xbox.com/games/store/${app.slug}/${app.id.xbox}`"
                   target="_blank">
                   <Icon size="15" class="me-1">BrandXbox</Icon>
@@ -530,9 +604,23 @@
                           justify-content: center;
                           transform: translateY(-2px);
                         ">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="20"
+                          viewBox="0 0 40 40"
+                          class="me-1"
+                          style="transform: translateX(-2px)">
+                          <path d="M36.978 19.49a17.49 17.49 0 1 1 0-.021" fill="#000" />
+                          <path
+                            d="m17.209 32.937 3.41-3.41-6.567-6.567c-.276-.276-.576-.622-.737-1.014-.369-.783-.53-2.004.369-2.903 1.106-1.106 2.58-.645 4.009.784l6.313 6.313 3.41-3.41-6.59-6.59c-.276-.276-.599-.691-.76-1.037-.438-.898-.415-2.027.392-2.834 1.129-1.129 2.603-.714 4.24.922l6.128 6.129 3.41-3.41L27.6 9.274c-3.364-3.364-6.52-3.249-8.686-1.083-.83.83-1.337 1.705-1.59 2.696a6.71 6.71 0 0 0-.092 2.81l-.046.047c-1.66-.691-3.549-.277-5 1.175-1.936 1.935-1.866 3.986-1.636 5.184l-.07.07-1.681-1.36-2.95 2.949c1.037.945 2.282 2.097 3.687 3.502l7.673 7.673Z"
+                            fill="#F2F2F2" />
+                          <path
+                            d="M19.982 0A20 20 0 1 0 40 20v-.024A20 20 0 0 0 19.982 0Zm-.091 4.274A15.665 15.665 0 0 1 35.57 19.921v.018A15.665 15.665 0 1 1 19.89 4.274Z"
+                            fill="#FFBD3F" />
+                        </svg>
                         <div
                           v-tippy="'Metacritic users'"
-                          class="text-muted me-2"
+                          class="text-muted me-1"
                           style="
                             display: flex;
                             width: 24px;
@@ -545,15 +633,14 @@
                             font-weight: bold;
                           "
                           :style="{
-                            'background-color': format.scoreToHuman(
-                              app.scores.metascore,
-                              'meta',
-                              'color'
-                            ),
+                            border:
+                              '1px solid ' +
+                              format.scoreToHuman(app.scores.metascore, 'meta', 'color'),
                           }">
                           {{ app.scores.metascore }}
                         </div>
                         <div
+                          v-if="app.scores.userscore"
                           v-tippy="'Metacritic users'"
                           class="text-muted"
                           style="
@@ -568,11 +655,9 @@
                             font-weight: bold;
                           "
                           :style="{
-                            'background-color': format.scoreToHuman(
-                              app.scores.userscore,
-                              'meta',
-                              'color'
-                            ),
+                            border:
+                              '1px solid ' +
+                              format.scoreToHuman(app.scores.userscore, 'meta', 'color'),
                           }">
                           {{ app.scores.userscore }}
                         </div>
@@ -737,7 +822,7 @@
 
             <div v-if="screenshots.length" class="col-12 my-4">
               <h5>Gallery ({{ screenshots.length }})</h5>
-              <div class="game-gallery" id="game-gallery">
+              <div id="game-gallery" class="game-gallery">
                 <!-- Main large screenshot -->
                 <a
                   v-if="screenshots[0]"
@@ -745,8 +830,8 @@
                   data-pswp-width="1000"
                   data-pswp-height="1000"
                   :data-id="0"
-                  @click.prevent="lightbox.loadAndOpen(0)"
-                  class="game-gallery__item game-gallery__item--main">
+                  class="game-gallery__item game-gallery__item--main"
+                  @click.prevent="lightbox.loadAndOpen(0)">
                   <img :src="screenshots[0].thumb" :alt="`${app.name} screenshot 1`" />
                 </a>
 
@@ -758,8 +843,8 @@
                     data-pswp-width="300"
                     data-pswp-height="300"
                     :data-id="index"
-                    @click.prevent="lightbox.loadAndOpen(index)"
-                    class="game-gallery__item">
+                    class="game-gallery__item"
+                    @click.prevent="lightbox.loadAndOpen(index)">
                     <img
                       :src="screenshots[index].thumb"
                       :alt="`${app.name} screenshot ${index + 1}`" />
@@ -794,18 +879,18 @@
                         <div class="datagrid-content" v-html="genres"></div>
                       </div>
                       <div class="datagrid-item">
-                        <div class="datagrid-title">Nameservers</div>
-                        <div class="datagrid-content">Third Party</div>
+                        <div class="datagrid-title">Release date</div>
+                        <div class="datagrid-content">{{ app.date.released }}</div>
                       </div>
-                      <div class="datagrid-item">
+                      <div v-if="$app.wip" class="datagrid-item">
                         <div class="datagrid-title">Port number</div>
                         <div class="datagrid-content">3306</div>
                       </div>
-                      <div class="datagrid-item">
+                      <div v-if="$app.wip" class="datagrid-item">
                         <div class="datagrid-title">Expiration date</div>
                         <div class="datagrid-content">–</div>
                       </div>
-                      <div class="datagrid-item">
+                      <div v-if="$app.wip" class="datagrid-item">
                         <div class="datagrid-title">Creator</div>
                         <div class="datagrid-content">
                           <div class="d-flex align-items-center">
@@ -814,17 +899,17 @@
                           </div>
                         </div>
                       </div>
-                      <div class="datagrid-item">
+                      <div v-if="$app.wip" class="datagrid-item">
                         <div class="datagrid-title">Age</div>
                         <div class="datagrid-content">15 days</div>
                       </div>
-                      <div class="datagrid-item">
+                      <div v-if="$app.wip" class="datagrid-item">
                         <div class="datagrid-title">Edge network</div>
                         <div class="datagrid-content">
                           <span class="status status-green">Active</span>
                         </div>
                       </div>
-                      <div class="datagrid-item">
+                      <div v-if="$app.wip" class="datagrid-item">
                         <div class="datagrid-title">Avatars list</div>
                         <div class="datagrid-content">
                           <div class="avatar-list avatar-list-stacked">
@@ -837,46 +922,8 @@
                           </div>
                         </div>
                       </div>
-                      <div class="datagrid-item">
-                        <div class="datagrid-title">Checkbox</div>
-                        <div class="datagrid-content">
-                          <label class="form-check">
-                            <input class="form-check-input" type="checkbox" checked="" />
-                            <span class="form-check-label">Click me</span>
-                          </label>
-                        </div>
-                      </div>
-                      <div class="datagrid-item">
-                        <div class="datagrid-title">Icon</div>
-                        <div class="datagrid-content">
-                          <!-- Download SVG icon from http://tabler-icons.io/i/check -->
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="icon text-green">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M5 12l5 5l10 -10"></path>
-                          </svg>
-                          Checked
-                        </div>
-                      </div>
-                      <div class="datagrid-item">
-                        <div class="datagrid-title">Form control</div>
-                        <div class="datagrid-content">
-                          <input
-                            type="text"
-                            class="form-control form-control-flush"
-                            placeholder="Input placeholder" />
-                        </div>
-                      </div>
-                      <div class="datagrid-item">
+
+                      <div v-if="$app.wip" class="datagrid-item">
                         <div class="datagrid-title">Longer description</div>
                         <div class="datagrid-content">
                           Lorem ipsum dolor sit amet, consectetur adipisicing elit.
@@ -886,13 +933,16 @@
                   </div>
                 </div>
               </div>
+              <!-- <pre>
+      {{ app }}
+    </pre
+              > -->
             </client-only>
 
             <div class="col-12 my-3 text-muted" style="zoom: 0.9">
               <h5>Data sources</h5>
 
-              Data provided by
-              <a href="https://www.igdb.com" target="_blank" class="ms-2">
+              <a href="https://www.igdb.com" target="_blank">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="15"
@@ -920,8 +970,8 @@
 
               <a href="https://store.steampowered.com" target="_blank">
                 <svg
-                  version="1.1"
                   id="Layer_1"
+                  version="1.1"
                   xmlns="http://www.w3.org/2000/svg"
                   xmlns:xlink="http://www.w3.org/1999/xlink"
                   x="0px"
@@ -1016,14 +1066,24 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
 </template>
 
 <script>
+/**
+ * @file:    \components\game\Folio.vue
+ * @desc:    ...
+ * ----------------------------------------------
+ * Created Date: 21st November 2024
+ * Modified: Mon 16 December 2024 - 17:13:11
+ **/
+
 export default {
   name: 'GameFolio',
   props: {
     game: {
       type: Object,
-      default: {},
+      default: () => ({}),
     },
   },
+
+  emits: ['close'],
 
   data() {
     return {
@@ -1043,7 +1103,7 @@ export default {
     }),
 
     app() {
-      let data = {
+      const data = {
         ...this.gameStore.app,
         ...this.game,
       }
@@ -1082,7 +1142,7 @@ export default {
       return this.app.genres
         .map((id) => (this._genres[id] ? this._genres[id].name : undefined))
         .filter(Boolean)
-        .join('<br>')
+        .join(', ')
 
       return app.genres.map((id) => this._genres[id]?.name).join(', ')
     },

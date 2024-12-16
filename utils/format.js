@@ -3,7 +3,7 @@
  * @desc:    All format functions not related to dates
  * -------------------------------------------
  * Created Date: 12th November 2023
- * Modified: Wed 20 November 2024 - 21:46:42
+ * Modified: Mon 16 December 2024 - 16:28:43
  */
 
 export default {
@@ -96,10 +96,10 @@ export default {
         { breakpoint: 0, color: '#ff0000', label: 'Generally unfavorable' },
       ],
       steam: [
-        { breakpoint: 80, color: '#66C0F4', label: 'Universal acclaim' },
-        { breakpoint: 70, color: '#66C0F4', label: 'Generally favorable' },
-        { breakpoint: 40, color: '#B9A074', label: 'Mixed or average' },
-        { breakpoint: 0, color: '#A34C25', label: 'Generally unfavorable' },
+        { breakpoint: 80, color: '#454e89ef', label: 'Universal acclaim' },
+        { breakpoint: 70, color: '#454e89ef', label: 'Generally favorable' },
+        { breakpoint: 40, color: '#454e89ef', label: 'Mixed or average' },
+        { breakpoint: 0, color: '#454e89ef', label: 'Generally unfavorable' },
       ],
       oc: [
         { breakpoint: 84, color: '#fc430a', label: 'mighty' },

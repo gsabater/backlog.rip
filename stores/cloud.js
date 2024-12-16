@@ -3,15 +3,15 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Thu 24 October 2024 - 15:02:17
+ * Modified: Thu 12 December 2024 - 15:28:21
  */
 
 import { createClient } from '@supabase/supabase-js'
-import { DexieInstaller } from '~/utils/dexieInstaller'
 
 let $nuxt = null
 let $data = null
 let $user = null
+// let $guild = null
 let $state = null
 
 //+-------------------------------------------------
@@ -111,7 +111,7 @@ export const useCloudStore = defineStore('cloud', {
 
       // Finalize the backup
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (this.backup.enabled) await this.storeBackup()
+      if (this.backup.enabled) await this.runBackup()
 
       log('⚡✅ syncing:done')
       this.status = 'syncing:done'
@@ -152,6 +152,7 @@ export const useCloudStore = defineStore('cloud', {
       $data ??= useDataStore()
       $user ??= useUserStore()
       $state ??= useStateStore()
+      // $guild ??= useGuildStore()
 
       if ($nuxt.$app.offline) {
         log('⚡ Cloud sync is disabled in offline mode')
@@ -339,6 +340,12 @@ export const useCloudStore = defineStore('cloud', {
       }
     },
 
+    async runBackup() {
+      log(`⚡ Running backup in 5 seconds...`)
+      clearTimeout(this._backupTimeout)
+      this._backupTimeout = setTimeout(() => this.storeBackup(), 5000)
+    },
+
     //+-------------------------------------------------
     // storeBackup()
     // Stores the backup to the cloud and updates the local
@@ -420,9 +427,9 @@ export const useCloudStore = defineStore('cloud', {
     async doSync(dimension) {
       // await delay(500)
       if (this.b[dimension] !== 'ok') {
-        // log('⚡ ⇢ doSync', dimension, this.b[dimension])
-        console.warn(this.b[dimension + '.cli.hash'])
-        console.warn(this.b[dimension + '.clo.hash'])
+        log('⚡ ⇢ doSync', dimension, this.b[dimension])
+        // console.warn(this.b[dimension + '.cli.hash'])
+        // console.warn(this.b[dimension + '.clo.hash'])
       }
 
       if (this.b[dimension].includes('up')) {
@@ -717,7 +724,7 @@ export const useCloudStore = defineStore('cloud', {
       $data.emptyLibrary()
       await $nuxt.$db.games.bulkPut(json)
 
-      await $data.loadLibrary(true)
+      await $data.loadGames(true)
       await $state.indexLibrary('all')
     },
 

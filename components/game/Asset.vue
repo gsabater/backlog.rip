@@ -1,5 +1,10 @@
 <template>
-  <img loading="lazy" :src="src" @error="showAnother" @load="emitLoaded" />
+  <img
+    loading="lazy"
+    :src="src"
+    @error="showAnother"
+    @load="emitLoaded"
+    crossorigin="anonymous" />
 </template>
 
 <script>
@@ -13,7 +18,7 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Tue 05 November 2024 - 17:42:37
+ * Modified: Fri 15 November 2024 - 14:04:14
  **/
 
 export default {
@@ -50,11 +55,12 @@ export default {
     },
   },
 
-  emits: ['loaded'],
+  emits: ['loaded', 'failed'],
 
   data() {
     return {
       is: null, // steam, igdb, etc
+      ready: false,
       showing: 0,
 
       resources: {
@@ -87,6 +93,8 @@ export default {
       const fallback = []
 
       this.priority.forEach((source) => {
+        if (source == 'steam' && !this.app.id.steam) return
+
         const resource = this.resources[source]
 
         if (!resource) return
@@ -129,9 +137,19 @@ export default {
       this.$el.classList.add('animate__animated animate__fadeOut animate__faster')
     },
 
+    //+-------------------------------------------------
+    // showAnother()
+    // Tries to show another asset or fails
+    // -----
+    // Updated on Thu Nov 14 2024 - Emit failed
+    //+-------------------------------------------------
     showAnother() {
       // console.warn('show another', this.app.uuid, this.assets)
-      if (this.showing == -1) return
+      if (this.showing == -1) {
+        this.$emit('failed')
+        return
+      }
+
       if (this.showing < this.assets.length - 1) this.showing++
       else this.showing = -1
     },

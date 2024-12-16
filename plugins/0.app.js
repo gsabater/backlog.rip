@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Thu 07 November 2024 - 12:15:42
+ * Modified: Thu 12 December 2024 - 16:43:55
  */
 
 // import { reactive } from 'vue'
@@ -22,10 +22,11 @@ let $state = null
 let $repos = null
 let $cloud = null
 let $search = null
+let $integration = null
 
 let app = {
-  v: '0.16.4 β', //β
-  t: Date.now(),
+  v: '0.17.3 β', //β
+  t: 1732274659575, // Date.now()
 
   // Global app state
   // Controls modules boundaries
@@ -162,13 +163,15 @@ async function init() {
 // Initializes client modules
 // -----
 // Created on Tue Feb 27 2024
+// Updated on Tue Nov 26 2024
 //+-------------------------------------------------
 async function initClient() {
-  if (!$user) $user = useUserStore()
-  if (!$data) $data = useDataStore()
-  if (!$cloud) $cloud = useCloudStore()
+  $data ??= useDataStore()
+  $user ??= useUserStore()
   $list ??= useListStore()
+  $cloud ??= useCloudStore()
   $state ??= useStateStore()
+  $integration ??= useLibraryStore()
 
   const breakpoints = useBreakpoints({
     sm: 0,
@@ -199,6 +202,7 @@ async function initClient() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   await $data.init()
+  $integration.init()
   await $state.init()
   await $list.init()
 

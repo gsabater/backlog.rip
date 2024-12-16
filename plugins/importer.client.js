@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Thu 05 September 2024 - 12:01:30
+ * Modified: Tue 10 December 2024 - 15:41:31
  */
 
 import importer from '~/utils/importer'
@@ -17,6 +17,7 @@ import importer from '~/utils/importer'
 
 let $nuxt = null
 let $toast = null
+let $integration = null
 
 const _sync = {
   x: {
@@ -24,12 +25,16 @@ const _sync = {
     source: null, // source currently running ('steam', 'gog'...)
 
     // From detect...
-    module: null, // the module assigned to that source to run the import
+    // run: null, // The module runner from $integration used for the integration
+    // module: null, // the module assigned to that source to run the import
+    states: {}, // User states from $db store
     account: null, // The user account with userdata at the selected source
 
     // Scan and prepare...
     data: {},
-    apps: {},
+    library: {},
+    changes: [],
+    // apps: {},
 
     // Error handling
     code: null, // profile:private, library:empty, etc
@@ -114,6 +119,8 @@ async function autoSync() {
 // Created on Mon Jan 22 2024
 //+-------------------------------------------------
 async function sync(options = {}) {
+  $integration ??= useLibraryStore()
+
   _sync.enabled = true
   _sync.background = options.background ?? false
 
@@ -142,7 +149,8 @@ async function detect() {
   const detected = importer.detect(_sync.x)
 
   if (detected) {
-    _sync.x.module = { ...detected.module }
+    _sync.x.module = { ...detected.module, wip: 'deleteme' }
+    _sync.x.module = $integration.module[_sync.x.source]
     _sync.x.account = { ...detected.account }
 
     return true
@@ -183,16 +191,19 @@ async function scan() {
 // - Generates appsToImport, appsToUpdate from data
 // -----
 // Created on Tue Jan 23 2024
+// Updated on Thu Nov 28 2024 - Simplified with a single changes array
 //+-------------------------------------------------
 async function prepare() {
   const prepared = await importer.prepare(_sync.x)
 
   if (prepared) {
-    _sync.x.apps = {
-      toReview: prepared.toReview,
-      toImport: prepared.toImport,
-      toUpdate: prepared.toUpdate,
-    }
+    _sync.x.library = prepared.library
+    _sync.x.changes = prepared.changes
+    // apps = {
+    //   toReview: prepared.toReview,
+    //   toImport: prepared.toImport,
+    //   toUpdate: prepared.toUpdate,
+    // }
   }
 
   return true
@@ -250,7 +261,7 @@ function notify() {
 function init() {
   window.setTimeout(() => {
     autoSync()
-  }, 2000)
+  }, 4000)
 }
 
 //+-------------------------------------------------

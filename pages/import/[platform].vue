@@ -172,40 +172,15 @@
           <div
             v-if="process.ready && ui.step == 'prep'"
             class="container container-tight py-3">
-            <div class="card card-md">
-              <div class="card-body text-center">
-                <div class="mb-4">
-                  <h2 class="mb-0">Your Steam library</h2>
-                  <!-- <p class="text-muted">Click to begin to scan your games</p> -->
-                </div>
-                <span
-                  class="avatar avatar-xl mb-3"
-                  :style="`background-image: url('${
-                    account.steam_data?.avatarfull || ''
-                  }')`"></span>
-                <div class="mb-6">
-                  <h3 class="card-title mb-0">
-                    {{ account.steam_data.personaname }} on {{ module.store }}
-                  </h3>
-                  <p class="text-muted">
-                    SteamID
-                    <code>{{ account.steam }}</code>
-                  </p>
-                </div>
+            <import-card :module="module" :integration="integration">
+              <template #card:action>
                 <div>
-                  <div
-                    v-if="$auth.canUpdateSteamLibrary"
-                    class="btn btn-primary w-100 mb-2"
-                    @click="scanAndPrepare">
+                  <div class="btn btn-primary w-100" @click="scanAndPrepare">
                     <Icon class="me-2">ArrowsTransferDown</Icon>
-                    Syncronize your {{ module.store }} library
-                  </div>
-                  <div v-else class="btn btn-primary disabled w-100 mb-2">
-                    <Icon class="me-2">ArrowsTransferDown</Icon>
-                    Syncronize your {{ module.store }} library
+                    Start syncronization
                   </div>
 
-                  <small v-if="$auth.user.steam_updated_at" class="text-muted">
+                  <!-- <small v-if="$auth.user.steam_updated_at" class="text-muted">
                     Last update, {{ dates.timeAgo($auth.user.steam_updated_at) }}
                   </small>
 
@@ -214,41 +189,11 @@
                     class="invalid-feedback d-block mt-1">
                     You have recently updated your library. Please wait a while before
                     updating again.
-                  </div>
+                  </div> -->
                 </div>
-              </div>
-              <div class="card-footer">
-                <div class="row align-items-center">
-                  <div class="col-auto">
-                    <label class="form-check form-switch m-0">
-                      <input
-                        v-model="$auth.config.autosync_steam"
-                        class="form-check-input position-static"
-                        type="checkbox"
-                        @change="storeConfig('autosync_steam')" />
-                      <span class="form-check-label form-check-label-on">
-                        Auto updates are enabled
-                      </span>
-                      <span class="form-check-label form-check-label-off">
-                        Enable automatic updates
-                      </span>
-                    </label>
-                  </div>
-                  <div class="col-auto ms-auto">
-                    <small
-                      v-tippy="{
-                        content:
-                          'Your Steam library will be automatically updated to stay synchronized with your backlog.rip account. This update process occurs every 24 hours',
-                        placement: 'top',
-                      }"
-                      class="text-muted">
-                      What is this?
-                      <span class="form-help mx-2">?</span>
-                    </small>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </template>
+              <template #card:footer></template>
+            </import-card>
           </div>
 
           <!--
@@ -259,7 +204,7 @@
           <div v-if="ui.step == 'review'" class="col-lg-9 mx-auto mt-2">
             <div class="card">
               <div class="card-body">
-                <h2>Data received successfully</h2>
+                <h2>Your library is ready! 🎉</h2>
                 <div class="row">
                   <div class="col">
                     <div class="card mb-2">
@@ -269,7 +214,10 @@
                         </div>
                         <div class="h2 mb-1 d-flex align-items-center">
                           <Icon class="mr-2 text-muted mt-1">NewSection</Icon>
-                          {{ data.appsToReview.length }} new
+                          <!-- {{ data.appsToReview.length }} new -->
+                          {{ format.num(newGames) }}
+                          <small class="subheader mx-2 pt-2">new games</small>
+
                           <br />
                         </div>
                         <!-- <b-btn block>Review</b-btn> -->
@@ -285,7 +233,8 @@
                         </div>
                         <div class="h2 mb-1 d-flex align-items-center">
                           <Icon class="mr-2 text-muted mt-1">Refresh</Icon>
-                          {{ data.appsToUpdate.length }}
+                          {{ format.num(enabled.length) }}
+                          <small class="subheader mx-2 pt-2">updates</small>
                           <br />
                         </div>
                         <!-- <b-btn block>Review</b-btn> -->
@@ -384,13 +333,13 @@
                     <div class="col">
                       <div
                         class="btn w-100"
-                        @click="(ui.step = 'review:plus'), toggleAll()">
+                        @click="((ui.step = 'review:plus'), toggleAll())">
                         Review your data
                       </div>
                     </div>
                     <div class="col">
                       <div class="btn btn-success w-100" @click="store">
-                        Update library
+                        Update everything
                       </div>
                     </div>
                   </div>
@@ -419,21 +368,26 @@
                     <div class="d-flex align-items-baseline">
                       <div class="h2 mb-0 me-2 d-flex align-items-center">
                         <Icon class="mr-2 text-muted mt-1">Cards</Icon>
-                        {{ data.library.length }} games
+
+                        {{ Object.keys(data.library).length }} games
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="col-sm-6 col-lg-4">
-                <div class="card cursor-pointer" @click="ui.tab = 'appsToReview'">
+                <div class="card">
                   <div class="card-body">
                     <div class="d-flex align-items-center">
                       <div class="subheader">New games found</div>
                     </div>
                     <div class="h2 mb-1 d-flex align-items-center">
                       <Icon class="mr-2 text-muted mt-1">NewSection</Icon>
-                      {{ data.appsToReview.length }} new
+
+                      <!-- {{ data.appsToReview.length }} new -->
+                      {{ format.num(newGames) }}
+                      <small class="subheader mx-2 pt-2">new games</small>
+
                       <br />
                     </div>
                     <!-- <b-btn block>Review</b-btn> -->
@@ -441,7 +395,7 @@
                 </div>
               </div>
 
-              <div class="col-sm-2">
+              <!-- <div class="col-sm-2">
                 <div class="card cursor-pointer" @click="ui.tab = 'appsToImport'">
                   <div
                     class="card-body d-flex align-items-center"
@@ -455,21 +409,32 @@
                     <div class="subheader">Importing</div>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
-              <div class="col-sm-2">
-                <div class="card cursor-pointer" @click="ui.tab = 'appsToUpdate'">
-                  <div
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center">
+                      <div class="subheader">Syncronizing</div>
+                    </div>
+                    <div class="h2 mb-1 d-flex align-items-center">
+                      <Icon class="mr-2 text-muted mt-1">Refresh</Icon>
+                      {{ format.num(enabled.length) }}
+                      <small class="subheader mx-2 pt-2">selected</small>
+                    </div>
+                  </div>
+                  <!-- <div
                     class="card-body d-flex align-items-center"
                     style="flex-direction: column">
                     <div class="h2 m-0">
                       <Icon class="text-muted" style="transform: translateY(-1px)">
                         Refresh
                       </Icon>
-                      {{ data.appsToUpdate.length }}
+                       {{ data.appsToUpdate.length }}
+                      wip
                     </div>
                     <div class="subheader">Updating</div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
 
@@ -483,7 +448,7 @@
                         </div>
                         <div class="h2 mb-1 d-flex align-items-center">
                           <Icon class="mr-2 text-muted mt-1">StepInto</Icon>
-                          {{ appsToImport.length }}
+                          <!-- {{ appsToImport.length }} -->
                         </div>
                       </div>
                       <div class="col">
@@ -492,7 +457,8 @@
                         </div>
                         <div class="h2 mb-1 d-flex align-items-center">
                           <Icon class="mr-2 text-muted mt-1">Refresh</Icon>
-                          {{ data.appsToUpdate.length }}
+                          <!-- {{ data.appsToUpdate.length }} -->
+                          wip
                         </div>
                       </div>
                       <!-- <div class="col">
@@ -511,111 +477,14 @@
             </div>
 
             <div class="row mb-3 align-items-center">
-              <div class="col-4">
+              <div class="col-8">
                 <b-input
                   v-model="table.filters.search"
                   placeholder="Filter..."
                   clearable></b-input>
               </div>
-              <div class="col-5">
-                <label class="form-check form-switch my-0 mx-2">
-                  <input
-                    class="form-check-input position-static"
-                    type="checkbox"
-                    :checked="tabs.appsToReview.count == tabs.appsToImport.count"
-                    @click="toggleAll" />
-                  <span class="form-check-label form-check-label-on">
-                    Unselect everything
-                  </span>
-                  <span class="form-check-label form-check-label-off text-white">
-                    Select all games ({{ tabs.appsToReview.count }})
-                  </span>
-                </label>
-
-                <!-- <button type="button" class="btn mr-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="icon icon-tabler icon-tabler-circle-plus"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
-                    <path d="M9 12h6"></path>
-                    <path d="M12 9v6"></path>
-                  </svg>
-                  <div
-                    :class="{
-                      'pe-2 me-2 border-end':
-                        !table.filters.played || !table.filters.unplayed,
-                    }">
-                    Status
-                  </div>
-                  <span
-                    v-if="table.filters.played && !table.filters.unplayed"
-                    class="badge bg-indigo-lt">
-                    Played
-                  </span>
-                  <span
-                    v-if="!table.filters.played && table.filters.unplayed"
-                    class="badge">
-                    Not played
-                  </span>
-                </button>
-                <b-menu>
-                  <label class="dropdown-item">
-                    <input
-                      v-model="table.filters.played"
-                      class="form-check-input m-0 me-2"
-                      type="checkbox" />
-                    Played
-                  </label>
-
-                  <label class="dropdown-item">
-                    <input
-                      v-model="table.filters.unplayed"
-                      class="form-check-input m-0 me-2"
-                      type="checkbox" />
-                    Not played
-                  </label>
-                </b-menu>
-                <b-btn
-                  v-if="
-                    !table.filters.played ||
-                    !table.filters.unplayed ||
-                    table.filters.search.length > 0
-                  "
-                  variant="ghost"
-                  color="secondary"
-                  @click="resetFilters">
-                  Reset
-                  <Icon style="margin-right: 0; margin-left: 5px">SquareRoundedX</Icon>
-                  <svg
-                    style="margin-right: 0; margin-left: 5px"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="icon icon-tabler icon-tabler-square-rounded-x"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M10 10l4 4m0 -4l-4 4"></path>
-                    <path
-                      d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"></path>
-                  </svg>
-                </b-btn> -->
-              </div>
-              <div class="col text-end">
-                <button class="btn dropdown-toggle">
+              <div class="d-none col-5">
+                <!-- <button class="btn dropdown-toggle">
                   <span class="badge text-primary me-2">
                     {{ tabs[ui.tab].count }}
                   </span>
@@ -632,36 +501,47 @@
                       </label>
                     </template>
                   </b-dropdown>
-                </button>
+                </button> -->
+              </div>
+              <div class="col" style="display: flex">
+                <label class="form-check form-switch my-0 mx-2">
+                  <input
+                    class="form-check-input position-static me-2"
+                    type="checkbox"
+                    :checked="data.changes.length == enabled.length"
+                    @click="toggleAll" />
+
+                  <small class="text-muted form-check-label form-check-label-on">
+                    Unselect everything
+                  </small>
+                  <small
+                    class="text-muted form-check-label form-check-label-off text-white">
+                    Select all ({{ format.num(data.changes.length) }}) games
+                  </small>
+                </label>
               </div>
             </div>
 
             <search-empty v-if="!loopToReview.length" preset="filtering"></search-empty>
             <div v-else class="card">
-              <div class="list-group card-list-group list-group-hoverable">
+              <div
+                class="list-group card-list-group list-group-hoverable games-group games--list">
                 <div
                   v-for="(app, i) in loopToReview"
                   :key="'game' + i"
-                  class="list-group-item cursor-pointer"
-                  style="border-style: solid"
-                  :class="{
-                    active: app.will_import,
-                  }"
-                  @click="flagAs('import', app)">
-                  <div class="row g-4 align-items-center">
+                  class="list-group-item text-decoration-none game game--list"
+                  @click="enable('import', app)">
+                  <div class="row align-items-center">
                     <div class="col-auto fs-3">
-                      <label
-                        v-if="ui.tab == 'appsToReview'"
-                        class="form-check form-switch mb-0 ms-2">
+                      <label class="form-check form-switch mb-0 ms-2">
                         <input
-                          :checked="app.will_import"
+                          :checked="app.enabled"
                           class="form-check-input"
-                          :class="{ disabled: ui.tab !== 'appsToReview' }"
                           type="checkbox" />
                       </label>
                     </div>
 
-                    <div class="col-auto">
+                    <!-- <div class="col-auto">
                       <img
                         loading="lazy"
                         :src="`https://cdn.akamai.steamstatic.com/steam/apps/${
@@ -669,66 +549,82 @@
                         }/capsule_184x69.jpg?t=1699291031`"
                         class="b-poster"
                         style="max-width: 120px" />
+                    </div> -->
+                    <div class="col-auto text-secondary">
+                      <div class="game__cover">
+                        <game-asset
+                          :app="{
+                            id: {
+                              steam: app.sourceID,
+                            },
+                          }"
+                          asset="banner"
+                          fallback="cover"
+                          :priority="['steam', 'igdb']" />
+                      </div>
                     </div>
                     <div class="col">
-                      <p class="d-block mb-1">
-                        {{ app.name }}
-                      </p>
+                      <span class="font-serif">{{ app.name }}</span>
+                      <div
+                        v-if="!app.uuid"
+                        class="status small my-0 mx-2"
+                        style="
+                          font-size: 0.775rem;
+                          border-radius: 4px;
+                          transform: scale(0.9);
+                        ">
+                        Adding to library
+                      </div>
 
-                      <div class="d-flex g-2">
-                        <template v-if="ui.tab == 'appsToImport'">
-                          <small class="text-muted">Will be added to your library</small>
-                        </template>
+                      <div class="v-list-item-subtitle my-2">
+                        <!-- <small
+                          class="text-muted me-2"
+                          v-tippy="'Marking the game as owned in your library'">
+                          <Icon
+                            size="12"
+                            width="1.5"
+                            style="transform: translateY(-1px); margin-right: 0px">
+                            NewSection
+                          </Icon>
+                          Add to library
+                        </small> -->
 
-                        <template v-if="app.will_ignore || ui.tab == 'appsToIgnore'">
-                          <small class="text-muted text-red">
-                            Will be ignored and won't be shown again
-                          </small>
-                        </template>
+                        <div
+                          v-if="app.sync.state"
+                          class="d-inline-block text-muted"
+                          style="transform: scale(0.9)">
+                          <b-state ref="bstate" :state="app.sync.state?.to" />
+                        </div>
 
-                        <template v-if="ui.tab == 'appsToUpdate'">
-                          <div
-                            v-if="app.toUpdate.owned"
-                            v-tippy="'Marking the game as owned in your library'"
-                            class="status small my-0 me-2"
-                            style="font-size: 0.775rem; border-radius: 4px">
-                            Adding to library
-                          </div>
+                        <small
+                          v-if="app.sync.playtime"
+                          class="text-muted"
+                          v-tippy="'Updating your playtime'">
+                          <Icon
+                            size="12"
+                            width="1.5"
+                            style="transform: translateY(-1px); margin-right: 0px">
+                            ClockHour3
+                          </Icon>
+                          {{ dates.minToHours(app.sync.playtime?.to, 'Not played') }}
+                        </small>
 
-                          <div
-                            v-if="app.toUpdate.playtime"
-                            v-tippy="'Updating your play time on Steam'"
-                            class="status small my-0 me-2"
-                            style="font-size: 0.775rem; border-radius: 4px">
-                            <span v-if="app.playtime_forever > 0">Played</span>
-                            {{ dates.minToHours(app.playtime_forever, 'Not played') }}
-                          </div>
+                        <template v-if="app.sync.last_played">
+                          <span class="mx-2">🔸</span>
 
-                          <div
-                            v-if="app.toUpdate.last_played"
-                            v-tippy="'Updating last played date on Steam'"
-                            class="status small my-0 me-2"
-                            style="font-size: 0.775rem; border-radius: 4px">
-                            Last played
-                            {{ dates.timeAgo(app.rtime_last_played * 1000) }}
-                          </div>
-                        </template>
-
-                        <template v-if="ui.tab == 'appsToReview' && !app.will_ignore">
-                          <small class="text-muted">
-                            <Icon size="14" style="transform: translateY(-2px)">
-                              ClockHour3
+                          <small
+                            v-if="app.sync.last_played"
+                            class="text-muted"
+                            v-tippy="'Your last session'">
+                            <Icon
+                              size="12"
+                              width="1.5"
+                              style="transform: translateY(-1px); margin-right: 0px">
+                              Calendar
                             </Icon>
-                            <span v-if="app.playtime_forever > 0">Played</span>
-                            {{ dates.minToHours(app.playtime_forever, 'Not played') }}
+                            Last played
+                            {{ dates.timeAgo(app.sync.last_played?.to * 1000) }}
                           </small>
-                          <div
-                            v-if="app.toUpdate && app.toUpdate.owned"
-                            v-tippy="'Marking the game as owned in your library'"
-                            class="status small my-0 me-2"
-                            style="font-size: 0.775rem; border-radius: 4px">
-                            Owned
-                          </div>
                         </template>
                       </div>
 
@@ -753,9 +649,7 @@
                         last played {{ dates.unixToDiff(app.rtime_last_played) }} -->
                     </div>
                     <div class="col-auto text-secondary">
-                      <code v-tippy="'Steam appid'">
-                        #{{ app.appid || app.id.steam }}
-                      </code>
+                      <code v-if="app.sourceID">#{{ app.sourceID }}</code>
                     </div>
 
                     <!-- <div
@@ -766,9 +660,14 @@
                         allowHTML: true,
                       }"
                       class="col-auto text-muted cursor-pointer"
-                      @click.stop="flagAs('ignore', app)">
+                      @click.stop="enable('ignore', app)">
                       <Icon>SquareRotatedOff</Icon>
                     </div> -->
+                    <div class="col-12">
+                      <pre>
+                        {{ app }}
+                      </pre>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -794,7 +693,8 @@
 
                 <div class="mb-4">
                   Your library has been updated with
-                  {{ appsToImport.length }} new games
+                  <!-- {{ appsToImport.length }} -->
+                  WIP new games
                 </div>
 
                 <div>
@@ -812,32 +712,32 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-4" v-if="manifest">
           <div class="card" style="position: sticky; top: 20px">
             <div class="card-body">
               <div class="d-flex align-items-center mb-2">
                 <div class="me-3">
-                  <Icon size="26">BrandSteam</Icon>
+                  <img
+                    :src="manifest?.source?.logo"
+                    style="max-width: 30px; max-height: 30px" />
                 </div>
                 <div>
-                  <h3 class="my-1">
-                    {{ module.name }}
+                  <small class="text-secondary">Integration</small>
+                  <h3 class="card-title lh-1 mb-1">
+                    {{ manifest.name }}
                   </h3>
                 </div>
               </div>
               <div class="text-muted mb-3">
-                {{ module.description }}
+                {{ manifest.description }}
               </div>
               <small class="text-muted">
-                By {{ module.author }},
-                <a
-                  href="https://github.com/gsabater/backlog.rip/blob/master/modules/importers/steam.js"
-                  target="_blank">
-                  version {{ module.version }}
-                </a>
+                By
+                <strong>{{ manifest.author }}</strong>
+                <a :href="manifest.url" target="_blank">version {{ module.ver }}</a>
                 <br />
-                Updated,
-                {{ dates.format(module.updated_at, 'LL') }}
+                Last updated
+                {{ dates.format(manifest.updated_at, 'LL') }}
               </small>
             </div>
 
@@ -876,7 +776,7 @@
               </b-btn>
               <!-- v-if="ui.step == 'complete'" <b-btn v-else block color="success">View library</b-btn> -->
             </div>
-            <div class="card-footer text-muted">
+            <div class="card-footer small text-muted">
               This module is open source. If you want to know more about the code or
               review your privacy and security, you can
               <a
@@ -886,10 +786,6 @@
               </a>
             </div>
           </div>
-
-          <!-- <pre>
-            {{ module.manifest }}
-            </pre> -->
         </div>
       </div>
     </div>
@@ -902,27 +798,34 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Fri 20 September 2024 - 14:25:19
+ * Modified: Tue 10 December 2024 - 17:34:28
  **/
-
-const importer = null
 
 export default {
   name: 'LibraryImporter',
+
+  setup() {
+    definePageMeta({
+      ssr: false,
+    })
+  },
+
   data() {
     return {
       logs: [], // log array for the whole process
-      module: {}, // the plugin / module manifest
+      // module: {}, // the plugin / module manifest
       account: {}, // The user account -> store to import
 
       data: {
         user: {}, // Raw of the imported userdata
-        games: [], // Raw library games from the scan process
-        library: [], // Preloaded content of user library
-        steambacklog: {},
+        games: [], // Raw library received from the platform
+        changes: [], // Array of changes to be applied
+        library: {}, // DB library indexed by platform ID
+        // steambacklog: {},
 
-        appsToReview: [], // Processed array of apps missing in library
-        appsToUpdate: [], // Processed array of apps already in library, that needs to update fields
+        updates: [],
+        // appsToReview: [], // Processed array of apps missing in library
+        // appsToUpdate: [], // Processed array of apps already in library, that needs to update fields
       },
 
       // helper object to control ui
@@ -962,6 +865,33 @@ export default {
   },
 
   computed: {
+    ...mapStores(useLibraryStore),
+    ...mapState(useStateStore, {
+      states: 'keyed',
+    }),
+
+    //+-------------------------------------------------
+    // module()
+    // Returns the module instance from the $integration Strore
+    //+-------------------------------------------------
+    module() {
+      if (!this.platform) return null
+      return this.libraryStore.module[this.platform] ?? {}
+    },
+
+    manifest() {
+      return this.libraryStore.module[this.platform]?.manifest ?? {}
+    },
+
+    //+-------------------------------------------------
+    // integration()
+    // Returns the integration with this platform
+    //+-------------------------------------------------
+    integration() {
+      if (!this.platform) return null
+      return this.libraryStore.linked[this.platform] ?? {}
+    },
+
     platform() {
       return this.$route.params?.platform || null
     },
@@ -984,7 +914,7 @@ export default {
         },
 
         review: {
-          action: 'Review and save',
+          action: 'Review changes',
           desc: 'Review the imported data',
         },
 
@@ -1013,19 +943,19 @@ export default {
         appsToReview: {
           label: 'games found',
           object: 'data.appsToReview',
-          count: this.data.appsToReview.length,
+          // count: this.data.appsToReview.length,
         },
 
         appsToImport: {
           label: 'to be imported',
           object: 'appsToImport',
-          count: this.appsToImport.length,
+          // count: this.appsToImport.length,
         },
 
         appsToUpdate: {
           label: 'to be updated',
           object: 'data.appsToUpdate',
-          count: this.data.appsToUpdate.length,
+          // count: this.data.appsToUpdate.length,
         },
 
         // appsToIgnore: {
@@ -1049,19 +979,19 @@ export default {
     loopToReview() {
       if (this.data.games.length === 0) return []
 
-      let loop = []
+      // let loop = []
       const items = []
 
-      let source = this.tabs[this.ui.tab].object
+      // let source = this.tabs[this.ui.tab].object
 
-      if (source.indexOf('data.') == -1) {
-        loop = this[source]
-      } else {
-        source = source.replace('data.', '')
-        loop = this.data[source]
-      }
+      // if (source.indexOf('data.') == -1) {
+      //   loop = this[source]
+      // } else {
+      //   source = source.replace('data.', '')
+      //   loop = this.data[source]
+      // }
 
-      loop.forEach((el, i) => {
+      this.data.changes.forEach((el, i) => {
         if (items.length > this.table.perPage) return false
 
         if (
@@ -1080,6 +1010,25 @@ export default {
     },
 
     //+-------------------------------------------------
+    // newGames()
+    //
+    // -----
+    // Created on Fri Nov 29 2024
+    //+-------------------------------------------------
+    newGames() {
+      return this.data.changes.filter((item) => !item.uuid).length
+    },
+
+    //+-------------------------------------------------
+    // enabled()
+    // -----
+    // Created on Mon Dec 02 2024
+    //+-------------------------------------------------
+    enabled() {
+      return this.data.changes.filter((item) => item.enabled == true)
+    },
+
+    //+-------------------------------------------------
     // appsToImport()
     // Array of apps that will be imported
     // Only apps with will_import === true
@@ -1087,45 +1036,49 @@ export default {
     // -----
     // Created on Thu Dec 14 2023
     //+-------------------------------------------------
-    appsToImport() {
-      const items = []
+    // appsToImport() {
+    //   const items = []
+    //   console.warn('wip')
+    //   return items
 
-      this.data.appsToReview
-        .filter((el) => el.will_import === true)
-        .forEach((el) => {
-          items.push({
-            data: el,
-            will_import: true,
-            [this.platform + '_id']: el.appid,
-          })
-        })
+    //   this.data.appsToReview
+    //     .filter((el) => el.will_import === true)
+    //     .forEach((el) => {
+    //       items.push({
+    //         data: el,
+    //         will_import: true,
+    //         [this.platform + '_id']: el.appid,
+    //       })
+    //     })
 
-      return items
-    },
+    //   return items
+    // },
 
-    //+-------------------------------------------------
-    // appsToIgnore()
-    // -----
-    // Created on Thu Dec 14 2023
-    //+-------------------------------------------------
-    appsToIgnore() {
-      const items = []
+    // //+-------------------------------------------------
+    // // appsToIgnore()
+    // // -----
+    // // Created on Thu Dec 14 2023
+    // //+-------------------------------------------------
+    // appsToIgnore() {
+    //   const items = []
+    //   console.warn('wip')
+    //   return items
 
-      this.data.appsToReview
-        .filter((el) => el.will_ignore === true)
-        .forEach((el) => {
-          items.push({
-            name: el.name,
-            [this.platform + '_id']: el.appid,
-            // is: {
-            //   owned: true,
-            //   ignored: true,
-            // },
-          })
-        })
+    //   this.data.appsToReview
+    //     .filter((el) => el.will_ignore === true)
+    //     .forEach((el) => {
+    //       items.push({
+    //         name: el.name,
+    //         [this.platform + '_id']: el.appid,
+    //         // is: {
+    //         //   owned: true,
+    //         //   ignored: true,
+    //         // },
+    //       })
+    //     })
 
-      return items
-    },
+    //   return items
+    // },
   },
 
   watch: {
@@ -1178,35 +1131,38 @@ export default {
     // Created on Tue Jan 30 2024
     //+-------------------------------------------------
     toggleAll() {
-      const action =
-        this.data.appsToReview.length == this.appsToImport.length ? 'none' : 'all'
+      const action = this.data.changes.length == this.enabled.length ? 'none' : 'all'
 
-      this.data.appsToReview.forEach((el) => {
-        el.will_import = action == 'all' ? true : false
+      this.data.changes.forEach((el) => {
+        el.enabled = action == 'all' ? true : false
       })
     },
 
     //+-------------------------------------------------
-    // flagAs()
+    // enable()
     // When reviewing, get the app object and flag it as
     // -----
     // Created on Tue Jan 30 2024
+    // Updated on Mon Dec 02 2024 - Updated to enable or disable data.changes
     //+-------------------------------------------------
-    flagAs(flag, app) {
-      if (this.ui.tab !== 'appsToReview') return
+    enable(flag, app) {
+      // if (this.ui.tab !== 'appsToReview') return
 
-      const source = this.data.appsToReview.find(
-        (el) => el.appid === (app.appid || app.id.steam)
+      const item = this.data.changes.find(
+        (el) => el.sourceID === (app.sourceID || app.id[this.id.platform])
       )
 
+      item.enabled = !item.enabled
+      return
+
       if (flag === 'ignore') {
-        source.will_import = false
-        source.will_ignore = !source.will_ignore
+        item.will_import = false
+        item.will_ignore = !item.will_ignore
       }
 
       if (flag === 'import') {
-        source.will_ignore = false
-        source.will_import = !source.will_import
+        item.will_ignore = false
+        item.will_import = !item.will_import
       }
     },
 
@@ -1227,9 +1183,9 @@ export default {
         notify: true,
         journal: true,
         apps: {
-          toUpdate: this.data.appsToUpdate,
-          toImport: this.appsToImport,
-          toIgnore: this.appsToIgnore,
+          // toUpdate: this.data.appsToUpdate,
+          // toImport: this.appsToImport,
+          // toIgnore: this.appsToIgnore,
         },
       })
 
@@ -1259,23 +1215,18 @@ export default {
 
       this.data.user = data.data.user
       this.data.games = data.data.games
-      this.data.library = data.data.library
-      this.data.steambacklog = data.data.steambacklog
 
-      this.data.appsToReview = data.apps.toReview
-      this.data.appsToUpdate = data.apps.toUpdate
-
-      console.warn(this.data, data.apps.toReview)
-      this.data.appsToReview.sort((a, b) => {
-        // Primary sort by 'playtime_forever'
-        const diff = b.playtime_forever - a.playtime_forever
-        if (diff !== 0) return diff
-
-        // Secondary sort by 'name' (alphabetically)
-        if (a.name < b.name) return -1
-        if (a.name > b.name) return 1
-        return 0
-      })
+      this.data.library = data.library
+      this.data.changes = data.changes
+        .map((item) => {
+          item.enabled = true
+          return item
+        })
+        .sort((a, b) => {
+          const aValue = a.data[this.manifest?.sortBy] || 0
+          const bValue = b.data[this.manifest?.sortBy] || 0
+          return bValue - aValue
+        })
 
       this.ui.step = 'review'
       this.ui.loading = false
@@ -1305,8 +1256,8 @@ export default {
         return
       }
 
-      this.account = connection.account
-      this.module = connection.module?.manifest
+      // this.account = connection.account
+      // this.module = connection.module?.manifest
 
       if (connection.account?.error == 'account:login') {
         this.ui.error = 'account:provider'
@@ -1332,7 +1283,6 @@ export default {
   },
 
   mounted() {
-    window.dev = this
     this.init()
   },
 

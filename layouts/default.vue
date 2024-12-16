@@ -256,12 +256,12 @@
             </div>
           </NuxtLink>
 
-          <NuxtLink to="/import/steam" class="dropdown-item mt-1">
+          <NuxtLink to="/import" class="dropdown-item mt-1">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">Refresh</Icon>
             </span>
             <span class="nav-link-title">
-              Steam library sync
+              Library sync
               <!-- <Icon size="10" width="1" class="ms-1">Refresh</Icon> -->
             </span>
           </NuxtLink>
@@ -370,6 +370,12 @@
                   <Icon size="18" class="me-2">Broadcast</Icon>
                   Changelog
                 </NuxtLink>
+
+                <NuxtLink to="/sitemap" class="dropdown-item">
+                  <Icon size="18" class="me-2">Steam</Icon>
+                  Sitemap
+                </NuxtLink>
+
                 <span class="dropdown-header" style="text-transform: none">
                   <span class="text-muted my-4">
                     Version
@@ -925,7 +931,7 @@
     <!-- <v-layout>
     </v-layout> -->
     <game-add />
-    <game-details />
+    <game-dialog />
     <game-manager />
 
     <cloud-conflict />
@@ -962,11 +968,57 @@
     </component>
   </client-only>
 
+  <!--
+    *+---------------------------------
+    *| SVG Filter
+    *| Grainy
+    *+--------------------------------- -->
   <svg width="0" height="0" style="display: none">
     <filter id="grainy" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency=".837"></feTurbulence>
       <feColorMatrix type="saturate" values="0"></feColorMatrix>
       <feBlend mode="multiply" in="SourceGraphic"></feBlend>
+    </filter>
+  </svg>
+
+  <!--
+    *+---------------------------------
+    *| SVG Filter
+    *| Ambilight
+    *+--------------------------------- -->
+  <svg width="0" height="0">
+    <filter
+      id="ambilight"
+      width="300%"
+      height="300%"
+      x="-0.75"
+      y="-0.75"
+      color-interpolation-filters="sRGB">
+      <feOffset in="SourceGraphic" result="source-copy"></feOffset>
+      <feColorMatrix
+        in="source-copy"
+        type="saturate"
+        values="1"
+        result="saturated-copy"></feColorMatrix>
+      <feColorMatrix
+        in="saturated-copy"
+        type="matrix"
+        values="1 0 0 0 0
+                     0 1 0 0 0
+                     0 0 1 0 0
+                     33 33 33 101 -132"
+        result="bright-colors"></feColorMatrix>
+      <feMorphology
+        in="bright-colors"
+        operator="dilate"
+        radius="2"
+        result="spread"></feMorphology>
+      <feGaussianBlur
+        in="spread"
+        stdDeviation="30"
+        result="ambilight-light"></feGaussianBlur>
+      <feOffset in="SourceGraphic" result="source"></feOffset>
+      <feComposite in="source" in2="ambilight-light" operator="over"></feComposite>
     </filter>
   </svg>
 
@@ -1057,7 +1109,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed 06 November 2024 - 12:43:23
+ * Modified: Mon 25 November 2024 - 17:52:36
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

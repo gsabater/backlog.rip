@@ -15,8 +15,10 @@ logs
 
 # Misc
 .DS_Store
-.fleet
 .idea
+.fleet
+.trigger
+trigger.config.ts
 
 # Local env files
 .env

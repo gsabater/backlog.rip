@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Thu 24 October 2024 - 15:01:09
+ * Modified: Tue 10 December 2024 - 17:53:06
  */
 
 let $nuxt = null
@@ -58,8 +58,8 @@ export const useUserStore = defineStore('user', {
     async authenticate() {
       if (this.user?.uuid) return this.user
 
-      if (!$nuxt) $nuxt = useNuxtApp()
-      if (!$cloud) $cloud = useCloudStore()
+      $nuxt ??= useNuxtApp()
+      $cloud ??= useCloudStore()
 
       await this.loadMe()
       await this.getApiData()
@@ -116,11 +116,16 @@ export const useUserStore = defineStore('user', {
           this.api = xhr.data
           let provider = xhr.data.providers.find((p) => p.provider === 'steam')
 
+          // Assign account/user data
           this.me.steam = xhr.data.steam || this.me.steam
           this.me.avatar = this.me.avatar || xhr.data.avatar
-          this.me.steam_data = provider?.data || null
+
+          // Assign library data
+          // $integration.link('steam', xhr.data.steam)
+          // this.me.steam_data = provider?.data || null
           // this.me.steam_updated_at = provider.updated_at
 
+          // Assign cloud data
           this.cloud.jwt = xhr.data.jwt
           this.cloud.sub = xhr.data.uuid
           this.setJWT(this.cloud?.jwt)
@@ -255,21 +260,6 @@ export const useUserStore = defineStore('user', {
       menu.favorites = this.config.favorites
 
       return menu
-    },
-
-    //+-------------------------------------------------
-    // canUpdateSteamLibrary()
-    // Returns true if the user is a guest
-    // NOTE: We set 1h of cooldown while we test the feature
-    // -----
-    // Created on Sat Jun 29 2024
-    //+-------------------------------------------------
-    canUpdateSteamLibrary() {
-      return true
-      let last_sync = this.user.steam_updated_at
-      if (!last_sync) return true
-
-      return dates.hoursAgo(last_sync) > 24
     },
   },
 })

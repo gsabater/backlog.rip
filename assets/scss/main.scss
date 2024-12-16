@@ -22,6 +22,7 @@
 @use 'base';
 @use 'colors';
 @use 'borders';
+@use 'effects';
 
 @use 'mixins/cards';
 @use 'mixins/buttons';
@@ -49,6 +50,7 @@
 @use 'components/b-menu';
 @use 'components/b-game';
 @use 'components/b-list';
+@use 'components/b-game-details_new';
 @use 'components/b-game-details';
 @use 'components/b-game-details-old';
 @use 'components/b-game-manager';

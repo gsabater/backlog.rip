@@ -1,39 +1,72 @@
 <template>
   <div class="page-body">
-    <div class="container-xl">
-      <h1>
-        {{ slug }}
-      </h1>
+    <div class="container">
+      <template v-if="pending">
+        <div>Loading...</div>
+      </template>
+
+      <template v-else-if="error">
+        <h1>Data Not Found</h1>
+        <p>Sorry, we couldn't find the data you're looking for.</p>
+      </template>
+
+      <template v-else-if="app">
+        <div id="game-folio">
+          <game-folio :game="app" />
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 /**
- * @file:    \pages\games.vue
+ * @file:    \pages\game\[slug].vue
  * @desc:    ...
- * -------------------------------------------
- * Created Date: 21st November 2022
- * Modified: Mon Dec 18 2023
+ * ----------------------------------------------
+ * Created Date: 18th December 2023
+ * Modified: Sat 23 November 2024 - 19:43:40
  **/
 
-export default {
-  data() {
-    return {}
-  },
+const route = useRoute()
+const slug = computed(() => route.params.slug)
+const $data = useDataStore()
 
-  computed: {
-    // ...mapStores(useDataStore),
+const { data, pending, error } = await useFetch(
+  () => `https://api.backlog.rip/get/${slug.value}.json`
+)
 
-    slug() {
-      return this.$route.params.slug
+const app = $data.prepareToData({ ...unref(data) })
+
+watchEffect(() => {
+  console.log({
+    k: '🔸',
+    // data: unref(data),
+    // app: unref(app),
+    // pending: unref(pending),
+    // error: unref(error),
+
+    route: route.params,
+    data: data.id,
+    app: app.id,
+  })
+})
+
+useHead(() => ({
+  title: app.name ?? 'Data Not Found',
+  meta: [
+    {
+      name: 'description',
+      content: data.value?.description ?? 'Data not found',
     },
-  },
-
-  methods: {},
-
-  mounted() {
-    window.dev = this
-  },
-}
+    {
+      property: 'og:title',
+      content: data.value?.title ?? 'Data Not Found',
+    },
+    {
+      property: 'og:description',
+      content: data.value?.description ?? 'Data not found',
+    },
+  ],
+}))
 </script>

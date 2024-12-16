@@ -6,20 +6,26 @@
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Tue 05 November 2024 - 19:34:41
+ * Modified: Mon 25 November 2024 - 17:48:30
  */
+
+import { defineNuxtConfig } from 'nuxt/config';
 
 // import vuetify from 'vite-plugin-vuetify'
 // import { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
+  compatibilityDate: '2024-08-15',
   ssr: true,
-  // nitro: {
-  //   // preset: 'static'
-  //   // preset: 'cloudflare-pages',
-  // },
 
-  compatibilityDate: '2024-09-01',
+  nitro: {
+    // preset: 'static'
+    // preset: 'cloudflare-pages',
+    prerender: {
+      routes: ['/sitemap']
+    }
+  },
+
   sourcemap: { server: false, client: true },
 
   features: {
@@ -51,6 +57,9 @@ export default defineNuxtConfig({
 
   // Auto import pinia stores
   imports: {
+    autoImport: true,
+    // injectAtEnd: true,
+
     dirs: ['./stores'],
     presets: [
       {
@@ -81,10 +90,6 @@ export default defineNuxtConfig({
     }
   },
 
-  // generate: {
-  //   routes: ['/sitemap'],
-  // },
-
   // content: {
   //   // ... options
   // },
@@ -99,9 +104,8 @@ export default defineNuxtConfig({
   },
 
   vuetify: {
-    moduleOptions: {
-      styles: { configFile: './assets/scss/settings.scss' },
-    },
+    styles: { configFile: './assets/scss/settings.scss' },
+    prefixComposables: true,
     vuetifyOptions: './vuetify.config.js',
   },
 
@@ -116,18 +120,22 @@ export default defineNuxtConfig({
     defaultLocale: 'en', // not needed if you have @nuxtjs/i18n installed
   },
 
-  ogImage: { enabled: false },
 
   sitemap: {
-    enabled: true,
-    exclude: ['/tabler*', '/account/**', '/dev/**'],
     cacheMaxAgeSeconds: 3600 * 24,
+    exclude: ['/tabler*', '/account/**', '/dev/**'],
+
+    //   urls: async () => {
+    //     const urls = await fetch('https://api.backlog.rip/sitemap.xml')
+    //     return urls
+    //   }
 
     sources: [
-      // fetch from an unauthenticated endpoint
-      'https://api.backlog.rip/dev/sitemap',
+      'https://api.backlog.rip/sitemap.xml',
     ],
   },
+
+  ogImage: { enabled: false },
 
   // robots: {
   //   enabled: false
@@ -157,21 +165,21 @@ export default defineNuxtConfig({
     css: {},
 
     plugins: [
-      {
-        name: 'ignore-css-warnings',
-        enforce: 'post',
-        configResolved(config) {
-          const originalWarn = config.logger.warn;
-          config.logger.warn = (...args) => {
-            if (typeof args[0] === 'string' && args[0].includes('@charset must precede all other statements')) {
-              // Ignore the specific warning
-              return;
-            }
-            // For all other warnings, call the original warn method
-            originalWarn.apply(config.logger, args);
-          };
-        },
-      },
+      // {
+      //   name: 'ignore-css-warnings',
+      //   enforce: 'post',
+      //   configResolved(config) {
+      //     const originalWarn = config.logger.warn;
+      //     config.logger.warn = (...args) => {
+      //       if (typeof args[0] === 'string' && args[0].includes('@charset must precede all other statements')) {
+      //         // Ignore the specific warning
+      //         return;
+      //       }
+      //       // For all other warnings, call the original warn method
+      //       originalWarn.apply(config.logger, args);
+      //     };
+      //   },
+      // },
     ],
 
     vue: {
@@ -185,7 +193,7 @@ export default defineNuxtConfig({
   },
 
   devtools: {
-    enabled: false,
+    enabled: true,
 
     vscode: {},
     timeline: {

@@ -213,7 +213,7 @@
                           <div class="subheader">New games found</div>
                         </div>
                         <div class="h2 mb-1 d-flex align-items-center">
-                          <Icon class="mr-2 text-muted mt-1">NewSection</Icon>
+                          <Icon class="mr-2 text-muted mt-1">CircleDashedPlus</Icon>
                           <!-- {{ data.appsToReview.length }} new -->
                           {{ format.num(newGames) }}
                           <small class="subheader mx-2 pt-2">new games</small>
@@ -565,16 +565,6 @@
                     </div>
                     <div class="col">
                       <span class="font-serif">{{ app.name }}</span>
-                      <div
-                        v-if="!app.uuid"
-                        class="status small my-0 mx-2"
-                        style="
-                          font-size: 0.775rem;
-                          border-radius: 4px;
-                          transform: scale(0.9);
-                        ">
-                        Adding to library
-                      </div>
 
                       <div class="v-list-item-subtitle my-2">
                         <!-- <small
@@ -589,11 +579,28 @@
                           Add to library
                         </small> -->
 
+                        <small
+                          v-if="!app.uuid"
+                          v-tippy="'This game will be added to your library'"
+                          class="text-green me-2">
+                          <Icon
+                            size="12"
+                            width="1.5"
+                            style="transform: translateY(-1px); margin-right: 0px">
+                            CircleDashedPlus
+                          </Icon>
+                          New
+                        </small>
+
                         <div
                           v-if="app.sync.state"
                           class="d-inline-block text-muted"
-                          style="transform: scale(0.9)">
-                          <b-state ref="bstate" :state="app.sync.state?.to" />
+                          style="transform: scale(0.9) translateX(-10px)">
+                          <BState
+                            :state="app.sync.state?.to"
+                            :from="app.sync.state?.from"
+                            :label="true"
+                            :manager="false"></BState>
                         </div>
 
                         <small
@@ -802,7 +809,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Tue 17 December 2024 - 11:55:07
+ * Modified: Tue 17 December 2024 - 14:58:31
  **/
 
 export default {

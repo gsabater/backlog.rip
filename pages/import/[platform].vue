@@ -369,7 +369,7 @@
                       <div class="h2 mb-0 me-2 d-flex align-items-center">
                         <Icon class="mr-2 text-muted mt-1">Cards</Icon>
 
-                        {{ Object.keys(data.library).length }} games
+                        {{ format.num(Object.keys(data.library).length) }} games
                       </div>
                     </div>
                   </div>
@@ -598,8 +598,8 @@
 
                         <small
                           v-if="app.sync.playtime"
-                          class="text-muted"
-                          v-tippy="'Updating your playtime'">
+                          v-tippy="'Updating your playtime'"
+                          class="text-muted">
                           <Icon
                             size="12"
                             width="1.5"
@@ -614,8 +614,8 @@
 
                           <small
                             v-if="app.sync.last_played"
-                            class="text-muted"
-                            v-tippy="'Your last session'">
+                            v-tippy="'Logging your last session'"
+                            class="text-muted">
                             <Icon
                               size="12"
                               width="1.5"
@@ -663,11 +663,12 @@
                       @click.stop="enable('ignore', app)">
                       <Icon>SquareRotatedOff</Icon>
                     </div> -->
-                    <div class="col-12">
+
+                    <!-- <div class="col-12">
                       <pre>
                         {{ app }}
                       </pre>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
@@ -712,7 +713,7 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-4" v-if="manifest">
+        <div v-if="manifest" class="col-lg-4">
           <div class="card" style="position: sticky; top: 20px">
             <div class="card-body">
               <div class="d-flex align-items-center mb-2">
@@ -734,7 +735,10 @@
               <small class="text-muted">
                 By
                 <strong>{{ manifest.author }}</strong>
-                <a :href="manifest.url" target="_blank">version {{ module.ver }}</a>
+                <span class="px-1">•</span>
+                <a :href="manifest.url" target="_blank">
+                  version {{ manifest.ver }} ({{ manifest.v }})
+                </a>
                 <br />
                 Last updated
                 {{ dates.format(manifest.updated_at, 'LL') }}
@@ -798,7 +802,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Tue 10 December 2024 - 17:34:28
+ * Modified: Tue 17 December 2024 - 11:55:07
  **/
 
 export default {

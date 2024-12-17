@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Mon 16 December 2024 - 16:00:07
+ * Modified: Tue 17 December 2024 - 12:04:34
  */
 
 let $nuxt = null
@@ -36,6 +36,47 @@ export const useGameStore = defineStore('game', {
   // * _score()
   // * _playtime()
   //
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Game Object
+  // {
+  //   uuid: '5c1c9b5a-1c02-4a56-85df-f0cf97929a48',
+  //   name: 'DOOM',
+  //   description: 'Lorem',
+  //   state: 1, ⇢ State ID from states table
+  //
+  //   id: { 🔸 Added in this.normalize
+  //     api: '5c1c9b5a-1c02-4a56-85df-f0cf97929a48', ⇢ UUID assigned by the API
+  //     gog: 'ABC',
+  //     xbox: 'C3QH42WRGM3R',
+  //     epic: 'ABC',
+  //     igdb: 7351,
+  //     steam: 379720,
+  //   },
+  //
+  //   is: {
+  //     lib: 1726666517, ⇢ Timestamp of when the app was added to the library
+  //     steam: 1726666517, ⇢ Timestamp of when the app was added to the steam library
+  //     state: {
+  //       state_1: 1726666517, ⇢ Timestamp of when assigned to state 1
+  //       state_2: 1726666517, ⇢ Timestamp of when assigned to state 2...
+  //     }
+  //   },
+  //
+  //   date: {
+  //     created_at: 1726666517, ⇢ Timestamp of when the app was created
+  //     updated_at: 1726666517, ⇢ Timestamp of when the app was updated
+  //     released_at: 1726666517, ⇢ Timestamp of when the app was released
+  //   },
+  //
+  //   playtime: {
+  //     steam: 123, ⇢ Playtime (in minutes)
+  //     steam_last: 1726666517, ⇢ Timestamp of last playtime
+  //   },
+  //
+  //   log: [], ⇢ Array of logs
+  // }
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   actions: {
@@ -256,7 +297,11 @@ export const useGameStore = defineStore('game', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (data) {
         // app matched with an api item
-        if (app && !app.id?.api && (data?.id?.api || data?.api_id)) return 'update:match'
+        if (!app.id?.api && (data?.id?.api || data?.api_id)) return 'update:match'
+
+        // Is not working
+        // if (app.uuid.indexOf('local:') > -1 && (data?.id?.api || data?.api_id))
+        //   return 'update:match'
 
         // disabled as i havent decided if this should be
         // a match or update:api or what
@@ -327,7 +372,7 @@ export const useGameStore = defineStore('game', {
       game.id = game.id || {}
       game.is = game.is || {}
       game.log = game.log || []
-      game.date = game.time || {}
+      game.date = game.date || {}
 
       game.scores = game.scores || {}
       game.genres = game.genres || []
@@ -375,31 +420,19 @@ export const useGameStore = defineStore('game', {
     // normalize_()
     // -----
     // Created on Mon Dec 16 2024
+    // Updated on Tue Dec 17 2024 - Added owned_at
     //+-------------------------------------------------
     normalize_(game) {
       return {
         score: this._score(game),
         playtime: this._playtime(game),
 
-        created_at: this._dateCreatedAt(game),
-        updated_at: this._dateUpdatedAt(game),
-        released_at: this._dateReleasedAt(game),
-
-        // owned: this._owned(game), // WIP -> should return true if is[store] is there
-        // date_owned: this._dateOwned(game), // remove as makes no sense, just use is.lib
-      }
-    },
-
-    //+-------------------------------------------------
-    // function()
-    //
-    // -----
-    // Created on Mon Dec 16 2024
-    //+-------------------------------------------------
-    normalizeDate(game) {
-      return {
         released: this._dateReleasedAt(game),
         releasedYear: this._dateReleasedAt(game, 'YYYY'),
+
+        owned_at: this._dateOwnedAt(game),
+        created_at: this._dateCreatedAt(game),
+        updated_at: this._dateUpdatedAt(game),
       }
     },
 
@@ -465,9 +498,10 @@ export const useGameStore = defineStore('game', {
       return $nuxt.$moment(app.updated_at * 1000).format('LL')
     },
 
-    // _dateOwned(app) {
-    //   return app.is.lib * 1000 || false
-    // },
+    _dateOwnedAt(app, format = 'LL') {
+      if (!app.is.lib) return null
+      return $nuxt.$moment(app.is.lib * 1000).format(format)
+    },
 
     async init() {
       if (!$nuxt) $nuxt = useNuxtApp()

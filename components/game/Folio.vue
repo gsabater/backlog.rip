@@ -189,18 +189,27 @@
                 :priority="['steam', 'igdb']"></game-asset>
             </div>
             <div class="mb-3">
-              <h3 class="mb-1">Your library</h3>
-              <div v-tippy="'Date added to your library'" class="mb-2">
-                <Icon
-                  size="16"
-                  width="1.2"
-                  class="me-1"
-                  style="transform: translateY(-1px)">
-                  CalendarWeek
-                </Icon>
-                Owned since
-                {{ app._.created_at }}
+              <h3 class="mb-1">Your game</h3>
+              <div class="mb-2">
+                <b-state ref="bstate" :app="app.uuid" :state="app.state">
+                  <template #container="{ state }">
+                    <span
+                      v-if="state.id"
+                      :style="{
+                        '--tblr-status-color': state.color,
+                      }"
+                      class="status-dot status-dot-animated ms-1 me-2"></span>
+
+                    <span>
+                      {{ state.name || 'Assign a state' }}
+                      <!-- <Icon size="12" class="ms-1" style="transform: translateX(3px)">
+                        ChevronDown
+                      </Icon> -->
+                    </span>
+                  </template>
+                </b-state>
               </div>
+
               <div class="mb-2">
                 <div class="d-flex flex-direction-column">
                   <div>
@@ -222,11 +231,25 @@
                   </div>
                 </div>
               </div>
+
+              <div v-tippy="'Date added to your library'" class="mb-2">
+                <Icon
+                  size="16"
+                  width="1.2"
+                  class="me-1"
+                  style="transform: translateY(-1px)">
+                  CalendarWeek
+                </Icon>
+                <span>Owned since {{ app._.owned_at }}</span>
+              </div>
             </div>
-            <div class="my-2 py-1" style="zoom: 0.8">🔸🔸🔸</div>
+            <div class="my-2 py-1" style="zoom: 0.7">
+              <!-- 🔸🔸🔸 -->
+            </div>
             <div class="mb-3 text-muted" style="zoom: 0.9">
               <h5 class="mb-1">In Backlog.rip</h5>
               <div
+                v-if="app._.created_at"
                 v-tippy="'The date when the game has been added to the website'"
                 class="mb-2">
                 <Icon size="16" width="1.2" class="me-1">Box</Icon>
@@ -234,7 +257,10 @@
                 <!-- {{ $moment(app.created_at).format('LL') }} -->
               </div>
 
-              <div v-tippy="'The last update on metadata from data sources'" class="mb-2">
+              <div
+                v-if="app._.updated_at"
+                v-tippy="'The last update on metadata from data sources'"
+                class="mb-2">
                 <Icon size="16" width="1.2" class="me-1">RotateClockwise2</Icon>
                 Updated {{ app._.updated_at }}
                 <!-- {{ $moment(app.created_at).format('LL') }} -->
@@ -271,12 +297,6 @@
             </div>
 
             <template v-if="$app.wip">
-              <h3>Your library</h3>
-              <ul>
-                <li>This game is in your library</li>
-                <li>since {{ app.is.lib }}</li>
-              </ul>
-
               <!-- <h3>Add a note</h3>
               <textarea id="" name="" cols="30" rows="10">
                 You can add a note here. Use markdown to format your text.
@@ -933,10 +953,10 @@
                   </div>
                 </div>
               </div>
-              <!-- <pre>
+              <pre v-if="$app.wip">
       {{ app }}
     </pre
-              > -->
+              >
             </client-only>
 
             <div class="col-12 my-3 text-muted" style="zoom: 0.9">
@@ -1071,7 +1091,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st November 2024
- * Modified: Mon 16 December 2024 - 17:13:11
+ * Modified: Tue 17 December 2024 - 12:48:19
  **/
 
 export default {

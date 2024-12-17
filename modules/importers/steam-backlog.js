@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th November 2024
- * Modified: Tue 10 December 2024 - 17:44:23
+ * Modified: Tue 17 December 2024 - 11:36:47
  */
 
 let $log = null
@@ -34,7 +34,7 @@ export default {
     ver: '1.0',
     name: 'Steam Backlog integration',
     author: 'Gaspar S.',
-    updated_at: '2024-12-05',
+    updated_at: '2024-12-17',
     description:
       'Syncronize completion states for every game on your Steam backlog profile',
 
@@ -184,10 +184,15 @@ export default {
 
     app.name = data.name
     app.id.steam = Number(data.appid)
+
+    app.date.steambacklog_updated_at = dates.stamp()
+    app.is.steam = app.is.steam || dates.stamp()
+
     if (states[data.state]) app.state = states[data.state]
 
     // Flag this item as dirty to be saved by datastore
     app.is.dirty = true
+
     return app
   },
 

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Mon 16 December 2024 - 16:04:51
+ * Modified: Tue 17 December 2024 - 12:50:29
  */
 
 let $nuxt = null
@@ -359,7 +359,11 @@ export const useDataStore = defineStore('data', {
 
         // Debugger
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if ($nuxt.$app.wip && item.uuid == 'x31c5058d-4c96-418d-adc6-c9a78ac02e40') {
+        if (
+          $nuxt.$app.wip &&
+          (item.uuid == 'x31c5058d-4c96-418d-adc6-c9a78ac02e40' ||
+            item.uuid == 'efef0156-a172-48fb-a9d0-b50e253c4ea8')
+        ) {
           // if (item.name == 'DOOM') {
           //   // if (item.steam_id == '292030') {
           // if (context == 'add:new') {
@@ -483,7 +487,6 @@ export const useDataStore = defineStore('data', {
       delete app.is.dirty
 
       delete app._
-      delete app.date
       delete app.data
       delete app.source
 
@@ -760,7 +763,6 @@ export const useDataStore = defineStore('data', {
 
       item = $game.normalize(item)
       item._ = $game.normalize_(item)
-      item.date = $game.normalizeDate(item)
 
       if (item.is?.dirty) {
         item.uuid = item.uuid || $nuxt.$uuid()

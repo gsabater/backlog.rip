@@ -3,7 +3,7 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 10 December 2024 - 17:48:32
+ * Modified: Tue 17 December 2024 - 12:49:20
  */
 
 let $log = null
@@ -23,7 +23,7 @@ export default {
     ver: '1.4',
     name: 'Steam library integration',
     author: 'Gaspar S.',
-    updated_at: '2024-12-05',
+    updated_at: '2024-12-17',
     description:
       'Syncronize all your games and playtime for every game on Steam, including free games.',
     url: 'https://github.com/gsabater/backlog.rip/blob/master/modules/importers/steam.js',
@@ -163,6 +163,7 @@ export default {
   // steam API and assign values to the app
   // -----
   // Created on Wed Apr 10 2024
+  // Updated on Tue Dec 17 2024 - Adapted to the new game Object
   //+-------------------------------------------------
   update(app, data) {
     data = data || app.data
@@ -171,18 +172,19 @@ export default {
     app.name = data.name
     app.id.steam = Number(data.appid)
 
-    // Flag this item as dirty to be saved by datastore
-    app.is.dirty = true
+    app.date.steam_updated_at = dates.stamp()
     app.is.steam = app.is.steam || dates.stamp()
-    app.time.steam_updated_at = dates.stamp()
 
     app.playtime.steam = data.playtime_forever
     app.playtime.steam_last = data.rtime_last_played
 
-    delete app.last_played
-    delete app.enabled
-    delete app.appid
-    delete app.data
+    // Flag this item as dirty to be saved by datastore
+    app.is.dirty = true
+
+    // delete app.last_played
+    // delete app.enabled
+    // delete app.appid
+    // delete app.data
 
     return app
   },

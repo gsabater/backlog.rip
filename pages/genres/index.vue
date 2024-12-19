@@ -58,7 +58,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 15th January 2024
- * Modified: Fri 27 September 2024 - 16:43:21
+ * Modified: Wed 18 December 2024 - 15:24:52
  **/
 
 export default {
@@ -67,12 +67,6 @@ export default {
   data() {
     return {
       alphabet: 'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split(''),
-
-      db: {
-        apps: {},
-        data: [],
-        states: [],
-      },
     }
   },
 
@@ -88,17 +82,11 @@ export default {
       return this.genres.filter((genre) => genre.name?.toUpperCase().startsWith(letter))
     },
 
-    getData() {
-      // this.repositoryStore.getGenres()
-    },
-
-    async init() {
-      this.getData()
-    },
+    async init() {},
   },
 
   mounted() {
-    this.init()
+    // this.init()
   },
 }
 </script>

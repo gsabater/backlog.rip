@@ -14,7 +14,7 @@
         padding: 10px;
         border-radius: 5px;
       "
-      @click="($app.dev = false), ($app.wip = false)"
+      @click="(($app.dev = false), ($app.wip = false))"
       >{{ $app.v }}
 ---
 {{ $app.api }}
@@ -170,10 +170,10 @@
             </small>
 
             <Icon
+              v-tippy="'Configure'"
               style="outline: none; transform: translateX(4px)"
               class="ms-auto me-1 text-secondary show-hover cursor-pointer"
               size="15"
-              v-tippy="'Configure'"
               @click.prevent="goTo('/account/preferences')">
               Settings2
             </Icon>
@@ -191,10 +191,10 @@
             </small>
 
             <Icon
+              v-tippy="'Create a new list'"
               style="float: right; outline: none; transform: translateX(4px)"
               class="ms-auto me-1 text-secondary show-hover cursor-pointer"
               size="15"
-              v-tippy="'Create a new list'"
               @click.prevent="$mitt.emit('list:create')">
               SquareRoundedPlus
             </Icon>
@@ -226,8 +226,8 @@
 
           <NuxtLink
             v-for="(state, i) in pinnedStates"
-            :to="'/library/' + state.slug"
             :key="'state' + i"
+            :to="'/library/' + state.slug"
             class="dropdown-item ps-3">
             <div class="content d-flex align-items-center w-100 ps-1">
               <span
@@ -533,7 +533,7 @@
                       </NuxtLink>
 
                       <NuxtLink
-                        to="/import/steam"
+                        to="/import"
                         class="list-group-item list-group-item-action d-flex align-items-center">
                         <span class="nav-link-title">Import your library</span>
                       </NuxtLink>
@@ -587,7 +587,7 @@
                 Manually
                 <small class="text-secondary ms-auto me-0">Insert</small>
               </div>
-              <NuxtLink to="/import/steam" class="dropdown-item">
+              <NuxtLink to="/import" class="dropdown-item">
                 <Icon size="16" class="me-2 text-muted">BrandSteam</Icon>
                 Import your Steam account
               </NuxtLink>
@@ -722,7 +722,7 @@
                   </div>
                   <div class="ms-3">
                     <a href="javascript:void(0)" class="text-body">Syncronized</a>
-                    <div class="text-secondary" v-tippy="$auth.cloud.updated_at">
+                    <div v-tippy="$auth.cloud.updated_at" class="text-secondary">
                       Last backup
                       {{ dates.dynamicTimeAgo($auth.cloud.updated_at) }} ago
                     </div>
@@ -1109,7 +1109,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Mon 25 November 2024 - 17:52:36
+ * Modified: Thu 19 December 2024 - 10:00:26
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

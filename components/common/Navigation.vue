@@ -85,7 +85,7 @@
             </li>
 
             <li class="nav-item">
-              <NuxtLink to="/import/steam" class="nav-link">
+              <NuxtLink to="/import" class="nav-link">
                 <span class="nav-link-title text-orange">
                   <Icon>StepInto</Icon>
                   Import library
@@ -180,7 +180,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2022
- * Modified: Tue Apr 02 2024
+ * Modified: Thu 19 December 2024 - 09:59:56
  **/
 
 export default {

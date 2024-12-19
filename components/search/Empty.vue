@@ -9,12 +9,12 @@
           Try importing your Steam games or add any game you want from games page.
         </p>
         <div class="empty-action">
-          <b-btn to="/import/steam" color="primary" size="sm" class="me-3">
+          <b-btn to="/import" color="primary" size="sm" class="me-3">
             <!-- <Icon>StepInto</Icon> -->
             Import your library
           </b-btn>
 
-          <b-btn to="/import/steam" color="primary" size="sm" class="me-3">
+          <b-btn to="/import" color="primary" size="sm" class="me-3">
             <!-- <Icon>StepInto</Icon> -->
             Add a game manually
           </b-btn>
@@ -43,7 +43,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 15th March 2024
- * Modified: 24 July 2024 - 09:41:47
+ * Modified: Thu 19 December 2024 - 10:00:07
  **/
 
 export default {

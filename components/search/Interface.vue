@@ -68,12 +68,12 @@
             Try importing your Steam games or add any game you want from games page.
           </p>
           <div class="empty-action">
-            <b-btn to="/import/steam" class="me-3">
+            <b-btn to="/import" class="me-3">
               <!-- <Icon>StepInto</Icon> -->
               Import your library
             </b-btn>
 
-            <b-btn @click.stop="$mitt.emit('game:add')" class="me-3">
+            <b-btn class="me-3" @click.stop="$mitt.emit('game:add')">
               Manually add a game
             </b-btn>
 
@@ -127,7 +127,7 @@
             </p>
 
             <div v-if="isLibrary" class="empty-action mt-3">
-              <b-btn to="/import/steam" class="btn-primary btn-sm me-3">
+              <b-btn to="/import" class="btn-primary btn-sm me-3">
                 <!-- <Icon>StepInto</Icon> -->
                 Import your library
               </b-btn>
@@ -204,7 +204,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon 04 November 2024 - 16:50:18
+ * Modified: Thu 19 December 2024 - 10:00:16
  **/
 
 export default {
@@ -318,7 +318,7 @@ export default {
     },
 
     addCustom() {
-      let app = this.gameStore.create({
+      const app = this.gameStore.create({
         name: this.f.string,
       })
 
@@ -338,7 +338,7 @@ export default {
     // Updated on Fri Oct 25 2024 - Dynamically attempt to find the genre
     //+-------------------------------------------------
     async mergeFilters() {
-      let loaded = {}
+      const loaded = {}
       let slugged = false
 
       // Set the search source to "library"

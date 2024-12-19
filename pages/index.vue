@@ -19,9 +19,7 @@
             <div class="row g-3 justify-center">
               <div class="col-auto">&nbsp;</div>
               <div class="col-auto">
-                <b-btn to="import/steam" color="purple" size="sm">
-                  Import your library
-                </b-btn>
+                <b-btn to="import" color="purple" size="sm">Import your library</b-btn>
               </div>
 
               <div class="col-auto">
@@ -80,7 +78,7 @@
             <div class="main-wcontent">
               <div class="scene">
                 <div class="group">
-                  <div class="xcard" v-for="item in randPosters">
+                  <div v-for="item in randPosters" class="xcard">
                     <div
                       class="xcard__img"
                       :style="`
@@ -170,7 +168,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Wed 30 October 2024 - 17:31:24
+ * Modified: Thu 19 December 2024 - 10:00:29
  **/
 
 export default {

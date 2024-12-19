@@ -112,7 +112,7 @@
                 of your progress.
               </p>
               <p>You start with 7 states, but you can modify them to fit your needs.</p>
-              <b-btn to="import/steam" class="btn btn-primary w-100 my-4">
+              <b-btn to="import" class="btn btn-primary w-100 my-4">
                 <Icon class="me-2">ArrowsTransferDown</Icon>
                 Import your library
               </b-btn>
@@ -130,7 +130,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 19th January 2024
- * Modified: Tue May 07 2024
+ * Modified: Thu 19 December 2024 - 10:00:32
  **/
 
 export default {

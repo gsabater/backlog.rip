@@ -3,11 +3,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Tue 10 December 2024 - 17:53:06
+ * Modified: Thu 19 December 2024 - 10:03:17
  */
 
 let $nuxt = null
 let $cloud = null
+let $library = null
 
 //+-------------------------------------------------
 // User auth and flow
@@ -60,6 +61,7 @@ export const useUserStore = defineStore('user', {
 
       $nuxt ??= useNuxtApp()
       $cloud ??= useCloudStore()
+      $library ??= useLibraryStore()
 
       await this.loadMe()
       await this.getApiData()
@@ -137,12 +139,15 @@ export const useUserStore = defineStore('user', {
 
           log('🧭 Userdata from API', xhr.data)
 
-          // Try to persist the user data
-          // and avoid the need to login again
+          // Store the user data after the login
           await this.register()
 
-          // Connect to the cloud if the user has it enabled
+          // Connect to the cloud if the user has cloud enabled
           if (this.config.cloud && $cloud.is == 'local') $cloud.connect()
+
+          // Init the library again
+          await delay(300)
+          $library.init()
         }
       } catch (e) {
         debugger
@@ -175,7 +180,7 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     async setJWT(token = false) {
       if (!token) return
-      if (!$cloud) $cloud = useCloudStore()
+      $cloud ??= useCloudStore()
 
       this.jwt = token
       this.cloud.jwt = token

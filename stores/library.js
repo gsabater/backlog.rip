@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th November 2024
- * Modified: Thu 05 December 2024 - 16:36:46
+ * Modified: Thu 19 December 2024 - 09:36:12
  */
 
 let $nuxt = null
@@ -39,11 +39,13 @@ export const useLibraryStore = defineStore('library', {
       // Autolink Steam
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (
-        $nuxt.$auth.user.steam_data &&
+        $nuxt.$auth.user.steam &&
         (!this.linked.steam?.v || this.module.steam.manifest.v > this.linked.steam.v)
       ) {
+        let provider = $nuxt.$auth.user.providers.find((p) => p.provider == 'steam')
+
         this.link('steam', {
-          ...$nuxt.$auth.user.steam_data,
+          ...provider.data,
           updated_at: $nuxt.$auth.user.steam_updated_at,
         })
 

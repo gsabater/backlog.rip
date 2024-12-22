@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Fri 13 December 2024 - 13:28:30
+ * Modified: Sun 22 December 2024 - 11:42:34
  */
 
 import axios from 'axios'
@@ -270,15 +270,9 @@ export default {
 
       let sync = x.module.hasUpdates(app, db)
       element.sync = sync
-      if (sync === false) return
 
-      // sync.forEach((key) => {
-      // synced[key] = x.module.hasUpdates(key, db, app)
-      // element[key] = synced[key]
-
-      // if (['name'].includes(key)) delete synced[key]
-      // let newPlaytime = x.module.hasUpdates('playtime', db, app)
-      // })
+      // Skip the app if  is already in library and there aren't updates
+      if (db && sync === false) return
 
       // Fill name value
       if (!element.name) element.name = db?.name || app.name

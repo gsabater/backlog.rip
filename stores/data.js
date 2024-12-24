@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue 17 December 2024 - 12:50:29
+ * Modified: Tue 24 December 2024 - 09:58:51
  */
 
 let $nuxt = null
@@ -71,6 +71,10 @@ export const useDataStore = defineStore('data', {
   }),
 
   getters: {
+    index() {
+      return index
+    },
+
     libLatest() {
       // let games = await $nuxt.$db.games
       //   .orderBy('created_at')
@@ -362,7 +366,7 @@ export const useDataStore = defineStore('data', {
         if (
           $nuxt.$app.wip &&
           (item.uuid == 'x31c5058d-4c96-418d-adc6-c9a78ac02e40' ||
-            item.uuid == 'efef0156-a172-48fb-a9d0-b50e253c4ea8')
+            item.uuid == 'xefef0156-a172-48fb-a9d0-b50e253c4ea8')
         ) {
           // if (item.name == 'DOOM') {
           //   // if (item.steam_id == '292030') {

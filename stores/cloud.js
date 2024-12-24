@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Thu 12 December 2024 - 15:28:21
+ * Modified: Tue 24 December 2024 - 11:32:42
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -29,9 +29,9 @@ export const useCloudStore = defineStore('cloud', {
   state: () => ({
     status: 'local',
 
-    sub: null, // Subject uuid defined in the cloud
-    jwt: null, // JWT token identifying the user
     $sb: null, // Supabase client
+    jwt: null, // JWT token identifying the user
+    sub: null, // Subject uuid defined in supabase
     backups: [], // Array of backups
 
     b: {},
@@ -76,7 +76,9 @@ export const useCloudStore = defineStore('cloud', {
   actions: {
     //+-------------------------------------------------
     // sync()
-    // Starts the syncronization process for every object
+    // Performs the syncronization
+    // Prepares the latest backup, analyzes it and
+    // performs the syncronization
     // -----
     // Created on Mon Aug 19 2024
     //+-------------------------------------------------
@@ -142,89 +144,9 @@ export const useCloudStore = defineStore('cloud', {
     },
 
     //+-------------------------------------------------
-    // connect()
-    // Connects the cloud client()
-    // -----
-    // Created on Wed Jul 31 2024
-    //+-------------------------------------------------
-    async connect() {
-      $nuxt ??= useNuxtApp()
-      $data ??= useDataStore()
-      $user ??= useUserStore()
-      $state ??= useStateStore()
-      // $guild ??= useGuildStore()
-
-      if ($nuxt.$app.offline) {
-        log('⚡ Cloud sync is disabled in offline mode')
-        this.status = 'offline'
-        return
-      }
-
-      if ($nuxt.$auth.config.cloud == false) {
-        log('⚡ Cloud sync is disabled in the user settings')
-        this.status = 'disabled'
-        return
-      }
-
-      log('⚡ cloud:connecting')
-      this.status = 'connecting'
-
-      if (!this.checkCredentials()) return
-
-      this.$sb = createClient(
-        this.anon.url,
-        this.anon.head + this.anon.body + this.anon.sign,
-        {
-          // auth: {
-          //   autoRefreshToken: false,
-          //   persistSession: false,
-          //   detectSessionInUrl: false,
-          // },
-
-          global: {
-            headers: {
-              Authorization: `Bearer ${this.jwt}`,
-            },
-          },
-        }
-      )
-
-      const { data } = this.$sb.auth.onAuthStateChange((event, session) => {
-        // console.log(event, session)
-
-        if (event === 'INITIAL_SESSION') {
-          // handle initial session
-        } else if (event === 'SIGNED_IN') {
-          // handle sign in event
-        } else if (event === 'SIGNED_OUT') {
-          // handle sign out event
-        } else if (event === 'PASSWORD_RECOVERY') {
-          // handle password recovery event
-        } else if (event === 'TOKEN_REFRESHED') {
-          // handle token refreshed event
-        } else if (event === 'USER_UPDATED') {
-          // handle user updated event
-        }
-      })
-
-      const { data: backups, error } = await this.$sb
-        .from('cloud')
-        .select('*')
-        .order('id', { ascending: false })
-
-      if (error) {
-        this.status = 'error'
-        log('⚡ Fatal error retrieving cloud backups', error.message)
-        return
-      }
-
-      this.backups = backups
-      this.sync()
-    },
-
-    //+-------------------------------------------------
     // prepareAndAnalyze()
-    // 727 lines... 771 ... 850 ... 820 ... 712
+    // Prepares and checks the versioning and hash of
+    // both local and cloud backups
     // -----
     // Created on Fri Aug 30 2024
     //+-------------------------------------------------
@@ -239,7 +161,7 @@ export const useCloudStore = defineStore('cloud', {
         return
       }
 
-      // Case 1: Client does not have local cloud saves
+      // Case 1: Client does not have local tracking
       // Verify data integrity to download or conflict
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (!this.client.hash) {
@@ -250,13 +172,14 @@ export const useCloudStore = defineStore('cloud', {
       }
 
       // Case 2: Hashes differ between cloud and client
-      // This should only happen when as a conflict resolution
+      // This can be a conflict. Trying autosolve
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let latest = this.backups[0]
       if (latest.hash !== this.client.hash) {
-        log('⚡ 2.1. Conflict resolution... ')
+        log('⚡ 2.1. versions are different')
         await this.prepareBackup('latest')
         await this.analyze()
+        this.tryAutoResolution()
 
         return
       }
@@ -265,17 +188,7 @@ export const useCloudStore = defineStore('cloud', {
       // Verify data integrity to download or upload
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       log('⚡ Using connected backup')
-      if (this.b.hash !== this.backup.hash) {
-        let backup = this.backups.find((backup) => backup.hash == this.client.hash)
-        this.backup = { ...backup }
-
-        let timeAgo = $nuxt.$moment().diff($nuxt.$moment(backup.created_at), 'hours')
-        if (timeAgo > 12) {
-          this.backup.hash = this.makeHash()
-          // this.backup.created_at = dates.timestamp()
-        }
-      }
-
+      this.prepareBackup('connected')
       await this.analyze()
 
       // do what is in prepare:
@@ -294,15 +207,53 @@ export const useCloudStore = defineStore('cloud', {
     // Checks the integrity of the backups for each dimension
     // -----
     // Created on Fri Aug 30 2024
+    // Updated on Mon Dec 23 2024 - Moved logic to prepare()
     //+-------------------------------------------------
     async analyze() {
       // ⇢ Analyze the integrity of each dimension
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let dimensions = Object.keys(this.dimensions)
       for (let dimension of dimensions) {
-        // await delay(500)
-        let state = this.integrityCheck(dimension)
+        this.integrityCheck(dimension)
         // console.warn('  ', dimension, state)
+      }
+
+      log(
+        `⚡ cli:${this.client.hash} ⇢ clo:${this.backup.hash} ⇢ Acc:${this.b.account} ⇢ St:${this.b.states} ⇢ Lib:${this.b.library}`
+      )
+    },
+
+    //+-------------------------------------------------
+    // prepareBackup()
+    // Tries to find a valid backup in the array or
+    // creates a new one to be used for the syncronization
+    // -----
+    // Created on Wed Aug 21 2024
+    // Updated on Mon Dec 23 2024 - Prepare now means hashing and versioning
+    //+-------------------------------------------------
+    async prepareBackup(type = null) {
+      this.backup.user_id = this.sub
+
+      if (type == 'new') {
+        this.backup.hash = this.makeHash()
+        // this.backup.created_at = dates.timestamp()
+      }
+
+      if (type == 'latest') {
+        this.backup = { ...this.backups[0] }
+      }
+
+      if (type == 'connected') {
+        if (this.b.hash !== this.backup.hash) {
+          let backup = this.backups.find((backup) => backup.hash == this.client.hash)
+          this.backup = { ...backup }
+
+          let timeAgo = $nuxt.$moment().diff($nuxt.$moment(backup.created_at), 'hours')
+          if (timeAgo > 12) {
+            this.backup.hash = this.makeHash()
+            // this.backup.created_at = dates.timestamp()
+          }
+        }
       }
 
       // ⇢ Assign version from hash
@@ -315,28 +266,10 @@ export const useCloudStore = defineStore('cloud', {
         this.b['hash.h'] = hash || this.backup.hash
       }
 
-      log(
-        `⚡ integrity ~ ${this.client.hash} ◈◈◈ ${this.backup.hash} ~ Account (${this.b.account}) ~ States (${this.b.states}) ~ Library (${this.b.library})`
-      )
-    },
-
-    //+-------------------------------------------------
-    // prepareBackup()
-    // Tries to find a valid backup in the array or
-    // creates a new one to be used for the syncronization
-    // -----
-    // Created on Wed Aug 21 2024
-    //+-------------------------------------------------
-    async prepareBackup(type = null) {
-      this.backup.user_id = this.sub
-
-      if (type == 'new') {
-        this.backup.hash = this.makeHash()
-        // this.backup.created_at = dates.timestamp()
-      }
-
-      if (type == 'latest') {
-        this.backup = { ...this.backups[0] }
+      if (this.client?.hash) {
+        const [version, hash] = this.client.hash.split('.') ?? [0, 'xxx']
+        this.b['cli.v'] = parseInt(version) ?? 0
+        this.b['cli.h'] = hash || this.client.hash
       }
     },
 
@@ -386,9 +319,53 @@ export const useCloudStore = defineStore('cloud', {
       // $nuxt.$toast.success('Your data has been syncronized')
     },
 
+    //+-------------------------------------------------
+    // conflict()
+    // There has been a conflict that needs to be resolved
+    // -----
+    // Created on Mon Dec 23 2024
+    //+-------------------------------------------------
     conflict() {
       this.status = 'conflict'
       $nuxt.$mitt.emit('cloud:conflict')
+    },
+
+    //+-------------------------------------------------
+    // tryAutoResolution()
+    // Takes values from config to determine a resolution
+    // -----
+    // Created on Mon Dec 23 2024
+    //+-------------------------------------------------
+    async tryAutoResolution() {
+      if (!this.b.conflict) return
+      if (!$user.config.cloud_resolve) return false
+
+      let local = this.b['cli.v']
+      let cloud = this.b['hash.v']
+      let action = $user.config.cloud_action
+      let tolerance = $user.config.cloud_tolerance
+
+      if (Math.abs(cloud - local) > tolerance) {
+        log('⚡ cloud version is out of tolerance', cloud, local)
+        return
+      }
+
+      switch (action) {
+        case 'downloadAlways':
+        case 'downloadIfNewer':
+          if (action == 'downloadAlways' || cloud > local) {
+            log('Downloading newer version from cloud…')
+            log('⚡ cloud:conflict:resolved (within tolerance)')
+
+            this.resolve('download', false)
+          }
+          break
+
+        case 'uploadAlways':
+          log('Uploading to cloud (always)…')
+          this.resolve('upload', false)
+          break
+      }
     },
 
     //+-------------------------------------------------
@@ -398,7 +375,7 @@ export const useCloudStore = defineStore('cloud', {
     // -----
     // Created on Fri Sep 13 2024
     //+-------------------------------------------------
-    async resolve(action) {
+    async resolve(action, sync = true) {
       this.status = 'syncing'
       this.b.conflict = null
 
@@ -413,8 +390,10 @@ export const useCloudStore = defineStore('cloud', {
         this.client[dimension] = `0.${action}`
       }
 
-      await this.sync()
-      return true
+      if (sync) {
+        await this.sync()
+        return true
+      }
     },
 
     //+-------------------------------------------------
@@ -868,6 +847,88 @@ export const useCloudStore = defineStore('cloud', {
         console.error('Error parsing JSON:', error)
         throw error
       }
+    },
+
+    //+-------------------------------------------------
+    // connect()
+    // Initializes stores, checks online status and credentials
+    // And creates the supabase client
+    // -----
+    // Created on Wed Jul 31 2024
+    //+-------------------------------------------------
+    async connect() {
+      $nuxt ??= useNuxtApp()
+      $data ??= useDataStore()
+      $user ??= useUserStore()
+      $state ??= useStateStore()
+      // $guild ??= useGuildStore()
+
+      if ($nuxt.$app.offline) {
+        log('⚡ Cloud sync is disabled in offline mode')
+        this.status = 'offline'
+        return
+      }
+
+      if ($nuxt.$auth.config.cloud == false) {
+        log('⚡ Cloud sync is disabled in the user settings')
+        this.status = 'disabled'
+        return
+      }
+
+      log('⚡ cloud:connecting')
+      this.status = 'connecting'
+
+      if (!this.checkCredentials()) return
+
+      this.$sb = createClient(
+        this.anon.url,
+        this.anon.head + this.anon.body + this.anon.sign,
+        {
+          // auth: {
+          //   autoRefreshToken: false,
+          //   persistSession: false,
+          //   detectSessionInUrl: false,
+          // },
+
+          global: {
+            headers: {
+              Authorization: `Bearer ${this.jwt}`,
+            },
+          },
+        }
+      )
+
+      const { data } = this.$sb.auth.onAuthStateChange((event, session) => {
+        // log(event, session)
+
+        if (event === 'INITIAL_SESSION') {
+          // handle initial session
+        } else if (event === 'SIGNED_IN') {
+          // handle sign in event
+        } else if (event === 'SIGNED_OUT') {
+          // handle sign out event
+        } else if (event === 'PASSWORD_RECOVERY') {
+          // handle password recovery event
+        } else if (event === 'TOKEN_REFRESHED') {
+          // handle token refreshed event
+        } else if (event === 'USER_UPDATED') {
+          // handle user updated event
+        }
+      })
+
+      const { data: backups, error } = await this.$sb
+        .from('cloud')
+        .select('*')
+        .order('id', { ascending: false })
+
+      if (error) {
+        this.status = 'error'
+        log('⚡ Fatal error retrieving cloud backups', error.message)
+        return
+      }
+
+      this.backups = backups
+      this.sync()
     },
   },
 

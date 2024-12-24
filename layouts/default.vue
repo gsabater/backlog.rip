@@ -75,7 +75,7 @@
           *+--------------------------------- -->
         <NuxtLink
           to="/"
-          class="d-none d-lg-flex py-3 text-decoration-none"
+          class="d-none d-lg-flex pt-1 pb-2 text-decoration-none"
           style="
             display: flex;
             align-items: center;
@@ -100,7 +100,14 @@
           *| Main dropdown menu
           *| Menu with options to navigate
           *+--------------------------------- -->
-        <div class="d-none d-lg-block dropdown-menu show bg-transparent">
+        <div
+          class="d-none d-lg-block dropdown-menu bg-transparent"
+          style="
+            height: calc(100% - 250px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: 4px;
+          ">
           <span class="dropdown-header">
             <span class="text-muted my-2">Explore</span>
           </span>
@@ -125,7 +132,8 @@
 
           <div class="dropdown-divider"></div>
 
-          <NuxtLink v-if="$app.wip" to="/dashboard" class="dropdown-item">
+
+          <!-- <NuxtLink v-if="$app.wip" to="/dashboard" class="dropdown-item">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">Components</Icon>
             </span>
@@ -140,7 +148,7 @@
             <small class="ms-auto text-secondary">
               {{ $moment().format('DD/MM') }}
             </small>
-          </NuxtLink>
+          </NuxtLink> -->
 
           <!-- <div class="dropdown-divider"></div>
           <span class="dropdown-header control-hover" style="pointer-events: all">
@@ -302,7 +310,7 @@
         </div>
 
         <div v-else class="px-3 mt-2 mb-3" @click.stop="$mitt.emit('search:palette')">
-          <div class="input-group input-group-flat input-palette">
+          <div class="input-group input-group-flat input-palette cursor-pointer">
             <span class="input-group-text">
               <Icon size="14" class="me-1">Search</Icon>
             </span>
@@ -1109,7 +1117,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu 19 December 2024 - 10:00:26
+ * Modified: Tue 24 December 2024 - 11:25:43
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

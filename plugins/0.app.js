@@ -25,8 +25,8 @@ let $search = null
 let $integration = null
 
 let app = {
-  v: '0.17.5 β', //β
-  t: 1732274659575, // Date.now()
+  v: '0.18.0 β', //β
+  t: 1735035976635, // Date.now()
 
   // Global app state
   // Controls modules boundaries

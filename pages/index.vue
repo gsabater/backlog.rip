@@ -68,7 +68,7 @@
                       fill-rule="nonzero"></path>
                   </g>
                 </svg>
-                Join at Discord
+                Join the Discord
               </a>
             </p>
           </div>
@@ -168,7 +168,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Thu 19 December 2024 - 10:00:29
+ * Modified: Fri 20 December 2024 - 14:29:35
  **/
 
 export default {

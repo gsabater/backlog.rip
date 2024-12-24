@@ -22,6 +22,21 @@ aside {
   overflow-x: hidden;
 }
 
+aside [class^='container'] {
+  height: 100%;
+}
+
+aside.navbar.navbar-vertical {
+  top: 8px;
+  left: 8px;
+  bottom: 8px;
+  border-radius: 4px;
+  outline: 1px solid #3e505e;
+  padding: 0;
+  overflow-y: auto;
+  filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+}
+
 aside .dropdown-menu {
   border: none;
   box-shadow: none;

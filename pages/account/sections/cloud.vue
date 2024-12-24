@@ -14,7 +14,7 @@
         your library, configuration, and game states, is stored locally in your browser. -->
       </p>
 
-      <p>
+      <p class="mb-1">
         To access your data from any device, you can use the cloud sync feature. This
         allows you to synchronize and access your information across multiple devices,
         ensuring it's always up to date.
@@ -31,7 +31,7 @@
         </a>
       </p> -->
     </div>
-    <div class="card-footer" v-if="$cloud.is !== 'local'">
+    <div v-if="$cloud.is !== 'local'" class="card-footer">
       <div class="row align-items-center">
         <div class="col-auto">
           <label class="form-check form-switch m-0">
@@ -54,7 +54,75 @@
 
   <div v-if="$auth.config.cloud && $cloud.is !== 'local'" class="card mb-3">
     <div class="card-body">
-      <h2 class="mb-3">Syncronization status</h2>
+      <h2 id="settings" class="mb-3">Cloud settings</h2>
+      <!-- <p class="card-subtitle">Adjust your preferences</p> -->
+
+      <div class="row">
+        <div class="col-md-12 nope-col-lg-8">
+          <div class="mb-3 pb-2">
+            <div class="form-label">Conflict tolerance</div>
+            <div class="text-muted">
+              A conflict occurs when there are backups from different devices. Conflict
+              tolerance allows you to decide how to resolve conflicts, enabling the
+              application to automatically handle them.
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <label class="form-check form-switch cursor-pointer pb-2">
+                <input
+                  v-model="$auth.config.cloud_resolve"
+                  type="checkbox"
+                  class="form-check-input"
+                  @change="storeConfig('cloud_resolve')" />
+                <span class="form-check-label form-label">
+                  <Icon
+                    size="14"
+                    width="1.3"
+                    class="me-1"
+                    style="transform: translateY(-2px)">
+                    CloudExclamation
+                  </Icon>
+                  Automatic conflict resolution
+                </span>
+
+                <span class="form-check-description">
+                  When enabled, conflicts in syncronization conflicts will be resolved
+                  based on the version tolerance and action.
+                </span>
+              </label>
+            </div>
+            <div class="col-2">
+              <div class="form-label">Tolerance</div>
+              <!-- <h4 class="card-title mb-2">Username2</h4> -->
+              <v-text-field
+                v-model.number="$auth.config.cloud_tolerance"
+                density="comfortable"
+                type="number"
+                @blur="storeConfig('cloud_tolerance')" />
+            </div>
+            <div class="col-4">
+              <label class="form-label">Action on conflict</label>
+              <v-select
+                v-model="$auth.config.cloud_action"
+                :items="[
+                  { value: 'downloadIfNewer', title: 'Download if cloud is newer' },
+                  { value: 'downloadAlways', title: 'Always download' },
+                  { value: 'uploadAlways', title: 'Always upload' },
+                ]"
+                item-title="title"
+                item-value="value"
+                @update:model-value="storeConfig('cloud_action')" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="$auth.config.cloud && $cloud.is !== 'local'" class="card mb-3">
+    <div class="card-body">
+      <h2 id="status" class="mb-3">Syncronization status</h2>
       <!-- <p class="card-subtitle">Your data is backed up in the cloud</p> -->
 
       <template>
@@ -68,7 +136,7 @@
       </template>
 
       <div class="row g-3">
-        <div class="d-flex align-items-center" v-if="$cloud.is == 'syncing'">
+        <div v-if="$cloud.is == 'syncing'" class="d-flex align-items-center">
           <div
             class="avatar avatar-sm rounded-circle bg-green-lt"
             style="--tblr-bg-opacity: 0.3">
@@ -79,7 +147,7 @@
           </div>
         </div>
 
-        <div class="d-flex align-items-center" v-if="$cloud.is == 'syncing:done'">
+        <div v-if="$cloud.is == 'syncing:done'" class="d-flex align-items-center">
           <div
             class="avatar avatar-sm rounded-circle bg-green-lt"
             style="--tblr-bg-opacity: 0.3">
@@ -115,7 +183,7 @@
     </div>
   </div>
 
-  <div class="card mb-3" v-if="$cloud.is == 'local'">
+  <div v-if="$cloud.is == 'local'" class="card mb-3">
     <div class="card-body">
       <h2 class="mb-2">Enable cloud saves</h2>
       <p class="card-subtitle">Enable cloud sync by logging in</p>
@@ -133,7 +201,7 @@
 
   <div v-if="$auth.config.cloud && $cloud.is == 'syncing:done'" class="card mb-3">
     <div class="card-body">
-      <h2 class="card-title mb-2">Cloud usage and quota</h2>
+      <h2 id="quota" class="card-title mb-2">Cloud usage and quota</h2>
       <p class="card-subtitle">Amount of data stored in the cloud.</p>
     </div>
     <table class="table card-table table-vcenter">
@@ -268,7 +336,7 @@
           <tr>
             <td>
               <code class="text-muted me-2">v{{ backup.hash.split('.')[0] }}</code>
-              <small class="label" v-if="$auth.cloud.hash == backup.hash">
+              <small v-if="$auth.cloud.hash == backup.hash" class="label">
                 <span class="badge bg-success mx-1"></span>
                 Active
               </small>
@@ -334,7 +402,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th August 2024
- * Modified: Wed 16 October 2024 - 17:14:45
+ * Modified: Tue 24 December 2024 - 11:30:46
  **/
 
 export default {

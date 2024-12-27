@@ -39,7 +39,19 @@
       </NuxtLink>
     </li>
 
-    <li class="nav-item">
+    <li v-if="$app.wip" class="nav-item">
+      <NuxtLink
+        to="/account/community"
+        class="nav-link"
+        :style="
+          $route.path.includes('community')
+            ? 'color: var(--tblr-nav-link-hover-color); '
+            : ''
+        ">
+        <Icon class="me-2">Components</Icon>
+        Community
+      </NuxtLink>
+    </li>
 
     <li class="nav-item">
       <NuxtLink

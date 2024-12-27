@@ -103,7 +103,7 @@
         <div
           class="d-none d-lg-block dropdown-menu bg-transparent"
           style="
-            height: calc(100% - 250px);
+            height: calc(100% - 220px);
             overflow-y: auto;
             overflow-x: hidden;
             border-radius: 4px;
@@ -130,8 +130,20 @@
             <span class="nav-link-title">Genres</span>
           </NuxtLink>
 
-          <div class="dropdown-divider"></div>
+          <template v-if="$app.wip">
+            <div class="dropdown-divider"></div>
 
+            <span class="dropdown-header">
+              <span class="text-muted my-2">Community</span>
+            </span>
+
+            <NuxtLink to="/community" class="dropdown-item">
+              <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                <Icon size="16">Components</Icon>
+              </span>
+              <span class="nav-link-title">Community</span>
+            </NuxtLink>
+          </template>
 
           <!-- <NuxtLink v-if="$app.wip" to="/dashboard" class="dropdown-item">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
@@ -284,7 +296,7 @@
       <div
         class="d-none d-lg-block aside-bottom w-100"
         style="position: absolute; bottom: 10px">
-        <div v-if="$app.updating" class="px-3 mt-2 mb-3">
+        <div v-if="$app.updating" class="px-3 my-2">
           <div class="input-icon" style="overflow: hidden; border-radius: 4px">
             <div class="progress progress-sm" style="position: absolute; height: 0.15rem">
               <div class="progress-bar progress-bar-indeterminate"></div>
@@ -309,7 +321,7 @@
           </div>
         </div>
 
-        <div v-else class="px-3 mt-2 mb-3" @click.stop="$mitt.emit('search:palette')">
+        <div v-else class="px-3 my-2" @click.stop="$mitt.emit('search:palette')">
           <div class="input-group input-group-flat input-palette cursor-pointer">
             <span class="input-group-text">
               <Icon size="14" class="me-1">Search</Icon>
@@ -339,7 +351,7 @@
           <span class="v-kbd">Control + K</span>
         </button> -->
 
-        <div class="row w-100 mb-3">
+        <div class="row w-100">
           <div class="col col d-flex justify-content-center">
             <div
               class="btn btn-ghost-secondary btn-sm btn-icon"
@@ -366,6 +378,15 @@
                   </svg>
                   Discord
                 </a>
+
+                <a
+                  href="https://www.patreon.com/c/BacklogRIP"
+                  class="dropdown-item"
+                  target="_blank">
+                  <Icon size="18" class="me-2">BrandPatreon</Icon>
+                  Support on Patreon
+                </a>
+
                 <a
                   href="https://github.com/gsabater/backlog.rip"
                   class="dropdown-item"
@@ -1117,7 +1138,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Tue 24 December 2024 - 11:25:43
+ * Modified: Fri 27 December 2024 - 11:40:57
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

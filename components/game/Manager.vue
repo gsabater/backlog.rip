@@ -41,15 +41,15 @@
         <div class="dropdown-item">
           <div class="d-flex nope-justify-content-center" style="width: 30px">
             <span
-              v-if="app.state && state"
+              v-if="app.state && currState"
               class="status-dot status-dot-animated"
               style="margin-left: 5px"
-              :style="{ 'background-color': state?.color || 'transparent' }"></span>
+              :style="{ 'background-color': currState?.color || 'transparent' }"></span>
             <Icon v-else size="16" width="1" class="text-muted">Background</Icon>
           </div>
 
           <span>
-            {{ app.state && state ? state.name : 'Assign a state' }}
+            {{ app.state && currState ? currState.name : 'Assign a state' }}
           </span>
 
           <span class="text-muted ms-auto">
@@ -273,7 +273,7 @@
           *| Add to library
           *| Click to add a game to library
           *+--------------------------------- -->
-        <div v-if="!app.is || !app.is.lib" @click="addToLibrary" class="dropdown-item">
+        <div v-if="!app.is || !app.is.lib" class="dropdown-item" @click="addToLibrary">
           <div class="d-flex nope-justify-content-center" style="width: 30px">
             <Icon size="17" width="1.5" class="text-muted">SquareRoundedPlus</Icon>
           </div>
@@ -292,7 +292,7 @@
           *| Favorite
           *| Simple item with fav option
           *+--------------------------------- -->
-        <div @click="setState({ id: 'fav' })" class="dropdown-item">
+        <div class="dropdown-item" @click="setState({ id: 'fav' })">
           <template v-if="app.is && app.is.fav">
             <div class="d-flex nope-justify-content-center" style="width: 30px">
               <Icon
@@ -330,7 +330,7 @@
           *| Pinned
           *| Simple item with pin option
           *+--------------------------------- -->
-        <div @click="setState({ id: 'pinned' })" class="dropdown-item">
+        <div class="dropdown-item" @click="setState({ id: 'pinned' })">
           <template v-if="app.is && app.is.pinned">
             <div class="d-flex nope-justify-content-center" style="width: 30px">
               <Icon
@@ -370,7 +370,7 @@
           *+--------------------------------- -->
         <div class="dropdown-divider"></div>
 
-        <div @click="setState({ id: 'hidden' })" class="dropdown-item">
+        <div class="dropdown-item" @click="setState({ id: 'hidden' })">
           <template v-if="app.is && app.is.hidden">
             <div class="d-flex nope-justify-content-center" style="width: 30px">
               <Icon size="17" width="1.5">Restore</Icon>
@@ -443,7 +443,7 @@
             </b-dropdown>
           </div>
 
-          <div class="dropdown-item" v-if="!ui.isRightClick">
+          <div v-if="!ui.isRightClick" class="dropdown-item">
             <div class="d-flex nope-justify-content-center" style="width: 30px">
               <Icon size="17" class="text-muted">Mouse</Icon>
             </div>
@@ -558,7 +558,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Wed 30 October 2024 - 17:53:16
+ * Modified: Fri 27 December 2024 - 11:52:28
  **/
 
 export default {
@@ -582,9 +582,9 @@ export default {
     ...mapState(useStateStore, ['states']),
     ...mapState(useListStore, ['lists']),
 
-    // state() {
-    //   return this.states.find((state) => state.id == this.app.state)
-    // },
+    currState() {
+      return this.states.find((state) => state.id == this.app.state)
+    },
   },
 
   methods: {
@@ -638,7 +638,7 @@ export default {
     // Created on Tue Jul 23 2024
     //+-------------------------------------------------
     addToLibrary() {
-      let app = { ...this.app }
+      const app = { ...this.app }
       app.is.lib = dates.stamp()
       app.is.dirty = true
 
@@ -678,7 +678,7 @@ export default {
     // Created on Thu Sep 19 2024
     //+-------------------------------------------------
     createList() {
-      let app = { ...this.app }
+      // const app = { ...this.app }
       this.$mitt.emit('list:create')
 
       this.hide()

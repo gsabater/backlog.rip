@@ -5,7 +5,7 @@
  *           https://eslint.org/docs/latest/use/configure/migration-guide
  * ----------------------------------------------
  * Created Date: 11th November 2023
- * Modified: Thu 12 December 2024 - 15:07:45
+ * Modified: Fri 27 December 2024 - 13:42:21
  */
 
 import globals from 'globals'
@@ -74,6 +74,7 @@ export default [
         useGameStore: true,
         useStateStore: true,
         useCloudStore: true,
+        useGuildStore: true,
         useJournalStore: true,
         useLibraryStore: true,
         useRepositoryStore: true,

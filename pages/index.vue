@@ -44,14 +44,17 @@
                 <Icon size="14" class="me-0" style="transform: translateY(-1px)">
                   BrandGithub
                 </Icon>
-                Source code on Github
+                Open source
               </a>
 
               <span class="px-3">·</span>
 
+              Join us at
+
               <a
+                v-tippy="'Join us at Discord'"
                 href="https://discord.gg/F2sPE5B"
-                class="link-secondary link-underline-opacity-0"
+                class="link-secondary link-underline-opacity-0 ms-2 mx-1"
                 target="_blank">
                 <svg
                   class="me-1"
@@ -68,7 +71,16 @@
                       fill-rule="nonzero"></path>
                   </g>
                 </svg>
-                Join the Discord
+              </a>
+
+              <a
+                v-tippy="'Support on Patreon'"
+                href="https://www.patreon.com/c/BacklogRIP"
+                class="link-secondary link-underline-opacity-0 mx-1"
+                target="_blank">
+                <Icon size="16" style="transform: translateY(-1px)">
+                  BrandPatreonFilled
+                </Icon>
               </a>
             </p>
           </div>
@@ -168,7 +180,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Fri 20 December 2024 - 14:29:35
+ * Modified: Tue 24 December 2024 - 15:23:18
  **/
 
 export default {

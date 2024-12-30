@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Tue 24 December 2024 - 11:32:42
+ * Modified: Fri 27 December 2024 - 13:53:21
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -11,7 +11,7 @@ import { createClient } from '@supabase/supabase-js'
 let $nuxt = null
 let $data = null
 let $user = null
-// let $guild = null
+let $guild = null
 let $state = null
 
 //+-------------------------------------------------
@@ -46,7 +46,6 @@ export const useCloudStore = defineStore('cloud', {
       sign_library: null,
 
       games: null,
-
       states: null,
     },
 
@@ -113,9 +112,9 @@ export const useCloudStore = defineStore('cloud', {
 
       // Finalize the backup
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (this.backup.enabled) await this.runBackup()
+      if (this.backup.enabled) await this.storeBckp()
 
-      log('⚡✅ syncing:done')
+      log('⚡✅ Syncronization complete')
       this.status = 'syncing:done'
     },
 
@@ -273,8 +272,14 @@ export const useCloudStore = defineStore('cloud', {
       }
     },
 
-    async runBackup() {
-      log(`⚡ Running backup in 5 seconds...`)
+    //+-------------------------------------------------
+    // storeBckp()
+    // Pre stores the backup calling a debounced function
+    // -----
+    // Created on Wed Aug 21 2024
+    //+-------------------------------------------------
+    async storeBckp() {
+      log(`⚡ Storing the backup... (5s)`)
       clearTimeout(this._backupTimeout)
       this._backupTimeout = setTimeout(() => this.storeBackup(), 5000)
     },
@@ -406,7 +411,7 @@ export const useCloudStore = defineStore('cloud', {
     async doSync(dimension) {
       // await delay(500)
       if (this.b[dimension] !== 'ok') {
-        log('⚡ ⇢ doSync', dimension, this.b[dimension])
+        log('⚡ ⇢ Syncronize ' + dimension, this.b[dimension])
         // console.warn(this.b[dimension + '.cli.hash'])
         // console.warn(this.b[dimension + '.clo.hash'])
       }
@@ -861,7 +866,7 @@ export const useCloudStore = defineStore('cloud', {
       $data ??= useDataStore()
       $user ??= useUserStore()
       $state ??= useStateStore()
-      // $guild ??= useGuildStore()
+      $guild ??= useGuildStore()
 
       if ($nuxt.$app.offline) {
         log('⚡ Cloud sync is disabled in offline mode')

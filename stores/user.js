@@ -3,11 +3,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Thu 19 December 2024 - 10:03:17
+ * Modified: Mon 30 December 2024 - 15:57:50
  */
 
 let $nuxt = null
 let $cloud = null
+let $guild = null
 let $library = null
 
 //+-------------------------------------------------
@@ -61,6 +62,7 @@ export const useUserStore = defineStore('user', {
 
       $nuxt ??= useNuxtApp()
       $cloud ??= useCloudStore()
+      $guild ??= useGuildStore()
       $library ??= useLibraryStore()
 
       await this.loadMe()
@@ -201,6 +203,33 @@ export const useUserStore = defineStore('user', {
     },
 
     //+-------------------------------------------------
+    // update()
+    // a try to streamline updates across local $db, $guild and $cloud
+    // -----
+    // Created on Fri Dec 27 2024
+    //+-------------------------------------------------
+    async update(field) {
+      const me = ['slug', 'username']
+      const cloud = []
+      const guild = ['guild', 'slug', 'username']
+      const config = ['guild', 'debug', 'two']
+
+      if (me.includes(field)) {
+        console.warn('updating account (me)', field)
+        this.updateAccount(field)
+      }
+
+      if (config.includes(field)) {
+        console.warn('updating config', field)
+        this.storeConfig(field)
+      }
+
+      if (guild.includes(field)) {
+        $guild.setProfile(field)
+      }
+    },
+
+    //+-------------------------------------------------
     // putAccount()
     // Writes an account object to the database
     // Use updateAccount() to update a single field instead
@@ -224,6 +253,7 @@ export const useUserStore = defineStore('user', {
     // Created on Mon Aug 26 2024 - Integrate with cloud
     //+-------------------------------------------------
     async updateAccount(field = null) {
+      console.warn('🔴🔴🔴 Updating account', field)
       let account = await $nuxt.$db.account.get('me')
 
       let data = { ...account }
@@ -241,6 +271,7 @@ export const useUserStore = defineStore('user', {
     // Created on Sun Feb 18 2024
     //+-------------------------------------------------
     async storeConfig(field) {
+      console.warn('🔴🔴🔴 Updating config', field)
       let value = JSON.parse(JSON.stringify(this.config[field]))
       await $nuxt.$db.config.put({
         key: field,

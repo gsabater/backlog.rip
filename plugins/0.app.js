@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Sun 22 December 2024 - 11:41:43
+ * Modified: Mon 30 December 2024 - 16:39:03
  */
 
 // import { reactive } from 'vue'
@@ -20,12 +20,13 @@ let $game = null
 let $list = null
 let $state = null
 let $repos = null
+let $guild = null
 let $cloud = null
 let $search = null
 let $integration = null
 
 let app = {
-  v: '0.18.0 β', //β
+  v: '0.18.1 β', //β
   t: 1735035976635, // Date.now()
 
   // Global app state
@@ -142,9 +143,9 @@ function detectEnvironment() {
 // Created on Sun Feb 04 2024
 //+-------------------------------------------------
 async function init() {
-  if (!$nuxt) $nuxt = useNuxtApp()
-  if (!$game) $game = useGameStore()
-
+  $nuxt ??= useNuxtApp()
+  $game ??= useGameStore()
+  $guild ??= useGuildStore()
   $repos ??= useRepositoryStore()
   $search ??= useSearchStore()
 
@@ -154,6 +155,7 @@ async function init() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   $game.init()
+  $guild.init()
   $repos.init()
   $search.init()
 }

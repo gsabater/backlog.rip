@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th November 2023
- * Modified: Mon 23 December 2024 - 11:11:35
+ * Modified: Mon 30 December 2024 - 15:45:23
  */
 
 export class DexieInstaller {
@@ -109,6 +109,7 @@ export class DexieInstaller {
   // Created on Thu Jan 25 2024
   //+-------------------------------------------------
   async checkin() {
+    // TODO: those values should be defined in ENUMS
     const config = {
       debug: false,
 
@@ -116,6 +117,8 @@ export class DexieInstaller {
       cloud_resolve: true,
       cloud_tolerance: 3,
       cloud_action: 'downloadIfNewer',
+
+      guild: true,
 
       pinned: true,
       hidden: true,

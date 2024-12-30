@@ -6,7 +6,7 @@
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Fri 27 December 2024 - 11:49:10
+ * Modified: Mon 30 December 2024 - 12:33:38
  */
 
 import { defineNuxtConfig } from 'nuxt/config';
@@ -61,7 +61,7 @@ export default defineNuxtConfig({
     autoImport: true,
     // injectAtEnd: true,
 
-    dirs: ['./stores'],
+    dirs: ['./stores', './services'],
     presets: [
       {
         from: 'pinia',
@@ -91,9 +91,14 @@ export default defineNuxtConfig({
     }
   },
 
-  // content: {
-  //   // ... options
-  // },
+  content: {
+    markdown: {
+      remarkPlugins: [
+        // Make sure you have something like "remark-container" here
+        // and also define your container name if needed
+      ]
+    }
+  },
 
   app: {
     head: {

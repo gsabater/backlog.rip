@@ -14,6 +14,14 @@
 </template>
 
 <script>
+/**
+ * @file:    \pages\account\[section].vue
+ * @desc:    ...
+ * ----------------------------------------------
+ * Created Date: 16th November 2023
+ * Modified: Thu 19 December 2024 - 17:55:33
+ **/
+
 import me from './sections/me'
 import logs from './sections/logs'
 import cloud from './sections/cloud'
@@ -22,6 +30,7 @@ import states from './sections/states'
 import linked from './sections/linked'
 import history from './sections/history'
 import database from './sections/database'
+import community from './sections/community.vue'
 import preferences from './sections/preferences'
 
 export default {
@@ -35,6 +44,7 @@ export default {
     linked,
     history,
     database,
+    community,
     preferences,
   },
 

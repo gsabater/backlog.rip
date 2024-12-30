@@ -356,8 +356,8 @@
             <div
               class="btn btn-ghost-secondary btn-sm btn-icon"
               style="border-radius: 50%">
-              <Icon size="18" style="transform: translateY(1px)">HelpSquare</Icon>
-              <b-dropdown placement="top-start">
+              <Icon size="18" style="transform: translateY(1px)">Terminal2</Icon>
+              <b-dropdown placement="top-start" style="overflow: hidden">
                 <a
                   class="dropdown-item"
                   href="https://discord.gg/F2sPE5B"
@@ -384,8 +384,10 @@
                   class="dropdown-item"
                   target="_blank">
                   <Icon size="18" class="me-2">BrandPatreon</Icon>
-                  Support on Patreon
+                  Patreon
                 </a>
+
+                <div class="dropdown-divider"></div>
 
                 <a
                   href="https://github.com/gsabater/backlog.rip"
@@ -1138,7 +1140,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Fri 27 December 2024 - 11:40:57
+ * Modified: Mon 30 December 2024 - 16:29:34
  **/
 
 // import { SpeedInsights } from '@vercel/speed-insights/nuxt'

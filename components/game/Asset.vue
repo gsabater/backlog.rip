@@ -2,9 +2,9 @@
   <img
     loading="lazy"
     :src="src"
+    crossorigin="anonymous"
     @error="showAnother"
-    @load="emitLoaded"
-    crossorigin="anonymous" />
+    @load="emitLoaded" />
 </template>
 
 <script>
@@ -18,7 +18,7 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Fri 15 November 2024 - 14:04:14
+ * Modified: Tue 31 December 2024 - 12:36:14
  **/
 
 export default {

@@ -41,7 +41,7 @@
             :key="app"
             type="list"
             :uuid="app"
-            :body="cardBody"
+            :visible="visibleProps"
             :display="['name', 'score', 'released']"
             style="padding-top: 0.65rem; padding-bottom: 0.65rem">
             <template #game:prepend>
@@ -110,7 +110,7 @@
           <div
             class="col col-6 col-sm-4 col-md-3 col-lg-custom pt-1 pb-3"
             style="padding-left: 0.75rem; padding-right: 0.75rem">
-            <b-game :key="app" :uuid="app" :body="cardBody" tracking></b-game>
+            <b-game :key="app" :uuid="app" :visible="visibleProps" tracking></b-game>
           </div>
         </template>
 
@@ -156,7 +156,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 12 December 2024 - 16:51:47
+ * Modified: Tue 31 December 2024 - 11:15:36
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -325,34 +325,16 @@ export default {
   },
 
   computed: {
-    ...mapStores(useDataStore),
-  },
+    ...mapStores(useDataStore, useSearchStore),
 
-  computed: {
-    cardBody() {
-      // // console.warn('🔴 cardBody', this.filters.show.card)
-      // return []
-      const show = [...(this.filters?.show?.card ?? [])]
-
-      if (show.length == 1 && show.includes('default')) {
-        if (this.filters.sortBy == 'score') {
-          show.push('score')
-        }
-
-        if (this.filters.sortBy == 'released') {
-          show.push('released')
-        }
-
-        if (this.filters.sortBy == 'playtime') {
-          show.push('playtime')
-        }
-
-        if (this.filters.sortBy == 'hltb') {
-          show.push('hltb')
-        }
-      }
-
-      return show
+    //+-------------------------------------------------
+    // visibleProps()
+    // VisibleProps fields defined by the user
+    // -----
+    // Created on Tue Dec 31 2024
+    //+-------------------------------------------------
+    visibleProps() {
+      return this.searchStore.visibleProps(this.filters)
     },
   },
 

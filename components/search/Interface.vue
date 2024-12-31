@@ -14,10 +14,12 @@
       width: 225px;
       border: 1px dashed #cccccc5c;
       font-size: 0.75rem;
-    "><h3 class="m-0">Search</h3>{{ f }}
+    "
+    onclick="this.style.display='none'">
 --
 {{ stats }}
-</pre>
+</pre
+  >
 
   <div class="row">
     <search-filters :filters="f" @updated="onUpdateFilters"></search-filters>
@@ -204,7 +206,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 19 December 2024 - 10:00:16
+ * Modified: Mon 30 December 2024 - 16:48:36
  **/
 
 export default {

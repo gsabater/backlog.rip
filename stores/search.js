@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Thu 26 September 2024 - 16:08:08
+ * Modified: Tue 31 December 2024 - 11:14:37
  */
 
 let $nuxt = null
@@ -49,6 +49,38 @@ export const useSearchStore = defineStore('search', {
       this.stats.api_end = 0
       this.stats.api_start = 0
     },
+
+    //+-------------------------------------------------
+    // visibleProps()
+    // Returns a an array of properties for game items
+    // based on the user selection and the sortBy
+    // -----
+    // Created on Tue Dec 31 2024
+    //+-------------------------------------------------
+    visibleProps(filters) {
+      let selected = JSON.parse(JSON.stringify(filters?.show?.card ?? []))
+
+      if (selected.length == 1 && selected.includes('default')) {
+        if (filters.sortBy == 'score') {
+          selected.push('score')
+        }
+
+        if (filters.sortBy == 'released') {
+          selected.push('released')
+        }
+
+        if (filters.sortBy == 'playtime') {
+          selected.push('playtime')
+        }
+
+        if (filters.sortBy == 'hltb') {
+          selected.push('hltb')
+        }
+      }
+
+      return selected
+    },
+
     //+-------------------------------------------------
     // init()
     // Initializes the search store

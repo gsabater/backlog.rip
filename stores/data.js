@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue 24 December 2024 - 09:58:51
+ * Modified: Tue 31 December 2024 - 13:13:52
  */
 
 let $nuxt = null
@@ -366,10 +366,9 @@ export const useDataStore = defineStore('data', {
         if (
           $nuxt.$app.wip &&
           (item.uuid == 'x31c5058d-4c96-418d-adc6-c9a78ac02e40' ||
-            item.uuid == 'xefef0156-a172-48fb-a9d0-b50e253c4ea8')
+            item.uuid == 'x66d25b01-821b-4400-81c8-c4039f2b02e0')
         ) {
           // if (item.name == 'DOOM') {
-          //   // if (item.steam_id == '292030') {
           // if (context == 'add:new') {
           //   console.warn('✨ ' + item.name, item, context)
           debugger
@@ -772,16 +771,6 @@ export const useDataStore = defineStore('data', {
         item.uuid = item.uuid || $nuxt.$uuid()
       }
 
-      if (item.api_id) item.id.api = item.api_id
-      if (item.xbox_id) item.id.xbox = item.xbox_id
-      if (item.igdb_id) item.id.igdb = item.igdb_id
-      if (item.steam_id) item.id.steam = item.steam_id
-      if (item.igdb_slug) item.id.igdb_slug = item.igdb_slug
-
-      delete item.api_id
-      delete item.igdb_id
-      delete item.xbox_id
-      delete item.igdb_slug
       delete item.platforms
 
       return item

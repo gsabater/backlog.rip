@@ -97,15 +97,15 @@ export const useCloudStore = defineStore('cloud', {
         return
       }
 
-      // Syncronize local account
+      // Synchronize local account
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       await this.doSync('account')
 
-      // Syncronize states
+      // Synchronize states
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       await this.doSync('states')
 
-      // Syncronize library
+      // Synchronize library
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       await this.doSync('library')
 
@@ -383,7 +383,7 @@ export const useCloudStore = defineStore('cloud', {
       }
 
       $user.putAccount($user.cloud, 'cloud')
-      // $nuxt.$toast.success('Your data has been syncronized')
+      // $nuxt.$toast.success('Your data has been synchronized')
     },
 
     conflict() {
@@ -420,7 +420,7 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     // doSync(dimension)
     // Checks both local and cloud account signature
-    // Syncronizes the local account with the cloud
+    // Synchronizes the local account with the cloud
     // -----
     // Created on Mon Aug 19 2024
     //+-------------------------------------------------
@@ -814,7 +814,7 @@ export const useCloudStore = defineStore('cloud', {
       // We're ok
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (signed && client === signed) {
-        // log(`⚡ ${dimension} ⇢ syncronized (ok)`)
+        // log(`⚡ ${dimension} ⇢ synchronized (ok)`)
         this.b[dimension] = 'ok'
         return 'ok'
       }

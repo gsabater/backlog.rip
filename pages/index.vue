@@ -154,7 +154,7 @@
                   fill-rule="nonzero"></path>
               </g>
             </svg>
-            Participe in the development!
+            Participate in the development!
           </a>
         </p>
       </div>

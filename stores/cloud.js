@@ -76,7 +76,7 @@ export const useCloudStore = defineStore('cloud', {
   actions: {
     //+-------------------------------------------------
     // sync()
-    // Starts the syncronization process for every object
+    // Starts the synchronization process for every object
     // -----
     // Created on Mon Aug 19 2024
     //+-------------------------------------------------
@@ -323,7 +323,7 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     // prepareBackup()
     // Tries to find a valid backup in the array or
-    // creates a new one to be used for the syncronization
+    // creates a new one to be used for the synchronization
     // -----
     // Created on Wed Aug 21 2024
     //+-------------------------------------------------
@@ -484,7 +484,7 @@ export const useCloudStore = defineStore('cloud', {
 
       if (sign.hash == this.b['account.clo.hash']) {
         log(
-          '⚡ account ~ The integrity hash has been compared with the cloud and no syncronization is needed'
+          '⚡ account ~ The integrity hash has been compared with the cloud and no synchronization is needed'
         )
         return
       }
@@ -773,7 +773,7 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     // update()
     // Resets the source signature
-    // And calls for a syncronization
+    // And calls for a synchronization
     // -----
     // Created on Tue Aug 20 2024
     //+-------------------------------------------------

@@ -25,7 +25,7 @@ export default {
     author: 'Gaspar S.',
     updated_at: '2024-12-17',
     description:
-      'Syncronize all your games and playtime for every game on Steam, including free games.',
+      'Synchronize all your games and playtime for every game on Steam, including free games.',
     url: 'https://github.com/gsabater/backlog.rip/blob/master/modules/importers/steam.js',
 
     source: {

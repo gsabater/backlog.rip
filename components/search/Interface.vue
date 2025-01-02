@@ -99,7 +99,7 @@
               justify-content: center;
             ">
             <p class="empty-title mb-3 font-serif" style="font-weight: 300">
-              Nothing found for
+              Nothing found
               <template v-if="f.string && f.string.length">
                 <strong>"{{ f.string }}"</strong>
               </template>
@@ -111,7 +111,7 @@
                 You can either
                 <strong>Import your steam games</strong>
                 or
-                <strong>repeat the search again in all games</strong>
+                <strong>repeat the search again with all games</strong>
               </template>
             </p>
             <p v-if="!isLibrary" class="empty-subtitle text-secondary">

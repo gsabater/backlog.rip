@@ -1,9 +1,9 @@
 /*
- * @file:    \utils\search.js
- * @desc:    Handles search filtering and sorting
- * -------------------------------------------
+ * @file:    \services\searchService.js
+ * @desc:    ...
+ * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Wed 30 October 2024 - 17:27:04
+ * Modified: Sun 05 January 2025 - 18:14:53
  */
 
 export default {
@@ -14,7 +14,7 @@ export default {
   // Created on Tue Jan 09 2024
   // Updated on Wed Jul 24 2024 - Added fav
   //+-------------------------------------------------
-  filter(source, filters, extra) {
+  filter(source, filters) {
     let items = []
     let toSort = []
     let filtered = []
@@ -270,32 +270,5 @@ export default {
     const end = start + perPage
 
     return items.slice(0, end)
-  },
-
-  //+-------------------------------------------------
-  // underScore()
-  // Calculates a new underlying score based on the amount
-  // of reviews and the median score
-  // -----
-  // Created on Mon Feb 12 2024
-  //+-------------------------------------------------
-  underScore(app) {
-    // TODO: use the method in $gameStore instead
-    let score = app.score || 0
-
-    // Avoid very high scores not verified
-    if (app.score > 96 && !app.scores) score = 60
-
-    // Reduce the final score there is not score count
-    // We cannot verify that the score is real
-    if (!app.scores) score = score - 10
-
-    // Reduce the final score if the amount of reviews is low
-    // if (app.scores?.steamCount < 100) score = score * 0.6
-    // else if (app.scores?.steamCount < 1000) score = score * 0.8
-
-    if (app.scores?.igdbCount < 100) score = score - 10
-
-    return score
   },
 }

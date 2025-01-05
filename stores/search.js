@@ -3,10 +3,18 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Tue 31 December 2024 - 11:14:37
+ * Modified: Sun 05 January 2025 - 17:58:52
  */
 
+import search from '~/services/searchService'
+
 let $nuxt = null
+let $data = null
+
+// Hashed
+// Stores instances for each search performed
+//+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+let hashed = {}
 
 export const useSearchStore = defineStore('search', {
   state: () => ({
@@ -41,13 +49,112 @@ export const useSearchStore = defineStore('search', {
   }),
 
   actions: {
-    setTime(time) {
-      this.stats[time] = performance.now()
+    //+-------------------------------------------------
+    // getSource()
+    // Returns the source to use in the search
+    // -----
+    // Created on Wed Jul 24 2024
+    //+-------------------------------------------------
+    getSource(filters) {
+      // Source is an array of fixed items
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (Array.isArray(filters.source) && filters.source.length)
+        return { type: 'array', apps: filters.source }
 
-      if (time !== 'start') return
-      this.stats.end = 0
-      this.stats.api_end = 0
-      this.stats.api_start = 0
+      // Source is all games
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (filters.source == 'all') return { type: 'all', apps: $data.list() }
+
+      // The source is the library but...
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      let type = filters.is ?? 'library'
+      let apps = null
+
+      if (!filters.is) apps = $data.library('object')
+      if (filters.is == 'pinned') apps = $data.pinned('object')
+      if (filters.is == 'hidden') apps = $data.hidden('object')
+      if (filters.is == 'favorites') apps = $data.library('object')
+
+      return { type, apps }
+    },
+
+    //+-------------------------------------------------
+    // getHash()
+    // Generates an unique hash to identify a search instance
+    // -----
+    // Created on Sun Jan 05 2025
+    //+-------------------------------------------------
+    getHash(source, filters) {
+      if (source.type == 'array') return null
+
+      let f = {
+        string: filters.string,
+        sortBy: filters.sortBy,
+        released: filters.released,
+        genres: filters.genres,
+        states: filters.states,
+      }
+
+      let json = JSON.stringify(f)
+      let base = btoa(json)
+      let hash = source.type + '#' + Object.keys(source.apps).length + ':' + base
+
+      return hash
+    },
+
+    //+-------------------------------------------------
+    // run()
+    // Performs a search using a filter object
+    // -----
+    // Created on Sun Jan 05 2025
+    //+-------------------------------------------------
+    run(filters) {
+      this.loading = true
+
+      let source = this.getSource(filters)
+      let hash = this.getHash(source, filters)
+
+      let filtered = null
+      let paginated = null
+
+      log(`⇢ Search ${hash} 🔸`)
+      log(JSON.stringify(filters))
+
+      this.stats.start = performance.now()
+      this.stats.apps = Object.keys(source.apps).length
+      if (source.type == 'all') this.stats.apps = $nuxt.$app.count.api
+
+      filtered = this.filter(hash, source, filters)
+      paginated = search.paginate(filtered.items, filters.show)
+      // const searched = search.filter(source, filters, { source: source })
+      // items.value = search.paginate(searched.items, filters.show)
+
+      this.stats.end = performance.now()
+      this.stats.results = filtered.results
+      this.stats.filtered = filtered.filtered || 0
+
+      this.history.items = filtered.items
+      return {
+        hash,
+        items: paginated,
+      }
+    },
+
+    //+-------------------------------------------------
+    // filter()
+    // Calls for filter to the service,
+    // Then stores and returns the results for subsequent use
+    // -----
+    // Created on Sun Jan 05 2025
+    //+-------------------------------------------------
+    filter(hash, source, filters) {
+      if (hashed[hash]) return hashed[hash]
+
+      let filtered = search.filter(source.apps, filters)
+      hashed[hash] = filtered
+      log(`⇢ Hashed ${hash} 🔸`)
+
+      return filtered
     },
 
     //+-------------------------------------------------
@@ -81,6 +188,15 @@ export const useSearchStore = defineStore('search', {
       return selected
     },
 
+    setTime(time) {
+      this.stats[time] = performance.now()
+
+      if (time !== 'start') return
+      this.stats.end = 0
+      this.stats.api_end = 0
+      this.stats.api_start = 0
+    },
+
     //+-------------------------------------------------
     // init()
     // Initializes the search store
@@ -88,7 +204,10 @@ export const useSearchStore = defineStore('search', {
     // Created on Thu Sep 26 2024
     //+-------------------------------------------------
     init() {
-      if (window) window.$search = this
+      $nuxt ??= useNuxtApp()
+      $data ??= useDataStore()
+
+      if (window) window.$search = { x: this, h: hashed }
     },
   },
 

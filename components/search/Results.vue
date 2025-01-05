@@ -156,11 +156,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 31 December 2024 - 11:15:36
+ * Modified: Sun 05 January 2025 - 18:13:02
  **/
 
 import { useThrottleFn } from '@vueuse/core'
-import searchFn from '~/utils/search'
+// import searchFn from '~/utils/search'
 
 export default {
   name: 'SearchResults',
@@ -197,12 +197,11 @@ export default {
   emits: ['search:ready', 'search:start', 'search:end'],
 
   setup(props, { emit }) {
-    const $nuxt = useNuxtApp()
+    // const $nuxt = useNuxtApp()
     const $data = useDataStore()
     const $search = useSearchStore()
 
     const items = ref([])
-    let typeofSource = null
 
     //+-------------------------------------------------
     // search()
@@ -212,17 +211,18 @@ export default {
     // Created on Fri Nov 24 2023
     // Updated on Tue Jan 09 2024
     // Updated on Mon Mar 25 2024 - useThrottleFn
+    // Created on Sun Jan 05 2025 - Filter in the store
     //+-------------------------------------------------
     const search = useThrottleFn(
       async (source = null) => {
         if (props.disabled) return
         if (Object.keys(props.filters).length === 0) return
 
-        $search.loading = true
+        // log('🪡 search:start', source || 'direct')
         emit('search:start', source)
-        log('🪡 search:start', source || 'direct')
 
-        filter()
+        const pep = $search.run(props.filters)
+        items.value = pep.items
 
         // Perform a search on the API
         // Only allowd sources will be searched
@@ -250,66 +250,6 @@ export default {
       1000,
       true
     )
-
-    //+-------------------------------------------------
-    // filter()
-    // Loads a source and filters out apps
-    // Generates an index to sort afterwords
-    // -----
-    // Created on Thu Nov 23 2023
-    // Updated on Tue Jan 09 2024 - Included utils.search
-    // Updated on Thu Feb 15 2024 - Added stats
-    // Updated on Mon Mar 25 2024 - On setup
-    //+-------------------------------------------------
-    const filter = () => {
-      const source = getSource()
-
-      log(
-        `⇢ Searching [${typeofSource}] (${Object.keys(source).length}) 🔸`,
-        JSON.stringify(props.filters)
-      )
-
-      $search.stats.apps = Object.keys(source).length
-      if (typeofSource == 'all') $search.stats.apps = $nuxt.$app.count.api
-      // if (props.filters.source.length == 0) return -> ??
-
-      $search.stats.start = performance.now()
-      const searched = searchFn.filter(source, props.filters, { source: props.source })
-      items.value = searchFn.paginate(searched.items, props.filters.show)
-
-      // $search.stats.time = end - start
-      $search.stats.end = performance.now()
-      $search.stats.results = searched.results
-      $search.stats.filtered = searched.filtered || 0
-
-      $search.history.items = searched.items
-    }
-
-    //+-------------------------------------------------
-    // getSource()
-    // Returns the source array based on the props
-    // -----
-    // Created on Wed Jul 24 2024
-    //+-------------------------------------------------
-    const getSource = () => {
-      // Source is an array of fixed items
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      typeofSource = 'array'
-      if (Array.isArray(props.source) && props.source.length) return props.source
-
-      // Source is all games
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      typeofSource = 'all'
-      if (props.filters.source == 'all') return $data.list()
-
-      // The source is the library but...
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      typeofSource = props.filters.is ?? 'library'
-      if (!props.filters.is) return $data.library('object')
-      if (props.filters.is == 'pinned') return $data.pinned('object')
-      if (props.filters.is == 'hidden') return $data.hidden('object')
-      if (props.filters.is == 'favorites') return $data.library('object')
-    }
 
     return { search, items, loading: $search.loading }
   },

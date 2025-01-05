@@ -43,7 +43,7 @@
       <span class="text-muted">General sorting</span>
     </span>
 
-    <label
+    <!-- <label
       class="dropdown-item ps-1"
       :class="{ active: f.sortBy == 'rand' }"
       @click="sortBy('rand')">
@@ -59,7 +59,7 @@
           HelpSmall
         </Icon>
       </tippy>
-    </label>
+    </label> -->
 
     <label
       class="dropdown-item ps-1"
@@ -198,7 +198,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st October 2024
- * Modified: Wed 30 October 2024 - 15:52:20
+ * Modified: Sun 05 January 2025 - 18:07:14
  **/
 
 export default {

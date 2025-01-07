@@ -955,6 +955,11 @@
     </div>
   </div>
 
+  <!--
+    *+---------------------------------
+    *| Global components
+    *| Mostly notifications and dialogs
+    *+--------------------------------- -->
   <client-only>
     <common-notification />
     <common-confirmDialog />
@@ -964,6 +969,7 @@
     <game-add />
     <game-dialog />
     <game-manager />
+    <game-random-dialog />
 
     <cloud-conflict />
     <list-crud-dialog />
@@ -1140,16 +1146,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Mon 30 December 2024 - 16:29:34
+ * Modified: Tue 07 January 2025 - 17:26:37
  **/
-
-// import { SpeedInsights } from '@vercel/speed-insights/nuxt'
 
 export default {
   name: 'DefaultLayout',
-  components: {
-    // SpeedInsights,
-  },
 
   data() {
     return {
@@ -1168,7 +1169,7 @@ export default {
 
     //+-------------------------------------------------
     // function()
-    //
+    // TODO: use the method in the store
     // -----
     // Created on Wed Apr 03 2024
     //+-------------------------------------------------

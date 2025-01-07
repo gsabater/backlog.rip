@@ -1,3 +1,18 @@
 .ambilight {
   filter: url(#ambilight);
 }
+
+.grainy {
+  filter: url(#grainy);
+}
+
+.grainy-before::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  filter: url(#grainy);
+  opacity: 0.2;
+}

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Sun 05 January 2025 - 17:58:52
+ * Modified: Mon 06 January 2025 - 10:13:54
  */
 
 import search from '~/services/searchService'
@@ -20,8 +20,13 @@ export const useSearchStore = defineStore('search', {
   state: () => ({
     loading: false,
 
-    // History object
-    // Used to store the last search state
+    // Latest
+    // Hash used to identify the last search
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    latest: null,
+
+    // Stats object
+    // Used to display useful infromation about the search
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     stats: {
       apps: 0, // amount of apps as source
@@ -42,10 +47,10 @@ export const useSearchStore = defineStore('search', {
     // History object
     // Used to store the last search state
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    history: {
-      hash: null,
-      items: null,
-    },
+    // history: {
+    //   hash: null,
+    //   items: null,
+    // },
   }),
 
   actions: {
@@ -103,6 +108,17 @@ export const useSearchStore = defineStore('search', {
     },
 
     //+-------------------------------------------------
+    // getSearch()
+    // Returns the search object for a given hash
+    // -----
+    // Created on Mon Jan 06 2025
+    //+-------------------------------------------------
+    getSearch(hash) {
+      if (!hash) hash = this.latest
+      return hashed[hash] ?? null
+    },
+
+    //+-------------------------------------------------
     // run()
     // Performs a search using a filter object
     // -----
@@ -124,6 +140,7 @@ export const useSearchStore = defineStore('search', {
       this.stats.apps = Object.keys(source.apps).length
       if (source.type == 'all') this.stats.apps = $nuxt.$app.count.api
 
+      this.onAPI(source, filters)
       filtered = this.filter(hash, source, filters)
       paginated = search.paginate(filtered.items, filters.show)
       // const searched = search.filter(source, filters, { source: source })
@@ -133,7 +150,9 @@ export const useSearchStore = defineStore('search', {
       this.stats.results = filtered.results
       this.stats.filtered = filtered.filtered || 0
 
-      this.history.items = filtered.items
+      this.loading = false
+      log('⇢ search:end', this.stats)
+
       return {
         hash,
         items: paginated,
@@ -148,6 +167,7 @@ export const useSearchStore = defineStore('search', {
     // Created on Sun Jan 05 2025
     //+-------------------------------------------------
     filter(hash, source, filters) {
+      this.latest = hash
       if (hashed[hash]) return hashed[hash]
 
       let filtered = search.filter(source.apps, filters)
@@ -155,6 +175,31 @@ export const useSearchStore = defineStore('search', {
       log(`⇢ Hashed ${hash} 🔸`)
 
       return filtered
+    },
+
+    //+-------------------------------------------------
+    // onAPI()
+    // Performs a search on the API
+    // -----
+    // Created on Sun Jan 05 2025
+    //+-------------------------------------------------
+    onAPI(source, filters) {
+      console.warn('WIP')
+      // // Perform a search on the API
+      //   // Only allowd sources will be searched
+      //   if (['all', 'palette'].includes(props.filters.source)) {
+      //     // console.warn(
+      //     //   'comprobar otros filtros y trabajar en optimizar el payload',
+      //     //   'genre, released, sortby: name, score,released, hltb'
+      //     // )
+      //     $search.stats.api_start = performance.now()
+      //     await $data.search({ ...props.filters })
+      //     $search.stats.api_end = performance.now()
+      //     emit('search:end')
+      //     $search.loading = false
+      //     log('⇢ search:end:api', $search.stats)
+      //     return
+      //   }
     },
 
     //+-------------------------------------------------

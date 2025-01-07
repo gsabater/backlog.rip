@@ -79,7 +79,9 @@ Selected
     *| Second line
     *| Select souce and apply filters
     *+--------------------------------- -->
-  <div class="col-auto">
+  <!-- <div class="col-auto">
+
+
     <div style="background: rgb(30 31 41 / 80%); border-radius: 4px; padding: 4px">
       <v-btn
         size="small"
@@ -99,8 +101,123 @@ Selected
         Library
       </v-btn>
     </div>
-  </div>
+  </div> -->
   <div class="col-6 d-flex align-items-center">
+    <div class="btn btn-sm me-2" style="background: transparent">
+      <small>All games</small>
+
+      <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+        Selector
+      </Icon>
+
+      <b-dropdown style="overflow: visible; min-width: 240px">
+        <span class="dropdown-header">This is your complete library</span>
+
+        <NuxtLink to="/library" class="dropdown-item">
+          <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+            <Icon size="17" width="1.5" class="text-muted">LayoutDashboard</Icon>
+          </span>
+          <span class="nav-link-title">Your library</span>
+          <small class="ms-auto text-secondary me-1">
+            {{ format.num($app.count.library) }}
+          </small>
+        </NuxtLink>
+
+        <NuxtLink
+          v-if="$auth.config.favorites"
+          to="/library/favorites"
+          class="dropdown-item pe-2">
+          <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+            <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
+          </span>
+          <span class="nav-link-title">Favorites</span>
+        </NuxtLink>
+
+        <NuxtLink
+          v-for="(state, i) in pinnedStates"
+          :key="'state' + i"
+          :to="'/library/' + state.slug"
+          class="dropdown-item ps-3">
+          <span
+            class="status-dot ms-0 me-4"
+            :style="{ 'background-color': state.color || '' }"
+            style="transform: translateX(1px)"></span>
+
+          <span class="nav-link-title">{{ state.name }}</span>
+          <small class="ms-auto text-secondary me-1">
+            {{ format.num(stateStore.count(state.id)) }}
+          </small>
+        </NuxtLink>
+
+        <!-- <div v-if="unPinnedStates.length > 0" class="dropdown-item">
+          <div style="width: 30px">
+            <Icon size="18" class="text-muted" width="1.5">Background</Icon>
+          </div>
+
+          <span>Other states</span>
+
+          <span class="text-muted ms-auto">
+            <Icon size="14">CaretRightFilled</Icon>
+          </span>
+          <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
+            <NuxtLink
+              v-for="(state, i) in unPinnedStates"
+              :key="'state' + i"
+              :to="'/library/' + state.slug"
+              class="dropdown-item px-2">
+              <div class="content d-flex align-items-center w-100 px-1">
+                <span
+                  class="status-dot ms-1 me-4"
+                  :style="{ 'background-color': state.color || '' }"></span>
+
+                <span class="me-4">
+                  {{ state.name }}
+                </span>
+
+                <small class="ms-auto text-secondary me-1">
+                  {{ format.num(stateStore.count(state.id)) }}
+                </small>
+              </div>
+            </NuxtLink>
+          </b-dropdown>
+        </div> -->
+
+        <div
+          v-if="$auth.config.pinned || $auth.config.hidden"
+          class="dropdown-divider"></div>
+
+        <NuxtLink
+          v-if="$auth.config.pinned"
+          to="/library/pinned"
+          class="dropdown-item pe-2">
+          <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+            <Icon size="17" width="1.5" class="text-muted">Bookmark</Icon>
+          </span>
+          <span class="nav-link-title">Pinned games</span>
+        </NuxtLink>
+
+        <NuxtLink
+          v-if="$auth.config.hidden"
+          to="/library/hidden"
+          class="dropdown-item pe-2">
+          <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+            <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
+          </span>
+          <span class="nav-link-title">Hidden games</span>
+        </NuxtLink>
+
+        <!-- <NuxtLink to="/library" class="dropdown-item">
+                Library
+                <small class="text-secondary ms-auto me-0">
+                  {{ format.num($app.count.library) }}
+                </small>
+              </NuxtLink>
+              <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
+              <div class="dropdown-divider"></div>
+              <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink> -->
+      </b-dropdown>
+    </div>
+
     <!-- <div class="btn-group btn-group-sm filters__source">
       <div
         class="btn d-flex align-items-center border-end-0"
@@ -326,36 +443,6 @@ Selected
         </div>
       </b-tippy-sheety>
     </v-btn>
-    <!-- <div class="btn btn-sm me-2" style="background: transparent">
-      <small>Apply filters</small>
-
-      <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
-        Selector
-      </Icon>
-
-
-
-     <tippy
-            ref="tippyFilter"
-            to="parent"
-            tag="div"
-            content-tag="div"
-            :animate-fill="true"
-            :interactive="true"
-            :interactive-debounce="55"
-            animation="scale-subtle"
-            placement="bottom-start"
-            trigger="click"
-            theme="filters"
-            :on-hidden="reset"
-            :on-show="() => ($app.ui.drawer = true)">
-            <template #content="{ hide }">
-              <div class="b-menu dropdown-menu show">
-
-              </div>
-            </template>
-          </tippy>
-    </div> -->
 
     <v-btn
       id="⚓sortby"
@@ -411,10 +498,22 @@ Selected
 
   <div class="col text-end d-flex align-items-center" style="justify-content: flex-end">
     <v-btn
+      v-tippy="'Get a random game from this list'"
+      variant="text"
+      size="small"
+      class="mx-1 p-0"
+      color="blue-grey-lighten-1"
+      style="min-width: 1px; aspect-ratio: 1"
+      @click="$mitt.emit('game:random', { filters: f })">
+      <Icon width="1.2" size="16" class="mx-1">Dice5</Icon>
+      <!-- <Icon class="text-muted" size="12" width="2">ChevronDown</Icon> -->
+    </v-btn>
+
+    <v-btn
       id="⚓itemDetails"
       variant="text"
       size="small"
-      class="me-2"
+      class="mx-1"
       color="blue-grey-lighten-1">
       <Icon width="1.2" size="16" class="me-1">PlayCardStar</Icon>
       <Icon class="text-muted" size="12" width="2">ChevronDown</Icon>
@@ -572,7 +671,7 @@ Selected
             </div>
             <tippy
               class="text-muted ms-auto cursor-help ps-4"
-              :content="'The median score is ....'">
+              :content="'The median is the middle value in a set of scores when arranged in order. It avoids being skewed by extreme values, making it a fairer representation of the central tendency compared to the average.'">
               <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
                 HelpSmall
               </Icon>
@@ -1146,7 +1245,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Tue 31 December 2024 - 13:12:01
+ * Modified: Tue 07 January 2025 - 15:16:57
  **/
 
 export default {
@@ -1229,9 +1328,11 @@ export default {
   },
 
   computed: {
-    // ...mapStores(useDataStore),
+    ...mapStores(useStateStore),
     ...mapState(useStateStore, {
       _states: 'states',
+      pinnedStates: 'pinnedStates',
+      unPinnedStates: 'unPinnedStates',
     }),
 
     ...mapState(useRepositoryStore, {

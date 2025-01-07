@@ -3,7 +3,7 @@
  * @desc:    All format functions not related to dates
  * -------------------------------------------
  * Created Date: 12th November 2023
- * Modified: Mon 16 December 2024 - 16:28:43
+ * Modified: Tue 07 January 2025 - 17:28:31
  */
 
 export default {
@@ -13,9 +13,12 @@ export default {
   // -----
   // Created on Tue Jun 21 2022
   // Updated on Fri Jul 08 2022
+  // Created on Tue Jan 07 2025 - Parse possible strings
   //+-------------------------------------------------
   num(num) {
     if (num === null || num === undefined) return 0
+    if (typeof num === 'string') num = parseFloat(num)
+
     return num.toLocaleString('de-DE')
   },
 
@@ -26,6 +29,12 @@ export default {
     return num.toFixed(decimals)
   },
 
+  //+-------------------------------------------------
+  // compactNum()
+  // Displays a number in a compact format (K, M, B)
+  // -----
+  // Created on Tue Jan 07 2025
+  //+-------------------------------------------------
   compactNum(num) {
     // Handle invalid inputs
     if (num === null || num === undefined) return '0'

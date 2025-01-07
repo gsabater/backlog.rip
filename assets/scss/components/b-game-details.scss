@@ -1,3 +1,15 @@
+/**
+ * @file:    \assets\scss\components\b-game-details.scss
+ * @desc:    ...
+ * ----------------------------------------------
+ * Created Date: 27th February 2024
+ * Modified: Tue 07 January 2025 - 17:21:27
+ **/
+
+// TODO: refactor
+// this file and game-details-new should be merged and
+// handle the two dialogs like details-full and details-lite or similar
+
 .game-card {
   position: relative;
 
@@ -67,9 +79,9 @@
       background: none !important;
 
       h2 {
-        padding-top: 0.5rem;
+        // padding-top: 0.5rem;
         font-weight: 500;
-        margin-bottom: 8px;
+        // margin-bottom: 8px;
         letter-spacing: normal;
         letter-spacing: initial !important;
       }

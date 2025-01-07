@@ -156,7 +156,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sun 05 January 2025 - 18:13:02
+ * Modified: Tue 07 January 2025 - 17:25:04
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -221,31 +221,10 @@ export default {
         // log('🪡 search:start', source || 'direct')
         emit('search:start', source)
 
-        const pep = $search.run(props.filters)
-        items.value = pep.items
-
-        // Perform a search on the API
-        // Only allowd sources will be searched
-        if (['all', 'palette'].includes(props.filters.source)) {
-          // console.warn(
-          //   'comprobar otros filtros y trabajar en optimizar el payload',
-          //   'genre, released, sortby: name, score,released, hltb'
-          // )
-
-          $search.stats.api_start = performance.now()
-          await $data.search({ ...props.filters })
-          $search.stats.api_end = performance.now()
-
-          emit('search:end')
-          $search.loading = false
-          log('⇢ search:end:api', $search.stats)
-
-          return
-        }
+        const search = $search.run(props.filters)
+        items.value = search.items
 
         emit('search:end')
-        $search.loading = false
-        log('⇢ search:end', $search.stats)
       },
       1000,
       true
@@ -255,13 +234,7 @@ export default {
   },
 
   data() {
-    return {
-      // control: {
-      //   hash: null,
-      //   event: null,
-      //   search: null,
-      // },
-    }
+    return {}
   },
 
   computed: {
@@ -279,14 +252,6 @@ export default {
   },
 
   watch: {
-    // filters: {
-    //   handler() {
-    //     log('💎 Search: Watcher', JSON.stringify(this.filters))
-    //     this.search('watch:filters')
-    //   },
-    //   deep: true,
-    // },
-
     source: {
       handler() {
         if (!this.source.length) return

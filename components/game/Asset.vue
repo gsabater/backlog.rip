@@ -18,7 +18,7 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Tue 31 December 2024 - 12:36:14
+ * Modified: Fri 03 January 2025 - 14:26:16
  **/
 
 export default {
@@ -93,7 +93,7 @@ export default {
       const fallback = []
 
       this.priority.forEach((source) => {
-        if (source == 'steam' && !this.app.id.steam) return
+        if (source == 'steam' && !this.app.id?.steam) return
 
         const resource = this.resources[source]
 

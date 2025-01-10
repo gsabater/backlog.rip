@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Mon 06 January 2025 - 10:13:54
+ * Modified: Thu 09 January 2025 - 17:36:22
  */
 
 import search from '~/services/searchService'
@@ -32,6 +32,9 @@ export const useSearchStore = defineStore('search', {
       apps: 0, // amount of apps as source
       results: 0, // amount of apps after filtering
       filtered: 0, // amount of apps filtered out
+
+      showing: 0, // Amount of items being shown, usually page * perpage
+      nextPage: 0, // Amount of items added by the next page
 
       start: 0, // time it took to filter and sort
       end: 0, // time it took to filter and sort
@@ -84,17 +87,18 @@ export const useSearchStore = defineStore('search', {
     },
 
     //+-------------------------------------------------
-    // getHash()
+    // makeHash()
     // Generates an unique hash to identify a search instance
     // -----
     // Created on Sun Jan 05 2025
     //+-------------------------------------------------
-    getHash(source, filters) {
+    makeHash(source, filters) {
       if (source.type == 'array') return null
 
       let f = {
         string: filters.string,
         sortBy: filters.sortBy,
+        sortDir: filters.sortDir,
         released: filters.released,
         genres: filters.genres,
         states: filters.states,
@@ -128,7 +132,7 @@ export const useSearchStore = defineStore('search', {
       this.loading = true
 
       let source = this.getSource(filters)
-      let hash = this.getHash(source, filters)
+      let hash = this.makeHash(source, filters)
 
       let filtered = null
       let paginated = null
@@ -149,6 +153,9 @@ export const useSearchStore = defineStore('search', {
       this.stats.end = performance.now()
       this.stats.results = filtered.results
       this.stats.filtered = filtered.filtered || 0
+
+      this.stats.showing = search.calcShowing(filters, filtered.results)
+      this.stats.nextPage = search.calcNextPage(filters, filtered.results)
 
       this.loading = false
       log('⇢ search:end', this.stats)
@@ -200,37 +207,6 @@ export const useSearchStore = defineStore('search', {
       //     log('⇢ search:end:api', $search.stats)
       //     return
       //   }
-    },
-
-    //+-------------------------------------------------
-    // visibleProps()
-    // Returns a an array of properties for game items
-    // based on the user selection and the sortBy
-    // -----
-    // Created on Tue Dec 31 2024
-    //+-------------------------------------------------
-    visibleProps(filters) {
-      let selected = JSON.parse(JSON.stringify(filters?.show?.card ?? []))
-
-      if (selected.length == 1 && selected.includes('default')) {
-        if (filters.sortBy == 'score') {
-          selected.push('score')
-        }
-
-        if (filters.sortBy == 'released') {
-          selected.push('released')
-        }
-
-        if (filters.sortBy == 'playtime') {
-          selected.push('playtime')
-        }
-
-        if (filters.sortBy == 'hltb') {
-          selected.push('hltb')
-        }
-      }
-
-      return selected
     },
 
     setTime(time) {

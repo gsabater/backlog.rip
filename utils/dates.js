@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Thu 26 September 2024 - 16:03:54
+ * Modified: Wed 08 January 2025 - 15:36:03
  */
 
 let $nuxt = null
@@ -51,6 +51,7 @@ export default {
   // takes an amount of minutes, and returns hours
   // -----
   // Created on Fri Jan 12 2024
+  // Created on Wed Jan 08 2025 - Floor values
   //+-------------------------------------------------
   minToHours(min, empty = false) {
     if (empty && !min) return empty
@@ -58,6 +59,9 @@ export default {
 
     let hours = Math.floor(min / 60)
     let minutes = min % 60
+
+    hours = Math.floor(hours)
+    minutes = Math.floor(minutes)
 
     if (hours == 0) return `${minutes}m`
     if (minutes == 0) return `${hours}h`

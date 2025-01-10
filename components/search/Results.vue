@@ -156,7 +156,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 07 January 2025 - 17:25:04
+ * Modified: Wed 08 January 2025 - 16:30:23
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -247,7 +247,7 @@ export default {
     // Created on Tue Dec 31 2024
     //+-------------------------------------------------
     visibleProps() {
-      return this.searchStore.visibleProps(this.filters)
+      return searchService.visibleProps(this.filters)
     },
   },
 

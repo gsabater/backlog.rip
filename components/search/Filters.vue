@@ -75,13 +75,11 @@ Selected
   </div>
 
   <!--
-    *+---------------------------------
-    *| Second line
-    *| Select souce and apply filters
-    *+--------------------------------- -->
+  *+---------------------------------
+  *| Second line
+  *| Select souce and apply filters
+  *+--------------------------------- -->
   <!-- <div class="col-auto">
-
-
     <div style="background: rgb(30 31 41 / 80%); border-radius: 4px; padding: 4px">
       <v-btn
         size="small"
@@ -103,119 +101,27 @@ Selected
     </div>
   </div> -->
   <div class="col-6 d-flex align-items-center">
-    <div class="btn btn-sm me-2" style="background: transparent">
-      <small>All games</small>
+    <div id="⚓source" class="btn btn-sm me-2" style="background: transparent">
+      <small v-if="f.source == 'all'">
+        <Icon size="12" class="text-muted me-1">Cards</Icon>
+        All games
+      </small>
+
+      <small v-if="f.source == 'library'">
+        <Icon size="12" class="text-muted me-1">LayoutDashboard</Icon>
+        Library
+      </small>
 
       <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
         Selector
       </Icon>
 
-      <b-dropdown style="overflow: visible; min-width: 240px">
-        <span class="dropdown-header">This is your complete library</span>
+      <b-tippy-sheety to="#⚓source" :autoclose="150" trigger="click">
+        <search-source-menu :with-all="true" />
+      </b-tippy-sheety>
 
-        <NuxtLink to="/library" class="dropdown-item">
-          <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-            <Icon size="17" width="1.5" class="text-muted">LayoutDashboard</Icon>
-          </span>
-          <span class="nav-link-title">Your library</span>
-          <small class="ms-auto text-secondary me-1">
-            {{ format.num($app.count.library) }}
-          </small>
-        </NuxtLink>
-
-        <NuxtLink
-          v-if="$auth.config.favorites"
-          to="/library/favorites"
-          class="dropdown-item pe-2">
-          <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-            <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
-          </span>
-          <span class="nav-link-title">Favorites</span>
-        </NuxtLink>
-
-        <NuxtLink
-          v-for="(state, i) in pinnedStates"
-          :key="'state' + i"
-          :to="'/library/' + state.slug"
-          class="dropdown-item ps-3">
-          <span
-            class="status-dot ms-0 me-4"
-            :style="{ 'background-color': state.color || '' }"
-            style="transform: translateX(1px)"></span>
-
-          <span class="nav-link-title">{{ state.name }}</span>
-          <small class="ms-auto text-secondary me-1">
-            {{ format.num(stateStore.count(state.id)) }}
-          </small>
-        </NuxtLink>
-
-        <!-- <div v-if="unPinnedStates.length > 0" class="dropdown-item">
-          <div style="width: 30px">
-            <Icon size="18" class="text-muted" width="1.5">Background</Icon>
-          </div>
-
-          <span>Other states</span>
-
-          <span class="text-muted ms-auto">
-            <Icon size="14">CaretRightFilled</Icon>
-          </span>
-          <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
-            <NuxtLink
-              v-for="(state, i) in unPinnedStates"
-              :key="'state' + i"
-              :to="'/library/' + state.slug"
-              class="dropdown-item px-2">
-              <div class="content d-flex align-items-center w-100 px-1">
-                <span
-                  class="status-dot ms-1 me-4"
-                  :style="{ 'background-color': state.color || '' }"></span>
-
-                <span class="me-4">
-                  {{ state.name }}
-                </span>
-
-                <small class="ms-auto text-secondary me-1">
-                  {{ format.num(stateStore.count(state.id)) }}
-                </small>
-              </div>
-            </NuxtLink>
-          </b-dropdown>
-        </div> -->
-
-        <div
-          v-if="$auth.config.pinned || $auth.config.hidden"
-          class="dropdown-divider"></div>
-
-        <NuxtLink
-          v-if="$auth.config.pinned"
-          to="/library/pinned"
-          class="dropdown-item pe-2">
-          <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-            <Icon size="17" width="1.5" class="text-muted">Bookmark</Icon>
-          </span>
-          <span class="nav-link-title">Pinned games</span>
-        </NuxtLink>
-
-        <NuxtLink
-          v-if="$auth.config.hidden"
-          to="/library/hidden"
-          class="dropdown-item pe-2">
-          <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-            <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
-          </span>
-          <span class="nav-link-title">Hidden games</span>
-        </NuxtLink>
-
-        <!-- <NuxtLink to="/library" class="dropdown-item">
-                Library
-                <small class="text-secondary ms-auto me-0">
-                  {{ format.num($app.count.library) }}
-                </small>
-              </NuxtLink>
-              <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
-              <div class="dropdown-divider"></div>
-              <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink> -->
-      </b-dropdown>
+      <!-- <b-dropdown style="overflow-x: hidden; min-width: 240px; letter-spacing: normal"> -->
+      <!-- </b-dropdown> -->
     </div>
 
     <!-- <div class="btn-group btn-group-sm filters__source">
@@ -1245,7 +1151,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Tue 07 January 2025 - 15:16:57
+ * Modified: Thu 09 January 2025 - 16:10:03
  **/
 
 export default {
@@ -1328,11 +1234,8 @@ export default {
   },
 
   computed: {
-    ...mapStores(useStateStore),
     ...mapState(useStateStore, {
       _states: 'states',
-      pinnedStates: 'pinnedStates',
-      unPinnedStates: 'unPinnedStates',
     }),
 
     ...mapState(useRepositoryStore, {
@@ -1356,6 +1259,8 @@ export default {
         name: 'Name',
         rand: 'Random',
         score: 'Score',
+        metascore: 'Metacritic',
+        steamscore: 'Steam recommendations',
         playtime: 'Your playtime',
         hltb: 'How long to beat',
         released: 'Release date',

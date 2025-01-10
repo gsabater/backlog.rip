@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 12th November 2024
- * Modified: Mon 16 December 2024 - 16:10:52
+ * Modified: Fri 10 January 2025 - 19:31:56
  **/
 
 //+-------------------------------------------------
@@ -28,6 +28,7 @@
     background: black;
     inset: 0;
     pointer-events: none;
+    user-select: none;
   }
 
   .game-details__container {
@@ -221,6 +222,8 @@
     background-color: #fff;
     position: relative; // Ensure this is set
     margin-top: -131px; // Pull body up to overlap with header
+    pointer-events: initial;
+    user-select: none;
 
     // Add an observer sentinel
     &::before {

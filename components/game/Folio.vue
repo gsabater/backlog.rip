@@ -1,5 +1,5 @@
 <template>
-  <div v-if="app.uuid" class="game-details__content" @click.stop.prevent="() => {}">
+  <div v-if="app.uuid" class="game-details__content" @click.stop="() => {}">
     <button type="button" class="game-details__close" @click="$emit('close')">
       <Icon width="2">X</Icon>
     </button>
@@ -188,7 +188,7 @@
                 class="locandina"
                 :priority="['steam', 'igdb']"></game-asset>
             </div>
-            <div class="mb-3">
+            <div class="mb-3" style="zoom: 0.9">
               <h3 class="mb-1">Your game</h3>
               <div class="mb-2">
                 <b-state ref="bstate" :app="app.uuid" :state="app.state">
@@ -200,8 +200,10 @@
                       }"
                       class="status-dot status-dot-animated ms-1 me-2"></span>
 
+                    <Icon v-else size="13" class="me-2">CircleOff</Icon>
+
                     <span>
-                      {{ state.name || 'Assign a state' }}
+                      {{ state.name || 'Without a state' }}
                       <!-- <Icon size="12" class="ms-1" style="transform: translateX(3px)">
                         ChevronDown
                       </Icon> -->
@@ -211,7 +213,7 @@
               </div>
 
               <div class="mb-2">
-                <div class="d-flex flex-direction-column">
+                <div class="d-flex flex-column">
                   <div>
                     <Icon
                       size="16"
@@ -269,7 +271,13 @@
               <div class="mb-2">
                 <Icon size="16" width="1.2" class="me-1">Edit</Icon>
                 Edit missing or wrong data on
-                <a :href="`https://www.igdb.com/games/${app.igdb_slug}`" target="_blank">
+                <a
+                  :href="
+                    app.igdb_slug
+                      ? `https://www.igdb.com/games/${app.igdb_slug}`
+                      : 'javascript:void(0)'
+                  "
+                  target="_blank">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     height="16"
@@ -310,7 +318,7 @@
               </h1>
               <div class="row">
                 <div class="mb-3">
-                  <strong class="text-muted">{{ app.date.releasedYear }}</strong>
+                  <strong class="text-muted">{{ app._.releasedYear }}</strong>
                   <div class="d-inline-block px-2 opacity-50">🔸</div>
                   <strong v-tippy="'Median score'" class="text-muted">
                     <Icon size="12" width="1" style="transform: translateY(-2px)">
@@ -381,7 +389,41 @@
             <div class="col-12 mb-3">
               <!-- <h5>Direct links</h5> -->
               <div class="btn-list">
-                <v-btn
+                <v-btn-group
+                  variant="tonal"
+                  :divided="false"
+                  style="
+                    height: auto;
+                    color: inherit;
+                    background-color: none;
+                    outline: rgb(108 122 145 / 40%) solid 1px;
+                  ">
+                  <v-btn
+                    v-if="app.id.steam"
+                    v-tippy="'Open Steam store page'"
+                    variant="tonal"
+                    :href="'https://store.steampowered.com/app/' + app.id.steam"
+                    target="_blank"
+                    style="outline: rgb(108 122 145 / 40%) solid 1px">
+                    <!-- <Icon size="15" class="me-1">BrandSteam</Icon> -->
+                    <b-logo
+                      name="steam"
+                      size="14"
+                      class="me-1"
+                      style="transform: translateY(1px); opacity: 0.6" />
+                    Steam store
+                  </v-btn>
+                  <v-btn
+                    v-if="app.id.steam && app.is.steam"
+                    v-tippy="'Run via Steam '"
+                    :href="'steam://run/' + app.id.steam"
+                    slim
+                    style="min-width: 0">
+                    <Icon size="14" width="1.5">BrowserShare</Icon>
+                  </v-btn>
+                </v-btn-group>
+
+                <!-- <v-btn
                   v-if="app.id.steam"
                   v-tippy="'Open Steam store page'"
                   variant="tonal"
@@ -390,7 +432,7 @@
                   style="outline: rgb(108 122 145 / 40%) solid 1px">
                   <Icon size="15" class="me-2">BrandSteam</Icon>
                   Steam store
-                </v-btn>
+                </v-btn> -->
 
                 <!-- <a
                     v-if="app.is.steam"
@@ -421,6 +463,21 @@
                   <Icon size="15" class="me-1">BrandXbox</Icon>
                   Xbox
                 </v-btn>
+
+                <!-- <v-btn
+                  v-tippy="'Open Xbox page'"
+                  variant="text"
+                  :href="`https://www.gog.com/game/${app.slug}/${app.id.xbox}`"
+                  target="_blank"
+                  class="small">
+                  <img
+                    width="15"
+                    height="15"
+                    src="data:image/png;base64,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"
+                    class="me-1"
+                    style="transform: translateY(1px); background-color: aliceblue" />
+                  GOG
+                </v-btn> -->
               </div>
             </div>
 
@@ -503,7 +560,7 @@
                       style="transform: translateY(-2px)">
                       Click
                     </Icon>
-                    Game length provided by
+                    Game length data from
                     <strong>HowLongToBeat</strong>
                   </a>
                 </div>
@@ -554,12 +611,101 @@
               *+---------------------------------
               *| Scores block
               *+--------------------------------- -->
+            <div v-if="$app.wip" class="row row-deck row-cards m-0">
+              <div v-if="app.score" class="col col-md-3">
+                <div class="card">
+                  <div class="card-body" style="padding: 0.5rem 0.75rem">
+                    <div class="d-flex align-items-center">
+                      <div class="subheader">Median score</div>
+
+                      <!-- <div class="ms-auto">
+                  <tippy class="text-muted ms-auto cursor-help" :content="'xxx'">
+                    <Icon>HelpCircleFilled</Icon>
+                  </tippy>
+                </div> -->
+                    </div>
+                    <div class="h1 mt-2 mb-0">
+                      {{ app.score }}
+                      <span class="subheader">/100</span>
+                      <!-- <br />
+                <span class="subheader">Overwhelmingly positive</span> -->
+                    </div>
+
+                    <!-- <div class="progress progress-sm" style="background-color: #25384f">
+                <div class="progress-bar bg-primary" :style="`width: ${app.score}%`">
+                  <span class="visually-hidden">{{ app.score }}% Complete</span>
+                </div>
+              </div> -->
+                    <!-- <div class="d-flex mb-2">
+                <div class="subheader">125.000 votes on Steam</div>
+              </div> -->
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="app.scores.steamscore" class="col col-md-3">
+                <div class="card" style="border: 2px solid rgb(102, 192, 244)">
+                  <div class="card-body" style="padding: 0.5rem 0.75rem">
+                    <div class="d-flex align-items-center">
+                      <div class="subheader">Steam reviews</div>
+
+                      <!-- <div class="ms-auto">{{ app.scores.steamCount }} reviews on steam</div> -->
+                    </div>
+                    <div class="h1 mt-2 mb-0">
+                      {{ app.scores.steamscore }}
+                      <span class="subheader">/100</span>
+                      <span class="d-block subheader">
+                        {{ app.scores.steamscoreAlt }}
+                      </span>
+                    </div>
+
+                    <!-- <div class="progress progress-sm" style="background-color: #25384f">
+                <div class="progress-bar bg-primary" :style="`width: ${app.score}%`">
+                  <span class="visually-hidden">{{ app.score }}% Complete</span>
+                </div>
+              </div> -->
+                    <!-- <div class="d-flex mb-2">
+                <div class="subheader">125.000 votes on Steam</div>
+              </div> -->
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="app.scores.metascore" class="col col-md-3">
+                <div class="card" style="border: 2px solid rgb(84, 167, 43)">
+                  <div class="card-body" style="padding: 0.5rem 0.75rem">
+                    <div class="d-flex align-items-center">
+                      <div class="subheader">Metacritic reviews</div>
+                    </div>
+                    <div class="h1 mb-0">
+                      {{ app.scores.metascore }}
+                      <span class="subheader">/100</span>
+                      <!-- <br />
+                <span class="subheader">Overwhelmingly positive</span> -->
+                    </div>
+
+                    <!-- <div class="progress progress-sm" style="background-color: #25384f">
+                <div class="progress-bar bg-primary" :style="`width: ${app.score}%`">
+                  <span class="visually-hidden">{{ app.score }}% Complete</span>
+                </div>
+              </div> -->
+                    <!-- <div class="d-flex mb-2">
+                <div class="subheader">125.000 votes on Steam</div>
+              </div> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div v-if="app.score" class="col-12 my-3">
               <h5>Scores</h5>
 
               <div class="row row-cards">
                 <div class="col-3">
                   <div
+                    v-tippy="
+                      'The median is the middle value in a set of scores when arranged in order. It avoids being skewed by extreme values, making it a fairer representation of the central tendency compared to the average.'
+                    "
                     class="card card-sm card-data card-is-score"
                     :style="{
                       '--score-color': format.scoreToHuman(app.score, 'meta', 'color'),
@@ -588,17 +734,27 @@
                     }">
                     <div class="card-body">
                       <div class="text-black fw-bold m-0">
-                        {{ app.scores.steamscore }}%
+                        {{ app.scores.steamscoreAlt }}
                       </div>
 
-                      <small class="text-secondary">
-                        {{ app.scores.steamscoreAlt }}
-                        <!-- #
-                            {{ format.compactNum(app.scores.steamCount) }} -->
-                        <!--  of
-                             reviews on -->
-                        <!-- Steam -->
-                      </small>
+                      <div class="w-100 text-center" style="transform: translateY(5px)">
+                        <div class="progress" style="height: 4px">
+                          <div
+                            class="progress-bar"
+                            :style="`width: ${app.scores.steamscore}%`"></div>
+                        </div>
+
+                        <small class="text-secondary">
+                          {{ app.scores.steamscore }}% of
+                          <!-- #
+                        {{ format.compactNum(app.scores.steamCount) }} -->
+                          <!--  of
+                        reviews on -->
+                          <!-- Steam -->
+
+                          {{ format.compactNum(app.scores.steamCount) }}
+                        </small>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -624,22 +780,13 @@
                           justify-content: center;
                           transform: translateY(-2px);
                         ">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="20"
-                          viewBox="0 0 40 40"
+                        <b-logo
+                          name="metacritic"
+                          size="18"
                           class="me-1"
-                          style="transform: translateX(-2px)">
-                          <path d="M36.978 19.49a17.49 17.49 0 1 1 0-.021" fill="#000" />
-                          <path
-                            d="m17.209 32.937 3.41-3.41-6.567-6.567c-.276-.276-.576-.622-.737-1.014-.369-.783-.53-2.004.369-2.903 1.106-1.106 2.58-.645 4.009.784l6.313 6.313 3.41-3.41-6.59-6.59c-.276-.276-.599-.691-.76-1.037-.438-.898-.415-2.027.392-2.834 1.129-1.129 2.603-.714 4.24.922l6.128 6.129 3.41-3.41L27.6 9.274c-3.364-3.364-6.52-3.249-8.686-1.083-.83.83-1.337 1.705-1.59 2.696a6.71 6.71 0 0 0-.092 2.81l-.046.047c-1.66-.691-3.549-.277-5 1.175-1.936 1.935-1.866 3.986-1.636 5.184l-.07.07-1.681-1.36-2.95 2.949c1.037.945 2.282 2.097 3.687 3.502l7.673 7.673Z"
-                            fill="#F2F2F2" />
-                          <path
-                            d="M19.982 0A20 20 0 1 0 40 20v-.024A20 20 0 0 0 19.982 0Zm-.091 4.274A15.665 15.665 0 0 1 35.57 19.921v.018A15.665 15.665 0 1 1 19.89 4.274Z"
-                            fill="#FFBD3F" />
-                        </svg>
+                          style="transform: translateX(-2px)" />
                         <div
-                          v-tippy="'Metacritic users'"
+                          v-tippy="'Metacritic score'"
                           class="text-muted me-1"
                           style="
                             display: flex;
@@ -683,7 +830,7 @@
                         </div>
                       </div>
                       <!-- </h3> -->
-                      <small class="text-secondary">On Metacritic</small>
+                      <small class="text-secondary">Metacritic</small>
                     </div>
                   </div>
                 </div>
@@ -709,7 +856,7 @@
                           " />
                         {{ app.scores.oc }}
                       </div>
-                      <small class="text-secondary">On Opencritic</small>
+                      <small class="text-secondary">Opencritic</small>
                     </div>
                   </div>
                 </div>
@@ -900,7 +1047,7 @@
                       </div>
                       <div class="datagrid-item">
                         <div class="datagrid-title">Release date</div>
-                        <div class="datagrid-content">{{ app.date.released }}</div>
+                        <div class="datagrid-content">{{ app._.released }}</div>
                       </div>
                       <div v-if="$app.wip" class="datagrid-item">
                         <div class="datagrid-title">Port number</div>
@@ -963,27 +1110,7 @@
               <h5>Data sources</h5>
 
               <a href="https://www.igdb.com" target="_blank">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="15"
-                  viewBox="0 0 34 16"
-                  fill="none">
-                  <path
-                    d="M6.71685e-05 0.000911468C11.3331 0.000683823 22.6665 0.00250409 33.9998 0C34 5.33326 34.0002 10.6667 33.9995 16C31.7937 15.6524 29.5779 15.3612 27.354 15.1482C19.3291 14.3685 11.2122 14.4991 3.21778 15.5367C2.14257 15.6731 1.07109 15.8359 6.71685e-05 15.9993C-0.00016551 10.6665 0.000299847 5.33371 6.71685e-05 0.000911468ZM1.00082 0.980238C1.00128 5.60575 1.00082 10.2315 1.00082 14.857C11.5847 13.2721 22.4154 13.2708 32.999 14.8575C32.9997 10.2315 32.9992 5.60552 32.9992 0.979555C22.333 0.981149 11.6668 0.98001 1.00082 0.980238Z"
-                    fill="black" />
-                  <path
-                    d="M8.31926 4.618C9.01287 3.95737 9.98594 3.60544 10.9497 3.62023C11.6077 3.61796 12.2794 3.7188 12.8712 4.01269C13.1762 4.16157 13.4549 4.35689 13.7151 4.57156C13.3877 4.95833 13.0575 5.34259 12.7339 5.73209C12.5391 5.58936 12.3497 5.43706 12.1343 5.32415C11.7017 5.08535 11.1921 5.00272 10.7005 5.03778C10.0988 5.08808 9.54827 5.44298 9.22228 5.93447C8.80207 6.55184 8.73668 7.3643 8.99123 8.05566C9.14527 8.47566 9.43937 8.84832 9.82678 9.08621C10.2121 9.32842 10.68 9.42562 11.1342 9.39899C11.6 9.38146 12.0742 9.25717 12.4535 8.98468C12.4498 8.65687 12.4535 8.32883 12.4516 8.00102C11.9297 8.00239 11.4076 8.00057 10.8857 8.00194C10.8845 7.56213 10.8885 7.12232 10.8838 6.68273C11.9104 6.67636 12.9372 6.68501 13.9638 6.67841C13.9701 7.68255 13.9631 8.68692 13.9673 9.69106C13.2607 10.2879 12.3688 10.6795 11.4374 10.7685C10.5281 10.8662 9.56944 10.7025 8.79439 10.2119C8.17337 9.82468 7.69359 9.23076 7.44253 8.5542C7.19472 7.88857 7.14586 7.1551 7.285 6.46124C7.42996 5.76373 7.79247 5.10971 8.31926 4.618Z"
-                    fill="black" />
-                  <path
-                    d="M3.78761 3.73952C4.30811 3.74066 4.82861 3.73861 5.34912 3.74066C5.34795 6.05079 5.34912 8.36116 5.34865 10.6715C4.82838 10.6713 4.30811 10.6706 3.78784 10.6718C3.78761 8.36116 3.78808 6.05034 3.78761 3.73952Z"
-                    fill="black" />
-                  <path
-                    d="M15.8643 3.73975C16.8165 3.73997 17.7686 3.73975 18.7207 3.73997C19.5863 3.74931 20.4628 4.01201 21.1401 4.54902C21.7323 5.01228 22.1522 5.6786 22.3123 6.40364C22.5061 7.27916 22.3798 8.23391 21.8993 9.00403C21.518 9.62481 20.919 10.1081 20.2345 10.3792C19.7549 10.5698 19.2377 10.6699 18.72 10.6713C17.7683 10.6713 16.8165 10.6708 15.8646 10.6715C15.8646 8.36093 15.865 6.05034 15.8643 3.73975ZM17.4303 5.11654C17.4279 6.50927 17.4305 7.902 17.4289 9.29496C17.7276 9.2945 18.0266 9.29473 18.3254 9.29473C18.566 9.29291 18.8086 9.30588 19.0469 9.26263C19.5139 9.19161 19.9639 8.97193 20.2727 8.61749C20.5426 8.31381 20.6994 7.92431 20.7466 7.52707C20.7906 7.12368 20.7557 6.70573 20.5958 6.32875C20.4313 5.92809 20.1237 5.58526 19.7352 5.3797C19.3843 5.18848 18.979 5.11631 18.5806 5.11609C18.1972 5.117 17.8137 5.11608 17.4303 5.11654Z"
-                    fill="black" />
-                  <path
-                    d="M24.1838 3.74407C25.1459 3.73406 26.1089 3.74271 27.0713 3.73975C27.3356 3.74339 27.6006 3.72905 27.864 3.75568C28.3319 3.79825 28.8061 3.93188 29.1805 4.21939C29.506 4.46502 29.7345 4.83176 29.7976 5.23036C29.8432 5.60734 29.822 6.00891 29.6324 6.34878C29.4711 6.6536 29.1933 6.87988 28.8946 7.0497C29.2927 7.1963 29.6864 7.41256 29.9342 7.76131C30.1652 8.08343 30.2327 8.49046 30.2101 8.87655C30.2008 9.26901 30.054 9.6626 29.7792 9.95194C29.5016 10.2486 29.12 10.4309 28.7284 10.5368C28.4011 10.623 28.0625 10.6674 27.7237 10.6706C26.5445 10.6715 25.3653 10.6718 24.1861 10.6706C24.1842 8.36161 24.1886 6.05284 24.1838 3.74407ZM25.7078 5.08035C25.7094 5.5675 25.7064 6.05489 25.7092 6.54228C26.2257 6.53909 26.7423 6.54296 27.2588 6.54023C27.4931 6.52794 27.7358 6.49538 27.9429 6.37974C28.1065 6.28914 28.2307 6.12683 28.2552 5.94244C28.2896 5.7346 28.2531 5.50126 28.0979 5.34578C27.9113 5.15774 27.633 5.09765 27.3749 5.08262C26.8193 5.07807 26.2634 5.08262 25.7078 5.08035ZM25.7076 7.81527C25.7083 8.32132 25.709 8.82783 25.7071 9.33411C26.2011 9.33867 26.6953 9.33457 27.1895 9.33593C27.4361 9.33297 27.6853 9.34936 27.9296 9.30634C28.1437 9.27265 28.3645 9.19388 28.509 9.02861C28.6547 8.86311 28.6852 8.62773 28.6486 8.41898C28.6195 8.24187 28.5058 8.08275 28.3485 7.99146C28.1351 7.86444 27.8796 7.82437 27.6334 7.81618C26.9915 7.81436 26.3495 7.81618 25.7076 7.81527Z"
-                    fill="black" />
-                </svg>
+                <b-logo name="igdb"></b-logo>
               </a>
 
               🔸
@@ -1091,7 +1218,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st November 2024
- * Modified: Tue 17 December 2024 - 12:48:19
+ * Modified: Fri 10 January 2025 - 19:25:26
  **/
 
 export default {

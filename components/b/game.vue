@@ -39,7 +39,6 @@
                   Diamond
                 </Icon>
                 {{ app.score ?? 'Unscored' }}
-                <!-- <template v-if="$app.dev">-- {{ app._.score }}</template> -->
               </small>
             </slot>
           </div>
@@ -120,10 +119,32 @@
               size="13"
               width="1.5"
               style="transform: translateY(-1px); margin-right: 3px">
-              StarFilled
+              Star
             </Icon>
             {{ app.score ?? 'Unscored' }}
-            <template v-if="$app.dev">-- {{ app._.score }}</template>
+          </small>
+
+          <small
+            v-if="visible.includes('metascore') && app.scores && app.scores.metascore"
+            class="text-muted">
+            <b-logo
+              name="metacritic"
+              size="12"
+              style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+
+            {{ app.scores.metascore ?? 'Unscored' }}
+          </small>
+
+          <small
+            v-if="visible.includes('steamscore') && app.scores && app.scores.steamscore"
+            class="text-muted">
+            <b-logo
+              name="steam"
+              size="12"
+              color="#fff"
+              style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+
+            {{ app.scores.steamscore ?? 'Unscored' }}
           </small>
 
           <small
@@ -180,7 +201,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 31 December 2024 - 13:11:05
+ * Modified: Fri 10 January 2025 - 19:27:43
  **/
 
 export default {

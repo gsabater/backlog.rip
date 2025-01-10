@@ -174,30 +174,20 @@
           v-if="f && f.show && f.show.perPage"
           class="d-flex mt-4"
           style="flex-direction: column; align-items: center">
-          <div
-            v-if="stats.results > f.show.perPage"
-            class="btn w-75 mb-3"
-            @click="addPage">
-            Show more
+          <div v-if="stats.nextPage > 0" class="btn w-75 mb-3" @click="addPage">
+            Show {{ stats.nextPage }} more games
           </div>
+
           <p class="text-muted text-center w-50">
-            <code v-if="$app.dev">
-              Loaded X games of X (lib/api) (info): The amount of games loaded, when
-              searching, more games are added from the api
-            </code>
             <template v-if="stats.results > 0">
               Showing
-              <strong>{{ showing }} of {{ format.num(stats.results) }}</strong>
-              results
+              <strong>{{ stats.showing }}</strong>
+              games, from a total of {{ format.num(stats.results) }}
             </template>
             <br />
-            <template v-if="stats.filtered > 0">
-              Filtered out
-              <strong>
-                {{ format.num(stats.filtered) }} of {{ format.num(stats.results) }}
-              </strong>
-            </template>
-            <span v-else>No games filtered</span>
+            <small v-if="stats.filtered > 0">
+              {{ format.num(stats.filtered) }} results excluded based on your filters
+            </small>
           </p>
         </div>
       </div>
@@ -211,7 +201,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon 06 January 2025 - 12:22:03
+ * Modified: Thu 09 January 2025 - 17:36:35
  **/
 
 export default {
@@ -283,12 +273,6 @@ export default {
     //+-------------------------------------------------
     isLibrary() {
       return this.f.source == 'library'
-    },
-
-    showing() {
-      return this.stats.results > this.f.show.perPage
-        ? this.f.show.page * this.f.show.perPage
-        : this.stats.results
     },
   },
 

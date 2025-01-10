@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Sun 05 January 2025 - 18:14:53
+ * Modified: Thu 09 January 2025 - 17:40:56
  */
 
 export default {
@@ -25,6 +25,7 @@ export default {
 
     for (const index in source) {
       const app = source[index]
+      const appName = this.cleanAppName(app.name)
 
       // ✨ Filter: Backlog state
       // Match with app.state
@@ -86,9 +87,6 @@ export default {
       // Match with on app.name and store IDs
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.string?.length > 0) {
-        let appName = app.name ? app.name : ''
-        appName = appName.toString().toLowerCase()
-
         if (
           appName.indexOf(searchString) === -1 &&
           app.id.steam?.toString() !== searchString
@@ -158,6 +156,29 @@ export default {
         }
       }
 
+      // ✨ Sort By: Scores
+      // Include only apps with data
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (['score', 'metascore', 'steamscore'].includes(filters?.sortBy)) {
+        if (filters.sortBy == 'score' && !app.score) {
+          filtered.push(app.uuid)
+          // console.warn('🛑 Skipping because has no score', filters.sortBy, app.score)
+          continue
+        }
+
+        if (filters.sortBy == 'metascore' && !app.scores.metascore) {
+          filtered.push(app.uuid)
+          // console.warn('🛑 Skipping because has no metascore', filters.sortBy, app.metascore)
+          continue
+        }
+
+        if (filters.sortBy == 'steamscore' && !app.scores.steamscore) {
+          filtered.push(app.uuid)
+          // console.warn('🛑 Skipping because has no steamscore', filters.sortBy, app.steamscore)
+          continue
+        }
+      }
+
       // Finally,
       // Modify and add the app to items
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -171,11 +192,19 @@ export default {
       }
 
       if (filters?.sortBy == 'name') {
-        toSort.push({ uuid: app.uuid, val: app.name?.toString().toLowerCase() || '' })
+        toSort.push({ uuid: app.uuid, val: appName || '' })
       }
 
       if (filters?.sortBy == 'score') {
-        toSort.push({ uuid: app.uuid, val: app._?.score || 0 })
+        toSort.push({ uuid: app.uuid, val: app.score || 0 })
+      }
+
+      if (filters.sortBy == 'metascore') {
+        toSort.push({ uuid: app.uuid, val: app.scores.metascore || 0 })
+      }
+
+      if (filters.sortBy == 'steamscore') {
+        toSort.push({ uuid: app.uuid, val: app.scores.steamscore || 0 })
       }
 
       if (filters?.sortBy == 'released') {
@@ -238,7 +267,17 @@ export default {
     // SortBy: numeric value
     // Using app.playtime // score // rand
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (['rand', 'hltb', 'score', 'playtime', 'released'].includes(sortBy)) {
+    if (
+      [
+        'rand',
+        'hltb',
+        'score',
+        'metascore',
+        'steamscore',
+        'playtime',
+        'released',
+      ].includes(sortBy)
+    ) {
       return items
         .sort((a, b) => {
           const A = a.val || 0
@@ -270,5 +309,71 @@ export default {
     const end = start + perPage
 
     return items.slice(0, end)
+  },
+
+  //+-------------------------------------------------
+  // cleanAppName()
+  // Returns a clean app name
+  // -----
+  // Created on Wed Jan 08 2025
+  //+-------------------------------------------------
+  cleanAppName(name) {
+    let appName = name ? name : ''
+    appName = appName.toString().toLowerCase()
+    appName = appName.trim()
+
+    // Characters to remove
+    // prettier-ignore
+    let chars = [
+      '(', ')', '[', ']', '{', '}', '|', ':', '"',
+      "'", '<', '>', '!', '?', ',', ';'
+    ]
+
+    for (const char of chars) {
+      appName = appName.replace(char, '')
+    }
+
+    return appName
+  },
+
+  //+-------------------------------------------------
+  // visibleProps()
+  // Returns a an array of properties for game items
+  // based on the user selection and the sortBy
+  // -----
+  // Created on Tue Dec 31 2024
+  //+-------------------------------------------------
+  visibleProps(filters) {
+    let selected = JSON.parse(JSON.stringify(filters?.show?.card ?? []))
+
+    if (selected.length == 1 && selected.includes('default')) {
+      selected.push(filters.sortBy)
+    }
+
+    return selected
+  },
+
+  //+-------------------------------------------------
+  // function()
+  //
+  // -----
+  // Created on Thu Jan 09 2025
+  //+-------------------------------------------------
+  calcNextPage(filters, results) {
+    const { page, perPage } = filters.show
+    const start = page * perPage
+    return Math.min(perPage, results - start)
+  },
+
+  //+-------------------------------------------------
+  // calcShowing()
+  // Calcs the amount of games being shown
+  // -----
+  // Created on Thu Jan 09 2025
+  //+-------------------------------------------------
+  calcShowing(filters, results) {
+    const { page, perPage } = filters.show
+    const start = page * perPage
+    return Math.min(start + perPage, results)
   },
 }

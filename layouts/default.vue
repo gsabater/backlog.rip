@@ -176,9 +176,11 @@
           </span> -->
 
           <div class="dropdown-divider"></div>
+
           <span class="dropdown-header">
             <span class="text-muted my-2">Your library</span>
           </span>
+
           <NuxtLink to="/library" class="dropdown-item control-hover">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">LayoutDashboard</Icon>
@@ -227,11 +229,16 @@
           <NuxtLink
             v-if="$auth.menu.favorites"
             to="/library/favorites"
-            class="dropdown-item pe-2">
-            <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-              <Icon size="16">Heart</Icon>
-            </span>
-            <span class="nav-link-title">Favorites</span>
+            class="dropdown-item">
+            <div class="content d-flex align-items-center w-100">
+              <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                <Icon size="16">Heart</Icon>
+              </span>
+              <span class="nav-link-title me-4">Favorites</span>
+              <small v-if="$app.count.fav > 0" class="ms-auto text-secondary">
+                {{ format.num($app.count.fav) }}
+              </small>
+            </div>
           </NuxtLink>
 
           <NuxtLink
@@ -1146,7 +1153,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Tue 07 January 2025 - 17:26:37
+ * Modified: Thu 09 January 2025 - 16:27:54
  **/
 
 export default {

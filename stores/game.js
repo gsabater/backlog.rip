@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Tue 31 December 2024 - 12:56:06
+ * Modified: Tue 31 December 2024 - 13:24:32
  */
 
 let $nuxt = null
@@ -482,6 +482,7 @@ export const useGameStore = defineStore('game', {
       return {
         score: this._score(game),
         playtime: this._playtime(game),
+        integrity: this._integrity(game),
 
         released: this._dateReleasedAt(game),
         releasedYear: this._dateReleasedAt(game, 'YYYY'),
@@ -490,6 +491,19 @@ export const useGameStore = defineStore('game', {
         created_at: this._dateCreatedAt(game),
         updated_at: this._dateUpdatedAt(game),
       }
+    },
+
+    //+-------------------------------------------------
+    // _integrity
+    // Returns a level of integrity for the game
+    // 'basic' is the default from the API
+    // 'full' is the complete set of data
+    // 'source' is the highest level of integrity
+    // -----
+    // Created on Tue Dec 31 2024
+    //+-------------------------------------------------
+    _integrity(app) {
+      if (!app.integrity) return 'wip'
     },
 
     //+-------------------------------------------------

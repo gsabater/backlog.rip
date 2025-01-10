@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue 31 December 2024 - 13:13:52
+ * Modified: Thu 09 January 2025 - 16:24:48
  */
 
 let $nuxt = null
@@ -658,6 +658,10 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     setIndex(key, app) {
       index[key] = app
+
+      if (key == 'fav' || key == 'hidden' || key == 'pinned') {
+        $nuxt.$app.count[key] = index[key].length
+      }
     },
 
     //+-------------------------------------------------

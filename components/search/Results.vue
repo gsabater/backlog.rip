@@ -156,7 +156,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 08 January 2025 - 16:30:23
+ * Modified: Mon 13 January 2025 - 17:41:24
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -176,16 +176,14 @@ export default {
       default: () => ({ string: '' }),
     },
 
+    // Source helper
+    // Used as an identifier of f.source
+    // or the array of items to search at
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     source: {
-      type: [Array],
-      default: () => [],
+      type: [String, Array],
+      default: 'all', // 'library', []
     },
-
-    // Not used yet, left for reference
-    // source: {
-    //   type: [String, Array],
-    //   default: 'all', // 'library', []
-    // },
 
     layout: {
       type: String,
@@ -198,7 +196,7 @@ export default {
 
   setup(props, { emit }) {
     // const $nuxt = useNuxtApp()
-    const $data = useDataStore()
+    // const $data = useDataStore()
     const $search = useSearchStore()
 
     const items = ref([])
@@ -214,14 +212,19 @@ export default {
     // Created on Sun Jan 05 2025 - Filter in the store
     //+-------------------------------------------------
     const search = useThrottleFn(
-      async (source = null) => {
+      async (trigger = null) => {
+        console.warn('thro', props.disabled, props.filters, Math.floor(Date.now() / 1000))
         if (props.disabled) return
         if (Object.keys(props.filters).length === 0) return
 
-        // log('🪡 search:start', source || 'direct')
-        emit('search:start', source)
+        // log('🪡 search:start', trigger || 'direct')
+        emit('search:start', trigger)
 
-        const search = $search.run(props.filters)
+        // const filters = structuredClone(props.filters)
+        const filters = JSON.parse(JSON.stringify(props.filters))
+        if (props.source && !filters.source) filters.source = props.source
+
+        const search = $search.run(filters)
         items.value = search.items
 
         emit('search:end')
@@ -266,7 +269,7 @@ export default {
       // this.loadRepositories()
       this.$emit('search:ready')
 
-      if (!this.source.length) return
+      if (!Array.isArray(this.source)) return
       this.search('init:array')
     },
   },

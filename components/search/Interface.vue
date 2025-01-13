@@ -201,7 +201,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 09 January 2025 - 17:36:35
+ * Modified: Mon 13 January 2025 - 17:46:41
  **/
 
 export default {
@@ -284,23 +284,32 @@ export default {
 
   methods: {
     search(by) {
+      console.warn('1', Math.floor(Date.now() / 1000))
       this.$nextTick(() => {
+        console.warn('2', Math.floor(Date.now() / 1000))
         this.searchStore.loading = true
         this.searchStore.setTime('start')
         this.$refs.results.search(by)
       })
     },
 
+    //+-------------------------------------------------
+    // onUpdateFilters()
+    // Handles the filters being updated
+    // -----
+    // Created on Mon Apr 11 2024
+    //+-------------------------------------------------
     onUpdateFilters(filters) {
+      console.warn('onupdate', Math.floor(Date.now() / 1000))
       this.f = filters || this.f
 
       this.f.show.page = 1
       this.ui.dirty = true
 
       this.search('interface')
-      this.$nextTick(() => {
-        this.ui.ping++
-      })
+      // this.$nextTick(() => {
+      // this.ui.ping++
+      // })
     },
 
     addPage() {
@@ -328,43 +337,59 @@ export default {
     // Updated on Thu Sep 19 2024 - In library, sort by playtime
     // Updated on Fri Oct 25 2024 - Dynamically attempt to find the genre
     //+-------------------------------------------------
+    // TODO: Make this a function in searchService.handleFilters()
+    // That should handle
+    // - a default object,
+    // - route path and query params,
+    // - and a given json
+    //+-------------------------------------------------
     async mergeFilters() {
+      console.warn('merge', Math.floor(Date.now() / 1000))
       const loaded = {}
       let slugged = false
 
-      // Set the search source to "library"
-      // And set special library filters
+      //Handle base sort options for library
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (this.$route.path.includes('library')) {
         loaded.source = 'library'
         loaded.sortBy = 'playtime'
         loaded.sortDir = 'desc'
       }
 
-      if (this.slug && ['pinned', 'hidden', 'favorites'].includes(this.slug)) {
-        loaded.is = this.slug
-        slugged = true
-      }
+      // Handle slug for special library filters
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      this.slug = this.$route.params?.slug || null
+      if (this.slug && typeof this.slug == 'object') this.slug = this.slug[0]
 
-      // Dynamically add state as a filter
-      // When the slug is set and found in the states array
-      if (this.slug && this.states.length) {
-        const state = this.states.find((g) => g.slug == this.slug)
-        if (state) {
-          loaded.states = [state.id]
+      if (this.slug) {
+        if (['pinned', 'hidden', 'favorites'].includes(this.slug)) {
+          loaded.source = 'library:' + this.slug
           slugged = true
         }
-      }
 
-      // Dynamically add genre as a filter
-      // When the slug is set and found in the genres array
-      if (this.slug && !slugged) {
-        let genres = null
+        // Dynamically add state as a filter
+        // When the slug is set and found in the states array
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (!slugged && this.states.length) {
+          const state = this.states.find((g) => g.slug == this.slug)
+          if (state) {
+            loaded.states = [state.id]
+            slugged = true
+          }
+        }
 
-        if (!this.genres.length) genres = await this.repositoryStore.getGenres()
-        else genres = this.genres
+        // Dynamically add genre as a filter
+        // When the slug is set and found in the genres array
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (!slugged) {
+          let genres = null
 
-        const genre = genres.find((g) => g.slug == this.slug)
-        if (genre) loaded.genres = [genre.id]
+          if (!this.genres.length) genres = await this.repositoryStore.getGenres()
+          else genres = this.genres
+
+          const genre = genres.find((g) => g.slug == this.slug)
+          if (genre) loaded.genres = [genre.id]
+        }
       }
 
       this.f = {
@@ -382,29 +407,29 @@ export default {
     // Created on Tue Sep 24 2024
     //+-------------------------------------------------
     async getData() {
-      this.slug = this.$route.params?.slug || null
-      if (this.slug && typeof this.slug == 'object') this.slug = this.slug[0]
-
-      if (this.isLibrary) return
+      if (this.f.source !== 'all') return
       this.repositoryStore.topGames('popular')
     },
 
     async init() {
+      console.warn('init', Math.floor(Date.now() / 1000))
       if (!this.$app.ready) return
 
-      await this.getData()
       this.mergeFilters()
       this.search('init')
+
+      this.getData()
 
       this.ui.ready = true
     },
   },
 
   mounted() {
+    console.warn('mount', Math.floor(Date.now() / 1000))
     this.init()
 
     this.$mitt.on('data:updated', () => {
-      this.ui.ping++
+      // this.ui.ping++
       this.$forceUpdate()
     })
 

@@ -114,14 +114,25 @@
 
     <label
       class="dropdown-item ps-1"
-      :class="{ active: f.sortBy == 'metascore' }"
+      :class="{
+        'active': f.sortBy == 'metascore',
+        'disabled cursor-not-allowed': f.source == 'all',
+      }"
       @click="sortBy('metascore', 'desc', true)">
       <div class="d-flex justify-center" style="width: 30px">
         <b-logo name="metacritic" size="14" class="me-1" style="opacity: 0.6" />
       </div>
       <div>
         Metacritic
-        <div v-if="f.sortBy == 'metascore'" class="text-muted" style="font-size: 0.75rem">
+        <small v-if="f.source == 'all'" class="d-block text-muted">
+          Not available yet on
+          <strong>all games</strong>
+        </small>
+
+        <div
+          v-else-if="f.sortBy == 'metascore'"
+          class="text-muted"
+          style="font-size: 0.75rem">
           {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
           <Icon size="14" width="2" class="mx-1">Repeat</Icon>
         </div>
@@ -137,15 +148,23 @@
 
     <label
       class="dropdown-item ps-1"
-      :class="{ active: f.sortBy == 'steamscore' }"
+      :class="{
+        'active': f.sortBy == 'steamscore',
+        'disabled cursor-not-allowed': f.source == 'all',
+      }"
       @click="sortBy('steamscore', 'desc', true)">
       <div class="d-flex justify-center" style="width: 30px">
         <b-logo color="#fff" name="steam" size="14" class="me-1" style="opacity: 0.6" />
       </div>
       <div>
         Steam recommendations
+        <small v-if="f.source == 'all'" class="d-block text-muted">
+          Not available yet on
+          <strong>all games</strong>
+        </small>
+
         <div
-          v-if="f.sortBy == 'steamscore'"
+          v-else-if="f.sortBy == 'steamscore'"
           class="text-muted"
           style="font-size: 0.75rem">
           {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
@@ -185,6 +204,7 @@
     </label>
 
     <label
+      v-if="$app.wip"
       class="dropdown-item ps-1"
       :class="{ active: f.sortBy == 'released' }"
       @click="sortBy('released', 'desc', true)">
@@ -192,7 +212,7 @@
         <Icon size="16" class="me-1">CalendarDot</Icon>
       </div>
       <div>
-        Release date
+        🔸 Release date
         <div v-if="f.sortBy == 'released'" class="text-muted" style="font-size: 0.75rem">
           {{ f.sortDir == 'asc' ? 'Oldest' : 'Newest' }}
           <Icon size="14" width="2" class="mx-1">Repeat</Icon>
@@ -247,7 +267,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st October 2024
- * Modified: Wed 08 January 2025 - 16:00:41
+ * Modified: Mon 13 January 2025 - 17:07:40
  **/
 
 export default {

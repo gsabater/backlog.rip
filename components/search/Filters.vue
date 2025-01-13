@@ -79,45 +79,37 @@ Selected
   *| Second line
   *| Select souce and apply filters
   *+--------------------------------- -->
-  <!-- <div class="col-auto">
-    <div style="background: rgb(30 31 41 / 80%); border-radius: 4px; padding: 4px">
-      <v-btn
-        size="small"
-        color="blue-grey-lighten-1"
-        :variant="f.source == 'all' ? 'tonal' : 'plain'"
-        @click="browse('all')">
-        <Icon v-if="f.source == 'all'" size="12" class="text-muted me-1">Cards</Icon>
-        All games
-      </v-btn>
-      <v-btn
-        size="small"
-        :variant="f.source == 'library' ? 'tonal' : 'plain'"
-        @click="browse('library')">
-        <Icon v-if="f.source == 'library'" size="12" class="text-muted me-1">
-          LayoutDashboard
-        </Icon>
-        Library
-      </v-btn>
-    </div>
-  </div> -->
   <div class="col-6 d-flex align-items-center">
     <div id="⚓source" class="btn btn-sm me-2" style="background: transparent">
-      <small v-if="f.source == 'all'">
-        <Icon size="12" class="text-muted me-1">Cards</Icon>
-        All games
-      </small>
+      <Icon v-if="f.source == 'all'" size="12" class="text-muted me-1">Cards</Icon>
+      <Icon v-if="f.source == 'library'" size="12" class="text-muted me-1">
+        LayoutDashboard
+      </Icon>
+      <Icon v-if="f.source == 'library:favorites'" size="12" class="text-muted me-1">
+        Heart
+      </Icon>
 
-      <small v-if="f.source == 'library'">
-        <Icon size="12" class="text-muted me-1">LayoutDashboard</Icon>
-        Library
-      </small>
+      <Icon v-if="f.source == 'library:pinned'" size="12" class="text-muted me-1">
+        Bookmark
+      </Icon>
+
+      <Icon v-if="f.source == 'library:hidden'" size="12" class="text-muted me-1">
+        Cancel
+      </Icon>
+
+      <span
+        v-if="sourceState"
+        class="status-dot ms-1 me-4"
+        :style="{ 'background-color': sourceState.color || '' }"></span>
+
+      <small>{{ sourceLabel }}</small>
 
       <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
         Selector
       </Icon>
 
-      <b-tippy-sheety to="#⚓source" :autoclose="150" trigger="click">
-        <search-source-menu :with-all="true" />
+      <b-tippy-sheety ref="source" to="#⚓source" :autoclose="150" trigger="click">
+        <search-source-menu :source="f.source" @change="changeSource" />
       </b-tippy-sheety>
 
       <!-- <b-dropdown style="overflow-x: hidden; min-width: 240px; letter-spacing: normal"> -->
@@ -1151,7 +1143,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Thu 09 January 2025 - 16:10:03
+ * Modified: Mon 13 January 2025 - 17:11:19
  **/
 
 export default {
@@ -1203,21 +1195,22 @@ export default {
           opValue: 'id',
         },
 
-        released: {
-          search: false,
-          multiple: false,
+        // WIP this is not working...
+        // released: {
+        //   search: false,
+        //   multiple: false,
 
-          by: 'released',
-          filter: 'released',
+        //   by: 'released',
+        //   filter: 'released',
 
-          icon: 'CalendarDot',
-          label: 'Release date',
-          labels: 'Release dates',
+        //   icon: 'CalendarDot',
+        //   label: 'Release date',
+        //   labels: 'Release dates',
 
-          data: 'released',
-          opTitle: 'name',
-          opValue: 'value',
-        },
+        //   data: 'released',
+        //   opTitle: 'name',
+        //   opValue: 'value',
+        // },
       },
 
       released: {
@@ -1244,15 +1237,45 @@ export default {
 
     ...mapState(useSearchStore, ['stats', 'loading', 'time']),
 
-    // //+-------------------------------------------------
-    // // stats()
-    // // Returns stats from results component
-    // // -----
-    // // Created on Fri Apr 05 2024
-    // //+-------------------------------------------------
-    // stats() {
-    //   return this.$parent.stats || { state: 'no stats' }
-    // },
+    //+-------------------------------------------------
+    // sourceLabel()
+    // Appropiate labeling
+    // -----
+    // Created on Mon Jan 13 2025
+    //+-------------------------------------------------
+    sourceLabel() {
+      if (!this.f?.source) return 'Loading...'
+      if (this.f.source == 'all') return 'All games'
+      if (this.f.source == 'library') return 'Your library'
+      if (this.f.source.includes(':fav')) return 'Favorites'
+      if (this.f.source.includes(':pinned')) return 'Pinned games'
+      if (this.f.source.includes(':hidden')) return 'Hidden games'
+
+      if (this.f.source.includes('state:')) {
+        const id = this.f.source.split(':')[1]
+        const state = this._states.find((s) => s.id == id)
+        if (state) return state.name
+      }
+
+      return this.f.source
+    },
+
+    //+-------------------------------------------------
+    // sourceState()
+    // Returns the state object for the current source
+    // -----
+    // Created on Mon Jan 13 2025
+    //+-------------------------------------------------
+    sourceState() {
+      if (!this.f?.source) return null
+      if (this.f.states.length !== 1) return null
+      if (this.f.source.includes('state:')) {
+        const id = this.f.source.split(':')[1]
+        return this._states.find((s) => s.id == id)
+      }
+
+      return null
+    },
 
     sortLabel() {
       return {
@@ -1265,12 +1288,6 @@ export default {
         hltb: 'How long to beat',
         released: 'Release date',
       }
-    },
-
-    amountOfApps() {
-      if (this.$parent.source == 'all') return format.num(this.$app.count.api)
-
-      return format.num(this.$app.count.library)
     },
 
     //+-------------------------------------------------
@@ -1399,13 +1416,20 @@ export default {
     },
 
     //+-------------------------------------------------
-    // browse()
+    // changeSource()
     // Updates the source
     // -----
     // Created on Mon Sep 23 2024
     //+-------------------------------------------------
-    browse(source) {
+    changeSource(source) {
       this.f.source = source
+      this.f.states = []
+
+      if (source.includes('state:')) {
+        const state = parseInt(source.split(':')[1])
+        this.f.states = [state]
+      }
+
       if (source == 'all') {
         this.f.sortBy = 'score'
         this.f.sortDir = 'desc'
@@ -1524,17 +1548,6 @@ export default {
       return selected
     },
 
-    // //+-------------------------------------------------
-    // // function()
-    // // moves selected to filters
-    // // hides tippy and ui
-    // // -----
-    // // Created on Fri Feb 09 2024
-    // //+-------------------------------------------------
-    // endSelection(){
-
-    // },
-
     //+-------------------------------------------------
     // function()
     //
@@ -1557,10 +1570,6 @@ export default {
     //+-------------------------------------------------
     notify() {
       this.$emit('updated', this.f)
-      // console.warn('✏️ ', this.f.string, JSON.stringify(this.f))
-      // this.$nextTick(() => {
-      //   console.warn('✏️ 2', this.f.string, JSON.stringify(this.f))
-      // })
     },
 
     init() {},

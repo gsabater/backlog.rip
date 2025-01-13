@@ -27,7 +27,7 @@
             @change="update('username', $auth.me.username)" />
         </div>
 
-        <div class="mb-3">
+        <div v-if="$app.wip" class="mb-3">
           <label class="form-label font-serif">Your public profile URL</label>
           <div class="input-group input-group-flat">
             <span class="smadll input-group-text">https://backlog.rip/@</span>
@@ -145,7 +145,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon 30 December 2024 - 15:49:30
+ * Modified: Mon 13 January 2025 - 17:50:39
  **/
 
 export default {

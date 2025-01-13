@@ -241,14 +241,17 @@
             </div>
           </NuxtLink>
 
-          <NuxtLink
-            v-if="$auth.menu.pinned"
-            to="/library/pinned"
-            class="dropdown-item pe-2">
-            <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-              <Icon size="16">Bookmark</Icon>
-            </span>
-            <span class="nav-link-title">Pinned</span>
+          <NuxtLink v-if="$auth.menu.pinned" to="/library/pinned" class="dropdown-item">
+            <div class="content d-flex align-items-center w-100">
+              <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                <Icon size="16">Bookmark</Icon>
+              </span>
+
+              <span class="nav-link-title me-4">Pinned</span>
+              <small v-if="$app.count.pinned > 0" class="ms-auto text-secondary">
+                {{ format.num($app.count.pinned) }}
+              </small>
+            </div>
           </NuxtLink>
 
           <NuxtLink
@@ -1153,7 +1156,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu 09 January 2025 - 16:27:54
+ * Modified: Sat 11 January 2025 - 16:19:44
  **/
 
 export default {

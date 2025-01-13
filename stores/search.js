@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Thu 09 January 2025 - 17:36:22
+ * Modified: Mon 13 January 2025 - 17:56:21
  */
 
 import search from '~/services/searchService'
@@ -62,6 +62,7 @@ export const useSearchStore = defineStore('search', {
     // Returns the source to use in the search
     // -----
     // Created on Wed Jul 24 2024
+    // Updated on Mon Jan 13 2025 - Handle source:params
     //+-------------------------------------------------
     getSource(filters) {
       // Source is an array of fixed items
@@ -75,13 +76,34 @@ export const useSearchStore = defineStore('search', {
 
       // The source is the library but...
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let type = filters.is ?? 'library'
+      // let type = filters.is ?? 'library'
+      let type = 'library'
       let apps = null
 
-      if (!filters.is) apps = $data.library('object')
-      if (filters.is == 'pinned') apps = $data.pinned('object')
-      if (filters.is == 'hidden') apps = $data.hidden('object')
-      if (filters.is == 'favorites') apps = $data.library('object')
+      if (
+        !filters?.source ||
+        filters.source == 'library' ||
+        filters.source.includes('state:')
+      ) {
+        return { type: 'library', apps: $data.library('object') }
+      }
+
+      if (filters.source.includes(':pinned')) {
+        return { type: 'pinned', apps: $data.library('object') }
+      }
+
+      if (filters.source.includes(':hidden')) {
+        return { type: 'hidden', apps: $data.library('object') }
+      }
+
+      if (filters.source.includes(':favorites')) {
+        return { type: 'favorites', apps: $data.library('object') }
+      }
+
+      // if (!filters.is) apps = $data.library('object')
+      // if (filters.is == 'pinned') apps = $data.pinned('object')
+      // if (filters.is == 'hidden') apps = $data.hidden('object')
+      // if (filters.is == 'favorites') apps = $data.library('object')
 
       return { type, apps }
     },
@@ -133,12 +155,15 @@ export const useSearchStore = defineStore('search', {
 
       let source = this.getSource(filters)
       let hash = this.makeHash(source, filters)
+      filters.is = source.type
 
       let filtered = null
       let paginated = null
 
-      log(`⇢ Search ${hash} 🔸`)
-      log(JSON.stringify(filters))
+      if (hash) {
+        log(`⇢ Search ${hash} 🔸`)
+        log(JSON.stringify(filters))
+      }
 
       this.stats.start = performance.now()
       this.stats.apps = Object.keys(source.apps).length
@@ -179,7 +204,7 @@ export const useSearchStore = defineStore('search', {
 
       let filtered = search.filter(source.apps, filters)
       hashed[hash] = filtered
-      log(`⇢ Hashed ${hash} 🔸`)
+      log(`⇢ 🌠🌠🌠 Hashed ${hash} 🔸`)
 
       return filtered
     },

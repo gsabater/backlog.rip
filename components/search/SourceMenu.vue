@@ -1,12 +1,12 @@
 <template>
   <div
     class="b-menu dropdown-menu show"
-    style="min-width: 240px; letter-spacing: normal; overflow-x: hidden">
+    style="min-width: 240px; letter-spacing: normal; overflow: visible">
     <span class="dropdown-header">Where to search</span>
 
     <!-- <template v-if="withAll">
   </template> -->
-    <component :is="componentIs" class="dropdown-item">
+    <component :is="componentIs" class="dropdown-item" @click="select('all')">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
         <Icon size="17" width="1.5" class="text-muted">Cards</Icon>
       </span>
@@ -16,7 +16,11 @@
       </small>
     </component>
 
-    <component :is="componentIs" to="/library" class="dropdown-item">
+    <component
+      :is="componentIs"
+      to="/library"
+      class="dropdown-item"
+      @click="select('library')">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
         <Icon size="17" width="1.5" class="text-muted">LayoutDashboard</Icon>
       </span>
@@ -29,26 +33,15 @@
     <div class="dropdown-divider"></div>
 
     <div
-      v-if="!ui.showLibrary"
+      v-if="!isExpanded"
       class="dropdown-item small text-muted"
-      @click="ui.showLibrary = true">
-      Show more
+      @click="ui.expanded = true">
+      Show more of your library
       <Icon class="ms-auto">ChevronDown</Icon>
     </div>
 
-    <template v-if="ui.showLibrary">
+    <template v-if="isExpanded">
       <span class="dropdown-header">This is your complete library</span>
-
-      <component
-        :is="componentIs"
-        v-if="$auth.config.favorites"
-        to="/library/favorites"
-        class="dropdown-item pe-2">
-        <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
-        </span>
-        <span class="nav-link-title">Favorites</span>
-      </component>
 
       <!-- <component
       :is="componentIs"
@@ -67,7 +60,7 @@
       </small>
     </component> -->
 
-      <div v-if="unPinnedStates.length > 0" class="dropdown-item">
+      <div class="dropdown-item">
         <div style="width: 30px">
           <Icon size="18" class="text-muted" width="1.5">Background</Icon>
         </div>
@@ -77,13 +70,15 @@
         <span class="text-muted ms-auto">
           <Icon size="14">CaretRightFilled</Icon>
         </span>
-        <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
+
+        <b-dropdown placement="right-start" style="min-width: 240px">
           <component
             :is="componentIs"
-            v-for="(state, i) in unPinnedStates"
+            v-for="(state, i) in states"
             :key="'state' + i"
             :to="'/library/' + state.slug"
-            class="dropdown-item px-2">
+            class="dropdown-item px-2"
+            @click="select('state:' + state.id)">
             <div class="content d-flex align-items-center w-100 px-1">
               <span
                 class="status-dot ms-1 me-4"
@@ -101,30 +96,51 @@
         </b-dropdown>
       </div>
 
-      <div
-        v-if="$auth.config.pinned || $auth.config.hidden"
-        class="dropdown-divider"></div>
+      <!-- <div class="dropdown-divider"></div> -->
+
+      <component
+        :is="componentIs"
+        nv-if="$auth.config.favorites"
+        to="/library/favorites"
+        class="dropdown-item"
+        @click="select('library:favorites')">
+        <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+          <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
+        </span>
+        <span class="nav-link-title">Favorites</span>
+        <small class="ms-auto text-secondary me-1">
+          {{ format.num($app.count.fav) }}
+        </small>
+      </component>
 
       <component
         :is="componentIs"
         v-if="$auth.config.pinned"
         to="/library/pinned"
-        class="dropdown-item pe-2">
+        class="dropdown-item"
+        @click="select('library:pinned')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
           <Icon size="17" width="1.5" class="text-muted">Bookmark</Icon>
         </span>
         <span class="nav-link-title">Pinned games</span>
+        <small class="ms-auto text-secondary me-1">
+          {{ format.num($app.count.pinned) }}
+        </small>
       </component>
 
       <component
         :is="componentIs"
         v-if="$auth.config.hidden"
         to="/library/hidden"
-        class="dropdown-item pe-2">
+        class="dropdown-item"
+        @click="select('library:hidden')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
           <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
         </span>
         <span class="nav-link-title">Hidden games</span>
+        <small class="ms-auto text-secondary me-1">
+          {{ format.num($app.count.hidden) }}
+        </small>
       </component>
     </template>
   </div>
@@ -136,13 +152,21 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th January 2025
- * Modified: Thu 09 January 2025 - 16:12:11
+ * Modified: Mon 13 January 2025 - 17:05:30
  **/
 
 export default {
   name: 'SourceMenu',
 
   props: {
+    // Selected source at filters
+    // Used for active and expanded ui
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    source: {
+      type: String,
+      default: 'all',
+    },
+
     // Defines if the component is used as a filter dropdown
     // or a navigation dropdown with links
     // options: filter, nav
@@ -170,12 +194,12 @@ export default {
     },
   },
 
-  emits: [''],
+  emits: ['change'],
 
   data() {
     return {
       ui: {
-        showLibrary: false,
+        expanded: false,
       },
     }
   },
@@ -187,9 +211,21 @@ export default {
     componentIs() {
       return this.purpose === 'nav' ? 'NuxtLink' : 'div'
     },
+
+    isExpanded() {
+      if (this.ui.expanded) return true
+      if (this.source !== 'all' && this.source !== 'library') return true
+
+      return false
+    },
   },
 
-  methods: {},
+  methods: {
+    select(source) {
+      this.$emit('change', source)
+      if (typeof this.$parent.hide == 'function') this.$parent.hide()
+    },
+  },
 
   mounted() {},
 }

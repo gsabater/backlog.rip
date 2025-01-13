@@ -1,11 +1,10 @@
 <template>
   <div class="row gx-1 mb-1 align-items-center">
-    <div class="col-auto" v-if="false && !ui.showSearch">
+    <div v-if="false && !ui.showSearch" class="col-auto">
       <!-- <div class="btn" size="small" style="background: rgb(30 31 41 / 20%)">
         <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
       </div> -->
       <v-btn
-        @click="ui.showSearch = !ui.showSearch"
         size="small"
         variant="tonal"
         color="secondary"
@@ -17,19 +16,20 @@
           width: 50px;
           height: 32px;
           padding: 0;
-        ">
+        "
+        @click="ui.showSearch = !ui.showSearch">
         <Icon size="14" width="2" class="text-secondary">Search</Icon>
       </v-btn>
     </div>
 
-    <div class="col-11" v-if="ui.showSearch">
+    <div v-if="ui.showSearch" class="col-11">
       <v-text-field
-        @update:modelValue="search"
         v-model="f.string"
         placeholder="Search by name..."
         clearable
-        density="comfortable">
-        <template v-slot:prepend-inner>
+        density="comfortable"
+        @update:model-value="search">
+        <template #prepend-inner>
           <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
         </template>
       </v-text-field>
@@ -58,22 +58,22 @@
 
     <div class="col-auto ms-auto">
       <v-btn
+        v-tippy="'Show results as list'"
         icon
-        @click="f.show.layout = 'list'"
         size="small"
         variant="text"
         color="secondary"
-        v-tippy="'Show results as list'">
+        @click="f.show.layout = 'list'">
         <Icon size="16" width="1.5" class="text-secondary">ListDetails</Icon>
       </v-btn>
 
       <v-btn
+        v-tippy="'Show results as grid'"
         icon
-        @click="f.show.layout = 'grid'"
         size="small"
         variant="text"
         color="secondary"
-        v-tippy="'Show results as grid'">
+        @click="f.show.layout = 'grid'">
         <Icon size="16" width="1.5" class="text-secondary">LayoutGrid</Icon>
       </v-btn>
     </div>
@@ -112,7 +112,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: Wed 06 November 2024 - 16:41:00
+ * Modified: Mon 13 January 2025 - 17:53:08
  **/
 
 export default {
@@ -121,7 +121,6 @@ export default {
   data: () => ({
     f: {
       string: '',
-      source: 'array',
       sortBy: 'user',
       sortDir: null,
       show: {
@@ -143,9 +142,9 @@ export default {
     ...mapState(useListStore, ['list']),
 
     listGames() {
-      let games = []
+      const games = []
       this.list.games.forEach((item) => {
-        let app = this.dataStore.get(item.uuid)
+        const app = this.dataStore.get(item.uuid)
         if (app) games.push(app)
       })
 

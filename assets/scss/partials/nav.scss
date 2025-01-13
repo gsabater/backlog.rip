@@ -42,6 +42,10 @@ aside .dropdown-menu {
   box-shadow: none;
   padding: 6px;
 
+  & a.dropdown-item {
+    color: rgb(220, 225, 231);
+  }
+
   & .dropdown-item {
     border-radius: 3px;
     padding: 0.45rem var(--tblr-dropdown-item-padding-x);

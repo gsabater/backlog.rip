@@ -26,11 +26,6 @@
             top: 0;
             box-shadow: none;
           ">
-        <!-- <div class="row m-0 mb-2">
-        <div class="text-center p-2 col-6 active">Status</div>
-        <div class="text-center p-2 col-6 active">Collections</div>
-      </div> -->
-
         <span class="dropdown-header">{{ app.name }}</span>
 
         <!--
@@ -558,7 +553,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Fri 27 December 2024 - 11:52:28
+ * Modified: Sat 11 January 2025 - 18:31:20
  **/
 
 export default {

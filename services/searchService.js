@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Thu 09 January 2025 - 17:40:56
+ * Modified: Mon 13 January 2025 - 16:25:47
  */
 
 export default {
@@ -354,12 +354,14 @@ export default {
   },
 
   //+-------------------------------------------------
-  // function()
-  //
+  // calcNextPage()
+  // Calcs the amount of games that will be shown in the next page
   // -----
   // Created on Thu Jan 09 2025
   //+-------------------------------------------------
   calcNextPage(filters, results) {
+    if (!filters.show) return 0
+
     const { page, perPage } = filters.show
     const start = page * perPage
     return Math.min(perPage, results - start)
@@ -372,6 +374,8 @@ export default {
   // Created on Thu Jan 09 2025
   //+-------------------------------------------------
   calcShowing(filters, results) {
+    if (!filters.show) return 0
+
     const { page, perPage } = filters.show
     const start = page * perPage
     return Math.min(start + perPage, results)

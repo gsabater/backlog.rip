@@ -51,8 +51,7 @@ Selected
         v-model="f.string"
         placeholder="Search a game..."
         clearable
-        density="comfortable"
-        @update:model-value="notify">
+        density="comfortable">
         <!-- <template v-slot:prepend-inner>
           <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
         </template> -->
@@ -734,12 +733,7 @@ Selected
   <div class="col-12 d-none">
     <div class="row gap-2 mb-4 align-items-center">
       <div class="col col-12 col-md-5">
-        <b-input
-          v-model="f.string"
-          placeholder="Search games..."
-          clearable
-          @tick="notify"
-          @clear="notify"></b-input>
+        <b-input v-model="f.string" placeholder="Search games..." clearable></b-input>
       </div>
       <div class="col">
         <div class="btn" style="padding: 0.35rem 0.85rem">
@@ -1143,26 +1137,26 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Mon 13 January 2025 - 17:11:19
+ * Modified: Tue 14 January 2025 - 19:25:11
  **/
 
 export default {
   name: 'SearchFilters',
 
   props: {
-    filters: {
-      type: Object,
-      default: () => ({}),
-    },
+    // filters: {
+    //   type: Object,
+    //   default: () => ({}),
+    // },
   },
 
   emits: ['updated'],
 
   data() {
     return {
-      f: {
-        string: '',
-      },
+      // f: {
+      //   string: '',
+      // },
 
       option: {},
       selected: {},
@@ -1235,7 +1229,7 @@ export default {
       _genres: 'genres',
     }),
 
-    ...mapState(useSearchStore, ['stats', 'loading', 'time']),
+    ...mapState(useSearchStore, ['f', 'stats', 'loading', 'time']),
 
     //+-------------------------------------------------
     // sourceLabel()
@@ -1394,14 +1388,15 @@ export default {
     },
   },
 
-  watch: {
-    filters: {
-      handler: function (val) {
-        this.f = { ...val }
-      },
-      deep: true,
-    },
-  },
+  // watch: {
+  //   filters: {
+  //     handler: function (val) {
+  //       console.warn('xxx')
+  //       this.f = { ...val }
+  //     },
+  //     deep: true,
+  //   },
+  // },
 
   methods: {
     filterLabel(key) {
@@ -1435,7 +1430,7 @@ export default {
         this.f.sortDir = 'desc'
       }
 
-      this.notify()
+      // this.notify()
     },
 
     //+-------------------------------------------------
@@ -1453,7 +1448,7 @@ export default {
       }
 
       // this.$refs.tippySort.hide()
-      this.notify()
+      // this.notify()
     },
 
     //+-------------------------------------------------
@@ -1519,7 +1514,7 @@ export default {
         this.f.show.card.splice(this.f.show.card.indexOf('default'), 1)
       }
 
-      this.notify()
+      // this.notify()
     },
 
     // Move selected to filters
@@ -1529,12 +1524,12 @@ export default {
       const values = Object.values(this.selected).map((item) => item[this.option.opValue])
       this.f[this.option.filter] = values
 
-      this.notify()
+      // this.notify()
     },
 
     removeFilter(key) {
       this.f[key] = []
-      this.notify()
+      // this.notify()
     },
 
     restoreFilter(option) {
@@ -1568,9 +1563,9 @@ export default {
     // -----
     // Created on Fri Feb 09 2024
     //+-------------------------------------------------
-    notify() {
-      this.$emit('updated', this.f)
-    },
+    // notify() {
+    //   this.$emit('updated', this.f)
+    // },
 
     init() {},
   },

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Mon 13 January 2025 - 16:25:47
+ * Modified: Tue 14 January 2025 - 14:14:18
  */
 
 export default {
@@ -160,7 +160,7 @@ export default {
       // Include only apps with data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (['score', 'metascore', 'steamscore'].includes(filters?.sortBy)) {
-        if (filters.sortBy == 'score' && !app.score) {
+        if (filters.sortBy == 'score' && filters.sortDir == 'asc' && !app.score) {
           filtered.push(app.uuid)
           // console.warn('🛑 Skipping because has no score', filters.sortBy, app.score)
           continue
@@ -309,6 +309,67 @@ export default {
     const end = start + perPage
 
     return items.slice(0, end)
+  },
+
+  //+-------------------------------------------------
+  // makeHash()
+  // Generates an unique hash to identify a search instance
+  // -----
+  // Created on Sun Jan 05 2025
+  //+-------------------------------------------------
+  makeHash(source, filters) {
+    if (source.type == 'array') return null
+
+    let f = {
+      string: filters.string,
+      sortBy: filters.sortBy,
+      sortDir: filters.sortDir,
+      released: filters.released,
+      genres: filters.genres,
+      states: filters.states,
+    }
+
+    let json = JSON.stringify(f)
+    let base = btoa(json)
+    let hash = source.type + '#' + Object.keys(source.apps).length + ':' + base
+
+    return hash
+  },
+
+  //+-------------------------------------------------
+  // searchHash()
+  // Sanitizes and creates a hash for the search to API
+  // -----
+  // Created on Wed May 01 2024
+  // Created on Tue Jan 14 2025 - Moved to searchService
+  //+-------------------------------------------------
+  makeApiHash(f = {}) {
+    f.string = f.string?.trim()
+
+    let emptyString = !f.string || f.string?.length < 3
+    let dirty = ['genres', 'anotherArrayProperty'].some(
+      (prop) => Array.isArray(f[prop]) && f[prop].length > 0
+    )
+
+    if (f.sortBy == 'rand') return null
+    if (f.sortBy == 'score' && f.sortDir == 'desc' && emptyString && !dirty) return null
+    if (f.sortBy == 'playtime' && emptyString) return null
+
+    delete f.is
+    delete f.mods
+    delete f.show
+    delete f.source
+    delete f.states
+
+    if (emptyString) delete f.string
+    if (!f.released) delete f.released
+    if (f.genres?.length == 0) delete f.genres
+
+    const json = JSON.stringify(f)
+    const slug = btoa(json)
+    const hash = 'API' + ':' + slug
+
+    return { hash, slug, json }
   },
 
   //+-------------------------------------------------

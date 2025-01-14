@@ -183,7 +183,7 @@
     </template>
   </Command.Dialog>
 
-  <search-results
+  <!-- <search-results
     ref="results"
     :disabled="!ui.show"
     :filters="{
@@ -201,7 +201,7 @@
     <template #body>
       <div></div>
     </template>
-  </search-results>
+  </search-results> -->
 </template>
 
 <script>
@@ -210,7 +210,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th March 2024
- * Modified: Tue 01 October 2024 - 16:34:56
+ * Modified: Tue 14 January 2025 - 16:50:23
  **/
 
 export default {

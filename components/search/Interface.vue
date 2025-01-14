@@ -23,10 +23,10 @@
     >
 
     <div class="row">
-      <search-filters :filters="f" @updated="onUpdateFilters"></search-filters>
+      <search-filters></search-filters>
 
       <div class="col-12">
-        <search-results ref="results" :filters="f" />
+        <search-results ref="results" />
 
         <!--
         *+---------------------------------
@@ -135,15 +135,9 @@
                   Import your library
                 </b-btn>
 
-                <b-btn
-                  class="btn-sm btn-primary"
-                  @click="
-                    () => {
-                      f.source = 'all'
-                      onUpdateFilters()
-                    }
-                  ">
+                <b-btn class="btn-sm btn-primary">
                   Search in all games
+                  <h1>WIP</h1>
                 </b-btn>
               </div>
 
@@ -160,7 +154,7 @@
                   You can just create a game for yourself.
                 </p>
                 <div class="empty-action mt-2">
-                  <b-btn class="btn-sm btn-primary" @click="addCustom">
+                  <b-btn class="btn-sm btn-primary" @click="createCustomGame">
                     <!-- <Icon>StepInto</Icon> -->
                     Add a game "{{ f.string }}" to your library
                   </b-btn>
@@ -201,57 +195,56 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon 13 January 2025 - 17:46:41
+ * Modified: Tue 14 January 2025 - 18:40:39
  **/
 
 export default {
   name: 'SearchInterface',
   props: {
-    filters: {
-      type: Object,
-      default: () => ({}),
-    },
-
-    preset: {
-      type: String,
-      default: null,
-    },
+    // filters: {
+    //   type: Object,
+    //   default: () => ({}),
+    // },
+    // preset: {
+    //   type: String,
+    //   default: null,
+    // },
   },
 
   data() {
     return {
-      f: {},
-      slug: null,
+      // f: {},
+      // slug: null,
 
-      base: {
-        source: 'all',
-        string: '',
+      // base: {
+      //   source: 'all',
+      //   string: '',
 
-        sortBy: 'score',
-        sortDir: 'desc',
+      //   sortBy: 'score',
+      //   sortDir: 'desc',
 
-        states: [],
-        genres: [],
-        released: null,
+      //   states: [],
+      //   genres: [],
+      //   released: null,
 
-        mods: {
-          // states: 'any(of) // all(of) // not(of)'
-        },
+      //   mods: {
+      //     // states: 'any(of) // all(of) // not(of)'
+      //   },
 
-        show: {
-          page: 1,
-          perPage: 42,
+      //   show: {
+      //     page: 1,
+      //     perPage: 42,
 
-          layout: 'grid',
-          card: ['default'],
-        },
-      },
+      //     layout: 'grid',
+      //     card: ['default'],
+      //   },
+      // },
 
-      presets: {
-        'my-preset': {
-          string: 'my preset',
-        },
-      },
+      // presets: {
+      //   'my-preset': {
+      //     string: 'my preset',
+      //   },
+      // },
 
       ui: {
         ping: 0,
@@ -263,16 +256,16 @@ export default {
 
   computed: {
     ...mapStores(useDataStore, useGameStore, useRepositoryStore, useSearchStore),
-    ...mapState(useStateStore, ['states']),
-    ...mapState(useRepositoryStore, ['genres']),
-    ...mapState(useSearchStore, ['stats', 'loading']),
+    // ...mapState(useStateStore, ['states']),
+    // ...mapState(useRepositoryStore, ['genres']),
+    ...mapState(useSearchStore, ['f', 'stats', 'loading']),
 
     //+-------------------------------------------------
     // isLibrary()
     // Returns true when browsing library
     //+-------------------------------------------------
     isLibrary() {
-      return this.f.source == 'library'
+      return this.f?.source == 'library'
     },
   },
 
@@ -283,15 +276,13 @@ export default {
   },
 
   methods: {
-    search(by) {
-      console.warn('1', Math.floor(Date.now() / 1000))
-      this.$nextTick(() => {
-        console.warn('2', Math.floor(Date.now() / 1000))
-        this.searchStore.loading = true
-        this.searchStore.setTime('start')
-        this.$refs.results.search(by)
-      })
-    },
+    // search(by) {
+    //   this.$nextTick(() => {
+    //     this.searchStore.loading = true
+    //     this.searchStore.setTime('start')
+    //     this.$refs.results.search(by)
+    //   })
+    // },
 
     //+-------------------------------------------------
     // onUpdateFilters()
@@ -299,25 +290,31 @@ export default {
     // -----
     // Created on Mon Apr 11 2024
     //+-------------------------------------------------
-    onUpdateFilters(filters) {
-      console.warn('onupdate', Math.floor(Date.now() / 1000))
-      this.f = filters || this.f
+    // onUpdateFilters(filters) {
+    //   this.f = filters || this.f
 
-      this.f.show.page = 1
-      this.ui.dirty = true
+    //   if (this.f?.show?.page) this.f.show.page = 1
 
-      this.search('interface')
-      // this.$nextTick(() => {
-      // this.ui.ping++
-      // })
-    },
+    //   this.ui.dirty = true
+
+    //   this.search('interface')
+    //   // this.$nextTick(() => {
+    //   // this.ui.ping++
+    //   // })
+    // },
 
     addPage() {
       this.f.show.page++
-      this.search('addPage')
+      //   this.search('addPage')
     },
 
-    addCustom() {
+    //+-------------------------------------------------
+    // createCustomGame()
+    //
+    // -----
+    // Created on Tue Oct 15 2024
+    //+-------------------------------------------------
+    createCustomGame() {
       const app = this.gameStore.create({
         name: this.f.string,
       })
@@ -343,62 +340,61 @@ export default {
     // - route path and query params,
     // - and a given json
     //+-------------------------------------------------
-    async mergeFilters() {
-      console.warn('merge', Math.floor(Date.now() / 1000))
-      const loaded = {}
-      let slugged = false
+    // async mergeFilters() {
+    //   const loaded = {}
+    //   let slugged = false
 
-      //Handle base sort options for library
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (this.$route.path.includes('library')) {
-        loaded.source = 'library'
-        loaded.sortBy = 'playtime'
-        loaded.sortDir = 'desc'
-      }
+    //   //Handle base sort options for library
+    //   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //   if (this.$route.path.includes('library')) {
+    //     loaded.source = 'library'
+    //     loaded.sortBy = 'playtime'
+    //     loaded.sortDir = 'desc'
+    //   }
 
-      // Handle slug for special library filters
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      this.slug = this.$route.params?.slug || null
-      if (this.slug && typeof this.slug == 'object') this.slug = this.slug[0]
+    //   // Handle slug for special library filters
+    //   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //   this.slug = this.$route.params?.slug || null
+    //   if (this.slug && typeof this.slug == 'object') this.slug = this.slug[0]
 
-      if (this.slug) {
-        if (['pinned', 'hidden', 'favorites'].includes(this.slug)) {
-          loaded.source = 'library:' + this.slug
-          slugged = true
-        }
+    //   if (this.slug) {
+    //     if (['pinned', 'hidden', 'favorites'].includes(this.slug)) {
+    //       loaded.source = 'library:' + this.slug
+    //       slugged = true
+    //     }
 
-        // Dynamically add state as a filter
-        // When the slug is set and found in the states array
-        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (!slugged && this.states.length) {
-          const state = this.states.find((g) => g.slug == this.slug)
-          if (state) {
-            loaded.states = [state.id]
-            slugged = true
-          }
-        }
+    //     // Dynamically add state as a filter
+    //     // When the slug is set and found in the states array
+    //     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //     if (!slugged && this.states.length) {
+    //       const state = this.states.find((g) => g.slug == this.slug)
+    //       if (state) {
+    //         loaded.states = [state.id]
+    //         slugged = true
+    //       }
+    //     }
 
-        // Dynamically add genre as a filter
-        // When the slug is set and found in the genres array
-        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (!slugged) {
-          let genres = null
+    //     // Dynamically add genre as a filter
+    //     // When the slug is set and found in the genres array
+    //     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //     if (!slugged) {
+    //       let genres = null
 
-          if (!this.genres.length) genres = await this.repositoryStore.getGenres()
-          else genres = this.genres
+    //       if (!this.genres.length) genres = await this.repositoryStore.getGenres()
+    //       else genres = this.genres
 
-          const genre = genres.find((g) => g.slug == this.slug)
-          if (genre) loaded.genres = [genre.id]
-        }
-      }
+    //       const genre = genres.find((g) => g.slug == this.slug)
+    //       if (genre) loaded.genres = [genre.id]
+    //     }
+    //   }
 
-      this.f = {
-        ...this.base,
-        ...(this.preset ? this.presets[this.preset] : {}),
-        ...this.filters,
-        ...loaded,
-      }
-    },
+    //   this.f = {
+    //     ...this.base,
+    //     ...(this.preset ? this.presets[this.preset] : {}),
+    //     ...this.filters,
+    //     ...loaded,
+    //   }
+    // },
 
     //+-------------------------------------------------
     // getData()
@@ -406,32 +402,37 @@ export default {
     // -----
     // Created on Tue Sep 24 2024
     //+-------------------------------------------------
-    async getData() {
-      if (this.f.source !== 'all') return
-      this.repositoryStore.topGames('popular')
-    },
+    // async getData() {
+    //   if (this.f.source !== 'all') return
+    //   this.repositoryStore.topGames('popular')
+    // },
 
+    //+-------------------------------------------------
+    // init()
+    // -----
+    // Created on Tue Jan 30 2024
+    //+-------------------------------------------------
     async init() {
-      console.warn('init', Math.floor(Date.now() / 1000))
+      // console.warn('init', Math.floor(Date.now() / 1000))
       if (!this.$app.ready) return
 
-      this.mergeFilters()
-      this.search('init')
+      // this.getData()
 
-      this.getData()
+      // this.mergeFilters()
+      // this.search('init')
 
       this.ui.ready = true
     },
   },
 
   mounted() {
-    console.warn('mount', Math.floor(Date.now() / 1000))
+    // console.warn('mount', Math.floor(Date.now() / 1000))
     this.init()
 
-    this.$mitt.on('data:updated', () => {
-      // this.ui.ping++
-      this.$forceUpdate()
-    })
+    // this.$mitt.on('data:updated', () => {
+    //   // this.ui.ping++
+    //   this.$forceUpdate()
+    // })
 
     // this.$mitt.on('data:ready', () => {
     //   log('✨ Search: event -> data:ready')
@@ -444,7 +445,7 @@ export default {
 
   beforeUnmount() {
     // this.$mitt.off('data:ready')
-    this.$mitt.off('data:updated')
+    // this.$mitt.off('data:updated')
   },
 }
 </script>

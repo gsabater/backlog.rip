@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu 09 January 2025 - 16:24:48
+ * Modified: Tue 14 January 2025 - 11:27:24
  */
 
 let $nuxt = null
@@ -294,32 +294,32 @@ export const useDataStore = defineStore('data', {
     // -----
     // Created on Wed May 01 2024
     //+-------------------------------------------------
-    searchHash(f = {}) {
-      f.string = f.string?.trim()
+    // searchHash(f = {}) {
+    //   f.string = f.string?.trim()
 
-      let emptyString = !f.string || f.string?.length < 3
-      let dirty = ['genres', 'anotherArrayProperty'].some(
-        (prop) => Array.isArray(f[prop]) && f[prop].length > 0
-      )
+    //   let emptyString = !f.string || f.string?.length < 3
+    //   let dirty = ['genres', 'anotherArrayProperty'].some(
+    //     (prop) => Array.isArray(f[prop]) && f[prop].length > 0
+    //   )
 
-      if (f.sortBy == 'rand') return null
-      if (f.sortBy == 'score' && f.sortDir == 'desc' && emptyString && !dirty) return null
-      if (f.sortBy == 'playtime' && emptyString) return null
+    //   if (f.sortBy == 'rand') return null
+    //   if (f.sortBy == 'score' && f.sortDir == 'desc' && emptyString && !dirty) return null
+    //   if (f.sortBy == 'playtime' && emptyString) return null
 
-      delete f.mods
-      delete f.show
-      delete f.source
-      delete f.states
+    //   delete f.mods
+    //   delete f.show
+    //   delete f.source
+    //   delete f.states
 
-      if (emptyString) delete f.string
-      if (!f.released) delete f.released
-      if (f.genres?.length == 0) delete f.genres
+    //   if (emptyString) delete f.string
+    //   if (!f.released) delete f.released
+    //   if (f.genres?.length == 0) delete f.genres
 
-      const json = JSON.stringify(f)
-      const hash = btoa(json)
+    //   const json = JSON.stringify(f)
+    //   const hash = btoa(json)
 
-      return hash
-    },
+    //   return hash
+    // },
 
     //+-------------------------------------------------
     // search(hash)
@@ -327,24 +327,24 @@ export const useDataStore = defineStore('data', {
     // -----
     // Created on Fri Nov 24 2023
     //+-------------------------------------------------
-    async search(filters) {
-      let hash = this.searchHash(filters)
-      if (!hash) return
+    // async search(filters) {
+    //   let hash = this.searchHash(filters)
+    //   if (!hash) return
 
-      if (search[hash]) {
-        log('🛑 Search', hash, 'already done')
-        return
-      } else log('🪂 Searching hash', hash, filters)
+    //   if (search[hash]) {
+    //     log('🛑 Search', hash, 'already done')
+    //     return
+    //   } else log('🪂 Searching hash', hash, filters)
 
-      search[hash] = true
-      const xhr = await $nuxt.$axios.get(`search/${hash}.json`)
-      if (xhr.status) {
-        log('🪂 Data from API', xhr.data)
-        await this.process(xhr.data, 'api')
-      }
+    //   search[hash] = true
+    //   const xhr = await $nuxt.$axios.get(`search/${hash}.json`)
+    //   if (xhr.status) {
+    //     log('🪂 Data from API', xhr.data)
+    //     await this.process(xhr.data, 'api')
+    //   }
 
-      return true
-    },
+    //   return true
+    // },
 
     //+-------------------------------------------------
     // process()

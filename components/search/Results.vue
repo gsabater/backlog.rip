@@ -156,11 +156,10 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon 13 January 2025 - 17:41:24
+ * Modified: Tue 14 January 2025 - 19:21:57
  **/
 
 import { useThrottleFn } from '@vueuse/core'
-// import searchFn from '~/utils/search'
 
 export default {
   name: 'SearchResults',
@@ -173,16 +172,15 @@ export default {
 
     filters: {
       type: Object,
-      default: () => ({ string: '' }),
+      default: null,
     },
 
-    // Source helper
-    // Used as an identifier of f.source
-    // or the array of items to search at
+    // Source array
+    // Used for constrained searches
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     source: {
       type: [String, Array],
-      default: 'all', // 'library', []
+      default: null, // 'library', []
     },
 
     layout: {
@@ -199,6 +197,7 @@ export default {
     // const $data = useDataStore()
     const $search = useSearchStore()
 
+    const ready = false
     const items = ref([])
 
     //+-------------------------------------------------
@@ -213,24 +212,43 @@ export default {
     //+-------------------------------------------------
     const search = useThrottleFn(
       async (trigger = null) => {
-        console.warn('thro', props.disabled, props.filters, Math.floor(Date.now() / 1000))
+        if (!$app.ready) return
         if (props.disabled) return
-        if (Object.keys(props.filters).length === 0) return
+        // if (Object.keys(props.filters).length === 0) return
 
-        // log('🪡 search:start', trigger || 'direct')
+        log('search', '⇢ search:start', trigger || 'direct')
         emit('search:start', trigger)
 
-        // const filters = structuredClone(props.filters)
-        const filters = JSON.parse(JSON.stringify(props.filters))
-        if (props.source && !filters.source) filters.source = props.source
+        // let filters = null
+        // if (props.filters?.source) {
+        //   filters = JSON.parse(JSON.stringify(props.filters))
+        // }
 
-        const search = $search.run(filters)
+        // if (props.source) {
+
+        //   debugger
+        // }
+
+        const search = $search.run()
         items.value = search.items
 
         emit('search:end')
       },
       1000,
       true
+    )
+
+    // Watcher
+    // Trigger to fire a search
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    watch(
+      () => $search.f,
+      (value) => {
+        if (props.disabled) return
+        console.warn('💢💢💢💥💥💥', value)
+        search('filters:updated')
+      },
+      { deep: true }
     )
 
     return { search, items, loading: $search.loading }
@@ -242,6 +260,7 @@ export default {
 
   computed: {
     ...mapStores(useDataStore, useSearchStore),
+    // ...mapState(useSearchStore, ['f','loading']),
 
     //+-------------------------------------------------
     // visibleProps()
@@ -250,12 +269,17 @@ export default {
     // Created on Tue Dec 31 2024
     //+-------------------------------------------------
     visibleProps() {
-      return searchService.visibleProps(this.filters)
+      return searchService.visibleProps(this.searchStore.f)
     },
   },
 
   watch: {
-    source: {
+    '$app.ready': function () {
+      // console.warn('watch $app.ready')
+      this.init()
+    },
+
+    'source': {
       handler() {
         if (!this.source.length) return
         this.search('watch:source')
@@ -265,12 +289,27 @@ export default {
   },
 
   methods: {
-    init() {
+    async init() {
+      if (!this.$app.ready) return
+
+      let filters = null
+
+      if (this.source?.length) {
+        filters = {
+          source: this.source,
+        }
+      }
+
       // this.loadRepositories()
+      // console.warn(this.filters, this.source, JSON.stringify(this.searchStore.f))
+      await this.searchStore.prepare(filters)
+      // console.warn(JSON.stringify(this.searchStore.f))
       this.$emit('search:ready')
 
-      if (!Array.isArray(this.source)) return
-      this.search('init:array')
+      // if (Object.keys(this.filters).length === 0) return
+      // if (!Array.isArray(this.source)) return
+      // this.search('init')
+      // this.search('init:array')
     },
   },
 
@@ -278,7 +317,7 @@ export default {
     this.init()
 
     this.$mitt.on('data:updated', () => {
-      if (!$app.ready) return
+      console.warn('search data:updated')
       this.search('data:updated')
     })
 

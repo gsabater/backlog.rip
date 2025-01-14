@@ -4,16 +4,16 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <div class="page-pretitle">Your games</div>
-          <h2 class="page-title text-capitalize cursor-pointer d-inline-block">
+          <h2 class="page-title text-capitalize d-inline-block">
             {{ source }}
-            <Icon
+            <!-- <Icon
               size="12"
               class="text-muted ms-1"
               style="width: 1rem; transform: translateY(2px)">
               ChevronDown
-            </Icon>
+            </Icon> -->
 
-            <b-dropdown style="overflow: visible; min-width: 240px">
+            <b-dropdown v-if="false" style="overflow: visible; min-width: 240px">
               <span class="dropdown-header">This is your complete library</span>
 
               <NuxtLink to="/library" class="dropdown-item">
@@ -163,7 +163,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th December 2023
- * Modified: Wed 08 January 2025 - 17:37:24
+ * Modified: Sat 11 January 2025 - 20:10:41
  **/
 
 export default {

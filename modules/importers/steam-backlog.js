@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th November 2024
- * Modified: Tue 17 December 2024 - 11:36:47
+ * Modified: Wed 22 January 2025 - 15:57:03
  */
 
 let $log = null
@@ -185,7 +185,7 @@ export default {
     app.name = data.name
     app.id.steam = Number(data.appid)
 
-    app.date.steambacklog_updated_at = dates.stamp()
+    app.dates.steambacklog_updated_at = dates.stamp()
     app.is.steam = app.is.steam || dates.stamp()
 
     if (states[data.state]) app.state = states[data.state]

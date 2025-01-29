@@ -18,7 +18,7 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Fri 03 January 2025 - 14:26:16
+ * Modified: Thu 16 January 2025 - 17:10:05
  **/
 
 export default {
@@ -150,7 +150,7 @@ export default {
         return
       }
 
-      if (this.showing < this.assets.length - 1) this.showing++
+      if (this.assets && this.showing < this.assets.length - 1) this.showing++
       else this.showing = -1
     },
 
@@ -164,16 +164,15 @@ export default {
     // Updated on Tue Nov 05 2024 - Added timestamp and null values
     //+-------------------------------------------------
     assetUrl(index) {
-      if (index == -1) {
-        this.adaptForIGDB()
-        return '/img/illustrations/wU08XKouRlOjqQsczsNQiw.webp'
-      }
-
       const cover = this.app?.cover
       const assets = this.assets[index]
       // console.warn('assetUrl', index, this.app.uuid, this.asset, this.is, assets, cover)
 
-      if (!assets) return
+      if (!assets || index == -1) {
+        this.adaptForIGDB()
+        return '/img/illustrations/wU08XKouRlOjqQsczsNQiw.webp'
+      }
+
       let theUrl = null
 
       if (assets.includes('igdb/')) this.is = 'igdb'

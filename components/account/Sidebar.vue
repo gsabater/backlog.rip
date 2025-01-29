@@ -91,8 +91,8 @@
 
     <li class="nav-item">
       <NuxtLink to="/account/linked" class="nav-link">
-        <Icon class="me-2">CirclesRelation</Icon>
-        Linked libraries
+        <Icon class="me-2">LayersIntersect</Icon>
+        Integrations
       </NuxtLink>
     </li>
 

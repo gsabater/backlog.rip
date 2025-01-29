@@ -25,9 +25,9 @@
 
             <label class="form-check form-switch cursor-pointer pb-2">
               <input
+                v-model="$auth.config.game_state_borders"
                 type="checkbox"
                 class="form-check-input"
-                v-model="$auth.config.game_state_borders"
                 @change="storeConfig('game_state_borders')" />
               <span class="form-check-label">Display state borders</span>
               <span class="form-check-description">
@@ -41,13 +41,14 @@
         <div class="col"></div>
 
         <div
-          class="col-md-3"
+          class="row row-deck row-cards row-games-list col-md-3"
           style="display: flex; flex-direction: column; align-items: center">
           <b-game
             :data="{
-              steam_id: '292030',
-              name: 'The Witcher® 3: Wild Hunt',
+              uuid: 'dummy',
               state: 3,
+              steam_id: '1245620',
+              name: 'Elden Ring',
             }"
             :disabled="true"
             style="max-width: 115px; transform: translateY(-25px)"></b-game>
@@ -80,9 +81,9 @@
 
             <label class="form-check form-switch cursor-pointer pb-2">
               <input
+                v-model="$auth.config.favorites"
                 type="checkbox"
                 class="form-check-input"
-                v-model="$auth.config.favorites"
                 @change="storeConfig('favorites')" />
               <span class="form-check-label">
                 <Icon size="14" width="1.5" style="transform: translateY(-2px)">
@@ -120,9 +121,9 @@
 
             <label class="form-check form-switch cursor-pointer pb-2">
               <input
+                v-model="$auth.config.pinned"
                 type="checkbox"
                 class="form-check-input"
-                v-model="$auth.config.pinned"
                 @change="storeConfig('pinned')" />
               <span class="form-check-label">
                 <Icon size="14" width="1.5" style="transform: translateY(-2px)">
@@ -151,9 +152,9 @@
             </label>
             <label class="form-check form-switch cursor-pointer pb-2">
               <input
+                v-model="$auth.config.hidden"
                 type="checkbox"
                 class="form-check-input"
-                v-model="$auth.config.hidden"
                 @change="storeConfig('hidden')" />
               <span class="form-check-label">Hidden games</span>
               <span class="form-check-description">
@@ -202,9 +203,9 @@
 
       <div class="form-check form-switch form-switch-lg">
         <input
+          v-model="$auth.config.debug"
           type="checkbox"
           class="form-check-input"
-          v-model="$auth.config.debug"
           @change="storeConfig('debug')" />
         <span class="form-check-label form-check-label-on">Debugging enabled</span>
         <span class="form-check-label form-check-label-off">Developer mode is off</span>
@@ -219,7 +220,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th July 2024
- * Modified: Mon 30 September 2024 - 13:35:38
+ * Modified: Mon 27 January 2025 - 17:43:01
  **/
 
 export default {

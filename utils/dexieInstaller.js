@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th November 2023
- * Modified: Mon 30 December 2024 - 15:45:23
+ * Modified: Mon 27 January 2025 - 17:56:30
  */
 
 export class DexieInstaller {
@@ -102,14 +102,15 @@ export class DexieInstaller {
   }
 
   //+-------------------------------------------------
-  // checkin()
+  // configure()
   // Checks in the user in the database and updates
   // config with missing values
   // -----
+  // TODO: those values should be defined in ENUMS
+  // -----
   // Created on Thu Jan 25 2024
   //+-------------------------------------------------
-  async checkin() {
-    // TODO: those values should be defined in ENUMS
+  async configure() {
     const config = {
       debug: false,
 

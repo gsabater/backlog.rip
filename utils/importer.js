@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Sun 22 December 2024 - 11:42:34
+ * Modified: Thu 16 January 2025 - 17:21:10
  */
 
 import axios from 'axios'
@@ -314,7 +314,12 @@ export default {
     // Preload missing games from the API
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     x.log('🪂 Requesting missing data')
-    $data.updateMissing(missing)
+    if (missing.length) {
+      let body = {}
+      body[x.source] = missing
+      dataService.getBatch(body)
+    }
+    // $data.updateMissing(missing)
 
     // x.log('Check 5.2: Preparing an Array ready to import')
     // apps.toImport = apps.toReview.map((item) => {

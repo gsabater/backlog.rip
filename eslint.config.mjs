@@ -5,17 +5,21 @@
  *           https://eslint.org/docs/latest/use/configure/migration-guide
  * ----------------------------------------------
  * Created Date: 11th November 2023
- * Modified: Fri 27 December 2024 - 13:42:21
+ * Modified: Tue 28 January 2025 - 16:56:58
  */
 
-import globals from 'globals'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import js from '@eslint/js'
+import path from 'node:path'
+import globals from 'globals'
+import eslintPluginPrettier from 'eslint-plugin-prettier'
+import eslintConfigPrettier from 'eslint-config-prettier'
+
+import { fileURLToPath } from 'node:url'
 import { FlatCompat } from '@eslint/eslintrc'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+
 const compat = new FlatCompat({
   baseDirectory: __dirname,
   recommendedConfig: js.configs.recommended,
@@ -27,10 +31,8 @@ export default [
     ignores: [
       '**/node_modules',
       '**/build',
-      '**/dist',
       '**/public',
       '**/dist',
-      '**/node_modules',
       '**/schema',
       '**/*.tmpl.*',
       '**/sw.js',
@@ -83,11 +85,24 @@ export default [
         delay: true,
         dates: true,
         format: true,
+        helpers: true,
+
+        dataService: true,
+        gameService: true,
+        queueService: true,
+        searchService: true,
       },
+    },
+
+    plugins: {
+      prettier: eslintPluginPrettier,
+      eslintConfigPrettier,
     },
 
     rules: {
       'no-debugger': 'warn',
+      'no-unreachable': 'warn',
+
       'vue/no-v-html': 'off',
       'vue/first-attribute-linebreak': 'off',
       'vue/no-multiple-template-root': 'off',
@@ -95,6 +110,9 @@ export default [
       // override/add rules settings here, such as:
       // 'vue/no-unused-vars': 'error'
       // "vue/require-default-prop": "off",
+
+      // Notify prettier rules as errors in eslint
+      // 'prettier/prettier': 'warn',
 
       'vue/order-in-components': [
         'error',

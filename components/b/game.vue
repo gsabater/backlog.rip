@@ -69,6 +69,7 @@
         app.state ? 'is-state_' + app.state : '',
         {
           'is-bordered': $auth.config.game_state_borders,
+          'is-disabled': disabled,
           'is-tracking': tracking,
         },
       ]">
@@ -201,7 +202,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri 10 January 2025 - 19:27:43
+ * Modified: Thu 16 January 2025 - 17:04:18
  **/
 
 export default {
@@ -393,9 +394,8 @@ export default {
       if (!this.$app.ready) return
 
       if (this.api) this.loadApiData()
-      if (this.data) this.app = this.dataStore.prepareToData(this.data)
       if (this.uuid) this.app = this.dataStore.get(this.uuid?.uuid || this.uuid)
-
+      if (this.data?.uuid) this.app = dataService.prepareToData(this.data)
       if (this.tracking) this.initTracking()
     },
   },

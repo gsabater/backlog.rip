@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Wed 29 January 2025 - 17:39:46
+ * Modified: Wed 29 January 2025 - 17:58:28
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -77,6 +77,7 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     // sync()
     // Starts the synchronization process for every object
+    // Starts the synchronization process for every object
     // -----
     // Created on Mon Aug 19 2024
     //+-------------------------------------------------
@@ -104,6 +105,7 @@ export const useCloudStore = defineStore('cloud', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       await this.doSync('account')
 
+      // Synchronize states
       // Synchronize states
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       await this.doSync('states')

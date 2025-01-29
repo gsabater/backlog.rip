@@ -6,7 +6,15 @@
           <h1 class="m-0">Community</h1>
         </div>
       </div>
-      <p>Be part of the Backlog.rip community and showcase your library to the world.</p>
+      <p>
+        The community is where your profile comes to life. Share the games in your
+        library, showcase your activity, and climb the rankings to see how you compare
+        with others.
+      </p>
+      <p>
+        Browse through user lists, discover new favorites, and see what is going on. It's
+        a simple way to connect through shared interests and accomplishments.
+      </p>
     </div>
     <div class="card-footer">
       <div class="row align-items-center">
@@ -18,10 +26,10 @@
               type="checkbox"
               @change="update('guild')" />
             <span class="form-check-label form-check-label-on">
-              I'm a part of the community and my profile is public
+              My profile is public and visible by the community
             </span>
             <span class="form-check-label form-check-label-off">
-              My profile is private and I don't want to appear in the community
+              My profile is private and I don't want to be part of the community
             </span>
           </label>
         </div>
@@ -89,7 +97,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 23rd December 2024
- * Modified: Mon 30 December 2024 - 16:36:29
+ * Modified: Mon 27 January 2025 - 17:48:38
  **/
 
 export default {

@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Fri 10 January 2025 - 19:35:01
+ * Modified: Wed 29 January 2025 - 16:27:23
  */
 
 // import { reactive } from 'vue'
@@ -121,7 +121,6 @@ async function toggleSidebar($nuxt) {
 // Created on Fri Jan 12 2024
 // Updated on Fri Sep 20 2024 - Added app.wip for localhost
 //+-------------------------------------------------
-
 function detectEnvironment() {
   if (window.location.hostname == 'localhost') {
     app.wip = true
@@ -148,9 +147,8 @@ function detectEnvironment() {
 async function init() {
   $nuxt ??= useNuxtApp()
   $game ??= useGameStore()
-  $guild ??= useGuildStore()
+
   $repos ??= useRepositoryStore()
-  $search ??= useSearchStore()
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Initialize stores
@@ -158,9 +156,7 @@ async function init() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   $game.init()
-  $guild.init()
   $repos.init()
-  $search.init()
 }
 
 //+-------------------------------------------------
@@ -175,8 +171,12 @@ async function initClient() {
   $user ??= useUserStore()
   $list ??= useListStore()
   $cloud ??= useCloudStore()
+  $guild ??= useGuildStore()
   $state ??= useStateStore()
+  $search ??= useSearchStore()
   $integration ??= useLibraryStore()
+
+  // console.groupCollapsed('🔸 Initializing')
 
   const breakpoints = useBreakpoints({
     sm: 0,
@@ -187,6 +187,8 @@ async function initClient() {
 
   const { width, height } = useWindowSize()
   const { isFullscreen, toggle } = useFullscreen(document.documentElement)
+
+  detectEnvironment()
 
   app.width = width
   app.device = breakpoints.active()
@@ -200,6 +202,7 @@ async function initClient() {
   // either locally or online and load values
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   await $user.authenticate()
+  $guild.init('ping')
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Initialize stores
@@ -207,6 +210,7 @@ async function initClient() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   await $data.init()
+  $search.init()
   $integration.init()
   await $state.init()
   await $list.init()
@@ -218,10 +222,17 @@ async function initClient() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   $cloud.connect()
 
-  detectEnvironment()
-
+  // console.groupEnd()
   await delay(333)
   app.ready = true
+
+  handleEvents()
+}
+
+function handleEvents() {
+  $nuxt.$mitt.on('sync:done', () => {
+    dataService.updateBatch(['empty', ':outdated'])
+  })
 }
 
 export default defineNuxtPlugin(() => {

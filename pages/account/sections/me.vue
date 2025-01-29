@@ -27,7 +27,7 @@
             @change="update('username', $auth.me.username)" />
         </div>
 
-        <div v-if="$app.wip" class="mb-3">
+        <!-- <div v-if="false && $app.wip" class="mb-3">
           <label class="form-label font-serif">Your public profile URL</label>
           <div class="input-group input-group-flat">
             <span class="smadll input-group-text">https://backlog.rip/@</span>
@@ -46,8 +46,8 @@
               and must not contain spaces, special characters, or emoji.
             </small>
           </div>
-        </div>
-        <div class="mb-3">
+        </div> -->
+        <div v-if="$app.wip" class="mb-3">
           <div class="form-check-description ms-1" style="vertical-align: top">
             <Icon
               size="14"
@@ -57,10 +57,10 @@
               Click
             </Icon>
             <div class="d-inline-block">
-              To change your appearance on the site and other preferences
+              To change your appearance on the site community pages
               <br />
               go to the
-              <NuxtLink to="/account/community">community configuration page</NuxtLink>
+              <NuxtLink to="/account/community">community configuration</NuxtLink>
             </div>
           </div>
         </div>
@@ -145,7 +145,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon 13 January 2025 - 17:50:39
+ * Modified: Wed 29 January 2025 - 17:38:48
  **/
 
 export default {

@@ -177,7 +177,7 @@
                 <div>
                   <div class="btn btn-primary w-100" @click="scanAndPrepare">
                     <Icon class="me-2">ArrowsTransferDown</Icon>
-                    Start syncronization
+                    Start synchronization
                   </div>
 
                   <!-- <small v-if="$auth.user.steam_updated_at" class="text-muted">
@@ -415,7 +415,7 @@
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex align-items-center">
-                      <div class="subheader">Syncronizing</div>
+                      <div class="subheader">Synchronizing</div>
                     </div>
                     <div class="h2 mb-1 d-flex align-items-center">
                       <Icon class="mr-2 text-muted mt-1">Refresh</Icon>
@@ -809,7 +809,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Tue 17 December 2024 - 14:58:31
+ * Modified: Wed 29 January 2025 - 17:52:32
  **/
 
 export default {

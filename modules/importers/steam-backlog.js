@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th November 2024
- * Modified: Wed 22 January 2025 - 15:57:03
+ * Modified: Wed 29 January 2025 - 17:52:07
  */
 
 let $log = null
@@ -36,7 +36,7 @@ export default {
     author: 'Gaspar S.',
     updated_at: '2024-12-17',
     description:
-      'Syncronize completion states for every game on your Steam backlog profile',
+      'Synchronize completion states for every game on your Steam backlog profile',
 
     source: {
       key: 'steam',

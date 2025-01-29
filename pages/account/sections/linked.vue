@@ -35,12 +35,12 @@
             <template v-if="libraryStore.isLinked(platform)">
               <NuxtLink :to="'/import/' + platform" class="btn btn-primary w-100 mb-2">
                 <Icon class="me-3">ArrowsTransferDown</Icon>
-                Syncronize now
+                Synchronize now
               </NuxtLink>
             </template>
             <template v-else>
               <div class="text-secondary mb-3">
-                Before you can syncronize your library with
+                Before you can synchronize your library with
                 <strong class="text-white font-serif">
                   {{ mod.manifest.source.name }}
                 </strong>
@@ -73,7 +73,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Mon 27 January 2025 - 17:16:08
+ * Modified: Wed 29 January 2025 - 17:52:23
  **/
 
 export default {

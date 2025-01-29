@@ -171,7 +171,7 @@
         <div v-if="ui.complete" class="row g-4">
           <div class="col-11 mx-auto text-center">
             <div class="text-secondary mb-3">
-              Your local data has been syncronized with the cloud. You can close this
+              Your local data has been synchronized with the cloud. You can close this
               window, but it's recommended to reload the application.
             </div>
             <v-btn
@@ -235,7 +235,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 23rd August 2024
- * Modified: Wed 29 January 2025 - 17:24:39
+ * Modified: Wed 29 January 2025 - 17:51:36
  **/
 
 export default {

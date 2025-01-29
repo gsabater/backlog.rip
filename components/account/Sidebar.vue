@@ -78,7 +78,7 @@
       <li>
         <a href="#status" class="nav-link ms-2 pb-0">
           <Icon size="6" width="1" class="me-2">PointFilled</Icon>
-          Syncronization status
+          Synchronization status
         </a>
       </li>
       <li>

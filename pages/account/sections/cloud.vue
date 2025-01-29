@@ -87,7 +87,7 @@
                 </span>
 
                 <span class="form-check-description">
-                  When enabled, conflicts in syncronization conflicts will be resolved
+                  When enabled, conflicts in synchronization conflicts will be resolved
                   based on the version tolerance and action.
                 </span>
               </label>
@@ -122,7 +122,7 @@
 
   <div v-if="$auth.config.cloud && $cloud.is !== 'local'" class="card mb-3">
     <div class="card-body">
-      <h2 id="status" class="mb-3">Syncronization status</h2>
+      <h2 id="status" class="mb-3">Synchronization status</h2>
       <!-- <p class="card-subtitle">Your data is backed up in the cloud</p> -->
 
       <template>
@@ -143,7 +143,7 @@
             <Icon size="18" width="1.5">CloudRain</Icon>
           </div>
           <div class="ms-3">
-            <span class="text-body">Syncronizing...</span>
+            <span class="text-body">Synchronizing...</span>
           </div>
         </div>
 
@@ -154,7 +154,7 @@
             <Icon size="18" width="1.5">CloudCheck</Icon>
           </div>
           <div class="ms-3">
-            <span class="text-body">Connected and syncronized</span>
+            <span class="text-body">Connected and synchronized</span>
             <div class="text-secondary">
               Last backup
               {{ dates.dynamicTimeAgo($auth.cloud.updated_at) }} ago
@@ -289,7 +289,7 @@
             </div> -->
             <small class="text-secondary">
               <Icon size="14">Rotate2</Icon>
-              This syncronization is planned for a future update
+              This synchronization is planned for a future update
             </small>
           </td>
         </tr>
@@ -306,7 +306,7 @@
             </div> -->
             <small class="text-secondary">
               <Icon size="14">Rotate2</Icon>
-              This syncronization is planned for a future update
+              This synchronization is planned for a future update
             </small>
           </td>
         </tr>
@@ -316,7 +316,7 @@
 
   <div v-if="$auth.config.cloud && $cloud.is == 'sync:done'" class="card mb-3">
     <div class="card-body">
-      <h2 class="card-title mb-2">Syncronization history</h2>
+      <h2 class="card-title mb-2">Synchronization history</h2>
       <p class="card-subtitle">Your latest backups</p>
     </div>
     <table class="table card-table table-vcenter">
@@ -402,7 +402,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th August 2024
- * Modified: Wed 29 January 2025 - 16:23:55
+ * Modified: Wed 29 January 2025 - 17:52:16
  **/
 
 export default {

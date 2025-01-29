@@ -8,7 +8,7 @@
             style="max-width: 40px; max-height: 40px" />
         </div>
         <div>
-          <small class="text-secondary">Syncronize your library with</small>
+          <small class="text-secondary">Synchronize your library with</small>
           <h3 class="card-title lh-2 mb-1">{{ module?.manifest.source.name }}</h3>
         </div>
         <!-- <div class="ms-auto text-center">
@@ -86,7 +86,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 4th December 2024
- * Modified: Thu 12 December 2024 - 16:46:34
+ * Modified: Wed 29 January 2025 - 17:51:43
  **/
 
 export default {

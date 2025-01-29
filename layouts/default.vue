@@ -766,7 +766,7 @@
                     <Icon size="18" width="1.5">CloudCheck</Icon>
                   </div>
                   <div class="ms-3">
-                    <a href="javascript:void(0)" class="text-body">Syncronized</a>
+                    <a href="javascript:void(0)" class="text-body">Synchronized</a>
                     <div v-tippy="$auth.cloud.updated_at" class="text-secondary">
                       Last backup
                       {{ dates.dynamicTimeAgo($auth.cloud.updated_at) }} ago
@@ -1158,7 +1158,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed 29 January 2025 - 16:23:46
+ * Modified: Wed 29 January 2025 - 17:52:03
  **/
 
 export default {

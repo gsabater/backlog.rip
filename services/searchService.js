@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Tue 14 January 2025 - 14:14:18
+ * Modified: Tue 28 January 2025 - 17:24:07
  */
 
 export default {
@@ -24,6 +24,8 @@ export default {
     let searchString = filters?.string?.toLowerCase().replace(re, '').trim()
 
     for (const index in source) {
+      // if (app.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') debugger
+
       const app = source[index]
       const appName = this.cleanAppName(app.name)
 
@@ -439,6 +441,6 @@ export default {
 
     const { page, perPage } = filters.show
     const start = page * perPage
-    return Math.min(start + perPage, results)
+    return Math.min(start, results)
   },
 }

@@ -331,7 +331,11 @@
           </div>
         </div>
 
-        <div v-else class="px-3 my-2" @click.stop="$mitt.emit('search:palette')">
+        <!-- TEMP disabled, not working the search -->
+        <div
+          v-else-if="false"
+          class="px-3 my-2"
+          @click.stop="$mitt.emit('search:palette')">
           <div class="input-group input-group-flat input-palette cursor-pointer">
             <span class="input-group-text">
               <Icon size="14" class="me-1">Search</Icon>
@@ -687,7 +691,7 @@
                 'gray-600': $cloud.is == 'local',
                 'bg-teal-lt': $cloud.is == 'connecting',
                 'bg-teal-lt': $cloud.is == 'syncing',
-                'bg-green-lt': $cloud.is == 'syncing:done',
+                'bg-green-lt': $cloud.is == 'sync:done',
                 'bg-orange-lt': $cloud.is == 'conflict',
                 'bg-red-lt': $cloud.is == 'error',
               }"
@@ -710,7 +714,7 @@
               <Icon v-if="$cloud.is == 'error'" size="14" width="1.5">CloudOff</Icon>
               <Icon v-if="$cloud.is == 'connecting'" size="14" width="1.5">Point</Icon>
               <Icon v-if="$cloud.is == 'syncing'" size="14" width="1.5">CloudRain</Icon>
-              <Icon v-if="$cloud.is == 'syncing:done'" size="14" width="1.5">
+              <Icon v-if="$cloud.is == 'sync:done'" size="14" width="1.5">
                 CloudCheck
               </Icon>
             </div>
@@ -749,7 +753,7 @@
                 </div>
               </div>
 
-              <div v-if="$cloud.is == 'syncing:done'" class="dropdown-item disabled">
+              <div v-if="$cloud.is == 'sync:done'" class="dropdown-item disabled">
                 <div class="d-flex align-items-center">
                   <div
                     class="avatar avatar-sm rounded-circle bg-green-lt"
@@ -784,9 +788,7 @@
                 </div>
               </div>
 
-              <div
-                v-else-if="$cloud.is !== 'syncing:done'"
-                class="dropdown-item disabled">
+              <div v-else-if="$cloud.is !== 'sync:done'" class="dropdown-item disabled">
                 <div class="d-flex align-items-center">
                   <span class="badge bg-orange badge-blink"></span>
                   <div class="ms-3">
@@ -1156,7 +1158,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Sat 11 January 2025 - 16:19:44
+ * Modified: Wed 29 January 2025 - 16:23:46
  **/
 
 export default {

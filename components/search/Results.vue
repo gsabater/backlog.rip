@@ -156,7 +156,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 14 January 2025 - 19:21:57
+ * Modified: Tue 28 January 2025 - 17:22:08
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -195,6 +195,7 @@ export default {
   setup(props, { emit }) {
     // const $nuxt = useNuxtApp()
     // const $data = useDataStore()
+    const $route = useRoute()
     const $search = useSearchStore()
 
     const ready = false
@@ -216,6 +217,7 @@ export default {
         if (props.disabled) return
         // if (Object.keys(props.filters).length === 0) return
 
+        console.groupCollapsed('🔸 Search at ..' + $route.path + ' (' + trigger + ')')
         log('search', '⇢ search:start', trigger || 'direct')
         emit('search:start', trigger)
 
@@ -233,6 +235,7 @@ export default {
         items.value = search.items
 
         emit('search:end')
+        console.groupEnd()
       },
       1000,
       true
@@ -243,9 +246,9 @@ export default {
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     watch(
       () => $search.f,
-      (value) => {
+      (value, old) => {
         if (props.disabled) return
-        console.warn('💢💢💢💥💥💥', value)
+        // console.warn('💢💢💢💥💥💥', value)
         search('filters:updated')
       },
       { deep: true }
@@ -300,26 +303,21 @@ export default {
         }
       }
 
-      // this.loadRepositories()
-      // console.warn(this.filters, this.source, JSON.stringify(this.searchStore.f))
       await this.searchStore.prepare(filters)
-      // console.warn(JSON.stringify(this.searchStore.f))
       this.$emit('search:ready')
 
-      // if (Object.keys(this.filters).length === 0) return
-      // if (!Array.isArray(this.source)) return
-      // this.search('init')
-      // this.search('init:array')
+      // @data:updated
+      // Reset the search hashed cache
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      this.$mitt.on('data:updated', () => {
+        this.searchStore.resetHashed()
+        this.search('data:updated')
+      })
     },
   },
 
   mounted() {
     this.init()
-
-    this.$mitt.on('data:updated', () => {
-      console.warn('search data:updated')
-      this.search('data:updated')
-    })
 
     // this.$mitt.on('data:deleted', () => {
     //   if (!$app.ready) return

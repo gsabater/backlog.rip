@@ -91,6 +91,7 @@
               <b-game
                 :data="{ uuid: 'placeholder' }"
                 tracking
+                disabled
                 style="max-width: 250px"></b-game>
             </div>
             <div
@@ -195,7 +196,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 14 January 2025 - 18:40:39
+ * Modified: Thu 16 January 2025 - 17:02:39
  **/
 
 export default {
@@ -402,10 +403,10 @@ export default {
     // -----
     // Created on Tue Sep 24 2024
     //+-------------------------------------------------
-    // async getData() {
-    //   if (this.f.source !== 'all') return
-    //   this.repositoryStore.topGames('popular')
-    // },
+    async getData() {
+      if (this.$route.path !== '/games') return
+      this.repositoryStore.topGames('popular')
+    },
 
     //+-------------------------------------------------
     // init()
@@ -416,7 +417,7 @@ export default {
       // console.warn('init', Math.floor(Date.now() / 1000))
       if (!this.$app.ready) return
 
-      // this.getData()
+      this.getData()
 
       // this.mergeFilters()
       // this.search('init')

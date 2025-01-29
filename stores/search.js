@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Tue 14 January 2025 - 19:20:31
+ * Modified: Wed 22 January 2025 - 17:38:41
  */
 
 import search from '~/services/searchService'
@@ -23,6 +23,11 @@ export const useSearchStore = defineStore('search', {
     f: {},
     ready: false,
     loading: false,
+
+    // Latest
+    // Hash used to identify the last search
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    latest: null,
 
     // base
     // Base filters template
@@ -50,11 +55,6 @@ export const useSearchStore = defineStore('search', {
         card: ['default'],
       },
     },
-
-    // Latest
-    // Hash used to identify the last search
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    latest: null,
 
     // Stats object
     // Used to display useful infromation about the search
@@ -236,6 +236,8 @@ export const useSearchStore = defineStore('search', {
         return { type: 'pinned', apps: $data.library('object') }
       }
 
+      // TODO: this could be a pre-filter in $data
+      // that can potentially be better than filtering in the service the whole lib
       if (filters.source.includes(':hidden')) {
         return { type: 'hidden', apps: $data.library('object') }
       }
@@ -265,6 +267,7 @@ export const useSearchStore = defineStore('search', {
       let source = this.getSource(filters)
       let hash = search.makeHash(source, filters)
       this.handleRouteChanges(filters)
+      filters.is = source.type
 
       let filtered = null
       let paginated = null
@@ -277,6 +280,10 @@ export const useSearchStore = defineStore('search', {
       this.stats.start = performance.now()
       if (source.type == 'all') this.stats.apps = $nuxt.$app.count.api
       else this.stats.apps = Object.keys(source.apps).length
+
+      if (source.type == 'all' && !$repos.loaded.includes('popular')) {
+        $repos.topGames('popular')
+      }
 
       this.searchAPI(source, filters)
       filtered = this.filter(hash, source, filters)
@@ -332,7 +339,6 @@ export const useSearchStore = defineStore('search', {
     async searchAPI(source, filters) {
       if (source.type !== 'all') return
 
-      $repos.topGames('popular')
       this.stats.api_start = performance.now()
       await this.callAPI({ ...filters })
       // if (!api) return
@@ -357,8 +363,6 @@ export const useSearchStore = defineStore('search', {
       }
 
       let { hash, slug, json } = hasher
-      log('search', `· ⇢ Searching API`, hash)
-      log('search', '·· ⇢ API Filters', JSON.stringify(filters))
 
       if (hashed[hash]) {
         log('search', '🛑 Skipping search, already done')
@@ -366,7 +370,8 @@ export const useSearchStore = defineStore('search', {
       }
 
       hashed[hash] = true
-      log('search', '·· ⇢ API Hash', hash)
+      log('search', `· ⇢ Searching API`, hash)
+      log('search', '·· ⇢ API Filters', JSON.stringify(filters))
 
       const xhr = await $nuxt.$axios.get(`search/${slug}.json`)
       if (xhr.status) {
@@ -375,6 +380,23 @@ export const useSearchStore = defineStore('search', {
       }
 
       return true
+    },
+
+    //+-------------------------------------------------
+    // resetHashed()
+    // Resets the hashed object and latest values while
+    // keeping API: hashes
+    // -----
+    // Created on Fri Jan 17 2025
+    //+-------------------------------------------------
+    resetHashed() {
+      if (Object.keys(hashed).length === 0) return
+
+      Object.keys(hashed).forEach((key) => {
+        if (!key.includes('API:')) delete hashed[key]
+      })
+
+      this.latest = null
     },
 
     setTime(time) {

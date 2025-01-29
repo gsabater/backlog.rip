@@ -396,11 +396,11 @@ Selected
   <div class="col text-end d-flex align-items-center" style="justify-content: flex-end">
     <v-btn
       v-tippy="'Get a random game from this list'"
-      variant="text"
+      variant="tonal"
       size="small"
       class="mx-1 p-0"
       color="blue-grey-lighten-1"
-      style="min-width: 1px; aspect-ratio: 1"
+      style="min-width: 1px; aspect-ratio: 1; --v-activated-opacity: 0.05"
       @click="$mitt.emit('game:random', { filters: f })">
       <Icon width="1.2" size="16" class="mx-1">Dice5</Icon>
       <!-- <Icon class="text-muted" size="12" width="2">ChevronDown</Icon> -->
@@ -408,10 +408,11 @@ Selected
 
     <v-btn
       id="⚓itemDetails"
-      variant="text"
+      variant="tonal"
       size="small"
-      class="mx-1"
-      color="blue-grey-lighten-1">
+      class="mx-1 p-0"
+      color="blue-grey-lighten-1"
+      style="--v-activated-opacity: 0.05">
       <Icon width="1.2" size="16" class="me-1">PlayCardStar</Icon>
       <Icon class="text-muted" size="12" width="2">ChevronDown</Icon>
 
@@ -1137,7 +1138,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Tue 14 January 2025 - 19:25:11
+ * Modified: Thu 16 January 2025 - 16:29:24
  **/
 
 export default {

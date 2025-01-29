@@ -1,6 +1,7 @@
 [data-bs-theme='dark'] {
   header.navbar {
     --tblr-navbar-border-color: rgb(56 57 76 / 25%);
+    --tblr-navbar-color: var(--tblr-body-color);
     background-color: rgb(33 26 40 / 50%);
   }
 

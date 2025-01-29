@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 20th June 2024
- * Modified: Tue 07 January 2025 - 17:21:42
+ * Modified: Thu 16 January 2025 - 17:00:02
  **/
 
 //+-------------------------------------------------
@@ -18,8 +18,8 @@
 // v-overlay
 //+-------------------------------------------------
 .v-overlay__scrim {
-  // filter: blur(0.2px) opacity(0.9);
-  background: rgba(0, 0, 0, 0.9) !important;
+  // filter: blur(0.2px) opacity(0.9); -- no funciona
+  background: rgba(0, 0, 0, 0.95) !important;
 }
 
 //+-------------------------------------------------

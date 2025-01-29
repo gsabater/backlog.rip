@@ -1,11 +1,9 @@
-/* eslint-disable no-unused-vars */
-
 /*
  * @file:    \stores\gameStore.js
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Tue 31 December 2024 - 13:24:32
+ * Modified: Wed 29 January 2025 - 16:36:26
  */
 
 let $nuxt = null
@@ -243,26 +241,20 @@ export const useGameStore = defineStore('game', {
     // To modify the data by the user, use modify()
     // -----
     // Created on Sun Feb 11 2024
+    // Created on Fri Jan 17 2025 - New update method
     //+-------------------------------------------------
     async update(uuid, data) {
       let game = null
-      if (uuid === true) {
-        console.error('🔥', uuid, data)
-      }
 
       // Load the game by reference
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (typeof uuid !== 'string') game = uuid
+      if (typeof uuid === 'object') game = uuid
       else game = $data.get(uuid)
-      if (game === true) {
-        console.error('🔥🚫', uuid, data)
-      }
 
-      const update = this.needsUpdate(game, data)
+      if (game.uuid == '4434fa13-4f18-44ec-ad80-db412ba28a96') debugger
+
+      const update = gameService.needsUpdate(game, data)
       if (!update) return false
-
-      // log(`🌠 Update as ${update} for ${game.name}`)
-      // if (update == 'update:match') debugger
 
       // Update the game with the new data from the API
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -272,76 +264,17 @@ export const useGameStore = defineStore('game', {
       }
 
       // Create the new object with the updated data
-      // And normalize removing unwanted data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let updated = {
-        ...game,
-        ...Object.fromEntries(
-          Object.entries(data).filter(([key, value]) => value !== null)
-        ),
-      }
-
-      updated.uuid = game.uuid
-      updated = this.normalize(updated)
-      // console.warn(JSON.stringify(updated, null, 2))
-      // debugger
+      let updated = gameService.update(game, data)
+      if (!updated.updated) return
 
       // TODO: Add entry in app log
 
       // Update local data, store and indexes
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      $data.process(updated, update)
-      if (this.app.uuid == updated.uuid) this.app = updated
-    },
-
-    //+-------------------------------------------------
-    // needsUpdate()
-    // Checks if the app needs to be updated
-    // There are three possible outcomes
-    // - false if update is not required
-    // - true or update:field to get data from the api
-    // - store:db if the app needs to be added to the store
-    // -----
-    // Created on Sun Feb 11 2024
-    //+-------------------------------------------------
-    needsUpdate(app, data) {
-      if (!app) return false
-
-      // This block is only when comparing
-      // local data with the API data
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (data) {
-        // app matched with an api item
-        if (!app.id?.api && (data?.id?.api || data?.api_id)) return 'update:match'
-
-        // Is not working
-        // if (app.uuid.indexOf('local:') > -1 && (data?.id?.api || data?.api_id))
-        //   return 'update:match'
-
-        // disabled as i havent decided if this should be
-        // a match or update:api or what
-        // app has older updated_at than api data
-        // if (app.updated_at < data?.updated_at) return 'update:refresh'
-      }
-
-      // This block is only when checking app data
-      // without a new object
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (!data) {
-        // App has never been updated from the API
-        if (!app.description) return 'update:api'
-        if (!app.providers) {
-          console.warn('should update and save providers')
-        }
-      }
-
-      // For internal updates like changing data
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // nunca ocurre
-      // if (app.state !== data.state) return 'update:state'
-      if (app?.is?.dirty || data?.is?.dirty) return 'store:db'
-
-      return false
+      $data.toData(updated.app)
+      // $data.process(updated.app, 'updated:app')
+      if (this.app.uuid == updated.app.uuid) this.app = updated.app
     },
 
     //+-------------------------------------------------
@@ -409,7 +342,6 @@ export const useGameStore = defineStore('game', {
     cleanup(game) {
       if (game.dates) delete game.date
 
-      delete game.trigger
       delete game.enabled
       delete game.data
 
@@ -455,8 +387,10 @@ export const useGameStore = defineStore('game', {
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // normalizeDates()
+    // - created_at -> Is the date the game was created in the API
+    // - updated_at -> Is the date the game was updated in the API
+    // - released_at -> Is the date the game was released
     // -----
     // Created on Tue Dec 31 2024
     //+-------------------------------------------------
@@ -481,8 +415,8 @@ export const useGameStore = defineStore('game', {
     normalize_(game) {
       return {
         score: this._score(game),
+        detail: gameService._detail(game),
         playtime: this._playtime(game),
-        integrity: this._integrity(game),
 
         released: this._dateReleasedAt(game),
         releasedYear: this._dateReleasedAt(game, 'YYYY'),
@@ -491,19 +425,6 @@ export const useGameStore = defineStore('game', {
         created_at: this._dateCreatedAt(game),
         updated_at: this._dateUpdatedAt(game),
       }
-    },
-
-    //+-------------------------------------------------
-    // _integrity
-    // Returns a level of integrity for the game
-    // 'basic' is the default from the API
-    // 'full' is the complete set of data
-    // 'source' is the highest level of integrity
-    // -----
-    // Created on Tue Dec 31 2024
-    //+-------------------------------------------------
-    _integrity(app) {
-      if (!app.integrity) return 'wip'
     },
 
     //+-------------------------------------------------

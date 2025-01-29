@@ -19,13 +19,17 @@
             <div class="row g-3 justify-center">
               <div class="col-auto">&nbsp;</div>
               <div class="col-auto">
-                <b-btn to="import" color="purple" size="sm">Import your library</b-btn>
+                <v-btn to="import" color="purple" variant="flat">
+                  Import your library
+                </v-btn>
+                <!-- <b-btn to="import" color="purple" size="sm">Import your library</b-btn> -->
               </div>
 
               <div class="col-auto">
-                <b-btn to="games" variant="ghost" size="sm" color="secondary">
+                <v-btn to="games" color="secondary" variant="text">Browse games</v-btn>
+                <!-- <b-btn to="games" variant="ghost" size="sm" color="secondary">
                   Browse games
-                </b-btn>
+                </b-btn> -->
               </div>
             </div>
 
@@ -180,7 +184,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Tue 24 December 2024 - 15:23:18
+ * Modified: Mon 27 January 2025 - 17:25:39
  **/
 
 export default {
@@ -228,15 +232,9 @@ export default {
   },
 
   methods: {
-    async getGames() {
-      if (this.loaded.includes(`top:popular`)) return
-      // this.repositoryStore.topGames('popular')
-    },
-
     async init() {
       if (!this.$app.ready) return
 
-      this.getGames()
       this.$wow()
     },
   },

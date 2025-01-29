@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Wed 18 December 2024 - 15:29:33
+ * Modified: Wed 22 January 2025 - 17:07:44
  */
 
 let $nuxt = null
@@ -131,11 +131,11 @@ export const useRepositoryStore = defineStore('repository', {
     async topGames(batch) {
       if (!batch) return
       if (this.loaded.includes(`top:${batch}`)) return
+      this.loaded.push(`top:${batch}`)
 
       const xhr = await $nuxt.$axios.get(`repository/top-${batch}.json`)
       if (xhr.status) {
         $data.process(xhr.data, 'api')
-        this.loaded.push(`top:${batch}`)
       }
     },
 

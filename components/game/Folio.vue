@@ -390,6 +390,7 @@
               <!-- <h5>Direct links</h5> -->
               <div class="btn-list">
                 <v-btn-group
+                  v-if="app.id.steam"
                   variant="tonal"
                   :divided="false"
                   style="
@@ -404,7 +405,7 @@
                     variant="tonal"
                     :href="'https://store.steampowered.com/app/' + app.id.steam"
                     target="_blank"
-                    style="outline: rgb(108 122 145 / 40%) solid 1px">
+                    style="height: 36px; outline: rgb(108 122 145 / 40%) solid 1px">
                     <!-- <Icon size="15" class="me-1">BrandSteam</Icon> -->
                     <b-logo
                       name="steam"
@@ -418,7 +419,7 @@
                     v-tippy="'Run via Steam '"
                     :href="'steam://run/' + app.id.steam"
                     slim
-                    style="min-width: 0">
+                    style="height: 36px; min-width: 0">
                     <Icon size="14" width="1.5">BrowserShare</Icon>
                   </v-btn>
                 </v-btn-group>
@@ -611,133 +612,51 @@
               *+---------------------------------
               *| Scores block
               *+--------------------------------- -->
-            <div v-if="$app.wip" class="row row-deck row-cards m-0">
-              <div v-if="app.score" class="col col-md-3">
-                <div class="card">
-                  <div class="card-body" style="padding: 0.5rem 0.75rem">
-                    <div class="d-flex align-items-center">
-                      <div class="subheader">Median score</div>
-
-                      <!-- <div class="ms-auto">
-                  <tippy class="text-muted ms-auto cursor-help" :content="'xxx'">
-                    <Icon>HelpCircleFilled</Icon>
-                  </tippy>
-                </div> -->
-                    </div>
-                    <div class="h1 mt-2 mb-0">
-                      {{ app.score }}
-                      <span class="subheader">/100</span>
-                      <!-- <br />
-                <span class="subheader">Overwhelmingly positive</span> -->
-                    </div>
-
-                    <!-- <div class="progress progress-sm" style="background-color: #25384f">
-                <div class="progress-bar bg-primary" :style="`width: ${app.score}%`">
-                  <span class="visually-hidden">{{ app.score }}% Complete</span>
-                </div>
-              </div> -->
-                    <!-- <div class="d-flex mb-2">
-                <div class="subheader">125.000 votes on Steam</div>
-              </div> -->
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="app.scores.steamscore" class="col col-md-3">
-                <div class="card" style="border: 2px solid rgb(102, 192, 244)">
-                  <div class="card-body" style="padding: 0.5rem 0.75rem">
-                    <div class="d-flex align-items-center">
-                      <div class="subheader">Steam reviews</div>
-
-                      <!-- <div class="ms-auto">{{ app.scores.steamCount }} reviews on steam</div> -->
-                    </div>
-                    <div class="h1 mt-2 mb-0">
-                      {{ app.scores.steamscore }}
-                      <span class="subheader">/100</span>
-                      <span class="d-block subheader">
-                        {{ app.scores.steamscoreAlt }}
-                      </span>
-                    </div>
-
-                    <!-- <div class="progress progress-sm" style="background-color: #25384f">
-                <div class="progress-bar bg-primary" :style="`width: ${app.score}%`">
-                  <span class="visually-hidden">{{ app.score }}% Complete</span>
-                </div>
-              </div> -->
-                    <!-- <div class="d-flex mb-2">
-                <div class="subheader">125.000 votes on Steam</div>
-              </div> -->
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="app.scores.metascore" class="col col-md-3">
-                <div class="card" style="border: 2px solid rgb(84, 167, 43)">
-                  <div class="card-body" style="padding: 0.5rem 0.75rem">
-                    <div class="d-flex align-items-center">
-                      <div class="subheader">Metacritic reviews</div>
-                    </div>
-                    <div class="h1 mb-0">
-                      {{ app.scores.metascore }}
-                      <span class="subheader">/100</span>
-                      <!-- <br />
-                <span class="subheader">Overwhelmingly positive</span> -->
-                    </div>
-
-                    <!-- <div class="progress progress-sm" style="background-color: #25384f">
-                <div class="progress-bar bg-primary" :style="`width: ${app.score}%`">
-                  <span class="visually-hidden">{{ app.score }}% Complete</span>
-                </div>
-              </div> -->
-                    <!-- <div class="d-flex mb-2">
-                <div class="subheader">125.000 votes on Steam</div>
-              </div> -->
-                  </div>
-                </div>
-              </div>
-            </div>
-
             <div v-if="app.score" class="col-12 my-3">
               <h5>Scores</h5>
-
-              <div class="row row-cards">
-                <div class="col-3">
-                  <div
-                    v-tippy="
-                      'The median is the middle value in a set of scores when arranged in order. It avoids being skewed by extreme values, making it a fairer representation of the central tendency compared to the average.'
-                    "
-                    class="card card-sm card-data card-is-score"
-                    :style="{
-                      '--score-color': format.scoreToHuman(app.score, 'meta', 'color'),
-                    }">
+              <div
+                v-if="app.score"
+                class="row row-deck row-cards p-0"
+                style="margin-left: calc(var(--tblr-gutter-x) * 0.5 * -1)">
+                <div class="col-md-3">
+                  <div class="card card-sm">
                     <div class="card-body">
-                      <div class="text-black fw-bold m-0">
-                        <Icon size="13" width="1.5" style="transform: translateY(-2px)">
+                      <h3 class="m-0" style="letter-spacing: 0 !important">
+                        <Icon
+                          size="13"
+                          width="1.5"
+                          style="transform: translateY(-1px)"
+                          class="me-1">
                           StarFilled
                         </Icon>
                         {{ app.score }}
-                      </div>
+                      </h3>
                       <small class="text-secondary">Median score</small>
                     </div>
                   </div>
                 </div>
 
-                <div v-if="app.scores.steamscore" class="col-3">
-                  <div
-                    class="card card-sm card-data card-is-score"
-                    :style="{
-                      '--score-color': format.scoreToHuman(
-                        app.scores.steamscore,
-                        'steam',
-                        'color'
-                      ),
-                    }">
-                    <div class="card-body">
-                      <div class="text-black fw-bold m-0">
+                <div v-if="app.scores.steamscore" class="col-md-3">
+                  <div class="card card-sm">
+                    <div class="card-body p-2">
+                      <h3
+                        class="m-0"
+                        style="letter-spacing: 0 !important"
+                        :style="
+                          app.scores.steamscoreAlt.includes('whelm')
+                            ? 'font-size: 10px'
+                            : ''
+                        ">
+                        <b-logo
+                          name="steam"
+                          size="13"
+                          class="me-1"
+                          style="transform: translate(1px, -1px); opacity: 0.6" />
                         {{ app.scores.steamscoreAlt }}
-                      </div>
-
-                      <div class="w-100 text-center" style="transform: translateY(5px)">
+                      </h3>
+                      <div
+                        class="w-100 text-center px-3"
+                        style="transform: translateY(4px)">
                         <div class="progress" style="height: 4px">
                           <div
                             class="progress-bar"
@@ -758,91 +677,53 @@
                     </div>
                   </div>
                 </div>
-
-                <div v-if="app.scores.metascore || app.scores.userscore" class="col-3">
-                  <div
-                    class="card card-sm card-data card-is-score"
-                    :style="{
-                      '--score-color': format.scoreToHuman(
-                        app.scores.metascore,
-                        'meta',
-                        'color'
-                      ),
-                    }">
+                <div v-if="app.scores.metascore || app.scores.userscore" class="col-md-3">
+                  <div class="card card-sm">
                     <div class="card-body">
-                      <!-- <h3 class="m-0"> -->
-                      <!-- <span>
-                                  {{ app.scores.metascore }}
-                                </span> -->
-                      <div
-                        style="
-                          display: flex;
-                          justify-content: center;
-                          transform: translateY(-2px);
-                        ">
+                      <h3 class="m-0" style="letter-spacing: 0 !important">
                         <b-logo
                           name="metacritic"
-                          size="18"
-                          class="me-1"
-                          style="transform: translateX(-2px)" />
-                        <div
-                          v-tippy="'Metacritic score'"
-                          class="text-muted me-1"
+                          size="15"
                           style="
-                            display: flex;
-                            width: 24px;
-                            height: 24px;
-                            border-radius: 3px;
-                            align-items: center;
-                            justify-content: center;
-                            color: black !important;
-                            font-size: 12px;
-                            font-weight: bold;
-                          "
+                            opacity: 0.6;
+                            filter: drop-shadow(0px 0px 1px #666);
+                            position: absolute;
+                            transform: translate(-22px, 5px);
+                          " />
+                        <span
                           :style="{
-                            border:
-                              '1px solid ' +
-                              format.scoreToHuman(app.scores.metascore, 'meta', 'color'),
+                            color: format.scoreToHuman(
+                              app.scores.metascore,
+                              'meta',
+                              'color'
+                            ),
                           }">
                           {{ app.scores.metascore }}
-                        </div>
-                        <div
-                          v-if="app.scores.userscore"
-                          v-tippy="'Metacritic users'"
-                          class="text-muted"
-                          style="
-                            display: flex;
-                            width: 24px;
-                            height: 24px;
-                            border-radius: 3px;
-                            align-items: center;
-                            justify-content: center;
-                            color: black !important;
-                            font-size: 12px;
-                            font-weight: bold;
-                          "
+                        </span>
+                        <small
+                          v-if="app.scores.metascore && app.scores.userscore"
+                          class="text-muted">
+                          ·
+                        </small>
+                        <span
                           :style="{
-                            border:
-                              '1px solid ' +
-                              format.scoreToHuman(app.scores.userscore, 'meta', 'color'),
+                            color: format.scoreToHuman(
+                              app.scores.userscore,
+                              'meta',
+                              'color'
+                            ),
                           }">
                           {{ app.scores.userscore }}
-                        </div>
-                      </div>
-                      <!-- </h3> -->
+                        </span>
+                      </h3>
                       <small class="text-secondary">Metacritic</small>
                     </div>
                   </div>
                 </div>
-
-                <div v-if="app.scores.oc" class="col-3">
-                  <div
-                    class="card card-sm card-data card-is-score"
-                    :style="{
-                      '--score-color': format.scoreToHuman(app.scores.oc, 'oc', 'color'),
-                    }">
+                <div v-if="app.scores.oc" class="col-md-3">
+                  <div class="card card-sm">
                     <div class="card-body">
-                      <div class="text-black fw-bold m-0">
+                      <h3 class="m-0" style="letter-spacing: 0 !important">
                         <img
                           :src="
                             'https://backlog.rip/img/scores/' +
@@ -855,134 +736,10 @@
                             transform: translate(-2px, -2px);
                           " />
                         {{ app.scores.oc }}
-                      </div>
+                      </h3>
                       <small class="text-secondary">Opencritic</small>
                     </div>
                   </div>
-                </div>
-              </div>
-
-              <!-- Single line layout -->
-              <div class="d-flex d-none align-items-center">
-                <div
-                  v-tippy="'Median score'"
-                  class="d-flex align-items-center text-muted small me-4">
-                  <Icon size="16" width="1.8" class="me-1">Universe</Icon>
-
-                  {{ app.score }}
-                </div>
-
-                <div
-                  v-if="app.scores.igdb"
-                  v-tippy="'Aggregate reviews from multiple sources'"
-                  class="d-flex align-items-center text-muted small me-3">
-                  <Icon size="16" width="1.8" class="me-1">Stack2</Icon>
-                  {{ app.scores.igdb }}%
-                  <!-- <br />
-          <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
-                </div>
-
-                <!--
-                        *+---------------------------------
-                        *| Steam score
-                        *+---------------------------------
-                      -->
-                <div
-                  v-if="app.scores.steamscoreAlt"
-                  v-tippy="'Reviews on Steam'"
-                  class="d-flex align-items-center text-muted small me-3">
-                  <Icon size="16" width="1.8" class="me-1">DiscountCheck</Icon>
-                  {{ app.scores.steamscore }}% · {{ app.scores.steamscoreAlt }}
-                  <!-- <br />
-          <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
-                </div>
-
-                <!--
-                        *+---------------------------------
-                        *| Metacritic
-                        *+---------------------------------
-                      -->
-                <div
-                  v-if="app.scores.metascore"
-                  class="d-flex align-items-center text-muted small me-3">
-                  <div
-                    v-tippy="'Metacritic'"
-                    class="text-muted"
-                    style="
-                      display: flex;
-                      width: 23px;
-                      height: 23px;
-                      border-radius: 3px;
-                      align-items: center;
-                      justify-content: center;
-                      color: black !important;
-                    "
-                    :style="{
-                      'background-color': format.scoreToHuman(
-                        app.scores.metascore,
-                        'meta',
-                        'color'
-                      ),
-                    }">
-                    {{ app.scores.metascore }}
-                  </div>
-                </div>
-
-                <!--
-                        *+---------------------------------
-                        *| Metacritic
-                        *+---------------------------------
-                      -->
-                <div
-                  v-if="app.scores.userscore"
-                  class="d-flex align-items-center text-muted small me-3">
-                  <div
-                    v-tippy="'Metacritic users'"
-                    class="text-muted"
-                    style="
-                      display: flex;
-                      width: 23px;
-                      height: 23px;
-                      border-radius: 3px;
-                      align-items: center;
-                      justify-content: center;
-                      color: black !important;
-                    "
-                    :style="{
-                      'background-color': format.scoreToHuman(
-                        app.scores.userscore,
-                        'meta',
-                        'color'
-                      ),
-                    }">
-                    {{ app.scores.userscore }}
-                  </div>
-                </div>
-
-                <!--
-                        *+---------------------------------
-                        *| Opencritic
-                        *+---------------------------------
-                      -->
-                <div
-                  v-if="app.scores.oc"
-                  v-tippy="'Opencritic'"
-                  class="d-flex align-items-center small"
-                  style="color: black">
-                  <img
-                    :src="
-                      'https://steam-backlog.com/images/' +
-                      format.scoreToHuman(app.scores.oc, 'oc', 'label') +
-                      '-head.png'
-                    "
-                    style="
-                      max-width: 18px;
-                      max-height: 18px;
-                      margin-right: 3px;
-                      transform: translate(-1px, -1px);
-                    " />
-
-                  {{ app.scores.oc }}
                 </div>
               </div>
             </div>
@@ -1065,10 +822,6 @@
                             Kuna
                           </div>
                         </div>
-                      </div>
-                      <div v-if="$app.wip" class="datagrid-item">
-                        <div class="datagrid-title">Age</div>
-                        <div class="datagrid-content">15 days</div>
                       </div>
                       <div v-if="$app.wip" class="datagrid-item">
                         <div class="datagrid-title">Edge network</div>
@@ -1218,7 +971,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st November 2024
- * Modified: Fri 10 January 2025 - 19:25:26
+ * Modified: Tue 28 January 2025 - 17:22:57
  **/
 
 export default {

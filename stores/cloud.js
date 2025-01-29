@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Thu 02 January 2025 - 13:59:56
+ * Modified: Wed 29 January 2025 - 17:39:46
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -22,12 +22,13 @@ let $state = null
 // - conflict
 // - error
 // - syncing
-// - syncing:done
+// - sync:done
 //+-------------------------------------------------
 
 export const useCloudStore = defineStore('cloud', {
   state: () => ({
     status: 'local',
+    connected: false,
 
     $sb: null, // Supabase client
     jwt: null, // JWT token identifying the user
@@ -80,9 +81,8 @@ export const useCloudStore = defineStore('cloud', {
     // Created on Mon Aug 19 2024
     //+-------------------------------------------------
     async sync() {
-      log('⚡ cloud:syncing')
+      console.groupCollapsed('🔸 ⚡Cloud sync')
       this.status = 'syncing'
-
       await delay(500)
 
       // Prepare and analyze the backup
@@ -96,6 +96,10 @@ export const useCloudStore = defineStore('cloud', {
         return
       }
 
+      // Synchronize library
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      await this.doSync('library')
+
       // Synchronize local account
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       await this.doSync('account')
@@ -104,16 +108,15 @@ export const useCloudStore = defineStore('cloud', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       await this.doSync('states')
 
-      // Synchronize library
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      await this.doSync('library')
-
       // Finalize the backup
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (this.backup.enabled) await this.storeBckp()
 
-      log('⚡✅ Syncronization complete')
-      this.status = 'syncing:done'
+      log('⚡✅ Synchronization complete')
+      console.groupEnd()
+
+      this.status = 'sync:done'
+      $nuxt.$mitt.emit('sync:done')
     },
 
     //+-------------------------------------------------
@@ -148,55 +151,53 @@ export const useCloudStore = defineStore('cloud', {
     // Created on Fri Aug 30 2024
     //+-------------------------------------------------
     async prepareAndAnalyze() {
+      let latest = this.backups[0]
+
       // Case 0: No backups found in the cloud
       // Action: Create a new backup and upload local
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (this.backups.length == 0) {
         log('⚡ 0.1 ~ No backups found in the cloud, creating a new one...')
         await this.prepareBackup('new')
-        await this.analyze()
-        return
+        // await this.analyze()
+        // return
       }
 
       // Case 1: Client does not have local tracking
       // Verify data integrity to download or conflict
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (!this.client.hash) {
+      else if (!this.client.hash) {
         log('⚡ 1.1 ~ No hash found locally, analyzing...')
         await this.prepareBackup('latest')
-        await this.analyze()
-        return
+        // await this.analyze()
+        // return
       }
 
       // Case 2: Hashes differ between cloud and client
       // This can be a conflict. Trying autosolve
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let latest = this.backups[0]
-      if (latest.hash !== this.client.hash) {
+      else if (latest.hash !== this.client.hash) {
         log('⚡ 2.1. versions are different')
         await this.prepareBackup('latest')
-        await this.analyze()
-        this.tryAutoResolution()
-
-        return
+        // await this.analyze()
+        // return
       }
 
       // Case 3: Hashes match
       // Verify data integrity to download or upload
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      log('⚡ Using connected backup')
-      this.prepareBackup('connected')
+      else {
+        log('⚡ Incrementing the latest backup')
+        this.prepareBackup('connected')
+      }
+
+      // Analyze the backup
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       await this.analyze()
 
-      // do what is in prepare:
-      // - Search the backups for the hashed
-      // - prepare cases:
-      // 1. data is identical
-      // 2. cloud has signature, client does not
-      // 3. signatures differ between cloud and client
-      // 3.1 signatures differ in both hash and timestamp
-      // 3.2 signatures differ in timestamp only
-      // Prepare actions for each dimension: up, down, conflict
+      // Try to resolve an arised conflict
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      await this.conflictAutoResolution()
     },
 
     //+-------------------------------------------------
@@ -205,19 +206,22 @@ export const useCloudStore = defineStore('cloud', {
     // -----
     // Created on Fri Aug 30 2024
     // Updated on Mon Dec 23 2024 - Moved logic to prepare()
+    // Updated on Tue Jan 28 2025 - Use a cloud queue
     //+-------------------------------------------------
     async analyze() {
+      let queue = queueService.get()
+
+      log(`⚡ cli:${this.client.hash} ⇢ clo:${this.backup.hash}`)
+
       // ⇢ Analyze the integrity of each dimension
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let dimensions = Object.keys(this.dimensions)
       for (let dimension of dimensions) {
-        this.integrityCheck(dimension)
-        // console.warn('  ', dimension, state)
-      }
+        if (this.initialized && !queue.cloud.includes(dimension)) continue
 
-      log(
-        `⚡ cli:${this.client.hash} ⇢ clo:${this.backup.hash} ⇢ Acc:${this.b.account} ⇢ St:${this.b.states} ⇢ Lib:${this.b.library}`
-      )
+        this.integrityCheck(dimension)
+        log(` ⇢ ${dimension}: ${this.b[dimension]}`)
+      }
     },
 
     //+-------------------------------------------------
@@ -329,17 +333,19 @@ export const useCloudStore = defineStore('cloud', {
     // Created on Mon Dec 23 2024
     //+-------------------------------------------------
     conflict() {
+      if (!this.b.conflict) return
+
       this.status = 'conflict'
       $nuxt.$mitt.emit('cloud:conflict')
     },
 
     //+-------------------------------------------------
-    // tryAutoResolution()
+    // conflictAutoResolution()
     // Takes values from config to determine a resolution
     // -----
     // Created on Mon Dec 23 2024
     //+-------------------------------------------------
-    async tryAutoResolution() {
+    async conflictAutoResolution() {
       if (!this.b.conflict) return
       if (!$user.config.cloud_resolve) return false
 
@@ -349,7 +355,7 @@ export const useCloudStore = defineStore('cloud', {
       let tolerance = $user.config.cloud_tolerance
 
       if (Math.abs(cloud - local) > tolerance) {
-        log('⚡ cloud version is out of tolerance', cloud, local)
+        log('⚡ The conflict not within tolerance limits', cloud, local)
         return
       }
 
@@ -358,7 +364,7 @@ export const useCloudStore = defineStore('cloud', {
         case 'downloadIfNewer':
           if (action == 'downloadAlways' || cloud > local) {
             log('Downloading newer version from cloud…')
-            log('⚡ cloud:conflict:resolved (within tolerance)')
+            log(`⇢ Resolving conflict (within tolerance ${tolerance}) `)
 
             this.resolve('download', false)
           }
@@ -388,9 +394,16 @@ export const useCloudStore = defineStore('cloud', {
         $user.cloud.hash = hash
       }
 
+      if (action == 'download') {
+        this.prepareBackup('latest')
+      }
+
       let dimensions = Object.keys(this.dimensions)
       for (let dimension of dimensions) {
-        this.client[dimension] = `0.${action}`
+        if (this.b[dimension] !== 'ok') {
+          this.b[dimension] = action
+          this.client[dimension] = `0.${action}`
+        }
       }
 
       if (sync) {
@@ -407,12 +420,11 @@ export const useCloudStore = defineStore('cloud', {
     // Created on Mon Aug 19 2024
     //+-------------------------------------------------
     async doSync(dimension) {
-      // await delay(500)
-      if (this.b[dimension] !== 'ok') {
-        log('⚡ ⇢ Syncronize ' + dimension, this.b[dimension])
-        // console.warn(this.b[dimension + '.cli.hash'])
-        // console.warn(this.b[dimension + '.clo.hash'])
-      }
+      if (this.b[dimension] == 'ok') return
+
+      // console.warn(this.b[dimension + '.cli.hash'])
+      // console.warn(this.b[dimension + '.clo.hash'])
+      log(`⇢ Sync ${dimension} ${this.b[dimension]}`)
 
       if (this.b[dimension].includes('up')) {
         await this[this.dimensions[dimension]['up']]()
@@ -569,9 +581,9 @@ export const useCloudStore = defineStore('cloud', {
 
       this.backup.enabled = true
       this.backup.games = games.length
-
+      console.warn(sign.hash, this.b['library.clo.hash'])
       if (sign.hash == this.b['library.clo.hash']) {
-        log('⚡ library ~ The integrity hash has been compared and no sync')
+        log('⚡ library ~ The integrity hash has been compared and no sync is required')
         return
       }
 
@@ -822,7 +834,7 @@ export const useCloudStore = defineStore('cloud', {
           $data.library().length === 0 ||
           clientHash === 'download')
       ) {
-        log(`⚡ ${dimension} ⇢ out of sync (down)`, clientAt, cloudAt)
+        log(`⇢ ${dimension} out of sync (down)`, clientAt, cloudAt)
         this.b[dimension] = 'down'
 
         return 'down'
@@ -943,7 +955,7 @@ export const useCloudStore = defineStore('cloud', {
     // Created on Wed Aug 14 2024
     //+-------------------------------------------------
     is() {
-      return this.status // == 'syncing:done' ? 'ok' : this.status
+      return this.status // == 'sync:done' ? 'ok' : this.status
     },
 
     //+-------------------------------------------------

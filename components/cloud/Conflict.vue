@@ -7,14 +7,14 @@
       </template>
 
       <v-card-text class="px-5 mb-2">
-        <div class="text-secondary mb-4">
+        <div v-if="$cloud.backup && !ui.complete" class="text-secondary mb-4">
           Your local saved data conflicts with what is stored on the cloud. The version
           you choose to keep will be synced in this device and the cloud, and the other
           will be overwritten.
         </div>
 
         <div
-          v-if="$cloud.backup"
+          v-if="$cloud.backup && !ui.complete"
           class="mb-4"
           style="
             background-color: rgba(0, 0, 0, 0.2);
@@ -169,7 +169,7 @@
         </div>
 
         <div v-if="ui.complete" class="row g-4">
-          <div class="col-10 mx-auto text-center">
+          <div class="col-11 mx-auto text-center">
             <div class="text-secondary mb-3">
               Your local data has been syncronized with the cloud. You can close this
               window, but it's recommended to reload the application.
@@ -235,7 +235,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 23rd August 2024
- * Modified: Tue 24 December 2024 - 10:46:35
+ * Modified: Wed 29 January 2025 - 17:24:39
  **/
 
 export default {

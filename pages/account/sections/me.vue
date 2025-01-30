@@ -47,7 +47,7 @@
             </small>
           </div>
         </div> -->
-        <div v-if="$app.wip" class="mb-3">
+        <div v-if="$app.wip && $cloud.sub" class="mb-3">
           <div class="form-check-description ms-1" style="vertical-align: top">
             <Icon
               size="14"
@@ -125,15 +125,19 @@
     </div>
     <div class="card-footer">
       <small>
-        Registered {{ $moment($auth.user.created_at).format('LL') }} 🔸
-        <span
-          v-tippy="'This is your cloud user identifier'"
-          class="text-muted cursor-help">
-          <Icon width="1.2" size="14" class="me-1" style="transform: translateY(-1px)">
-            CloudRain
-          </Icon>
-          <strong>... {{ ($cloud?.sub || '').substr(-8) }}</strong>
-        </span>
+        Registered {{ $moment($auth.user.created_at).format('LL') }}
+        <template v-if="$cloud.sub">
+          🔸
+
+          <span
+            v-tippy="'This is your cloud user identifier'"
+            class="text-muted cursor-help">
+            <Icon width="1.2" size="14" class="me-1" style="transform: translateY(-1px)">
+              CloudRain
+            </Icon>
+            <strong>... {{ ($cloud?.sub || '').substr(-8) }}</strong>
+          </span>
+        </template>
       </small>
     </div>
   </div>
@@ -145,7 +149,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 29 January 2025 - 17:38:48
+ * Modified: Thu 30 January 2025 - 14:21:19
  **/
 
 export default {

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th November 2024
- * Modified: Tue 28 January 2025 - 17:14:26
+ * Modified: Thu 30 January 2025 - 14:19:53
  */
 
 let $nuxt = null
@@ -105,6 +105,7 @@ export const useGuildStore = defineStore('guild', {
     async ping() {
       let profile = this.build()
 
+      if (!$user.hasApi) return
       if (!profile.updated) return
       if (profile.data.disabled) return
 

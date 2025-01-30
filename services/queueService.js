@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Wed 29 January 2025 - 16:20:49
+ * Modified: Thu 30 January 2025 - 15:25:31
  */
 
 import { useThrottleFn } from '@vueuse/core'
@@ -17,9 +17,16 @@ let queue = {
   delete: [],
 }
 
+//+-------------------------------------------------
+// run()
+// Runs the queue to persist data
+// -----
+// Created on Thu Jan 30 2025
+//+-------------------------------------------------
 async function run() {
   $data ??= useDataStore()
-  debugger
+
+  if (queue.cloud.length > 0) debugger
   log(`⛓️ Persisting queue on ${queue.add.length} games`)
   $data.store(queue.add)
 

@@ -202,7 +202,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 16 January 2025 - 17:04:18
+ * Modified: Thu 30 January 2025 - 16:39:30
  **/
 
 export default {
@@ -405,19 +405,19 @@ export default {
 
     this.$mitt.on('state:change', (payload) => {
       if (payload.uuid != this.app.uuid) return
-      this.app.state = payload.state
+
+      if (payload.state == 'fav') {
+        this.app.is.fav = payload.fav
+      } else {
+        this.app.state = payload.state
+      }
+
       this.$forceUpdate()
     })
 
     this.$mitt.on('pinned:change', (payload) => {
       if (payload.uuid != this.app.uuid) return
       this.app.is.pinned = payload.pinned
-      this.$forceUpdate()
-    })
-
-    this.$mitt.on('fav:change', (payload) => {
-      if (payload.uuid != this.app.uuid) return
-      this.app.is.fav = payload.fav
       this.$forceUpdate()
     })
 
@@ -436,7 +436,6 @@ export default {
   },
 
   beforeUnmount() {
-    this.$mitt.off('fav:change')
     this.$mitt.off('data:deleted')
     this.$mitt.off('state:change')
     this.$mitt.off('pinned:change')

@@ -178,7 +178,7 @@
           <div class="dropdown-divider"></div>
 
           <span class="dropdown-header">
-            <span class="text-muted my-2">Your library</span>
+            <span class="text-muted my-2">Your games</span>
           </span>
 
           <NuxtLink to="/library" class="dropdown-item control-hover">
@@ -269,8 +269,10 @@
                 {{ state.name }}
               </span>
 
-              <small v-if="stateStore.count(state.id) > 0" class="ms-auto text-secondary">
-                {{ format.num(stateStore.count(state.id)) }}
+              <small
+                v-if="$app.count.states[state.key] > 0"
+                class="ms-auto text-secondary">
+                {{ format.num($app.count.states[state.key]) }}
               </small>
 
               <!-- <span
@@ -367,11 +369,11 @@
 
         <div class="row w-100">
           <div class="col col d-flex justify-content-center">
-            <div
-              class="btn btn-ghost-secondary btn-sm btn-icon"
-              style="border-radius: 50%">
+            <v-btn icon size="small" variant="text">
               <Icon size="18" style="transform: translateY(1px)">Terminal2</Icon>
-              <b-dropdown placement="top-start" style="overflow: hidden">
+              <b-dropdown
+                placement="top-start"
+                style="overflow: hidden; letter-spacing: initial">
                 <a
                   class="dropdown-item"
                   href="https://discord.gg/F2sPE5B"
@@ -391,6 +393,7 @@
                     </g>
                   </svg>
                   Discord
+                  <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
                 </a>
 
                 <a
@@ -399,17 +402,25 @@
                   target="_blank">
                   <Icon size="18" class="me-2">BrandPatreon</Icon>
                   Patreon
+                  <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
                 </a>
-
-                <div class="dropdown-divider"></div>
 
                 <a
                   href="https://github.com/gsabater/backlog.rip"
                   class="dropdown-item"
                   target="_blank">
-                  <Icon size="18" class="me-2">BrandGithub</Icon>
-                  Code on Github
+                  <b-logo
+                    name="github"
+                    size="16"
+                    class="me-2"
+                    color="#fff"
+                    style="opacity: 0.6"></b-logo>
+                  <!-- <Icon size="18" class="me-2">BrandGithub</Icon> -->
+                  Source code
+                  <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
                 </a>
+
+                <div class="dropdown-divider"></div>
 
                 <NuxtLink to="/changelog" class="dropdown-item">
                   <Icon size="18" class="me-2">Broadcast</Icon>
@@ -428,7 +439,12 @@
                   </span>
                 </span>
               </b-dropdown>
-            </div>
+            </v-btn>
+            <!-- <div
+              class="btn btn-ghost-secondary btn-sm btn-icon"
+              style="border-radius: 50%">
+
+            </div> -->
           </div>
           <div class="col col d-flex justify-content-center">
             <NuxtLink
@@ -1158,7 +1174,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed 29 January 2025 - 17:52:03
+ * Modified: Thu 30 January 2025 - 16:51:26
  **/
 
 export default {
@@ -1186,6 +1202,7 @@ export default {
     // Created on Wed Apr 03 2024
     //+-------------------------------------------------
     pinnedStates() {
+      if (!this.$app.ready) return []
       const pinned = this.$auth?.menu?.states || []
       return this.states.filter((state) => pinned.includes(state.id))
     },

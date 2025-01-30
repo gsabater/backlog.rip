@@ -172,7 +172,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Thu 07 November 2024 - 14:00:35
+ * Modified: Thu 30 January 2025 - 15:04:54
  **/
 
 export default {
@@ -218,7 +218,6 @@ export default {
 
     edit(item) {
       this.$refs.crud.edit(item)
-      this.$toast.success('State updated')
     },
 
     async delete(item) {

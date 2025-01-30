@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th November 2023
- * Modified: Mon 27 January 2025 - 17:56:30
+ * Modified: Thu 30 January 2025 - 15:17:20
  */
 
 export class DexieInstaller {
@@ -11,7 +11,6 @@ export class DexieInstaller {
     {
       id: 1,
       order: 1,
-      key: true,
       slug: 'backlog',
       color: '#ff0000',
       name: 'Backlog',
@@ -22,7 +21,6 @@ export class DexieInstaller {
     {
       id: 2,
       order: 2,
-      key: true,
       slug: 'playing',
       color: '#800080',
       name: 'Currently Playing',
@@ -33,7 +31,6 @@ export class DexieInstaller {
     {
       id: 3,
       order: 3,
-      key: true,
       slug: 'completed',
       color: '#249b25',
       name: 'Completed',

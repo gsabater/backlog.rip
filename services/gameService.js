@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Wed 29 January 2025 - 17:03:40
+ * Modified: Thu 30 January 2025 - 19:35:53
  */
 
 export default {
@@ -146,12 +146,13 @@ export default {
   //+-------------------------------------------------
   needsUpdate(app, data) {
     if (!app) return false
-    if (!app.is.lib) return false
 
     // This block is only when comparing
     // local data with the API data
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (data) {
+      if (!app.is.lib) return false
+
       // app matched with an api item
       if (!app.id?.api && (data?.id?.api || data?.api_id)) return 'update:match'
 

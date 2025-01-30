@@ -405,7 +405,7 @@
             <tippy
               :allow-h-t-m-l="true"
               class="text-muted ms-auto cursor-help"
-              content="Delete this game from your library.<br>You might want to do it to fix duplicates or errors">
+              content="Delete this game from your library.<br>You might want to do this to fix duplicates or errors">
               <span class="form-help">?</span>
             </tippy>
           </div>
@@ -553,7 +553,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Sat 11 January 2025 - 18:31:20
+ * Modified: Thu 30 January 2025 - 16:35:23
  **/
 
 export default {
@@ -640,6 +640,7 @@ export default {
       this.gameStore.update(this.appUUID, { ...app })
       this.$nuxt.$toast.success(app.name + ' has been added to your library')
 
+      this.$mitt.emit('library:added')
       this.hide()
     },
 

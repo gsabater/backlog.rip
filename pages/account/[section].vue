@@ -1,16 +1,18 @@
 <template>
-  <div class="page-body">
-    <div class="container-xl">
-      <div class="row gx-lg-5 mx-auto">
-        <div class="d-none d-lg-block col-lg-2">
-          <account-sidebar></account-sidebar>
-        </div>
-        <div class="col-lg-8">
-          <component :is="section" ref="section"></component>
+  <ClientOnly>
+    <div class="page-body">
+      <div class="container-xl">
+        <div class="row gx-lg-5 mx-auto">
+          <div class="d-none d-lg-block col-lg-2">
+            <account-sidebar></account-sidebar>
+          </div>
+          <div class="col-lg-8">
+            <component :is="section" ref="section"></component>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </ClientOnly>
 </template>
 
 <script>
@@ -19,7 +21,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 19 December 2024 - 17:55:33
+ * Modified: Thu 30 January 2025 - 14:30:47
  **/
 
 import me from './sections/me'

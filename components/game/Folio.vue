@@ -234,7 +234,7 @@
                 </div>
               </div>
 
-              <div v-tippy="'Date added to your library'" class="mb-2">
+              <div v-if="app.is.lib" v-tippy="'Date added to your library'" class="mb-2">
                 <Icon
                   size="16"
                   width="1.2"
@@ -243,6 +243,16 @@
                   CalendarWeek
                 </Icon>
                 <span>Owned since {{ app._.owned_at }}</span>
+              </div>
+              <div v-else class="mb-2">
+                <Icon
+                  size="16"
+                  width="1.2"
+                  class="me-1"
+                  style="transform: translateY(-1px)">
+                  Cards
+                </Icon>
+                <span>Not in your library</span>
               </div>
             </div>
             <div class="my-2 py-1" style="zoom: 0.7">
@@ -798,7 +808,7 @@
                 <div class="card">
                   <div class="card-body">
                     <div class="datagrid">
-                      <div class="datagrid-item">
+                      <div v-if="genres" class="datagrid-item">
                         <div class="datagrid-title">Genres</div>
                         <div class="datagrid-content" v-html="genres"></div>
                       </div>
@@ -971,7 +981,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st November 2024
- * Modified: Tue 28 January 2025 - 17:22:57
+ * Modified: Thu 30 January 2025 - 17:02:06
  **/
 
 export default {

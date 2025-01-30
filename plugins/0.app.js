@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Wed 29 January 2025 - 17:47:39
+ * Modified: Thu 30 January 2025 - 16:13:27
  */
 
 // import { reactive } from 'vue'
@@ -67,9 +67,7 @@ let app = {
     hidden: 0,
     library: 0,
 
-    states: {
-      backlog: 0,
-    },
+    states: {},
   },
 
   api: {},
@@ -225,14 +223,6 @@ async function initClient() {
   // console.groupEnd()
   await delay(333)
   app.ready = true
-
-  handleEvents()
-}
-
-function handleEvents() {
-  $nuxt.$mitt.on('sync:done', () => {
-    dataService.updateBatch(['empty', ':outdated'])
-  })
 }
 
 export default defineNuxtPlugin(() => {

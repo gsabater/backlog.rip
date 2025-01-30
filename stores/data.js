@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Wed 29 January 2025 - 17:04:38
+ * Modified: Thu 30 January 2025 - 16:48:06
  */
 
 let $nuxt = null
@@ -187,29 +187,20 @@ export const useDataStore = defineStore('data', {
     // Counts the library filtering out hidden and non library items
     // -----
     // Created on Tue Jul 23 2024
+    // Updated on Thu Jan 30 2025 - Update count values
     //+-------------------------------------------------
     countLibrary() {
       let library = this.library()
       let active = library.filter((item) => {
-        if (!item.is) {
-          // console.warn('🔒1', item)
+        if (!item.is?.lib || item.is?.hidden) {
           return false
         }
-        if (!item.is.lib) {
-          // console.warn('🔒2', item)
-          return false
-        }
-        if (item.is.hidden) {
-          // console.warn('🔒3', item)
-          return false
-        }
+
         return true
       })
 
-      // console.log('🚀 ~ countLibrary ~ library:', library)
-      // console.log('🚀 ~ active ~ active:', active)
-
-      return active.length
+      $nuxt.$app.count.data = Object.keys(data).length || 0
+      $nuxt.$app.count.library = active.length
     },
 
     //+-------------------------------------------------
@@ -420,8 +411,7 @@ export const useDataStore = defineStore('data', {
       // wip: Update some state data with some throttling
       // this.updateState()
 
-      $nuxt.$app.count.data = Object.keys(data).length || 0
-      $nuxt.$app.count.library = this.countLibrary() // index.lib.length || 0
+      this.countLibrary() // index.lib.length || 0
 
       if (!$nuxt.$app.ready) return
       if (intent.includes('list:')) return

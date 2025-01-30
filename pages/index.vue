@@ -45,9 +45,12 @@
                 href="https://github.com/gsabater/backlog.rip"
                 class="link-secondary link-underline-opacity-0"
                 target="_blank">
-                <Icon size="14" class="me-0" style="transform: translateY(-1px)">
-                  BrandGithub
-                </Icon>
+                <b-logo
+                  name="github"
+                  size="13"
+                  class="me-1"
+                  color="#fff"
+                  style="opacity: 0.6; transform: translateY(-1px)"></b-logo>
                 Open source
               </a>
 
@@ -184,7 +187,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Mon 27 January 2025 - 17:25:39
+ * Modified: Thu 30 January 2025 - 16:49:08
  **/
 
 export default {

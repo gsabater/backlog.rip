@@ -58,7 +58,7 @@
         to="/account/cloud"
         class="nav-link"
         :style="
-          $route.path.includes('cloud')
+          isCloud
             ? 'color: var(--tblr-nav-link-hover-color); padding-bottom: 0.25rem;'
             : ''
         ">
@@ -67,7 +67,7 @@
       </NuxtLink>
     </li>
 
-    <template v-if="$route.path.includes('cloud')">
+    <template v-if="isCloud">
       <li>
         <a href="#settings" class="nav-link ms-2 pb-0">
           <Icon size="6" width="1" class="me-2">PointFilled</Icon>
@@ -410,3 +410,21 @@
       </li> -->
   </ul>
 </template>
+
+<script>
+export default {
+  name: 'AccountSidebar',
+
+  data() {
+    return {}
+  },
+
+  computed: {
+    isCloud() {
+      return this.$route.path.includes('cloud') && this.$auth.hasCloud
+    },
+  },
+
+  methods: {},
+}
+</script>

@@ -3,12 +3,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Wed 29 January 2025 - 17:40:44
+ * Modified: Thu 30 January 2025 - 14:32:08
  */
 
 let $nuxt = null
 let $cloud = null
-// let $guild = null
 let $library = null
 
 //+-------------------------------------------------
@@ -295,6 +294,36 @@ export const useUserStore = defineStore('user', {
       menu.favorites = this.config.favorites
 
       return menu
+    },
+
+    //+-------------------------------------------------
+    // hasApi()
+    // Getter to check if the user has a Bearer token
+    // -----
+    // Created on Thu Jan 30 2025
+    //+-------------------------------------------------
+    hasApi() {
+      return !!this.bearer
+    },
+
+    //+-------------------------------------------------
+    // hasPassport()
+    // Getter to check if the user has a JWT for Supabase
+    // -----
+    // Created on Thu Jan 30 2025
+    //+-------------------------------------------------
+    hasPassport() {
+      return !!this.jwt
+    },
+
+    //+-------------------------------------------------
+    // hasCloud()
+    // Getter to check if the user has cloud connected and enabled
+    // -----
+    // Created on Thu Jan 30 2025
+    //+-------------------------------------------------
+    hasCloud() {
+      return this.config?.cloud && this.cloud?.sub
     },
   },
 })

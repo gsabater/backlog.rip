@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Wed 29 January 2025 - 16:36:26
+ * Modified: Thu 30 January 2025 - 19:43:38
  */
 
 let $nuxt = null
@@ -100,7 +100,7 @@ export const useGameStore = defineStore('game', {
     // -----
     // Created on Thu Jan 11 2024
     //+-------------------------------------------------
-    async load(uuid) {
+    async load(uuid, update = true) {
       const game = $data.get(uuid)
 
       this.app = game
@@ -215,7 +215,8 @@ export const useGameStore = defineStore('game', {
 
         game.languages = 'en,fr,it,de,es_ES,ja,ko,pl,pt_BR,ru,zh_CN,es_LA,th'
       }
-      this.update(game)
+
+      if (update) this.update(game)
     },
 
     //+-------------------------------------------------
@@ -259,7 +260,7 @@ export const useGameStore = defineStore('game', {
       // Update the game with the new data from the API
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (!data && update.indexOf(':api') > -1) {
-        data = await this.getFromAPI()
+        data = await this.getFromAPI(game.uuid)
         if (!data) return
       }
 
@@ -274,7 +275,8 @@ export const useGameStore = defineStore('game', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       $data.toData(updated.app)
       // $data.process(updated.app, 'updated:app')
-      if (this.app.uuid == updated.app.uuid) this.app = updated.app
+
+      if (this.app.uuid == updated.app.uuid) this.load(updated.app.uuid, false)
     },
 
     //+-------------------------------------------------
@@ -282,25 +284,13 @@ export const useGameStore = defineStore('game', {
     // Gets more data from the API
     // -----
     // Created on Fri Feb 16 2024
+    // Updated on Thu Jan 30 2025 - Get uuid from param
     //+-------------------------------------------------
-    async getFromAPI() {
-      console.warn('🪝 Going to ask api for more data')
-
-      let app = this.app.uuid
-      let api = this.app.id.api
-
-      if (this.app.is_api) api = this.app.uuid
-      if (this.app.id.api?.length > 0 && app !== this.app.id.api) api = this.app.id.api
-
-      if (!api) {
-        console.error('🪝 No API ID found')
-        return
-      }
-
-      let xhr = await $nuxt.$axios.get(`/get/${api}.json`)
+    async getFromAPI(uuid) {
+      if (uuid.includes('local:')) return
+      let xhr = await $nuxt.$axios.get(`/get/${uuid}.json`)
 
       if (xhr.status == 200) {
-        console.warn('🪝 Data received: Updating')
         return xhr.data
       } else {
         console.error('🪝 Error loading data from API', xhr)
@@ -497,6 +487,8 @@ export const useGameStore = defineStore('game', {
     async init() {
       if (!$nuxt) $nuxt = useNuxtApp()
       if (!$data) $data = useDataStore()
+
+      if (window) window.$game = this
     },
   },
 })

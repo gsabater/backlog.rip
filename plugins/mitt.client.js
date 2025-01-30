@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Wed 06 November 2024 - 12:45:10
+ * Modified: Thu 30 January 2025 - 17:53:13
  */
 
 //+-------------------------------------------------
@@ -29,13 +29,52 @@
 
 import mitt from 'mitt'
 
+let $data = null
+let $game = null
+
+//+-------------------------------------------------
+// handle()
+// Handles some callbacks for mitt events
+// -----
+// Created on Thu Jan 30 2025
+//+-------------------------------------------------
+function handle(event, payload) {
+  switch (event) {
+    // Library changes.
+    // Similar to data changes but specific to library or owned
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    case 'library:added':
+      $data ??= useDataStore()
+      $data.countLibrary()
+      break
+
+    // State events
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    case 'state:change':
+      $data ??= useDataStore()
+      $game ??= useGameStore()
+
+      $data.countLibrary()
+      break
+
+    // Cloud sync events
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    case 'sync:done':
+      dataService.updateBatch(['empty', ':outdated'])
+      break
+
+    default:
+      break
+  }
+}
+
 export default defineNuxtPlugin(() => {
   const emitter = mitt()
   window.$mitt = emitter
 
   emitter.on('*', (e, payload) => {
+    handle(e, payload)
     log('✨ ' + e, payload)
-    // console.info(emitter.all)
   })
 
   return {

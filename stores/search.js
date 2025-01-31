@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Wed 22 January 2025 - 17:38:41
+ * Modified: Fri 31 January 2025 - 11:43:10
  */
 
 import search from '~/services/searchService'
@@ -165,8 +165,9 @@ export const useSearchStore = defineStore('search', {
         if (!slugged) {
           let genres = null
 
-          if (!$repos.genres.length) genres = await $repos.getGenres()
-          else genres = $repos.genres
+          genres = await $repos.getGenres()
+          // if (!$repos.genres.length) genres = await $repos.getGenres()
+          // else genres = $repos.genres
 
           const genre = genres.find((g) => g.slug == slug)
           if (genre) filters.genres = [genre.id]

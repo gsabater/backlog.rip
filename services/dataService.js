@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 31st December 2024
- * Modified: Tue 28 January 2025 - 17:11:58
+ * Modified: Fri 31 January 2025 - 10:29:24
  */
 
 let $nuxt = null
@@ -84,7 +84,7 @@ export default {
     const xhr = await $nuxt.$axios.post(`get/batch`, apps)
     if (xhr.status) {
       log('🪂 Data from API', xhr.data)
-      await $data.process(xhr.data, 'api')
+      await $data.process(xhr.data, 'api:update:batch')
     }
   },
 }

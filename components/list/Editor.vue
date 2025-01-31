@@ -111,8 +111,7 @@
         v-model="f.string"
         placeholder="Search by name..."
         clearable
-        density="comfortable"
-        @update:model-value="search">
+        density="comfortable">
         <template #prepend-inner>
           <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
         </template>
@@ -152,7 +151,7 @@
     *+--------------------------------- -->
   <div class="card mb-3">
     <div class="list-group card-list-group games-group games--list">
-      <template v-for="(item, i) in _games" :key="item.uuid">
+      <template v-for="(item, i) in _games" :key="item.uuid || Math.random()">
         <div
           class="d-none list-group-item px-3 text-decoration-none"
           :class="{
@@ -301,12 +300,7 @@
     </div>
   </div>
 
-  <search-results
-    ref="results"
-    :disabled="false"
-    :filters="f"
-    @search:ready="search"
-    @search:end="ui.ping++">
+  <search-results ref="results" :disabled="false" @search:end="ui.ping++">
     <template #body>
       <div></div>
     </template>
@@ -319,7 +313,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: Thu 02 January 2025 - 17:06:38
+ * Modified: Fri 31 January 2025 - 13:05:22
  **/
 
 // import { useAsyncData } from 'nuxt/app' // Import useAsyncData from Nuxt 3
@@ -337,16 +331,16 @@ export default {
     searched: null,
     dragging: false,
 
-    f: {
-      string: '',
-      source: 'all',
-      sortBy: 'score',
-      sortDir: 'desc',
-      show: {
-        page: 1,
-        perPage: 42,
-      },
-    },
+    // f: {
+    //   string: '',
+    //   source: 'all',
+    //   sortBy: 'score',
+    //   sortDir: 'desc',
+    //   show: {
+    //     page: 1,
+    //     perPage: 42,
+    //   },
+    // },
 
     ui: {
       ping: 0,
@@ -359,6 +353,7 @@ export default {
   computed: {
     ...mapStores(useListStore, useDataStore),
     ...mapState(useListStore, ['list']),
+    ...mapState(useSearchStore, ['f', 'stats', 'loading', 'time']),
 
     library() {
       return this.dataStore.library().slice(0, 5)
@@ -400,21 +395,21 @@ export default {
     // -----
     // Created on Fri Mar 22 2024
     //+-------------------------------------------------
-    search() {
-      if (this.f.string == this.searched) return
+    // search() {
+    //   if (this.f.string == this.searched) return
 
-      this.searched = this.f.string
-      this.$nextTick(() => {
-        console.warn('search', this.$refs)
+    //   this.searched = this.f.string
+    //   this.$nextTick(() => {
+    //     console.warn('search', this.$refs)
 
-        // if (!this.f.string.length) return
-        if (!this.$refs.results) return
-        this.$refs.results.search('palettex')
-      })
-    },
+    //     // if (!this.f.string.length) return
+    //     if (!this.$refs.results) return
+    //     this.$refs.results.search('palettex')
+    //   })
+    // },
 
     hasAPIUUID(app) {
-      return app.id?.api
+      return app.uuid && !app.uuid.includes('local:')
     },
 
     //+-------------------------------------------------
@@ -572,9 +567,7 @@ export default {
       }
     },
 
-    init() {
-      this.search()
-    },
+    init() {},
   },
 
   mounted() {

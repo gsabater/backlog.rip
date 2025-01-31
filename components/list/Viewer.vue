@@ -79,12 +79,7 @@
     </div>
   </div>
 
-  <search-results
-    ref="results"
-    :disabled="false"
-    :filters="f"
-    :layout="f.show.layout"
-    :source="listGames" />
+  <search-results ref="results" :disabled="false" :source="listGames" />
 
   <!--
     *+---------------------------------
@@ -95,11 +90,9 @@
     v-if="list.games.length == 0"
     class="empty"
     style="border: 1px dashed #cccccc73; border-radius: 4px; height: auto; padding: 4rem">
-    <p class="empty-title mb-3 font-serif" style="font-weight: 300">
-      There is nothing here
-    </p>
+    <p class="empty-title mb-3 font-serif" style="font-weight: 300">This list is empty</p>
     <p class="empty-subtitle text-secondary">
-      This list is empty. Try adding some games to it.
+      There is nothing here. To start, try adding some games to it.
       <br />
       You can add most games, even if it's not in your library.
     </p>
@@ -112,24 +105,24 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: Mon 13 January 2025 - 17:53:08
+ * Modified: Fri 31 January 2025 - 13:05:35
  **/
 
 export default {
   name: 'ListViewer',
 
   data: () => ({
-    f: {
-      string: '',
-      sortBy: 'user',
-      sortDir: null,
-      show: {
-        page: 1,
-        perPage: 42,
+    // f: {
+    //   string: '',
+    //   sortBy: 'user',
+    //   sortDir: null,
+    //   show: {
+    //     page: 1,
+    //     perPage: 42,
 
-        layout: 'list', //'grid',
-      },
-    },
+    //     layout: 'list', //'grid',
+    //   },
+    // },
 
     ui: {
       dice: 4,
@@ -140,6 +133,7 @@ export default {
   computed: {
     ...mapStores(useListStore, useDataStore),
     ...mapState(useListStore, ['list']),
+    ...mapState(useSearchStore, ['f', 'stats', 'loading', 'time']),
 
     listGames() {
       const games = []
@@ -171,33 +165,30 @@ export default {
     // -----
     // Created on Sun Mar 17 2024
     //+-------------------------------------------------
-    sortBy(sort) {
-      if (sort.toggle && this.f.sortBy == sort.by) {
-        this.f.sortDir = this.f.sortDir == 'asc' ? 'desc' : 'asc'
-      } else {
-        this.f.sortBy = sort.by
-        this.f.sortDir = sort.dir
-      }
-
-      this.search('sort')
-
-      // this.$refs.tippySort.hide()
-      // this.notify()
-    },
-
+    // sortBy(sort) {
+    //   if (sort.toggle && this.f.sortBy == sort.by) {
+    //     this.f.sortDir = this.f.sortDir == 'asc' ? 'desc' : 'asc'
+    //   } else {
+    //     this.f.sortBy = sort.by
+    //     this.f.sortDir = sort.dir
+    //   }
+    //   this.search('sort')
+    //   // this.$refs.tippySort.hide()
+    //   // this.notify()
+    // },
     //+-------------------------------------------------
     // search()
     // Performs a search on the results component
     // -----
     // Created on Tue Oct 29 2024
     //+-------------------------------------------------
-    search(by) {
-      this.$nextTick(() => {
-        // this.searchStore.loading = true
-        // this.searchStore.setTime('start')
-        this.$refs.results.search(by)
-      })
-    },
+    // search(by) {
+    //   this.$nextTick(() => {
+    //     // this.searchStore.loading = true
+    //     // this.searchStore.setTime('start')
+    //     this.$refs.results.search(by)
+    //   })
+    // },
   },
 }
 </script>

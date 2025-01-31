@@ -156,7 +156,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 28 January 2025 - 17:22:08
+ * Modified: Fri 31 January 2025 - 11:43:31
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -226,11 +226,6 @@ export default {
         //   filters = JSON.parse(JSON.stringify(props.filters))
         // }
 
-        // if (props.source) {
-
-        //   debugger
-        // }
-
         const search = $search.run()
         items.value = search.items
 
@@ -296,8 +291,7 @@ export default {
       if (!this.$app.ready) return
 
       let filters = null
-
-      if (this.source?.length) {
+      if (Array.isArray(this.source)) {
         filters = {
           source: this.source,
         }

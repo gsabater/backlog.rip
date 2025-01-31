@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu 30 January 2025 - 16:48:06
+ * Modified: Fri 31 January 2025 - 13:02:04
  */
 
 let $nuxt = null
@@ -279,6 +279,7 @@ export const useDataStore = defineStore('data', {
       )
 
       apps.forEach((item) => {
+        if (!item.uuid) return
         if (item === true || (Array.isArray(item) && item.length === 0)) {
           console.error('🔥', item, intent)
           return
@@ -346,11 +347,12 @@ export const useDataStore = defineStore('data', {
           }
         }
 
-        // An imported game comes from the plugins
-        // usually already normalized
+        // An imported game comes from plugins
+        // List items are only a subset of data
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (intent == 'import') {
+        if (intent == 'import' || intent?.includes('list:')) {
           // console.warn('6 ⇢ Imported app', item.uuid, item.name)
+          item.api_id = item.uuid
           this.toData(item)
           return
         }
@@ -385,13 +387,6 @@ export const useDataStore = defineStore('data', {
         //   // item.id.api = item.id.api || item.uuid
         //   // if (!item.uuid) item.uuid = `local:${format.stringToSlug(item.name)}`
         // }
-
-        // Populate the data from a list
-        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (intent?.includes('list:')) {
-          item.is_api = true
-          item.api_id = item.uuid
-        }
 
         // Adding games manually
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

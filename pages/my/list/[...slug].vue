@@ -1,80 +1,80 @@
 <template>
-  <div class="page-body">
-    <div class="container-xl">
-      <div v-if="!ui.ready" class="row row-cards">
-        <div class="col-lg-2"></div>
-        <div class="col-lg-8">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex align-items-center">
-                <div class="subheader">Loading list</div>
-              </div>
-              <div class="h3 m-0">
-                {{ list.name }}
+  <ClientOnly>
+    <div class="page-body">
+      <div class="container-xl">
+        <div v-if="!ui.ready" class="row row-cards">
+          <div class="col-lg-2"></div>
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex align-items-center">
+                  <div class="subheader">Loading list</div>
+                </div>
+                <div class="h3 m-0">
+                  {{ list.name }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div v-if="ui.ready" class="row row-cards">
-        <div class="col-lg-2" style="width: 20%">
-          <div class="p-2 pt-4">
-            <ClientOnly>
+        <div v-if="ui.ready" class="row row-cards">
+          <div class="col-lg-2" style="width: 20%">
+            <div class="p-2 pt-4">
               <list-cover :games="list.games" class="mb-3" />
-            </ClientOnly>
+            </div>
+
+            <div class="text-center">
+              <h2 class="mb-1">{{ list.name }}</h2>
+              <p>
+                Local only 🔸 {{ $moment(list.created_at).format('YYYY') }} 🔸
+                {{ list.games.length }} games
+                <!-- 🔸 By @gsabater -->
+              </p>
+
+              <small v-if="list.description" class="d-block text-muted my-3">
+                {{ list.description }}
+              </small>
+            </div>
+
+            <div v-if="mode == 'viewer'" class="d-flex justify-content-center mb-4">
+              <v-btn
+                class="me-2"
+                color="primary"
+                variant="tonal"
+                @click.stop="$refs.crud.edit(list)">
+                Edit details
+              </v-btn>
+
+              <v-btn color="primary" variant="tonal" @click="mode = 'editor'">
+                Add games
+              </v-btn>
+            </div>
+
+            <div v-else class="d-flex justify-content-center mb-4">
+              <v-btn class="me-2" color="secondary" variant="text" @click="backToList">
+                <Icon size="16" width="1" class="me-1">ArrowLeft</Icon>
+                Cancel
+              </v-btn>
+
+              <v-btn color="primary" variant="tonal" @click="$refs.editor.submit()">
+                Save list
+              </v-btn>
+            </div>
           </div>
+          <div class="col"></div>
+          <div class="col-lg-9">
+            <list-viewer v-if="mode == 'viewer'" />
+            <list-editor v-if="mode == 'editor'" ref="editor" @stored="mode = 'viewer'" />
 
-          <div class="text-center">
-            <h2 class="mb-1">{{ list.name }}</h2>
-            <p>
-              Local only 🔸 {{ $moment(list.created_at).format('YYYY') }} 🔸
-              {{ list.games.length }} games
-              <!-- 🔸 By @gsabater -->
-            </p>
-
-            <small v-if="list.description" class="d-block text-muted my-3">
-              {{ list.description }}
-            </small>
+            <list-crud-dialog
+              ref="crud"
+              @stored="$forceUpdate()"
+              @deleted="$forceUpdate()" />
           </div>
-
-          <div v-if="mode == 'viewer'" class="d-flex justify-content-center mb-4">
-            <v-btn
-              class="me-2"
-              color="primary"
-              @click.stop="$refs.crud.edit(list)"
-              variant="tonal">
-              Edit details
-            </v-btn>
-
-            <v-btn color="primary" @click="mode = 'editor'" variant="tonal">
-              Add games
-            </v-btn>
-          </div>
-
-          <div v-else class="d-flex justify-content-center mb-4">
-            <v-btn class="me-2" color="secondary" variant="text" @click="backToList">
-              <Icon size="16" width="1" class="me-1">ArrowLeft</Icon>
-              Cancel
-            </v-btn>
-
-            <v-btn color="primary" variant="tonal" @click="$refs.editor.submit()">
-              Save list
-            </v-btn>
-          </div>
-        </div>
-        <div class="col"></div>
-        <div class="col-lg-9">
-          <list-viewer v-if="mode == 'viewer'" />
-          <list-editor ref="editor" v-if="mode == 'editor'" @stored="mode = 'viewer'" />
-
-          <list-crud-dialog
-            ref="crud"
-            @stored="$forceUpdate()"
-            @deleted="$forceUpdate()" />
         </div>
       </div>
     </div>
-  </div>
+  </ClientOnly>
 </template>
 
 <script>
@@ -83,7 +83,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th September 2024
- * Modified: Thu 07 November 2024 - 11:59:18
+ * Modified: Fri 31 January 2025 - 11:11:00
  **/
 
 export default {
@@ -126,7 +126,7 @@ export default {
     async backToList() {
       this.loadData()
       this.mode = 'viewer'
-      let slug = this.$route.params.slug[0]
+      const slug = this.$route.params.slug[0]
 
       navigateTo('/my/list/' + slug, { replace: true })
     },
@@ -140,7 +140,7 @@ export default {
     async loadData() {
       this.ui.ready = false
 
-      let slug = this.$route.params.slug[0]
+      const slug = this.$route.params.slug[0]
       await this.listStore.use(slug)
 
       this.ui.ready = true

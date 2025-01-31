@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Thu 30 January 2025 - 19:35:53
+ * Modified: Fri 31 January 2025 - 10:10:56
  */
 
 export default {
@@ -22,6 +22,7 @@ export default {
     let detail = 'empty'
     let outdated = ''
 
+    // debugger
     // if (app.uuid.includes('local:')) debugger
 
     // Outdated check
@@ -275,11 +276,13 @@ export default {
       updates.push({ key, old: data[key], new: app[key] })
     }
 
-    if (updates.length) updated = true
-
-    // Set the refreshed date
+    // Set flags to update and store
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (updated) app.dates.refreshed = dates.stamp()
+    if (updates.length || !app.dates.refreshed) {
+      updated = true
+      app.toStore = true
+      app.dates.refreshed = dates.stamp()
+    }
 
     return {
       updated,

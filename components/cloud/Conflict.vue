@@ -1,50 +1,20 @@
 <template>
   <v-dialog v-model="ui.show" max-width="650">
     <v-card>
-      <template v-slot:title>
+      <template #title>
         <Icon class="me-2">CloudExclamation</Icon>
         Cloud conflict
       </template>
 
       <v-card-text class="px-5 mb-2">
-        <div class="text-secondary mb-4">
+        <div v-if="$cloud.backup && !ui.complete" class="text-secondary mb-4">
           Your local saved data conflicts with what is stored on the cloud. The version
           you choose to keep will be synced in this device and the cloud, and the other
           will be overwritten.
         </div>
 
-        <!-- <div class="row g-1 mb-3 align-items-center">
-          <div class="col-6">
-            <Icon
-              size="18"
-              width="2"
-              class="text-azure me-2"
-              style="transform: translateY(-1px)">
-              Cloud
-            </Icon>
-            <h4 class="d-inline-block">Local</h4>
-          </div>
-          <div class="col-6 text-end text-secondary">
-            Last updated {{ $moment($auth.cloud.updated_at).format('LLL') }}
-          </div>
-          <div class="col-6">
-            <Icon
-              size="18"
-              width="2"
-              class="text-lime me-2"
-              style="transform: translateY(-1px)">
-              DeviceFloppy
-            </Icon>
-            <h4 class="d-inline-block">Cloud</h4>
-          </div>
-          <div class="col-6 text-end text-secondary">
-            Last updated
-            {{ $moment($cloud.backup.updated_at).format('LLL') }}
-          </div>
-        </div> -->
-
         <div
-          v-if="$cloud.backup"
+          v-if="$cloud.backup && !ui.complete"
           class="mb-4"
           style="
             background-color: rgba(0, 0, 0, 0.2);
@@ -61,34 +31,42 @@
             </thead>
             <tbody>
               <tr>
-                <td>Control code</td>
+                <td>Date and time</td>
                 <td>
-                  <span v-if="$auth.cloud.hash">
-                    {{ $auth.cloud.hash }}
-                  </span>
-                  <span v-else>Never synced</span>
-                  <small class="text-muted d-block">
+                  <small class="d-block">
                     {{ $moment($auth.cloud.updated_at).format('LLL') }}
                   </small>
                 </td>
                 <td>
-                  {{ $cloud.backup.hash }}
-                  <small class="text-muted d-block">
+                  <small class="d-block">
                     {{ $moment($cloud.backup.updated_at).format('LLL') }}
                   </small>
                 </td>
               </tr>
 
               <tr>
+                <td>Versioning</td>
+                <td>
+                  <code class="me-2">v.{{ $cloud.b['cli.v'] }}</code>
+                </td>
+                <td>
+                  <code class="me-2">v.{{ $cloud.b['hash.v'] }}</code>
+                </td>
+              </tr>
+
+              <tr>
                 <td>Games</td>
                 <td>
-                  {{ format.num($app.count.library) }}
+                  {{ format.num(indexed?.lib?.length ?? 0) }}
                   <small
                     v-if="$auth.cloud?.library"
-                    class="text-muted d-inline-block cursor-help"
                     v-tippy="
                       'This signature hash verifies the integrity of your data. You can detect any conflicts by comparing their hashes'
-                    ">
+                    "
+                    class="text-muted d-inline-block cursor-help"
+                    :class="{
+                      'text-red': $auth.cloud?.library !== $cloud.backup.sign_library,
+                    }">
                     <Icon size="14" class="ms-2">Signature</Icon>
 
                     {{ $auth.cloud?.library?.slice(-6) }}
@@ -100,10 +78,13 @@
                 <td>
                   {{ format.num($cloud.backup.games) }}
                   <small
-                    class="text-muted d-inline-block cursor-help"
                     v-tippy="
                       'This signature hash verifies the integrity of your data. You can detect any conflicts by comparing their hashes'
-                    ">
+                    "
+                    class="text-muted d-inline-block cursor-help"
+                    :class="{
+                      'text-red': $auth.cloud?.library !== $cloud.backup.sign_library,
+                    }">
                     <Icon size="14" class="ms-2">Signature</Icon>
                     {{ $cloud.backup?.sign_library?.slice(-6) }}
                   </small>
@@ -121,10 +102,14 @@
                   {{ states.length }}
                   <small
                     v-if="$auth.cloud?.states"
-                    class="text-muted d-inline-block cursor-help"
                     v-tippy="
                       'This signature hash verifies the integrity of your data. You can detect any conflicts by comparing their hashes'
-                    ">
+                    "
+                    class="text-muted d-inline-block cursor-help"
+                    :class="{
+                      'text-red':
+                        $cloud.b['states.cli.hash'] !== $cloud.b['states.clo.hash'],
+                    }">
                     <Icon size="14" class="ms-2">Signature</Icon>
                     {{ $auth.cloud?.states?.slice(-6) }}
                   </small>
@@ -132,10 +117,14 @@
                 <td>
                   {{ $cloud.backup.states || 0 }}
                   <small
-                    class="text-muted d-inline-block cursor-help"
                     v-tippy="
                       'This signature hash verifies the integrity of your data. You can detect any conflicts by comparing their hashes'
-                    ">
+                    "
+                    class="text-muted d-inline-block cursor-help"
+                    :class="{
+                      'text-red':
+                        $cloud.b['states.cli.hash'] !== $cloud.b['states.clo.hash'],
+                    }">
                     <Icon size="14" class="ms-2">Signature</Icon>
                     {{ $cloud.backup?.sign_states?.slice(-6) }}
                   </small>
@@ -147,10 +136,14 @@
                 <td>
                   <small
                     v-if="$auth.cloud?.account"
-                    class="text-muted d-inline-block cursor-help"
                     v-tippy="
                       'This signature hash verifies the integrity of your data. You can detect any conflicts by comparing their hashes'
-                    ">
+                    "
+                    class="text-muted d-inline-block cursor-help"
+                    :class="{
+                      'text-red':
+                        $cloud.b['account.cli.hash'] !== $cloud.b['account.clo.hash'],
+                    }">
                     <Icon size="14">Signature</Icon>
                     {{ $auth.cloud?.account?.slice(-6) }}
                   </small>
@@ -158,10 +151,14 @@
                 </td>
                 <td>
                   <small
-                    class="text-muted d-inline-block cursor-help"
                     v-tippy="
                       'This signature hash verifies the integrity of your data. You can detect any conflicts by comparing their hashes'
-                    ">
+                    "
+                    class="text-muted d-inline-block cursor-help"
+                    :class="{
+                      'text-red':
+                        $cloud.b['account.cli.hash'] !== $cloud.b['account.clo.hash'],
+                    }">
                     <Icon size="14">Signature</Icon>
                     {{ $cloud.backup?.sign_account?.slice(-6) }}
                   </small>
@@ -171,17 +168,17 @@
           </table>
         </div>
 
-        <div class="row g-4" v-if="ui.complete">
-          <div class="col-10 mx-auto text-center">
+        <div v-if="ui.complete" class="row g-4">
+          <div class="col-11 mx-auto text-center">
             <div class="text-secondary mb-3">
-              Your local data has been syncronized with the cloud. You can close this
+              Your local data has been synchronized with the cloud. You can close this
               window, but it's recommended to reload the application.
             </div>
             <v-btn
               color="green-darken-2 mb-3"
               block
-              @click="ui.show = false"
-              variant="tonal">
+              variant="tonal"
+              @click="ui.show = false">
               <Icon size="16" width="1" class="mx-2">Checks</Icon>
               Accept changes
             </v-btn>
@@ -194,8 +191,8 @@
           </div>
         </div>
 
-        <div class="row g-4" v-else>
-          <div class="col-12" v-if="ui.loading">
+        <div v-else class="row g-4">
+          <div v-if="ui.loading" class="col-12">
             <v-progress-linear
               color="deep-purple accent-4"
               indeterminate
@@ -209,8 +206,8 @@
               :disabled="ui.loading"
               color="deep-purple-lighten-2"
               block
-              @click="upload"
-              variant="tonal">
+              variant="tonal"
+              @click="upload">
               <Icon size="18" width="1" class="mx-2">WorldUpload</Icon>
               Upload local
             </v-btn>
@@ -220,8 +217,8 @@
               :disabled="ui.loading"
               color="deep-purple-lighten-2"
               block
-              @click="download"
-              variant="tonal">
+              variant="tonal"
+              @click="download">
               <Icon size="18" width="1" class="mx-2">WorldDownload</Icon>
               Download cloud data
             </v-btn>
@@ -238,7 +235,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 23rd August 2024
- * Modified: Fri 20 September 2024 - 08:51:22
+ * Modified: Wed 29 January 2025 - 17:51:36
  **/
 
 export default {
@@ -256,6 +253,9 @@ export default {
   computed: {
     ...mapStores(useCloudStore),
     ...mapState(useStateStore, ['states']),
+    ...mapState(useDataStore, {
+      indexed: 'index',
+    }),
   },
 
   methods: {

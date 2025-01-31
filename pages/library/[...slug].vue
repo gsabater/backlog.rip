@@ -4,16 +4,16 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <div class="page-pretitle">Your games</div>
-          <h2 class="page-title text-capitalize cursor-pointer d-inline-block">
+          <h2 class="page-title text-capitalize d-inline-block">
             {{ source }}
-            <Icon
+            <!-- <Icon
               size="12"
               class="text-muted ms-1"
               style="width: 1rem; transform: translateY(2px)">
               ChevronDown
-            </Icon>
+            </Icon> -->
 
-            <b-dropdown style="overflow: visible; min-width: 240px">
+            <b-dropdown v-if="false" style="overflow: visible; min-width: 240px">
               <span class="dropdown-header">This is your complete library</span>
 
               <NuxtLink to="/library" class="dropdown-item">
@@ -38,8 +38,8 @@
 
               <NuxtLink
                 v-for="(state, i) in pinnedStates"
-                :to="'/library/' + state.slug"
                 :key="'state' + i"
+                :to="'/library/' + state.slug"
                 class="dropdown-item ps-3">
                 <span
                   class="status-dot ms-0 me-4"
@@ -52,7 +52,7 @@
                 </small>
               </NuxtLink>
 
-              <div class="dropdown-item" v-if="unPinnedStates.length > 0">
+              <div v-if="unPinnedStates.length > 0" class="dropdown-item">
                 <div style="width: 30px">
                   <Icon size="18" class="text-muted" width="1.5">Background</Icon>
                 </div>
@@ -67,8 +67,8 @@
                   style="overflow: visible; min-width: 240px">
                   <NuxtLink
                     v-for="(state, i) in unPinnedStates"
-                    :to="'/library/' + state.slug"
                     :key="'state' + i"
+                    :to="'/library/' + state.slug"
                     class="dropdown-item px-2">
                     <div class="content d-flex align-items-center w-100 px-1">
                       <span
@@ -163,7 +163,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th December 2023
- * Modified: Wed 25 September 2024 - 17:57:41
+ * Modified: Sat 11 January 2025 - 20:10:41
  **/
 
 export default {
@@ -176,10 +176,10 @@ export default {
     ...mapState(useStateStore, ['states', 'pinnedStates', 'unPinnedStates']),
 
     source() {
-      let slug = this.$route.params?.slug[0] || null
+      const slug = this.$route.params?.slug[0] || null
       if (['pinned', 'hidden', 'favorites'].includes(slug)) return slug
 
-      let state = this.states.find((state) => state.slug == slug)
+      const state = this.states.find((state) => state.slug == slug)
       return state ? state.name : 'Library'
     },
   },

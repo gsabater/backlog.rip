@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Fri 25 October 2024 - 11:52:49
+ * Modified: Wed 22 January 2025 - 17:07:44
  */
 
 let $nuxt = null
@@ -69,10 +69,7 @@ export const useRepositoryStore = defineStore('repository', {
       if (this.loaded.includes('genres')) return this.genres
 
       const xhr = await $nuxt.$axios.get(`repository/genres.json`)
-      if (xhr.status) {
-        // this.loaded.push('genres')
-        this._genres = xhr.data
-      }
+      if (xhr.status) this._genres = xhr.data
 
       log(
         '❇️ Genres loaded',
@@ -134,17 +131,17 @@ export const useRepositoryStore = defineStore('repository', {
     async topGames(batch) {
       if (!batch) return
       if (this.loaded.includes(`top:${batch}`)) return
+      this.loaded.push(`top:${batch}`)
 
       const xhr = await $nuxt.$axios.get(`repository/top-${batch}.json`)
       if (xhr.status) {
         $data.process(xhr.data, 'api')
-        this.loaded.push(`top:${batch}`)
       }
     },
 
     async init() {
-      if (!$nuxt) $nuxt = useNuxtApp()
-      if (!$data) $data = useDataStore()
+      $nuxt ??= useNuxtApp()
+      $data ??= useDataStore()
     },
   },
 })

@@ -10,10 +10,10 @@
         <template #item="{ element, index }">
           <div data-helper="draggable-required-to-drag">
             <b-game
+              :key="element.uuid"
               type="list"
               :uuid="element"
               :display="['name', 'score']"
-              :key="element.uuid"
               :action="null"
               style="padding-top: 0.65rem; padding-bottom: 0.65rem">
               <template #game:prepend>
@@ -60,21 +60,21 @@
                   </v-btn> -->
 
                   <v-btn
+                    v-tippy="'Drag to reorder'"
                     icon
                     class="handle cursor-move"
                     variant="text"
                     size="x-small"
-                    color="grey-lighten-1"
-                    v-tippy="'Drag to reorder'">
+                    color="grey-lighten-1">
                     <Icon size="16" width="1">GripVertical</Icon>
                   </v-btn>
 
                   <v-btn
+                    v-tippy="'Remove from the list'"
                     icon
                     variant="text"
                     size="x-small"
                     color="grey-lighten-1"
-                    v-tippy="'Remove from the list'"
                     @click="removeFromList(element)">
                     <Icon size="18">TrashX</Icon>
                   </v-btn>
@@ -108,12 +108,11 @@
 
     <div class="col-8">
       <v-text-field
-        @update:modelValue="search"
         v-model="f.string"
         placeholder="Search by name..."
         clearable
         density="comfortable">
-        <template v-slot:prepend-inner>
+        <template #prepend-inner>
           <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
         </template>
       </v-text-field>
@@ -152,7 +151,7 @@
     *+--------------------------------- -->
   <div class="card mb-3">
     <div class="list-group card-list-group games-group games--list">
-      <template v-for="(item, i) in _games" :key="item.uuid">
+      <template v-for="(item, i) in _games" :key="item.uuid || Math.random()">
         <div
           class="d-none list-group-item px-3 text-decoration-none"
           :class="{
@@ -205,32 +204,32 @@
 
             <div v-if="listHasApp(item)" class="col-auto">
               <v-btn
+                v-tippy="'Remove from the list'"
                 variant="text"
                 icon
                 size="x-small"
-                v-tippy="'Remove from the list'"
                 @click="removeFromList(item)">
                 <Icon>TrashX</Icon>
               </v-btn>
             </div>
 
-            <div class="col-auto" v-else-if="hasAPIUUID(item)">
+            <div v-else-if="hasAPIUUID(item)" class="col-auto">
               <v-btn
+                v-tippy="'Add to the top of the list'"
                 variant="text"
                 icon="mdi-chevron-right"
                 size="x-small"
                 color="grey-lighten-1"
-                v-tippy="'Add to the top of the list'"
                 @click="addToList(item, 'top')">
                 <Icon size="16">ChevronsUp</Icon>
               </v-btn>
 
               <v-btn
+                v-tippy="'Add to the bottom of the list'"
                 variant="text"
                 icon="mdi-chevron-right"
                 size="x-small"
                 color="grey-lighten-1"
-                v-tippy="'Add to the bottom of the list'"
                 @click="addToList(item, 'bottom')">
                 <Icon size="16">ChevronsDown</Icon>
               </v-btn>
@@ -266,30 +265,30 @@
             <div class="col-auto">
               <v-btn
                 v-if="listHasApp(item)"
+                v-tippy="'Remove from the list'"
                 variant="text"
                 icon
                 size="x-small"
-                v-tippy="'Remove from the list'"
                 @click="removeFromList(item)">
                 <Icon>TrashX</Icon>
               </v-btn>
               <template v-else-if="hasAPIUUID(item)">
                 <v-btn
+                  v-tippy="'Add to the top of the list'"
                   variant="text"
                   icon="mdi-chevron-right"
                   size="x-small"
                   color="grey-lighten-1"
-                  v-tippy="'Add to the top of the list'"
                   @click="addToList(item, 'top')">
                   <Icon size="16">ChevronsUp</Icon>
                 </v-btn>
 
                 <v-btn
+                  v-tippy="'Add to the bottom of the list'"
                   variant="text"
                   icon="mdi-chevron-right"
                   size="x-small"
                   color="grey-lighten-1"
-                  v-tippy="'Add to the bottom of the list'"
                   @click="addToList(item, 'bottom')">
                   <Icon size="16">ChevronsDown</Icon>
                 </v-btn>
@@ -301,12 +300,7 @@
     </div>
   </div>
 
-  <search-results
-    ref="results"
-    :disabled="false"
-    :filters="f"
-    @search:ready="search"
-    @search:end="ui.ping++">
+  <search-results ref="results" :disabled="false" @search:end="ui.ping++">
     <template #body>
       <div></div>
     </template>
@@ -319,7 +313,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: Wed 06 November 2024 - 17:13:31
+ * Modified: Fri 31 January 2025 - 13:05:22
  **/
 
 // import { useAsyncData } from 'nuxt/app' // Import useAsyncData from Nuxt 3
@@ -337,16 +331,16 @@ export default {
     searched: null,
     dragging: false,
 
-    f: {
-      string: '',
-      source: 'all',
-      sortBy: 'score',
-      sortDir: 'desc',
-      show: {
-        page: 1,
-        perPage: 42,
-      },
-    },
+    // f: {
+    //   string: '',
+    //   source: 'all',
+    //   sortBy: 'score',
+    //   sortDir: 'desc',
+    //   show: {
+    //     page: 1,
+    //     perPage: 42,
+    //   },
+    // },
 
     ui: {
       ping: 0,
@@ -356,15 +350,10 @@ export default {
     },
   }),
 
-  watch: {
-    'ui.show': function (value) {
-      this.reset()
-    },
-  },
-
   computed: {
     ...mapStores(useListStore, useDataStore),
     ...mapState(useListStore, ['list']),
+    ...mapState(useSearchStore, ['f', 'stats', 'loading', 'time']),
 
     library() {
       return this.dataStore.library().slice(0, 5)
@@ -388,8 +377,14 @@ export default {
         games.push(this.dataStore.get(uuid))
       })
 
-      let amount = this.searchString?.length ? 15 : 5
+      const amount = this.searchString?.length ? 15 : 5
       return games.slice(0, amount)
+    },
+  },
+
+  watch: {
+    'ui.show': function (value) {
+      this.reset()
     },
   },
 
@@ -400,21 +395,21 @@ export default {
     // -----
     // Created on Fri Mar 22 2024
     //+-------------------------------------------------
-    search() {
-      if (this.f.string == this.searched) return
+    // search() {
+    //   if (this.f.string == this.searched) return
 
-      this.searched = this.f.string
-      this.$nextTick(() => {
-        console.warn('search', this.$refs)
+    //   this.searched = this.f.string
+    //   this.$nextTick(() => {
+    //     console.warn('search', this.$refs)
 
-        // if (!this.f.string.length) return
-        if (!this.$refs.results) return
-        this.$refs.results.search('palettex')
-      })
-    },
+    //     // if (!this.f.string.length) return
+    //     if (!this.$refs.results) return
+    //     this.$refs.results.search('palettex')
+    //   })
+    // },
 
     hasAPIUUID(app) {
-      return app.id?.api
+      return app.uuid && !app.uuid.includes('local:')
     },
 
     //+-------------------------------------------------
@@ -552,7 +547,7 @@ export default {
     async store() {
       this.ui.loading = true
       try {
-        let payload = { ...this.list }
+        const payload = { ...this.list }
 
         payload.slug = format.stringToSlug(payload.name)
         await this.listStore.update(payload)
@@ -572,9 +567,7 @@ export default {
       }
     },
 
-    init() {
-      this.search()
-    },
+    init() {},
   },
 
   mounted() {

@@ -20,6 +20,7 @@
 }
 
 [data-theme='filters'] {
+  overflow: visible !important;
   // transform: translate(-3px, -50px);
 
   & .dropdown-menu {
@@ -75,7 +76,7 @@ header div.container-xl > [data-tippy-root] {
   padding: 5px;
   // margin-top: 7px;
 
-  backdrop-filter: blur(10px);
+  // backdrop-filter: blur(10px);
   border-color: #38394c;
 
   max-height: 55vh;

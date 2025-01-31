@@ -75,7 +75,7 @@
           *+--------------------------------- -->
         <NuxtLink
           to="/"
-          class="d-none d-lg-flex py-3 text-decoration-none"
+          class="d-none d-lg-flex pt-1 pb-2 text-decoration-none"
           style="
             display: flex;
             align-items: center;
@@ -100,7 +100,14 @@
           *| Main dropdown menu
           *| Menu with options to navigate
           *+--------------------------------- -->
-        <div class="d-none d-lg-block dropdown-menu show bg-transparent">
+        <div
+          class="d-none d-lg-block dropdown-menu bg-transparent"
+          style="
+            height: calc(100% - 220px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: 4px;
+          ">
           <span class="dropdown-header">
             <span class="text-muted my-2">Explore</span>
           </span>
@@ -123,9 +130,22 @@
             <span class="nav-link-title">Genres</span>
           </NuxtLink>
 
-          <div class="dropdown-divider"></div>
+          <template v-if="$app.wip">
+            <div class="dropdown-divider"></div>
 
-          <NuxtLink v-if="$app.wip" to="/dashboard" class="dropdown-item">
+            <span class="dropdown-header">
+              <span class="text-muted my-2">Community</span>
+            </span>
+
+            <NuxtLink to="/community" class="dropdown-item">
+              <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                <Icon size="16">Components</Icon>
+              </span>
+              <span class="nav-link-title">Community</span>
+            </NuxtLink>
+          </template>
+
+          <!-- <NuxtLink v-if="$app.wip" to="/dashboard" class="dropdown-item">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">Components</Icon>
             </span>
@@ -140,7 +160,7 @@
             <small class="ms-auto text-secondary">
               {{ $moment().format('DD/MM') }}
             </small>
-          </NuxtLink>
+          </NuxtLink> -->
 
           <!-- <div class="dropdown-divider"></div>
           <span class="dropdown-header control-hover" style="pointer-events: all">
@@ -156,9 +176,11 @@
           </span> -->
 
           <div class="dropdown-divider"></div>
+
           <span class="dropdown-header">
-            <span class="text-muted my-2">Your library</span>
+            <span class="text-muted my-2">Your games</span>
           </span>
+
           <NuxtLink to="/library" class="dropdown-item control-hover">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
               <Icon size="16">LayoutDashboard</Icon>
@@ -207,21 +229,29 @@
           <NuxtLink
             v-if="$auth.menu.favorites"
             to="/library/favorites"
-            class="dropdown-item pe-2">
-            <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-              <Icon size="16">Heart</Icon>
-            </span>
-            <span class="nav-link-title">Favorites</span>
+            class="dropdown-item">
+            <div class="content d-flex align-items-center w-100">
+              <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                <Icon size="16">Heart</Icon>
+              </span>
+              <span class="nav-link-title me-4">Favorites</span>
+              <small v-if="$app.count.fav > 0" class="ms-auto text-secondary">
+                {{ format.num($app.count.fav) }}
+              </small>
+            </div>
           </NuxtLink>
 
-          <NuxtLink
-            v-if="$auth.menu.pinned"
-            to="/library/pinned"
-            class="dropdown-item pe-2">
-            <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-              <Icon size="16">Bookmark</Icon>
-            </span>
-            <span class="nav-link-title">Pinned</span>
+          <NuxtLink v-if="$auth.menu.pinned" to="/library/pinned" class="dropdown-item">
+            <div class="content d-flex align-items-center w-100">
+              <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                <Icon size="16">Bookmark</Icon>
+              </span>
+
+              <span class="nav-link-title me-4">Pinned</span>
+              <small v-if="$app.count.pinned > 0" class="ms-auto text-secondary">
+                {{ format.num($app.count.pinned) }}
+              </small>
+            </div>
           </NuxtLink>
 
           <NuxtLink
@@ -239,8 +269,10 @@
                 {{ state.name }}
               </span>
 
-              <small v-if="stateStore.count(state.id) > 0" class="ms-auto text-secondary">
-                {{ format.num(stateStore.count(state.id)) }}
+              <small
+                v-if="$app.count.states[state.key] > 0"
+                class="ms-auto text-secondary">
+                {{ format.num($app.count.states[state.key]) }}
               </small>
 
               <!-- <span
@@ -276,7 +308,7 @@
       <div
         class="d-none d-lg-block aside-bottom w-100"
         style="position: absolute; bottom: 10px">
-        <div v-if="$app.updating" class="px-3 mt-2 mb-3">
+        <div v-if="$app.updating" class="px-3 my-2">
           <div class="input-icon" style="overflow: hidden; border-radius: 4px">
             <div class="progress progress-sm" style="position: absolute; height: 0.15rem">
               <div class="progress-bar progress-bar-indeterminate"></div>
@@ -301,8 +333,12 @@
           </div>
         </div>
 
-        <div v-else class="px-3 mt-2 mb-3" @click.stop="$mitt.emit('search:palette')">
-          <div class="input-group input-group-flat input-palette">
+        <!-- TEMP disabled, not working the search -->
+        <div
+          v-else-if="false"
+          class="px-3 my-2"
+          @click.stop="$mitt.emit('search:palette')">
+          <div class="input-group input-group-flat input-palette cursor-pointer">
             <span class="input-group-text">
               <Icon size="14" class="me-1">Search</Icon>
             </span>
@@ -331,13 +367,13 @@
           <span class="v-kbd">Control + K</span>
         </button> -->
 
-        <div class="row w-100 mb-3">
+        <div class="row w-100">
           <div class="col col d-flex justify-content-center">
-            <div
-              class="btn btn-ghost-secondary btn-sm btn-icon"
-              style="border-radius: 50%">
-              <Icon size="18" style="transform: translateY(1px)">HelpSquare</Icon>
-              <b-dropdown placement="top-start">
+            <v-btn icon size="small" variant="text">
+              <Icon size="18" style="transform: translateY(1px)">Terminal2</Icon>
+              <b-dropdown
+                placement="top-start"
+                style="overflow: hidden; letter-spacing: initial">
                 <a
                   class="dropdown-item"
                   href="https://discord.gg/F2sPE5B"
@@ -357,14 +393,34 @@
                     </g>
                   </svg>
                   Discord
+                  <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
                 </a>
+
+                <a
+                  href="https://www.patreon.com/c/BacklogRIP"
+                  class="dropdown-item"
+                  target="_blank">
+                  <Icon size="18" class="me-2">BrandPatreon</Icon>
+                  Patreon
+                  <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
+                </a>
+
                 <a
                   href="https://github.com/gsabater/backlog.rip"
                   class="dropdown-item"
                   target="_blank">
-                  <Icon size="18" class="me-2">BrandGithub</Icon>
-                  Code on Github
+                  <b-logo
+                    name="github"
+                    size="16"
+                    class="me-2"
+                    color="#fff"
+                    style="opacity: 0.6"></b-logo>
+                  <!-- <Icon size="18" class="me-2">BrandGithub</Icon> -->
+                  Source code
+                  <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
                 </a>
+
+                <div class="dropdown-divider"></div>
 
                 <NuxtLink to="/changelog" class="dropdown-item">
                   <Icon size="18" class="me-2">Broadcast</Icon>
@@ -383,7 +439,12 @@
                   </span>
                 </span>
               </b-dropdown>
-            </div>
+            </v-btn>
+            <!-- <div
+              class="btn btn-ghost-secondary btn-sm btn-icon"
+              style="border-radius: 50%">
+
+            </div> -->
           </div>
           <div class="col col d-flex justify-content-center">
             <NuxtLink
@@ -646,7 +707,7 @@
                 'gray-600': $cloud.is == 'local',
                 'bg-teal-lt': $cloud.is == 'connecting',
                 'bg-teal-lt': $cloud.is == 'syncing',
-                'bg-green-lt': $cloud.is == 'syncing:done',
+                'bg-green-lt': $cloud.is == 'sync:done',
                 'bg-orange-lt': $cloud.is == 'conflict',
                 'bg-red-lt': $cloud.is == 'error',
               }"
@@ -669,7 +730,7 @@
               <Icon v-if="$cloud.is == 'error'" size="14" width="1.5">CloudOff</Icon>
               <Icon v-if="$cloud.is == 'connecting'" size="14" width="1.5">Point</Icon>
               <Icon v-if="$cloud.is == 'syncing'" size="14" width="1.5">CloudRain</Icon>
-              <Icon v-if="$cloud.is == 'syncing:done'" size="14" width="1.5">
+              <Icon v-if="$cloud.is == 'sync:done'" size="14" width="1.5">
                 CloudCheck
               </Icon>
             </div>
@@ -708,7 +769,7 @@
                 </div>
               </div>
 
-              <div v-if="$cloud.is == 'syncing:done'" class="dropdown-item disabled">
+              <div v-if="$cloud.is == 'sync:done'" class="dropdown-item disabled">
                 <div class="d-flex align-items-center">
                   <div
                     class="avatar avatar-sm rounded-circle bg-green-lt"
@@ -721,7 +782,7 @@
                     <Icon size="18" width="1.5">CloudCheck</Icon>
                   </div>
                   <div class="ms-3">
-                    <a href="javascript:void(0)" class="text-body">Syncronized</a>
+                    <a href="javascript:void(0)" class="text-body">Synchronized</a>
                     <div v-tippy="$auth.cloud.updated_at" class="text-secondary">
                       Last backup
                       {{ dates.dynamicTimeAgo($auth.cloud.updated_at) }} ago
@@ -743,9 +804,7 @@
                 </div>
               </div>
 
-              <div
-                v-else-if="$cloud.is !== 'syncing:done'"
-                class="dropdown-item disabled">
+              <div v-else-if="$cloud.is !== 'sync:done'" class="dropdown-item disabled">
                 <div class="d-flex align-items-center">
                   <span class="badge bg-orange badge-blink"></span>
                   <div class="ms-3">
@@ -924,6 +983,11 @@
     </div>
   </div>
 
+  <!--
+    *+---------------------------------
+    *| Global components
+    *| Mostly notifications and dialogs
+    *+--------------------------------- -->
   <client-only>
     <common-notification />
     <common-confirmDialog />
@@ -933,6 +997,7 @@
     <game-add />
     <game-dialog />
     <game-manager />
+    <game-random-dialog />
 
     <cloud-conflict />
     <list-crud-dialog />
@@ -1109,16 +1174,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu 19 December 2024 - 10:00:26
+ * Modified: Thu 30 January 2025 - 16:51:26
  **/
-
-// import { SpeedInsights } from '@vercel/speed-insights/nuxt'
 
 export default {
   name: 'DefaultLayout',
-  components: {
-    // SpeedInsights,
-  },
 
   data() {
     return {
@@ -1137,11 +1197,12 @@ export default {
 
     //+-------------------------------------------------
     // function()
-    //
+    // TODO: use the method in the store
     // -----
     // Created on Wed Apr 03 2024
     //+-------------------------------------------------
     pinnedStates() {
+      if (!this.$app.ready) return []
       const pinned = this.$auth?.menu?.states || []
       return this.states.filter((state) => pinned.includes(state.id))
     },

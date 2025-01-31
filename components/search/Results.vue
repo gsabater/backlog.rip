@@ -41,7 +41,7 @@
             :key="app"
             type="list"
             :uuid="app"
-            :body="cardBody"
+            :visible="visibleProps"
             :display="['name', 'score', 'released']"
             style="padding-top: 0.65rem; padding-bottom: 0.65rem">
             <template #game:prepend>
@@ -110,7 +110,7 @@
           <div
             class="col col-6 col-sm-4 col-md-3 col-lg-custom pt-1 pb-3"
             style="padding-left: 0.75rem; padding-right: 0.75rem">
-            <b-game :key="app" :uuid="app" :body="cardBody" tracking></b-game>
+            <b-game :key="app" :uuid="app" :visible="visibleProps" tracking></b-game>
           </div>
         </template>
 
@@ -156,11 +156,10 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 12 December 2024 - 16:51:47
+ * Modified: Fri 31 January 2025 - 11:43:31
  **/
 
 import { useThrottleFn } from '@vueuse/core'
-import searchFn from '~/utils/search'
 
 export default {
   name: 'SearchResults',
@@ -173,19 +172,16 @@ export default {
 
     filters: {
       type: Object,
-      default: () => ({ string: '' }),
+      default: null,
     },
 
+    // Source array
+    // Used for constrained searches
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     source: {
-      type: [Array],
-      default: () => [],
+      type: [String, Array],
+      default: null, // 'library', []
     },
-
-    // Not used yet, left for reference
-    // source: {
-    //   type: [String, Array],
-    //   default: 'all', // 'library', []
-    // },
 
     layout: {
       type: String,
@@ -197,12 +193,13 @@ export default {
   emits: ['search:ready', 'search:start', 'search:end'],
 
   setup(props, { emit }) {
-    const $nuxt = useNuxtApp()
-    const $data = useDataStore()
+    // const $nuxt = useNuxtApp()
+    // const $data = useDataStore()
+    const $route = useRoute()
     const $search = useSearchStore()
 
+    const ready = false
     const items = ref([])
-    let typeofSource = null
 
     //+-------------------------------------------------
     // search()
@@ -212,160 +209,75 @@ export default {
     // Created on Fri Nov 24 2023
     // Updated on Tue Jan 09 2024
     // Updated on Mon Mar 25 2024 - useThrottleFn
+    // Created on Sun Jan 05 2025 - Filter in the store
     //+-------------------------------------------------
     const search = useThrottleFn(
-      async (source = null) => {
+      async (trigger = null) => {
+        if (!$app.ready) return
         if (props.disabled) return
-        if (Object.keys(props.filters).length === 0) return
+        // if (Object.keys(props.filters).length === 0) return
 
-        $search.loading = true
-        emit('search:start', source)
-        log('🪡 search:start', source || 'direct')
+        console.groupCollapsed('🔸 Search at ..' + $route.path + ' (' + trigger + ')')
+        log('search', '⇢ search:start', trigger || 'direct')
+        emit('search:start', trigger)
 
-        filter()
+        // let filters = null
+        // if (props.filters?.source) {
+        //   filters = JSON.parse(JSON.stringify(props.filters))
+        // }
 
-        // Perform a search on the API
-        // Only allowd sources will be searched
-        if (['all', 'palette'].includes(props.filters.source)) {
-          // console.warn(
-          //   'comprobar otros filtros y trabajar en optimizar el payload',
-          //   'genre, released, sortby: name, score,released, hltb'
-          // )
-
-          $search.stats.api_start = performance.now()
-          await $data.search({ ...props.filters })
-          $search.stats.api_end = performance.now()
-
-          emit('search:end')
-          $search.loading = false
-          log('⇢ search:end:api', $search.stats)
-
-          return
-        }
+        const search = $search.run()
+        items.value = search.items
 
         emit('search:end')
-        $search.loading = false
-        log('⇢ search:end', $search.stats)
+        console.groupEnd()
       },
       1000,
       true
     )
 
-    //+-------------------------------------------------
-    // filter()
-    // Loads a source and filters out apps
-    // Generates an index to sort afterwords
-    // -----
-    // Created on Thu Nov 23 2023
-    // Updated on Tue Jan 09 2024 - Included utils.search
-    // Updated on Thu Feb 15 2024 - Added stats
-    // Updated on Mon Mar 25 2024 - On setup
-    //+-------------------------------------------------
-    const filter = () => {
-      const source = getSource()
-
-      log(
-        `⇢ Searching [${typeofSource}] (${Object.keys(source).length}) 🔸`,
-        JSON.stringify(props.filters)
-      )
-
-      $search.stats.apps = Object.keys(source).length
-      if (typeofSource == 'all') $search.stats.apps = $nuxt.$app.count.api
-      // if (props.filters.source.length == 0) return -> ??
-
-      $search.stats.start = performance.now()
-      const searched = searchFn.filter(source, props.filters, { source: props.source })
-      items.value = searchFn.paginate(searched.items, props.filters.show)
-
-      // $search.stats.time = end - start
-      $search.stats.end = performance.now()
-      $search.stats.results = searched.results
-      $search.stats.filtered = searched.filtered || 0
-
-      $search.history.items = searched.items
-    }
-
-    //+-------------------------------------------------
-    // getSource()
-    // Returns the source array based on the props
-    // -----
-    // Created on Wed Jul 24 2024
-    //+-------------------------------------------------
-    const getSource = () => {
-      // Source is an array of fixed items
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      typeofSource = 'array'
-      if (Array.isArray(props.source) && props.source.length) return props.source
-
-      // Source is all games
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      typeofSource = 'all'
-      if (props.filters.source == 'all') return $data.list()
-
-      // The source is the library but...
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      typeofSource = props.filters.is ?? 'library'
-      if (!props.filters.is) return $data.library('object')
-      if (props.filters.is == 'pinned') return $data.pinned('object')
-      if (props.filters.is == 'hidden') return $data.hidden('object')
-      if (props.filters.is == 'favorites') return $data.library('object')
-    }
+    // Watcher
+    // Trigger to fire a search
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    watch(
+      () => $search.f,
+      (value, old) => {
+        if (props.disabled) return
+        // console.warn('💢💢💢💥💥💥', value)
+        search('filters:updated')
+      },
+      { deep: true }
+    )
 
     return { search, items, loading: $search.loading }
   },
 
   data() {
-    return {
-      // control: {
-      //   hash: null,
-      //   event: null,
-      //   search: null,
-      // },
-    }
+    return {}
   },
 
   computed: {
-    ...mapStores(useDataStore),
-  },
+    ...mapStores(useDataStore, useSearchStore),
+    // ...mapState(useSearchStore, ['f','loading']),
 
-  computed: {
-    cardBody() {
-      // // console.warn('🔴 cardBody', this.filters.show.card)
-      // return []
-      const show = [...(this.filters?.show?.card ?? [])]
-
-      if (show.length == 1 && show.includes('default')) {
-        if (this.filters.sortBy == 'score') {
-          show.push('score')
-        }
-
-        if (this.filters.sortBy == 'released') {
-          show.push('released')
-        }
-
-        if (this.filters.sortBy == 'playtime') {
-          show.push('playtime')
-        }
-
-        if (this.filters.sortBy == 'hltb') {
-          show.push('hltb')
-        }
-      }
-
-      return show
+    //+-------------------------------------------------
+    // visibleProps()
+    // VisibleProps fields defined by the user
+    // -----
+    // Created on Tue Dec 31 2024
+    //+-------------------------------------------------
+    visibleProps() {
+      return searchService.visibleProps(this.searchStore.f)
     },
   },
 
   watch: {
-    // filters: {
-    //   handler() {
-    //     log('💎 Search: Watcher', JSON.stringify(this.filters))
-    //     this.search('watch:filters')
-    //   },
-    //   deep: true,
-    // },
+    '$app.ready': function () {
+      // console.warn('watch $app.ready')
+      this.init()
+    },
 
-    source: {
+    'source': {
       handler() {
         if (!this.source.length) return
         this.search('watch:source')
@@ -375,22 +287,31 @@ export default {
   },
 
   methods: {
-    init() {
-      // this.loadRepositories()
+    async init() {
+      if (!this.$app.ready) return
+
+      let filters = null
+      if (Array.isArray(this.source)) {
+        filters = {
+          source: this.source,
+        }
+      }
+
+      await this.searchStore.prepare(filters)
       this.$emit('search:ready')
 
-      if (!this.source.length) return
-      this.search('init:array')
+      // @data:updated
+      // Reset the search hashed cache
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      this.$mitt.on('data:updated', () => {
+        this.searchStore.resetHashed()
+        this.search('data:updated')
+      })
     },
   },
 
   mounted() {
     this.init()
-
-    this.$mitt.on('data:updated', () => {
-      if (!$app.ready) return
-      this.search('data:updated')
-    })
 
     // this.$mitt.on('data:deleted', () => {
     //   if (!$app.ready) return

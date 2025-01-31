@@ -25,7 +25,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 18th December 2023
- * Modified: Sat 23 November 2024 - 19:43:40
+ * Modified: Thu 23 January 2025 - 17:07:05
  **/
 
 const route = useRoute()
@@ -36,7 +36,7 @@ const { data, pending, error } = await useFetch(
   () => `https://api.backlog.rip/get/${slug.value}.json`
 )
 
-const app = $data.prepareToData({ ...unref(data) })
+const app = dataService.prepareToData({ ...unref(data) })
 
 watchEffect(() => {
   console.log({

@@ -3,7 +3,7 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 17 December 2024 - 12:49:20
+ * Modified: Fri 17 January 2025 - 13:21:30
  */
 
 let $log = null
@@ -172,7 +172,7 @@ export default {
     app.name = data.name
     app.id.steam = Number(data.appid)
 
-    app.date.steam_updated_at = dates.stamp()
+    app.dates.steam_updated_at = dates.stamp()
     app.is.steam = app.is.steam || dates.stamp()
 
     app.playtime.steam = data.playtime_forever

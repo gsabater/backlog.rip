@@ -11,12 +11,12 @@
                     :to="'/import/' + platform"
                     class="btn btn-primary w-100 mb-2">
                     <Icon class="me-3">ArrowsTransferDown</Icon>
-                    Syncronize your library
+                    Synchronize your library
                   </NuxtLink>
                 </template>
                 <template v-else>
                   <div class="text-secondary mb-3">
-                    Before you can syncronize your library with
+                    Before you can synchronize your library with
                     <strong class="text-white font-serif">
                       {{ mod.manifest.source.name }}
                     </strong>
@@ -57,7 +57,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 25th November 2024
- * Modified: Thu 12 December 2024 - 16:50:44
+ * Modified: Wed 29 January 2025 - 17:52:38
  **/
 
 export default {

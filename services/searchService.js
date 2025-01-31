@@ -1,9 +1,9 @@
 /*
- * @file:    \utils\search.js
- * @desc:    Handles search filtering and sorting
- * -------------------------------------------
+ * @file:    \services\searchService.js
+ * @desc:    ...
+ * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Wed 30 October 2024 - 17:27:04
+ * Modified: Tue 28 January 2025 - 17:24:07
  */
 
 export default {
@@ -14,7 +14,7 @@ export default {
   // Created on Tue Jan 09 2024
   // Updated on Wed Jul 24 2024 - Added fav
   //+-------------------------------------------------
-  filter(source, filters, extra) {
+  filter(source, filters) {
     let items = []
     let toSort = []
     let filtered = []
@@ -24,7 +24,10 @@ export default {
     let searchString = filters?.string?.toLowerCase().replace(re, '').trim()
 
     for (const index in source) {
+      // if (app.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') debugger
+
       const app = source[index]
+      const appName = this.cleanAppName(app.name)
 
       // ✨ Filter: Backlog state
       // Match with app.state
@@ -86,9 +89,6 @@ export default {
       // Match with on app.name and store IDs
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.string?.length > 0) {
-        let appName = app.name ? app.name : ''
-        appName = appName.toString().toLowerCase()
-
         if (
           appName.indexOf(searchString) === -1 &&
           app.id.steam?.toString() !== searchString
@@ -158,6 +158,29 @@ export default {
         }
       }
 
+      // ✨ Sort By: Scores
+      // Include only apps with data
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (['score', 'metascore', 'steamscore'].includes(filters?.sortBy)) {
+        if (filters.sortBy == 'score' && filters.sortDir == 'asc' && !app.score) {
+          filtered.push(app.uuid)
+          // console.warn('🛑 Skipping because has no score', filters.sortBy, app.score)
+          continue
+        }
+
+        if (filters.sortBy == 'metascore' && !app.scores.metascore) {
+          filtered.push(app.uuid)
+          // console.warn('🛑 Skipping because has no metascore', filters.sortBy, app.metascore)
+          continue
+        }
+
+        if (filters.sortBy == 'steamscore' && !app.scores.steamscore) {
+          filtered.push(app.uuid)
+          // console.warn('🛑 Skipping because has no steamscore', filters.sortBy, app.steamscore)
+          continue
+        }
+      }
+
       // Finally,
       // Modify and add the app to items
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -171,11 +194,19 @@ export default {
       }
 
       if (filters?.sortBy == 'name') {
-        toSort.push({ uuid: app.uuid, val: app.name?.toString().toLowerCase() || '' })
+        toSort.push({ uuid: app.uuid, val: appName || '' })
       }
 
       if (filters?.sortBy == 'score') {
-        toSort.push({ uuid: app.uuid, val: app._?.score || 0 })
+        toSort.push({ uuid: app.uuid, val: app.score || 0 })
+      }
+
+      if (filters.sortBy == 'metascore') {
+        toSort.push({ uuid: app.uuid, val: app.scores.metascore || 0 })
+      }
+
+      if (filters.sortBy == 'steamscore') {
+        toSort.push({ uuid: app.uuid, val: app.scores.steamscore || 0 })
       }
 
       if (filters?.sortBy == 'released') {
@@ -238,7 +269,17 @@ export default {
     // SortBy: numeric value
     // Using app.playtime // score // rand
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (['rand', 'hltb', 'score', 'playtime', 'released'].includes(sortBy)) {
+    if (
+      [
+        'rand',
+        'hltb',
+        'score',
+        'metascore',
+        'steamscore',
+        'playtime',
+        'released',
+      ].includes(sortBy)
+    ) {
       return items
         .sort((a, b) => {
           const A = a.val || 0
@@ -273,29 +314,133 @@ export default {
   },
 
   //+-------------------------------------------------
-  // underScore()
-  // Calculates a new underlying score based on the amount
-  // of reviews and the median score
+  // makeHash()
+  // Generates an unique hash to identify a search instance
   // -----
-  // Created on Mon Feb 12 2024
+  // Created on Sun Jan 05 2025
   //+-------------------------------------------------
-  underScore(app) {
-    // TODO: use the method in $gameStore instead
-    let score = app.score || 0
+  makeHash(source, filters) {
+    if (source.type == 'array') return null
 
-    // Avoid very high scores not verified
-    if (app.score > 96 && !app.scores) score = 60
+    let f = {
+      string: filters.string,
+      sortBy: filters.sortBy,
+      sortDir: filters.sortDir,
+      released: filters.released,
+      genres: filters.genres,
+      states: filters.states,
+    }
 
-    // Reduce the final score there is not score count
-    // We cannot verify that the score is real
-    if (!app.scores) score = score - 10
+    let json = JSON.stringify(f)
+    let base = btoa(json)
+    let hash = source.type + '#' + Object.keys(source.apps).length + ':' + base
 
-    // Reduce the final score if the amount of reviews is low
-    // if (app.scores?.steamCount < 100) score = score * 0.6
-    // else if (app.scores?.steamCount < 1000) score = score * 0.8
+    return hash
+  },
 
-    if (app.scores?.igdbCount < 100) score = score - 10
+  //+-------------------------------------------------
+  // searchHash()
+  // Sanitizes and creates a hash for the search to API
+  // -----
+  // Created on Wed May 01 2024
+  // Created on Tue Jan 14 2025 - Moved to searchService
+  //+-------------------------------------------------
+  makeApiHash(f = {}) {
+    f.string = f.string?.trim()
 
-    return score
+    let emptyString = !f.string || f.string?.length < 3
+    let dirty = ['genres', 'anotherArrayProperty'].some(
+      (prop) => Array.isArray(f[prop]) && f[prop].length > 0
+    )
+
+    if (f.sortBy == 'rand') return null
+    if (f.sortBy == 'score' && f.sortDir == 'desc' && emptyString && !dirty) return null
+    if (f.sortBy == 'playtime' && emptyString) return null
+
+    delete f.is
+    delete f.mods
+    delete f.show
+    delete f.source
+    delete f.states
+
+    if (emptyString) delete f.string
+    if (!f.released) delete f.released
+    if (f.genres?.length == 0) delete f.genres
+
+    const json = JSON.stringify(f)
+    const slug = btoa(json)
+    const hash = 'API' + ':' + slug
+
+    return { hash, slug, json }
+  },
+
+  //+-------------------------------------------------
+  // cleanAppName()
+  // Returns a clean app name
+  // -----
+  // Created on Wed Jan 08 2025
+  //+-------------------------------------------------
+  cleanAppName(name) {
+    let appName = name ? name : ''
+    appName = appName.toString().toLowerCase()
+    appName = appName.trim()
+
+    // Characters to remove
+    // prettier-ignore
+    let chars = [
+      '(', ')', '[', ']', '{', '}', '|', ':', '"',
+      "'", '<', '>', '!', '?', ',', ';'
+    ]
+
+    for (const char of chars) {
+      appName = appName.replace(char, '')
+    }
+
+    return appName
+  },
+
+  //+-------------------------------------------------
+  // visibleProps()
+  // Returns a an array of properties for game items
+  // based on the user selection and the sortBy
+  // -----
+  // Created on Tue Dec 31 2024
+  //+-------------------------------------------------
+  visibleProps(filters) {
+    let selected = JSON.parse(JSON.stringify(filters?.show?.card ?? []))
+
+    if (selected.length == 1 && selected.includes('default')) {
+      selected.push(filters.sortBy)
+    }
+
+    return selected
+  },
+
+  //+-------------------------------------------------
+  // calcNextPage()
+  // Calcs the amount of games that will be shown in the next page
+  // -----
+  // Created on Thu Jan 09 2025
+  //+-------------------------------------------------
+  calcNextPage(filters, results) {
+    if (!filters.show) return 0
+
+    const { page, perPage } = filters.show
+    const start = page * perPage
+    return Math.min(perPage, results - start)
+  },
+
+  //+-------------------------------------------------
+  // calcShowing()
+  // Calcs the amount of games being shown
+  // -----
+  // Created on Thu Jan 09 2025
+  //+-------------------------------------------------
+  calcShowing(filters, results) {
+    if (!filters.show) return 0
+
+    const { page, perPage } = filters.show
+    const start = page * perPage
+    return Math.min(start, results)
   },
 }

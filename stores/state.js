@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Tue 26 November 2024 - 13:05:09
+ * Modified: Thu 30 January 2025 - 16:38:19
  */
 
 let $nuxt = null
@@ -47,6 +47,18 @@ export const useStateStore = defineStore('state', {
     // getCurrentlyPlaying() {
     //   return this.playing
     // },
+
+    pinnedStates() {
+      if (!this.states.length) return ['xx']
+      const pinned = $nuxt.$auth?.menu?.states || []
+      return this.states.filter((state) => pinned.includes(state.id))
+    },
+
+    unPinnedStates() {
+      if (!this.states.length) return ['xx']
+      const pinned = $nuxt.$auth?.menu?.states || []
+      return this.states.filter((state) => !pinned.includes(state.id))
+    },
   },
 
   actions: {
@@ -211,15 +223,6 @@ export const useStateStore = defineStore('state', {
       $game.app.state = state
       $game.update(uuid, { ...app })
 
-      $journal.add({
-        event: 'state',
-        ref: uuid,
-        data: {
-          state: state,
-          old: old,
-        },
-      })
-
       $nuxt.$mitt.emit('state:change', {
         uuid: uuid,
         state: state,
@@ -230,6 +233,15 @@ export const useStateStore = defineStore('state', {
       })
 
       this.indexLibrary()
+
+      // $journal.add({
+      //   event: 'state',
+      //   ref: uuid,
+      //   data: {
+      //     state: state,
+      //     old: old,
+      //   },
+      // })
     },
 
     //+-------------------------------------------------
@@ -265,35 +277,37 @@ export const useStateStore = defineStore('state', {
 
     //+-------------------------------------------------
     // favorite()
-    // Toggle the is.fav flag on an app
+    // Switch is.fav flag
     // -----
     // Created on Tue Jul 23 2024
     //+-------------------------------------------------
     favorite(uuid) {
       let app = $data.get(uuid)
       let old = app.is?.fav || false
+      let isFav = !old
 
       // Update the status
       // on $game and $data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-      app.is.fav = !old
+      app.is.fav = isFav
       app.is.dirty = true
       app.is.lib = app.is.lib ?? dates.stamp()
 
-      $game.app.is.fav = !old
+      $game.app.is.fav = isFav
       $game.update(uuid, { ...app })
 
-      $nuxt.$mitt.emit('fav:change', {
+      $nuxt.$mitt.emit('state:change', {
         uuid: uuid,
-        fav: !old,
+        state: 'fav',
+        fav: isFav,
       })
 
       $nuxt.$toast.success(
         'Game has been ' + (old ? 'removed from favorites' : 'added to favorites')
       )
 
-      this.indexLibrary()
+      this.indexLibrary('fav')
     },
 
     //+-------------------------------------------------
@@ -326,7 +340,7 @@ export const useStateStore = defineStore('state', {
         // description: 'Monday, January 3rd at 6:00pm',
       })
 
-      this.indexLibrary()
+      this.indexLibrary('pinned')
     },
 
     //+-------------------------------------------------
@@ -440,7 +454,10 @@ export const useStateStore = defineStore('state', {
 
       this.states = states.sort((a, b) => a.order - b.order)
       this.keyed = states.reduce((obj, state, index) => {
-        state.key = state.key || `state_${state.id}`
+        // if (state.key === true) delete state.key
+        // state.key = state.key || `state_${state.id}`
+        state.key = `state_${state.id}`
+
         if (state.order != index) {
           state.order = index
           $nuxt.$db.states.put(state)
@@ -482,20 +499,6 @@ export const useStateStore = defineStore('state', {
         s: this.states,
         index: this.index,
       }
-    },
-  },
-
-  getters: {
-    pinnedStates() {
-      if (!this.states.length) return ['xx']
-      const pinned = $nuxt.$auth?.menu?.states || []
-      return this.states.filter((state) => pinned.includes(state.id))
-    },
-
-    unPinnedStates() {
-      if (!this.states.length) return ['xx']
-      const pinned = $nuxt.$auth?.menu?.states || []
-      return this.states.filter((state) => !pinned.includes(state.id))
     },
   },
 })

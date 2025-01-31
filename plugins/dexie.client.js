@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Tue 26 November 2024 - 13:01:16
+ * Modified: Mon 27 January 2025 - 17:56:46
  */
 
 import Dexie from 'dexie'
@@ -77,7 +77,7 @@ function install() {
   let installer = new DexieInstaller(db)
   installer.account()
   installer.states()
-  installer.checkin()
+  installer.configure()
   installer.journal()
 
   db.status = 'ready'

@@ -43,7 +43,7 @@
       <span class="text-muted">General sorting</span>
     </span>
 
-    <label
+    <!-- <label
       class="dropdown-item ps-1"
       :class="{ active: f.sortBy == 'rand' }"
       @click="sortBy('rand')">
@@ -59,7 +59,7 @@
           HelpSmall
         </Icon>
       </tippy>
-    </label>
+    </label> -->
 
     <label
       class="dropdown-item ps-1"
@@ -94,7 +94,7 @@
       :class="{ active: f.sortBy == 'score' }"
       @click="sortBy('score', 'desc', true)">
       <div class="d-flex justify-center" style="width: 30px">
-        <Icon size="16" class="me-1">Universe</Icon>
+        <Icon size="16" class="me-1">Star</Icon>
       </div>
       <div>
         Median score
@@ -105,7 +105,75 @@
       </div>
       <tippy
         class="text-muted ms-auto cursor-help ps-4"
-        :content="'The median score is ....'">
+        :content="'The median is the middle value in a set of scores when arranged in order. It avoids being skewed by extreme values, making it a fairer representation of the central tendency compared to the average.'">
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
+          HelpSmall
+        </Icon>
+      </tippy>
+    </label>
+
+    <label
+      class="dropdown-item ps-1"
+      :class="{
+        'active': f.sortBy == 'metascore',
+        'disabled cursor-not-allowed': f.source == 'all',
+      }"
+      @click="sortBy('metascore', 'desc', true)">
+      <div class="d-flex justify-center" style="width: 30px">
+        <b-logo name="metacritic" size="14" class="me-1" style="opacity: 0.6" />
+      </div>
+      <div>
+        Metacritic
+        <small v-if="f.source == 'all'" class="d-block text-muted">
+          Not available yet on
+          <strong>all games</strong>
+        </small>
+
+        <div
+          v-else-if="f.sortBy == 'metascore'"
+          class="text-muted"
+          style="font-size: 0.75rem">
+          {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
+          <Icon size="14" width="2" class="mx-1">Repeat</Icon>
+        </div>
+      </div>
+      <tippy
+        class="text-muted ms-auto cursor-help ps-4"
+        :content="'Sorting by Metacritic will show only games with known Metacritic scores. Please note that not all games in the database have Metacritic scores.'">
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
+          HelpSmall
+        </Icon>
+      </tippy>
+    </label>
+
+    <label
+      class="dropdown-item ps-1"
+      :class="{
+        'active': f.sortBy == 'steamscore',
+        'disabled cursor-not-allowed': f.source == 'all',
+      }"
+      @click="sortBy('steamscore', 'desc', true)">
+      <div class="d-flex justify-center" style="width: 30px">
+        <b-logo color="#fff" name="steam" size="14" class="me-1" style="opacity: 0.6" />
+      </div>
+      <div>
+        Steam recommendations
+        <small v-if="f.source == 'all'" class="d-block text-muted">
+          Not available yet on
+          <strong>all games</strong>
+        </small>
+
+        <div
+          v-else-if="f.sortBy == 'steamscore'"
+          class="text-muted"
+          style="font-size: 0.75rem">
+          {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
+          <Icon size="14" width="2" class="mx-1">Repeat</Icon>
+        </div>
+      </div>
+      <tippy
+        class="text-muted ms-auto cursor-help ps-4"
+        :content="'Sorting by Steam recommendations will show only games with known Steam score. Please note that not all games in the database are linked with Steam.'">
         <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
           HelpSmall
         </Icon>
@@ -136,6 +204,7 @@
     </label>
 
     <label
+      v-if="$app.wip"
       class="dropdown-item ps-1"
       :class="{ active: f.sortBy == 'released' }"
       @click="sortBy('released', 'desc', true)">
@@ -143,7 +212,7 @@
         <Icon size="16" class="me-1">CalendarDot</Icon>
       </div>
       <div>
-        Release date
+        🔸 Release date
         <div v-if="f.sortBy == 'released'" class="text-muted" style="font-size: 0.75rem">
           {{ f.sortDir == 'asc' ? 'Oldest' : 'Newest' }}
           <Icon size="14" width="2" class="mx-1">Repeat</Icon>
@@ -198,7 +267,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st October 2024
- * Modified: Wed 30 October 2024 - 15:52:20
+ * Modified: Mon 13 January 2025 - 17:07:40
  **/
 
 export default {

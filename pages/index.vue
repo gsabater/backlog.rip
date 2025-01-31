@@ -19,13 +19,17 @@
             <div class="row g-3 justify-center">
               <div class="col-auto">&nbsp;</div>
               <div class="col-auto">
-                <b-btn to="import" color="purple" size="sm">Import your library</b-btn>
+                <v-btn to="import" color="purple" variant="flat">
+                  Import your library
+                </v-btn>
+                <!-- <b-btn to="import" color="purple" size="sm">Import your library</b-btn> -->
               </div>
 
               <div class="col-auto">
-                <b-btn to="games" variant="ghost" size="sm" color="secondary">
+                <v-btn to="games" color="secondary" variant="text">Browse games</v-btn>
+                <!-- <b-btn to="games" variant="ghost" size="sm" color="secondary">
                   Browse games
-                </b-btn>
+                </b-btn> -->
               </div>
             </div>
 
@@ -41,17 +45,23 @@
                 href="https://github.com/gsabater/backlog.rip"
                 class="link-secondary link-underline-opacity-0"
                 target="_blank">
-                <Icon size="14" class="me-0" style="transform: translateY(-1px)">
-                  BrandGithub
-                </Icon>
-                Source code on Github
+                <b-logo
+                  name="github"
+                  size="13"
+                  class="me-1"
+                  color="#fff"
+                  style="opacity: 0.6; transform: translateY(-1px)"></b-logo>
+                Open source
               </a>
 
               <span class="px-3">·</span>
 
+              Join us at
+
               <a
+                v-tippy="'Join us at Discord'"
                 href="https://discord.gg/F2sPE5B"
-                class="link-secondary link-underline-opacity-0"
+                class="link-secondary link-underline-opacity-0 ms-2 mx-1"
                 target="_blank">
                 <svg
                   class="me-1"
@@ -68,7 +78,16 @@
                       fill-rule="nonzero"></path>
                   </g>
                 </svg>
-                Join at Discord
+              </a>
+
+              <a
+                v-tippy="'Support on Patreon'"
+                href="https://www.patreon.com/c/BacklogRIP"
+                class="link-secondary link-underline-opacity-0 mx-1"
+                target="_blank">
+                <Icon size="16" style="transform: translateY(-1px)">
+                  BrandPatreonFilled
+                </Icon>
               </a>
             </p>
           </div>
@@ -168,7 +187,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Thu 19 December 2024 - 10:00:29
+ * Modified: Thu 30 January 2025 - 16:49:08
  **/
 
 export default {
@@ -216,15 +235,9 @@ export default {
   },
 
   methods: {
-    async getGames() {
-      if (this.loaded.includes(`top:popular`)) return
-      // this.repositoryStore.topGames('popular')
-    },
-
     async init() {
       if (!this.$app.ready) return
 
-      this.getGames()
       this.$wow()
     },
   },

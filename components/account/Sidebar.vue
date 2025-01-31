@@ -1,14 +1,12 @@
 <template>
   <div class="row g-2 align-items-center">
     <div class="col">
-      <h3>Account and settings</h3>
+      <h3>Your account</h3>
     </div>
   </div>
 
   <ul class="nav nav-pills nav-vertical">
-    <!-- <li>My Account</li>
-
-      <li>Integrations</li>
+    <!--
 
       <li>Account history</li>
 
@@ -16,30 +14,85 @@
 
       <li>---</li> -->
     <li class="nav-item">
-      <NuxtLink to="/account/me" class="nav-link">
+      <NuxtLink
+        to="/account/me"
+        class="nav-link"
+        :style="
+          $route.path.includes('me') ? 'color: var(--tblr-nav-link-hover-color); ' : ''
+        ">
         <Icon class="me-2">Fingerprint</Icon>
         Your account
       </NuxtLink>
     </li>
 
     <li class="nav-item">
-      <NuxtLink to="/account/preferences" class="nav-link">
+      <NuxtLink
+        to="/account/preferences"
+        class="nav-link"
+        :style="
+          $route.path.includes('preferences')
+            ? 'color: var(--tblr-nav-link-hover-color); '
+            : ''
+        ">
         <Icon class="me-2">Settings</Icon>
         Preferences
       </NuxtLink>
     </li>
 
+    <li v-if="$app.wip" class="nav-item">
+      <NuxtLink
+        to="/account/community"
+        class="nav-link"
+        :style="
+          $route.path.includes('community')
+            ? 'color: var(--tblr-nav-link-hover-color); '
+            : ''
+        ">
+        <Icon class="me-2">Components</Icon>
+        Community
+      </NuxtLink>
+    </li>
+
     <li class="nav-item">
-      <NuxtLink to="/account/cloud" class="nav-link">
+      <NuxtLink
+        to="/account/cloud"
+        class="nav-link"
+        :style="
+          isCloud
+            ? 'color: var(--tblr-nav-link-hover-color); padding-bottom: 0.25rem;'
+            : ''
+        ">
         <Icon class="me-2">CloudRain</Icon>
         Cloud sync
       </NuxtLink>
     </li>
 
+    <template v-if="isCloud">
+      <li>
+        <a href="#settings" class="nav-link ms-2 pb-0">
+          <Icon size="6" width="1" class="me-2">PointFilled</Icon>
+          Cloud settings
+        </a>
+      </li>
+
+      <li>
+        <a href="#status" class="nav-link ms-2 pb-0">
+          <Icon size="6" width="1" class="me-2">PointFilled</Icon>
+          Synchronization status
+        </a>
+      </li>
+      <li>
+        <a href="#quota" class="nav-link ms-2">
+          <Icon size="6" width="1" class="me-2">PointFilled</Icon>
+          Used quota
+        </a>
+      </li>
+    </template>
+
     <li class="nav-item">
       <NuxtLink to="/account/linked" class="nav-link">
-        <Icon class="me-2">CirclesRelation</Icon>
-        Linked libraries
+        <Icon class="me-2">LayersIntersect</Icon>
+        Integrations
       </NuxtLink>
     </li>
 
@@ -61,11 +114,27 @@
 
   <ul class="nav nav-pills nav-vertical">
     <li class="nav-item">
-      <NuxtLink to="/account/lists" class="nav-link">
+      <NuxtLink
+        to="/account/lists"
+        class="nav-link"
+        :style="
+          $route.path.includes('lists')
+            ? 'color: var(--tblr-nav-link-hover-color); padding-bottom: 0.25rem;'
+            : ''
+        ">
         <Icon class="me-2">Mist</Icon>
         Lists
       </NuxtLink>
     </li>
+
+    <template v-if="$route.path.includes('lists')">
+      <li @click.prevent="$mitt.emit('list:create')">
+        <a href="#" class="nav-link ms-2">
+          <Icon size="14" width="1" class="me-2">SquareRoundedPlus</Icon>
+          Create a new list
+        </a>
+      </li>
+    </template>
 
     <li class="nav-item">
       <NuxtLink to="/account/states" class="nav-link">
@@ -81,7 +150,7 @@
       </NuxtLink>
     </li>
 
-    <li class="nav-item" v-if="$app.dev">
+    <li v-if="$app.dev" class="nav-item">
       <NuxtLink to="/account/logs" class="nav-link">
         <Icon class="me-2">Bug</Icon>
         Application logs
@@ -341,3 +410,21 @@
       </li> -->
   </ul>
 </template>
+
+<script>
+export default {
+  name: 'AccountSidebar',
+
+  data() {
+    return {}
+  },
+
+  computed: {
+    isCloud() {
+      return this.$route.path.includes('cloud') && this.$auth.hasCloud
+    },
+  },
+
+  methods: {},
+}
+</script>

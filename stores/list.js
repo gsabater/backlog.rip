@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: Thu 12 December 2024 - 16:32:00
+ * Modified: Fri 31 January 2025 - 13:07:21
  */
 
 let $nuxt = null
@@ -146,11 +146,12 @@ export const useListStore = defineStore('list', {
 
       let data = $data.get(app.uuid)
       if (!data || data.error) return
-      if (!data?.id?.api) return
+      // if (!data?.id?.api) return
+      if (data.uuid.includes('local:')) return
 
       let item = {
         name: data.name,
-        uuid: data.id?.api,
+        uuid: data.uuid,
         cover: data.cover || undefined,
         steam_id: data.id?.steam || undefined,
       }
@@ -209,7 +210,7 @@ export const useListStore = defineStore('list', {
     //+-------------------------------------------------
     hasApp(list, app) {
       if (!list?.uuid) return false
-      if (!app?.uuid || !app.id?.api) return false
+      if (!app?.uuid && !app.id?.api) return false
 
       if (!list.games?.length) {
         list = this.lists.find((item) => item.uuid == list.uuid)
@@ -265,13 +266,14 @@ export const useListStore = defineStore('list', {
         let data = $data.get(app.uuid)
 
         if (!data || data.error) return
-        if (!data?.id?.api) return
+        // if (!data?.id?.api) return
+        if (data.uuid.includes('local:')) return
 
         let item = {
           name: data.name,
-          uuid: data.id?.api,
+          uuid: data.uuid,
           cover: data.cover || undefined,
-          steam_id: data.steam_id || undefined,
+          // steam_id: data.steam_id || undefined,
           steam_id: data.steam_id || data.id?.steam,
         }
 

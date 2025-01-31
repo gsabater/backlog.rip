@@ -10,13 +10,14 @@
     :interactive-debounce="debounce"
     animation="shift-away-subtle"
     :duration="duration"
-    theme="dropdown">
+    theme="dropdown"
+    append-to="parent">
     <!-- <template #default="{ state }">
       <div>{{ state }}</div>
     </template> -->
 
     <template #content="{ hide }">
-      <div class="b-menu dropdown-menu show" @click="hide" v-bind="$attrs">
+      <div class="b-menu dropdown-menu show" v-bind="$attrs" @click="hide">
         <slot />
       </div>
     </template>
@@ -29,7 +30,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Wed 06 November 2024 - 12:27:42
+ * Modified: Sat 11 January 2025 - 19:35:15
  **/
 
 export default {

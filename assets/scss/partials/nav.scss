@@ -1,6 +1,7 @@
 [data-bs-theme='dark'] {
   header.navbar {
     --tblr-navbar-border-color: rgb(56 57 76 / 25%);
+    --tblr-navbar-color: var(--tblr-body-color);
     background-color: rgb(33 26 40 / 50%);
   }
 
@@ -22,10 +23,29 @@ aside {
   overflow-x: hidden;
 }
 
+aside [class^='container'] {
+  height: 100%;
+}
+
+aside.navbar.navbar-vertical {
+  top: 8px;
+  left: 8px;
+  bottom: 8px;
+  border-radius: 4px;
+  outline: 1px solid #3e505e;
+  padding: 0;
+  overflow-y: auto;
+  filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+}
+
 aside .dropdown-menu {
   border: none;
   box-shadow: none;
   padding: 6px;
+
+  & a.dropdown-item {
+    color: rgb(220, 225, 231);
+  }
 
   & .dropdown-item {
     border-radius: 3px;

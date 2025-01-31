@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Thu 19 December 2024 - 10:03:17
+ * Modified: Thu 30 January 2025 - 14:32:08
  */
 
 let $nuxt = null
@@ -13,15 +13,17 @@ let $library = null
 //+-------------------------------------------------
 // User auth and flow
 // ~~~~~~~~~~~~~~~~~~
-// - Anonymous user is created on first load
-// - The user data and configuration can live on localDB
+// - Anonymous account is created on first visit
+// - The user data and configuration can live offline on localDB
 // - On page load, call authenticate()
-// > - $auth.user.config from $db.config
-// > - $auth.user.me from $db.account.get('me')
-// > - $auth.user.cloud from $db.account.get('cloud')
-//
-// > - $auth.user.bearer from $db.account.me.bearer
+// > - $auth.user.me -- $db.account.get('me')
+
+// > - $auth.user.config -- $db.config.toArray()
+// > - $auth.user.cloud -- $db.account.get('cloud')
+// > - $auth.user.guild -- $db.account.get('guild')
+
 // > - $auth.user.jwt from $db.account.cloud.jwt
+// > - $auth.user.bearer from $db.account.me.bearer
 //+-------------------------------------------------
 
 export const useUserStore = defineStore('user', {
@@ -34,6 +36,7 @@ export const useUserStore = defineStore('user', {
     me: {},
     api: {},
     cloud: {},
+    guild: {},
     config: {},
 
     is: {
@@ -70,7 +73,6 @@ export const useUserStore = defineStore('user', {
       log('🥸 User logged in as ' + this.user.username, this.user)
 
       this.is.checked = true
-      // if (this.jwt) this.is.cloud = true -- replaced by user.has_cloud
       if (this.bearer) this.is.logged = true
 
       return true
@@ -81,16 +83,18 @@ export const useUserStore = defineStore('user', {
     // Gets the local "account" database
     // -----
     // Created on Fri Nov 17 2023
-    // Updated on Thu Aug 15 2024 - load cloud data
+    // Updated on Thu Aug 15 2024 - load cloud account
+    // Updated on Tue Jan 28 2025 - load guild profile
     //+-------------------------------------------------
     async loadMe() {
       let config = await $nuxt.$db.config.toArray()
 
       this.me = (await $nuxt.$db.account.get('me')) || {}
       this.cloud = (await $nuxt.$db.account.get('cloud')) || {}
+      this.guild = (await $nuxt.$db.account.get('guild')) || {}
 
-      this.setBearer(this.me?.bearer)
       this.setJWT(this.cloud?.jwt)
+      this.setBearer(this.me?.bearer)
 
       // prettier-ignore
       let _config = config.reduce((acc, row) =>
@@ -201,6 +205,29 @@ export const useUserStore = defineStore('user', {
     },
 
     //+-------------------------------------------------
+    // update()
+    // a try to streamline updates across local $db, $guild and $cloud
+    // -----
+    // Created on Fri Dec 27 2024
+    //+-------------------------------------------------
+    async update(field) {
+      const me = ['slug', 'username']
+      const cloud = []
+      const guild = ['guild', 'slug', 'username']
+      const config = ['guild', 'debug', 'two']
+
+      if (me.includes(field)) {
+        console.warn('updating account (me)', field)
+        this.updateAccount(field)
+      }
+
+      if (config.includes(field)) {
+        console.warn('updating config', field)
+        this.storeConfig(field)
+      }
+    },
+
+    //+-------------------------------------------------
     // putAccount()
     // Writes an account object to the database
     // Use updateAccount() to update a single field instead
@@ -224,6 +251,7 @@ export const useUserStore = defineStore('user', {
     // Created on Mon Aug 26 2024 - Integrate with cloud
     //+-------------------------------------------------
     async updateAccount(field = null) {
+      console.warn('🔴🔴🔴 Updating account', field)
       let account = await $nuxt.$db.account.get('me')
 
       let data = { ...account }
@@ -241,6 +269,7 @@ export const useUserStore = defineStore('user', {
     // Created on Sun Feb 18 2024
     //+-------------------------------------------------
     async storeConfig(field) {
+      console.warn('🔴🔴🔴 Updating config', field)
       let value = JSON.parse(JSON.stringify(this.config[field]))
       await $nuxt.$db.config.put({
         key: field,
@@ -265,6 +294,36 @@ export const useUserStore = defineStore('user', {
       menu.favorites = this.config.favorites
 
       return menu
+    },
+
+    //+-------------------------------------------------
+    // hasApi()
+    // Getter to check if the user has a Bearer token
+    // -----
+    // Created on Thu Jan 30 2025
+    //+-------------------------------------------------
+    hasApi() {
+      return !!this.bearer
+    },
+
+    //+-------------------------------------------------
+    // hasPassport()
+    // Getter to check if the user has a JWT for Supabase
+    // -----
+    // Created on Thu Jan 30 2025
+    //+-------------------------------------------------
+    hasPassport() {
+      return !!this.jwt
+    },
+
+    //+-------------------------------------------------
+    // hasCloud()
+    // Getter to check if the user has cloud connected and enabled
+    // -----
+    // Created on Thu Jan 30 2025
+    //+-------------------------------------------------
+    hasCloud() {
+      return this.config?.cloud && this.cloud?.sub
     },
   },
 })

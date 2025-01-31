@@ -25,12 +25,12 @@
           <span class="font-serif">{{ app.name }}</span>
           <div class="v-list-item-subtitle">
             <slot name="details">
-              <small v-if="display.includes('released')" class="text-muted me-2">
+              <small v-if="visible.includes('released')" class="text-muted me-2">
                 {{ app._.released_at ?? '' }}
               </small>
 
               <small
-                v-if="display.includes('score') && app.score"
+                v-if="visible.includes('score') && app.score"
                 class="text-muted me-2">
                 <Icon
                   size="12"
@@ -39,7 +39,6 @@
                   Diamond
                 </Icon>
                 {{ app.score ?? 'Unscored' }}
-                <!-- <template v-if="$app.dev">-- {{ app._.score }}</template> -->
               </small>
             </slot>
           </div>
@@ -70,6 +69,7 @@
         app.state ? 'is-state_' + app.state : '',
         {
           'is-bordered': $auth.config.game_state_borders,
+          'is-disabled': disabled,
           'is-tracking': tracking,
         },
       ]">
@@ -105,37 +105,62 @@
       </a>
 
       <slot name="game:details">
-        <div v-if="display.length" class="card-game__details">
+        <div v-if="visible.length" class="card-game__details">
           <slot name="details:prepend"></slot>
 
           <span
-            v-if="display.includes('name') || display.includes('*')"
+            v-if="visible.includes('name') || visible.includes('default')"
             class="details__name font-serif d-block">
             {{ app.name }}
           </span>
 
-          <small v-if="display.includes('score') && app.score" class="text-muted">
+          <small v-if="visible.includes('score') && app.score" class="text-muted">
             <Icon
+              note="Diamond?"
               size="13"
               width="1.5"
               style="transform: translateY(-1px); margin-right: 3px">
-              Diamond
+              Star
             </Icon>
             {{ app.score ?? 'Unscored' }}
-            <template v-if="$app.dev">-- {{ app._.score }}</template>
           </small>
 
-          <small v-if="display.includes('released')" class="d-block text-muted">
+          <small
+            v-if="visible.includes('metascore') && app.scores && app.scores.metascore"
+            class="text-muted">
+            <b-logo
+              name="metacritic"
+              size="12"
+              style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+
+            {{ app.scores.metascore ?? 'Unscored' }}
+          </small>
+
+          <small
+            v-if="visible.includes('steamscore') && app.scores && app.scores.steamscore"
+            class="text-muted">
+            <b-logo
+              name="steam"
+              size="12"
+              color="#fff"
+              style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+
+            {{ app.scores.steamscore ?? 'Unscored' }}
+          </small>
+
+          <small
+            v-if="visible.includes('released') && app._.released"
+            class="d-block text-muted">
             <Icon
               size="12"
               width="1.8"
               style="transform: translateY(-1px); margin-right: 3px">
               Calendar
             </Icon>
-            {{ app._.released_at }}
+            {{ app._.released }}
           </small>
 
-          <small v-if="display.includes('playtime')" class="d-block text-muted">
+          <small v-if="visible.includes('playtime')" class="d-block text-muted">
             <Icon
               size="12"
               width="1.8"
@@ -154,7 +179,7 @@
           </small>
 
           <small
-            v-if="display.includes('hltb') && app.hltb && app.hltb.main"
+            v-if="visible.includes('hltb') && app.hltb && app.hltb.main"
             class="d-block text-muted">
             <Icon
               size="12"
@@ -177,7 +202,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat 23 November 2024 - 15:16:46
+ * Modified: Thu 30 January 2025 - 16:39:30
  **/
 
 export default {
@@ -194,6 +219,7 @@ export default {
 
     // uuid
     // Used to locate the app in $data
+    // This uuid is also the API UUID if not local:
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     uuid: {
       type: [String, Object],
@@ -213,11 +239,6 @@ export default {
       default: null,
     },
 
-    body: {
-      type: [Array, Boolean],
-      default: false,
-    },
-
     tracking: {
       type: [Boolean, Number],
       default: false,
@@ -233,13 +254,13 @@ export default {
       default: 'default',
     },
 
-    // display
+    // visible
     // Is an array of strings used to specify which
     // components to show. If the value is an empty
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    display: {
+    visible: {
       type: Array,
-      default: () => ['*'],
+      default: () => ['default'],
     },
   },
 
@@ -270,10 +291,6 @@ export default {
   },
 
   methods: {
-    show(slot) {
-      return this.display.includes('*') || this.display.includes(slot)
-    },
-
     //+-------------------------------------------------
     // handleAction()
     //
@@ -377,9 +394,8 @@ export default {
       if (!this.$app.ready) return
 
       if (this.api) this.loadApiData()
-      if (this.data) this.app = this.dataStore.prepareToData(this.data)
       if (this.uuid) this.app = this.dataStore.get(this.uuid?.uuid || this.uuid)
-
+      if (this.data?.uuid) this.app = dataService.prepareToData(this.data)
       if (this.tracking) this.initTracking()
     },
   },
@@ -389,19 +405,19 @@ export default {
 
     this.$mitt.on('state:change', (payload) => {
       if (payload.uuid != this.app.uuid) return
-      this.app.state = payload.state
+
+      if (payload.state == 'fav') {
+        this.app.is.fav = payload.fav
+      } else {
+        this.app.state = payload.state
+      }
+
       this.$forceUpdate()
     })
 
     this.$mitt.on('pinned:change', (payload) => {
       if (payload.uuid != this.app.uuid) return
       this.app.is.pinned = payload.pinned
-      this.$forceUpdate()
-    })
-
-    this.$mitt.on('fav:change', (payload) => {
-      if (payload.uuid != this.app.uuid) return
-      this.app.is.fav = payload.fav
       this.$forceUpdate()
     })
 
@@ -420,7 +436,6 @@ export default {
   },
 
   beforeUnmount() {
-    this.$mitt.off('fav:change')
     this.$mitt.off('data:deleted')
     this.$mitt.off('state:change')
     this.$mitt.off('pinned:change')

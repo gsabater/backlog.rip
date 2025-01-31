@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Tue 10 September 2024 - 16:13:42
+ * Modified: Tue 14 January 2025 - 11:12:16
  */
 let $nuxt = null
 
@@ -24,6 +24,12 @@ function logd(...args) {
   debugger
 }
 
+//+-------------------------------------------------
+// logDefault()
+// Logs debug info to the console
+// -----
+// Created on Tue Nov 10 2023
+//+-------------------------------------------------
 async function logDefault(...args) {
   $nuxt ??= useNuxtApp()
 
@@ -33,21 +39,28 @@ async function logDefault(...args) {
     .slice(2)
     .map((line) => line.trim().replace(/^at\s+/g, ''))
 
-  const dt = new Date()
-  const padL = (nr, len = 2, chr = `0`) => `${nr}`.padStart(2, chr)
-  // ${padL(dt.getHours())}:${padL(dt.getMinutes())}:${padL(dt.getSeconds())}
+  let bullet = '🔹'
+  if (args[0] == 'search') {
+    bullet = '🔸'
+    args.shift()
+  }
 
   console.debug(
-    `🔹 %c Backlog %c ${args[0]}`,
-    'color: #ccc; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 2px; background: #43565f; margin-bottom: 3px;', // margin-bottom: 7px;
+    `${bullet} %c Backlog %c ${args[0]}`,
+    'color: #ccc; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 2px; background: #43565f; margin-bottom: 3px;',
     'color: #ccc; border-radius: 0 3px 3px 0; padding: 2px 8px 1px 2px; background: #00DC8220',
     ...args.slice(1)
     // `\n🪢 ${stack[0]}`
   )
+
   // console.log('%cTrace 🪢', 'color: blue; text-decoration: underline;', stack[0])
 
   // Append the log details to the app log
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  const dt = new Date()
+  // const padL = (nr, len = 2) => String(nr).padStart(len, '0')
+  // ${padL(dt.getHours())}:${padL(dt.getMinutes())}:${padL(dt.getSeconds())}
+
   $nuxt.$app.log.unshift({
     message: args[0],
     args,

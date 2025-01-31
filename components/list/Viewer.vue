@@ -1,11 +1,10 @@
 <template>
   <div class="row gx-1 mb-1 align-items-center">
-    <div class="col-auto" v-if="false && !ui.showSearch">
+    <div v-if="false && !ui.showSearch" class="col-auto">
       <!-- <div class="btn" size="small" style="background: rgb(30 31 41 / 20%)">
         <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
       </div> -->
       <v-btn
-        @click="ui.showSearch = !ui.showSearch"
         size="small"
         variant="tonal"
         color="secondary"
@@ -17,19 +16,20 @@
           width: 50px;
           height: 32px;
           padding: 0;
-        ">
+        "
+        @click="ui.showSearch = !ui.showSearch">
         <Icon size="14" width="2" class="text-secondary">Search</Icon>
       </v-btn>
     </div>
 
-    <div class="col-11" v-if="ui.showSearch">
+    <div v-if="ui.showSearch" class="col-11">
       <v-text-field
-        @update:modelValue="search"
         v-model="f.string"
         placeholder="Search by name..."
         clearable
-        density="comfortable">
-        <template v-slot:prepend-inner>
+        density="comfortable"
+        @update:model-value="search">
+        <template #prepend-inner>
           <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
         </template>
       </v-text-field>
@@ -58,33 +58,28 @@
 
     <div class="col-auto ms-auto">
       <v-btn
+        v-tippy="'Show results as list'"
         icon
-        @click="f.show.layout = 'list'"
         size="small"
         variant="text"
         color="secondary"
-        v-tippy="'Show results as list'">
+        @click="f.show.layout = 'list'">
         <Icon size="16" width="1.5" class="text-secondary">ListDetails</Icon>
       </v-btn>
 
       <v-btn
+        v-tippy="'Show results as grid'"
         icon
-        @click="f.show.layout = 'grid'"
         size="small"
         variant="text"
         color="secondary"
-        v-tippy="'Show results as grid'">
+        @click="f.show.layout = 'grid'">
         <Icon size="16" width="1.5" class="text-secondary">LayoutGrid</Icon>
       </v-btn>
     </div>
   </div>
 
-  <search-results
-    ref="results"
-    :disabled="false"
-    :filters="f"
-    :layout="f.show.layout"
-    :source="listGames" />
+  <search-results ref="results" :disabled="false" :source="listGames" />
 
   <!--
     *+---------------------------------
@@ -95,11 +90,9 @@
     v-if="list.games.length == 0"
     class="empty"
     style="border: 1px dashed #cccccc73; border-radius: 4px; height: auto; padding: 4rem">
-    <p class="empty-title mb-3 font-serif" style="font-weight: 300">
-      There is nothing here
-    </p>
+    <p class="empty-title mb-3 font-serif" style="font-weight: 300">This list is empty</p>
     <p class="empty-subtitle text-secondary">
-      This list is empty. Try adding some games to it.
+      There is nothing here. To start, try adding some games to it.
       <br />
       You can add most games, even if it's not in your library.
     </p>
@@ -112,25 +105,24 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: Wed 06 November 2024 - 16:41:00
+ * Modified: Fri 31 January 2025 - 13:05:35
  **/
 
 export default {
   name: 'ListViewer',
 
   data: () => ({
-    f: {
-      string: '',
-      source: 'array',
-      sortBy: 'user',
-      sortDir: null,
-      show: {
-        page: 1,
-        perPage: 42,
+    // f: {
+    //   string: '',
+    //   sortBy: 'user',
+    //   sortDir: null,
+    //   show: {
+    //     page: 1,
+    //     perPage: 42,
 
-        layout: 'list', //'grid',
-      },
-    },
+    //     layout: 'list', //'grid',
+    //   },
+    // },
 
     ui: {
       dice: 4,
@@ -141,11 +133,12 @@ export default {
   computed: {
     ...mapStores(useListStore, useDataStore),
     ...mapState(useListStore, ['list']),
+    ...mapState(useSearchStore, ['f', 'stats', 'loading', 'time']),
 
     listGames() {
-      let games = []
+      const games = []
       this.list.games.forEach((item) => {
-        let app = this.dataStore.get(item.uuid)
+        const app = this.dataStore.get(item.uuid)
         if (app) games.push(app)
       })
 
@@ -172,33 +165,30 @@ export default {
     // -----
     // Created on Sun Mar 17 2024
     //+-------------------------------------------------
-    sortBy(sort) {
-      if (sort.toggle && this.f.sortBy == sort.by) {
-        this.f.sortDir = this.f.sortDir == 'asc' ? 'desc' : 'asc'
-      } else {
-        this.f.sortBy = sort.by
-        this.f.sortDir = sort.dir
-      }
-
-      this.search('sort')
-
-      // this.$refs.tippySort.hide()
-      // this.notify()
-    },
-
+    // sortBy(sort) {
+    //   if (sort.toggle && this.f.sortBy == sort.by) {
+    //     this.f.sortDir = this.f.sortDir == 'asc' ? 'desc' : 'asc'
+    //   } else {
+    //     this.f.sortBy = sort.by
+    //     this.f.sortDir = sort.dir
+    //   }
+    //   this.search('sort')
+    //   // this.$refs.tippySort.hide()
+    //   // this.notify()
+    // },
     //+-------------------------------------------------
     // search()
     // Performs a search on the results component
     // -----
     // Created on Tue Oct 29 2024
     //+-------------------------------------------------
-    search(by) {
-      this.$nextTick(() => {
-        // this.searchStore.loading = true
-        // this.searchStore.setTime('start')
-        this.$refs.results.search(by)
-      })
-    },
+    // search(by) {
+    //   this.$nextTick(() => {
+    //     // this.searchStore.loading = true
+    //     // this.searchStore.setTime('start')
+    //     this.$refs.results.search(by)
+    //   })
+    // },
   },
 }
 </script>

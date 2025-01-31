@@ -6,7 +6,7 @@
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Fri 20 December 2024 - 13:39:43
+ * Modified: Sun 05 January 2025 - 17:05:30
  */
 
 import { defineNuxtConfig } from 'nuxt/config';
@@ -61,7 +61,7 @@ export default defineNuxtConfig({
     autoImport: true,
     // injectAtEnd: true,
 
-    dirs: ['./stores'],
+    dirs: ['./stores', './services'],
     presets: [
       {
         from: 'pinia',
@@ -91,9 +91,14 @@ export default defineNuxtConfig({
     }
   },
 
-  // content: {
-  //   // ... options
-  // },
+  content: {
+    markdown: {
+      remarkPlugins: [
+        // Make sure you have something like "remark-container" here
+        // and also define your container name if needed
+      ]
+    }
+  },
 
   app: {
     head: {
@@ -123,17 +128,21 @@ export default defineNuxtConfig({
 
 
   sitemap: {
-    cacheMaxAgeSeconds: 3600 * 24,
-    exclude: ['/tabler*', '/account/**', '/dev/**'],
+    enabled: false
+    // // exclude all app sources
+    // excludeAppSources: true,
+    // cacheMaxAgeSeconds: 3600 * 24,
 
-    //   urls: async () => {
-    //     const urls = await fetch('https://api.backlog.rip/sitemap.xml')
-    //     return urls
-    //   }
+    // // Build time sitemap
+    // urls: async () => {
+    //   const urls = await fetch('https://api.backlog.rip/sitemap.xml')
+    //   return urls
+    // }
 
-    sources: [
-      'https://api.backlog.rip/sitemap.xml',
-    ],
+    // // Runtime sitemap
+    // // sources: [
+    // //   'https://api.backlog.rip/sitemap.xml',
+    // // ],
   },
 
   ogImage: { enabled: false },
@@ -194,7 +203,7 @@ export default defineNuxtConfig({
   },
 
   devtools: {
-    enabled: true,
+    enabled: false,
 
     vscode: {},
     timeline: {

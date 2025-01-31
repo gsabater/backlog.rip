@@ -49,10 +49,9 @@ Selected
     <div class="col">
       <v-text-field
         v-model="f.string"
-        placeholder="Search any game..."
+        placeholder="Search a game..."
         clearable
-        density="comfortable"
-        @update:modelValue="notify">
+        density="comfortable">
         <!-- <template v-slot:prepend-inner>
           <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
         </template> -->
@@ -75,32 +74,47 @@ Selected
   </div>
 
   <!--
-    *+---------------------------------
-    *| Second line
-    *| Select souce and apply filters
-    *+--------------------------------- -->
-  <div class="col-auto">
-    <div style="background: rgb(30 31 41 / 80%); border-radius: 4px; padding: 4px">
-      <v-btn
-        @click="browse('all')"
-        size="small"
-        color="blue-grey-lighten-1"
-        :variant="f.source == 'all' ? 'tonal' : 'plain'">
-        <Icon v-if="f.source == 'all'" size="12" class="text-muted me-1">Cards</Icon>
-        All games
-      </v-btn>
-      <v-btn
-        @click="browse('library')"
-        size="small"
-        :variant="f.source == 'library' ? 'tonal' : 'plain'">
-        <Icon v-if="f.source == 'library'" size="12" class="text-muted me-1">
-          LayoutDashboard
-        </Icon>
-        Library
-      </v-btn>
-    </div>
-  </div>
+  *+---------------------------------
+  *| Second line
+  *| Select souce and apply filters
+  *+--------------------------------- -->
   <div class="col-6 d-flex align-items-center">
+    <div id="⚓source" class="btn btn-sm me-2" style="background: transparent">
+      <Icon v-if="f.source == 'all'" size="12" class="text-muted me-1">Cards</Icon>
+      <Icon v-if="f.source == 'library'" size="12" class="text-muted me-1">
+        LayoutDashboard
+      </Icon>
+      <Icon v-if="f.source == 'library:favorites'" size="12" class="text-muted me-1">
+        Heart
+      </Icon>
+
+      <Icon v-if="f.source == 'library:pinned'" size="12" class="text-muted me-1">
+        Bookmark
+      </Icon>
+
+      <Icon v-if="f.source == 'library:hidden'" size="12" class="text-muted me-1">
+        Cancel
+      </Icon>
+
+      <span
+        v-if="sourceState"
+        class="status-dot ms-1 me-4"
+        :style="{ 'background-color': sourceState.color || '' }"></span>
+
+      <small>{{ sourceLabel }}</small>
+
+      <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+        Selector
+      </Icon>
+
+      <b-tippy-sheety ref="source" to="#⚓source" :autoclose="150" trigger="click">
+        <search-source-menu :source="f.source" @change="changeSource" />
+      </b-tippy-sheety>
+
+      <!-- <b-dropdown style="overflow-x: hidden; min-width: 240px; letter-spacing: normal"> -->
+      <!-- </b-dropdown> -->
+    </div>
+
     <!-- <div class="btn-group btn-group-sm filters__source">
       <div
         class="btn d-flex align-items-center border-end-0"
@@ -140,8 +154,8 @@ Selected
       </Icon>
 
       <b-tippy-sheety
-        to="#⚓filters"
         ref="filters"
+        to="#⚓filters"
         trigger="click"
         :autoclose="150"
         @closed="reset">
@@ -174,7 +188,7 @@ Selected
               </div>
               <div class="dropdown-divider"></div>
             </template>
-            <span class="dropdown-header" v-else>
+            <span v-else class="dropdown-header">
               <span class="text-muted">Filter by {{ option.label }}</span>
             </span>
 
@@ -275,7 +289,7 @@ Selected
                     </pre
                 >
                 <div class="input-group mb-1">
-                  <select class="form-control" v-model="released.month">
+                  <select v-model="released.month" class="form-control">
                     <option selected="selected" disabled="disabled">Month</option>
                     <option value="01">January</option>
                     <option value="02">February</option>
@@ -291,10 +305,10 @@ Selected
                     <option value="12">December</option>
                   </select>
                   <select
+                    v-model="released.year"
                     placeholder="asdasd"
                     class="form-control"
-                    style="max-width: 43%"
-                    v-model="released.year">
+                    style="max-width: 43%">
                     <option selected="selected" disabled="disabled">Year</option>
                     <option
                       v-for="year in Array.from(
@@ -326,36 +340,6 @@ Selected
         </div>
       </b-tippy-sheety>
     </v-btn>
-    <!-- <div class="btn btn-sm me-2" style="background: transparent">
-      <small>Apply filters</small>
-
-      <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
-        Selector
-      </Icon>
-
-
-
-     <tippy
-            ref="tippyFilter"
-            to="parent"
-            tag="div"
-            content-tag="div"
-            :animate-fill="true"
-            :interactive="true"
-            :interactive-debounce="55"
-            animation="scale-subtle"
-            placement="bottom-start"
-            trigger="click"
-            theme="filters"
-            :on-hidden="reset"
-            :on-show="() => ($app.ui.drawer = true)">
-            <template #content="{ hide }">
-              <div class="b-menu dropdown-menu show">
-
-              </div>
-            </template>
-          </tippy>
-    </div> -->
 
     <v-btn
       id="⚓sortby"
@@ -410,40 +394,69 @@ Selected
   </div>
 
   <div class="col text-end d-flex align-items-center" style="justify-content: flex-end">
+    <v-btn
+      v-tippy="'Get a random game from this list'"
+      variant="tonal"
+      size="small"
+      class="mx-1 p-0"
+      color="blue-grey-lighten-1"
+      style="min-width: 1px; aspect-ratio: 1; --v-activated-opacity: 0.05"
+      @click="$mitt.emit('game:random', { filters: f })">
+      <Icon width="1.2" size="16" class="mx-1">Dice5</Icon>
+      <!-- <Icon class="text-muted" size="12" width="2">ChevronDown</Icon> -->
+    </v-btn>
+
+    <v-btn
+      id="⚓itemDetails"
+      variant="tonal"
+      size="small"
+      class="mx-1 p-0"
+      color="blue-grey-lighten-1"
+      style="--v-activated-opacity: 0.05">
+      <Icon width="1.2" size="16" class="me-1">PlayCardStar</Icon>
+      <Icon class="text-muted" size="12" width="2">ChevronDown</Icon>
+
+      <b-tippy-sheety to="#⚓itemDetails" :autoclose="150" trigger="click">
+        <search-item-details :f="f" @show="visibleProps" />
+      </b-tippy-sheety>
+    </v-btn>
+
     <small class="text-muted">
-      <div
-        v-if="loading"
-        class="spinner-grow"
-        role="status"
-        style="width: 13px; height: 13px"></div>
-      <span
-        v-else
-        style="cursor: help"
-        v-tippy="
-          'Time to search, filter and sort results ◈ When searching in all games, this includes the API calls as well'
-        ">
-        {{ dates.microTime(time) }}
-      </span>
-      <span class="mx-2">◈</span>
-      Data from
-      <a href="https://www.igdb.com" target="_blank">
-        <img
-          class="mx-2 text-muted"
-          width="25"
-          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNCIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDM0IDE2IiBmaWxsPSJub25lIj4KICAgIDxwYXRoCiAgICAgICAgZD0iTTYuNzE2ODVlLTA1IDAuMDAwOTExNDY4QzExLjMzMzEgMC4wMDA2ODM4MjMgMjIuNjY2NSAwLjAwMjUwNDA5IDMzLjk5OTggMEMzNCA1LjMzMzI2IDM0LjAwMDIgMTAuNjY2NyAzMy45OTk1IDE2QzMxLjc5MzcgMTUuNjUyNCAyOS41Nzc5IDE1LjM2MTIgMjcuMzU0IDE1LjE0ODJDMTkuMzI5MSAxNC4zNjg1IDExLjIxMjIgMTQuNDk5MSAzLjIxNzc4IDE1LjUzNjdDMi4xNDI1NyAxNS42NzMxIDEuMDcxMDkgMTUuODM1OSA2LjcxNjg1ZS0wNSAxNS45OTkzQy0wLjAwMDE2NTUxIDEwLjY2NjUgMC4wMDAyOTk4NDcgNS4zMzM3MSA2LjcxNjg1ZS0wNSAwLjAwMDkxMTQ2OFpNMS4wMDA4MiAwLjk4MDIzOEMxLjAwMTI4IDUuNjA1NzUgMS4wMDA4MiAxMC4yMzE1IDEuMDAwODIgMTQuODU3QzExLjU4NDcgMTMuMjcyMSAyMi40MTU0IDEzLjI3MDggMzIuOTk5IDE0Ljg1NzVDMzIuOTk5NyAxMC4yMzE1IDMyLjk5OTIgNS42MDU1MiAzMi45OTkyIDAuOTc5NTU1QzIyLjMzMyAwLjk4MTE0OSAxMS42NjY4IDAuOTgwMDEgMS4wMDA4MiAwLjk4MDIzOFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNOC4zMTkyNiA0LjYxOEM5LjAxMjg3IDMuOTU3MzcgOS45ODU5NCAzLjYwNTQ0IDEwLjk0OTcgMy42MjAyM0MxMS42MDc3IDMuNjE3OTYgMTIuMjc5NCAzLjcxODggMTIuODcxMiA0LjAxMjY5QzEzLjE3NjIgNC4xNjE1NyAxMy40NTQ5IDQuMzU2ODkgMTMuNzE1MSA0LjU3MTU2QzEzLjM4NzcgNC45NTgzMyAxMy4wNTc1IDUuMzQyNTkgMTIuNzMzOSA1LjczMjA5QzEyLjUzOTEgNS41ODkzNiAxMi4zNDk3IDUuNDM3MDYgMTIuMTM0MyA1LjMyNDE1QzExLjcwMTcgNS4wODUzNSAxMS4xOTIxIDUuMDAyNzIgMTAuNzAwNSA1LjAzNzc4QzEwLjA5ODggNS4wODgwOCA5LjU0ODI3IDUuNDQyOTggOS4yMjIyOCA1LjkzNDQ3QzguODAyMDcgNi41NTE4NCA4LjczNjY4IDcuMzY0MyA4Ljk5MTIzIDguMDU1NjZDOS4xNDUyNyA4LjQ3NTY2IDkuNDM5MzcgOC44NDgzMiA5LjgyNjc4IDkuMDg2MjFDMTAuMjEyMSA5LjMyODQyIDEwLjY4IDkuNDI1NjIgMTEuMTM0MiA5LjM5ODk5QzExLjYgOS4zODE0NiAxMi4wNzQyIDkuMjU3MTcgMTIuNDUzNSA4Ljk4NDY4QzEyLjQ0OTggOC42NTY4NyAxMi40NTM1IDguMzI4ODMgMTIuNDUxNiA4LjAwMTAyQzExLjkyOTcgOC4wMDIzOSAxMS40MDc2IDguMDAwNTcgMTAuODg1NyA4LjAwMTk0QzEwLjg4NDUgNy41NjIxMyAxMC44ODg1IDcuMTIyMzIgMTAuODgzOCA2LjY4MjczQzExLjkxMDQgNi42NzYzNiAxMi45MzcyIDYuNjg1MDEgMTMuOTYzOCA2LjY3ODQxQzEzLjk3MDEgNy42ODI1NSAxMy45NjMxIDguNjg2OTIgMTMuOTY3MyA5LjY5MTA2QzEzLjI2MDcgMTAuMjg3OSAxMi4zNjg4IDEwLjY3OTUgMTEuNDM3NCAxMC43Njg1QzEwLjUyODEgMTAuODY2MiA5LjU2OTQ0IDEwLjcwMjUgOC43OTQzOSAxMC4yMTE5QzguMTczMzcgOS44MjQ2OCA3LjY5MzU5IDkuMjMwNzYgNy40NDI1MyA4LjU1NDJDNy4xOTQ3MiA3Ljg4ODU3IDcuMTQ1ODYgNy4xNTUxIDcuMjg1IDYuNDYxMjRDNy40Mjk5NiA1Ljc2MzczIDcuNzkyNDcgNS4xMDk3MSA4LjMxOTI2IDQuNjE4WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+CiAgICA8cGF0aAogICAgICAgIGQ9Ik0zLjc4NzYxIDMuNzM5NTJDNC4zMDgxMSAzLjc0MDY2IDQuODI4NjEgMy43Mzg2MSA1LjM0OTEyIDMuNzQwNjZDNS4zNDc5NSA2LjA1MDc5IDUuMzQ5MTIgOC4zNjExNiA1LjM0ODY1IDEwLjY3MTVDNC44MjgzOCAxMC42NzEzIDQuMzA4MTEgMTAuNjcwNiAzLjc4Nzg0IDEwLjY3MThDMy43ODc2MSA4LjM2MTE2IDMuNzg4MDggNi4wNTAzNCAzLjc4NzYxIDMuNzM5NTJaIgogICAgICAgIGZpbGw9IndoaXRlIgogICAgLz4KICAgIDxwYXRoCiAgICAgICAgZD0iTTE1Ljg2NDMgMy43Mzk3NUMxNi44MTY1IDMuNzM5OTcgMTcuNzY4NiAzLjczOTc1IDE4LjcyMDcgMy43Mzk5N0MxOS41ODYzIDMuNzQ5MzEgMjAuNDYyOCA0LjAxMjAxIDIxLjE0MDEgNC41NDkwMkMyMS43MzIzIDUuMDEyMjggMjIuMTUyMiA1LjY3ODYgMjIuMzEyMyA2LjQwMzY0QzIyLjUwNjEgNy4yNzkxNiAyMi4zNzk4IDguMjMzOTEgMjEuODk5MyA5LjAwNDAzQzIxLjUxOCA5LjYyNDgxIDIwLjkxOSAxMC4xMDgxIDIwLjIzNDUgMTAuMzc5MkMxOS43NTQ5IDEwLjU2OTggMTkuMjM3NyAxMC42Njk5IDE4LjcyIDEwLjY3MTNDMTcuNzY4MyAxMC42NzEzIDE2LjgxNjUgMTAuNjcwOCAxNS44NjQ2IDEwLjY3MTVDMTUuODY0NiA4LjM2MDkzIDE1Ljg2NSA2LjA1MDM0IDE1Ljg2NDMgMy43Mzk3NVpNMTcuNDMwMyA1LjExNjU0QzE3LjQyNzkgNi41MDkyNyAxNy40MzA1IDcuOTAyIDE3LjQyODkgOS4yOTQ5NkMxNy43Mjc2IDkuMjk0NSAxOC4wMjY2IDkuMjk0NzMgMTguMzI1NCA5LjI5NDczQzE4LjU2NiA5LjI5MjkxIDE4LjgwODYgOS4zMDU4OCAxOS4wNDY5IDkuMjYyNjNDMTkuNTEzOSA5LjE5MTYxIDE5Ljk2MzkgOC45NzE5MyAyMC4yNzI3IDguNjE3NDlDMjAuNTQyNiA4LjMxMzgxIDIwLjY5OTQgNy45MjQzMSAyMC43NDY2IDcuNTI3MDdDMjAuNzkwNiA3LjEyMzY4IDIwLjc1NTcgNi43MDU3MyAyMC41OTU4IDYuMzI4NzVDMjAuNDMxMyA1LjkyODA5IDIwLjEyMzcgNS41ODUyNiAxOS43MzUyIDUuMzc5N0MxOS4zODQzIDUuMTg4NDggMTguOTc5IDUuMTE2MzEgMTguNTgwNiA1LjExNjA5QzE4LjE5NzIgNS4xMTcgMTcuODEzNyA1LjExNjA4IDE3LjQzMDMgNS4xMTY1NFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNMjQuMTgzOCAzLjc0NDA3QzI1LjE0NTkgMy43MzQwNiAyNi4xMDg5IDMuNzQyNzEgMjcuMDcxMyAzLjczOTc1QzI3LjMzNTYgMy43NDMzOSAyNy42MDA2IDMuNzI5MDUgMjcuODY0IDMuNzU1NjhDMjguMzMxOSAzLjc5ODI1IDI4LjgwNjEgMy45MzE4OCAyOS4xODA1IDQuMjE5MzlDMjkuNTA2IDQuNDY1MDIgMjkuNzM0NSA0LjgzMTc2IDI5Ljc5NzYgNS4yMzAzNkMyOS44NDMyIDUuNjA3MzQgMjkuODIyIDYuMDA4OTEgMjkuNjMyNCA2LjM0ODc4QzI5LjQ3MTEgNi42NTM2IDI5LjE5MzMgNi44Nzk4OCAyOC44OTQ2IDcuMDQ5N0MyOS4yOTI3IDcuMTk2MyAyOS42ODY0IDcuNDEyNTYgMjkuOTM0MiA3Ljc2MTMxQzMwLjE2NTIgOC4wODM0MyAzMC4yMzI3IDguNDkwNDYgMzAuMjEwMSA4Ljg3NjU1QzMwLjIwMDggOS4yNjkwMSAzMC4wNTQgOS42NjI2IDI5Ljc3OTIgOS45NTE5NEMyOS41MDE2IDEwLjI0ODYgMjkuMTIgMTAuNDMwOSAyOC43Mjg0IDEwLjUzNjhDMjguNDAxMSAxMC42MjMgMjguMDYyNSAxMC42Njc0IDI3LjcyMzcgMTAuNjcwNkMyNi41NDQ1IDEwLjY3MTUgMjUuMzY1MyAxMC42NzE4IDI0LjE4NjEgMTAuNjcwNkMyNC4xODQyIDguMzYxNjEgMjQuMTg4NiA2LjA1Mjg0IDI0LjE4MzggMy43NDQwN1pNMjUuNzA3OCA1LjA4MDM1QzI1LjcwOTQgNS41Njc1IDI1LjcwNjQgNi4wNTQ4OSAyNS43MDkyIDYuNTQyMjhDMjYuMjI1NyA2LjUzOTA5IDI2Ljc0MjMgNi41NDI5NiAyNy4yNTg4IDYuNTQwMjNDMjcuNDkzMSA2LjUyNzk0IDI3LjczNTggNi40OTUzOCAyNy45NDI5IDYuMzc5NzRDMjguMTA2NSA2LjI4OTE0IDI4LjIzMDcgNi4xMjY4MyAyOC4yNTUyIDUuOTQyNDRDMjguMjg5NiA1LjczNDYgMjguMjUzMSA1LjUwMTI2IDI4LjA5NzkgNS4zNDU3OEMyNy45MTEzIDUuMTU3NzQgMjcuNjMzIDUuMDk3NjUgMjcuMzc0OSA1LjA4MjYyQzI2LjgxOTMgNS4wNzgwNyAyNi4yNjM0IDUuMDgyNjIgMjUuNzA3OCA1LjA4MDM1Wk0yNS43MDc2IDcuODE1MjdDMjUuNzA4MyA4LjMyMTMyIDI1LjcwOSA4LjgyNzgzIDI1LjcwNzEgOS4zMzQxMUMyNi4yMDExIDkuMzM4NjcgMjYuNjk1MyA5LjMzNDU3IDI3LjE4OTUgOS4zMzU5M0MyNy40MzYxIDkuMzMyOTcgMjcuNjg1MyA5LjM0OTM2IDI3LjkyOTYgOS4zMDYzNEMyOC4xNDM3IDkuMjcyNjUgMjguMzY0NSA5LjE5Mzg4IDI4LjUwOSA5LjAyODYxQzI4LjY1NDcgOC44NjMxMSAyOC42ODUyIDguNjI3NzMgMjguNjQ4NiA4LjQxODk4QzI4LjYxOTUgOC4yNDE4NyAyOC41MDU4IDguMDgyNzUgMjguMzQ4NSA3Ljk5MTQ2QzI4LjEzNTEgNy44NjQ0NCAyNy44Nzk2IDcuODI0MzcgMjcuNjMzNCA3LjgxNjE4QzI2Ljk5MTUgNy44MTQzNiAyNi4zNDk1IDcuODE2MTggMjUuNzA3NiA3LjgxNTI3WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+Cjwvc3ZnPgo="
-          alt="" />
-      </a>
+      <template v-if="false">
+        <div
+          v-if="loading"
+          class="spinner-grow"
+          role="status"
+          style="width: 13px; height: 13px"></div>
 
-      <a href="https://store.steampowered.com" target="_blank">
-        <img
-          src="https://store.akamai.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016"
-          width="55"
-          class="ms-1"
-          style="margin-right: -5px"
-          alt="Link to the Steam Homepage" />
-      </a>
+        <span
+          v-else
+          v-tippy="
+            'Time to search, filter and sort results ◈ When searching in all games, this includes the API calls as well'
+          "
+          style="cursor: help">
+          {{ dates.microTime(time) }}
+        </span>
+        <span class="mx-2">◈</span>
+        Data from
+        <a href="https://www.igdb.com" target="_blank">
+          <img
+            class="mx-2 text-muted"
+            width="25"
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNCIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDM0IDE2IiBmaWxsPSJub25lIj4KICAgIDxwYXRoCiAgICAgICAgZD0iTTYuNzE2ODVlLTA1IDAuMDAwOTExNDY4QzExLjMzMzEgMC4wMDA2ODM4MjMgMjIuNjY2NSAwLjAwMjUwNDA5IDMzLjk5OTggMEMzNCA1LjMzMzI2IDM0LjAwMDIgMTAuNjY2NyAzMy45OTk1IDE2QzMxLjc5MzcgMTUuNjUyNCAyOS41Nzc5IDE1LjM2MTIgMjcuMzU0IDE1LjE0ODJDMTkuMzI5MSAxNC4zNjg1IDExLjIxMjIgMTQuNDk5MSAzLjIxNzc4IDE1LjUzNjdDMi4xNDI1NyAxNS42NzMxIDEuMDcxMDkgMTUuODM1OSA2LjcxNjg1ZS0wNSAxNS45OTkzQy0wLjAwMDE2NTUxIDEwLjY2NjUgMC4wMDAyOTk4NDcgNS4zMzM3MSA2LjcxNjg1ZS0wNSAwLjAwMDkxMTQ2OFpNMS4wMDA4MiAwLjk4MDIzOEMxLjAwMTI4IDUuNjA1NzUgMS4wMDA4MiAxMC4yMzE1IDEuMDAwODIgMTQuODU3QzExLjU4NDcgMTMuMjcyMSAyMi40MTU0IDEzLjI3MDggMzIuOTk5IDE0Ljg1NzVDMzIuOTk5NyAxMC4yMzE1IDMyLjk5OTIgNS42MDU1MiAzMi45OTkyIDAuOTc5NTU1QzIyLjMzMyAwLjk4MTE0OSAxMS42NjY4IDAuOTgwMDEgMS4wMDA4MiAwLjk4MDIzOFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNOC4zMTkyNiA0LjYxOEM5LjAxMjg3IDMuOTU3MzcgOS45ODU5NCAzLjYwNTQ0IDEwLjk0OTcgMy42MjAyM0MxMS42MDc3IDMuNjE3OTYgMTIuMjc5NCAzLjcxODggMTIuODcxMiA0LjAxMjY5QzEzLjE3NjIgNC4xNjE1NyAxMy40NTQ5IDQuMzU2ODkgMTMuNzE1MSA0LjU3MTU2QzEzLjM4NzcgNC45NTgzMyAxMy4wNTc1IDUuMzQyNTkgMTIuNzMzOSA1LjczMjA5QzEyLjUzOTEgNS41ODkzNiAxMi4zNDk3IDUuNDM3MDYgMTIuMTM0MyA1LjMyNDE1QzExLjcwMTcgNS4wODUzNSAxMS4xOTIxIDUuMDAyNzIgMTAuNzAwNSA1LjAzNzc4QzEwLjA5ODggNS4wODgwOCA5LjU0ODI3IDUuNDQyOTggOS4yMjIyOCA1LjkzNDQ3QzguODAyMDcgNi41NTE4NCA4LjczNjY4IDcuMzY0MyA4Ljk5MTIzIDguMDU1NjZDOS4xNDUyNyA4LjQ3NTY2IDkuNDM5MzcgOC44NDgzMiA5LjgyNjc4IDkuMDg2MjFDMTAuMjEyMSA5LjMyODQyIDEwLjY4IDkuNDI1NjIgMTEuMTM0MiA5LjM5ODk5QzExLjYgOS4zODE0NiAxMi4wNzQyIDkuMjU3MTcgMTIuNDUzNSA4Ljk4NDY4QzEyLjQ0OTggOC42NTY4NyAxMi40NTM1IDguMzI4ODMgMTIuNDUxNiA4LjAwMTAyQzExLjkyOTcgOC4wMDIzOSAxMS40MDc2IDguMDAwNTcgMTAuODg1NyA4LjAwMTk0QzEwLjg4NDUgNy41NjIxMyAxMC44ODg1IDcuMTIyMzIgMTAuODgzOCA2LjY4MjczQzExLjkxMDQgNi42NzYzNiAxMi45MzcyIDYuNjg1MDEgMTMuOTYzOCA2LjY3ODQxQzEzLjk3MDEgNy42ODI1NSAxMy45NjMxIDguNjg2OTIgMTMuOTY3MyA5LjY5MTA2QzEzLjI2MDcgMTAuMjg3OSAxMi4zNjg4IDEwLjY3OTUgMTEuNDM3NCAxMC43Njg1QzEwLjUyODEgMTAuODY2MiA5LjU2OTQ0IDEwLjcwMjUgOC43OTQzOSAxMC4yMTE5QzguMTczMzcgOS44MjQ2OCA3LjY5MzU5IDkuMjMwNzYgNy40NDI1MyA4LjU1NDJDNy4xOTQ3MiA3Ljg4ODU3IDcuMTQ1ODYgNy4xNTUxIDcuMjg1IDYuNDYxMjRDNy40Mjk5NiA1Ljc2MzczIDcuNzkyNDcgNS4xMDk3MSA4LjMxOTI2IDQuNjE4WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+CiAgICA8cGF0aAogICAgICAgIGQ9Ik0zLjc4NzYxIDMuNzM5NTJDNC4zMDgxMSAzLjc0MDY2IDQuODI4NjEgMy43Mzg2MSA1LjM0OTEyIDMuNzQwNjZDNS4zNDc5NSA2LjA1MDc5IDUuMzQ5MTIgOC4zNjExNiA1LjM0ODY1IDEwLjY3MTVDNC44MjgzOCAxMC42NzEzIDQuMzA4MTEgMTAuNjcwNiAzLjc4Nzg0IDEwLjY3MThDMy43ODc2MSA4LjM2MTE2IDMuNzg4MDggNi4wNTAzNCAzLjc4NzYxIDMuNzM5NTJaIgogICAgICAgIGZpbGw9IndoaXRlIgogICAgLz4KICAgIDxwYXRoCiAgICAgICAgZD0iTTE1Ljg2NDMgMy43Mzk3NUMxNi44MTY1IDMuNzM5OTcgMTcuNzY4NiAzLjczOTc1IDE4LjcyMDcgMy43Mzk5N0MxOS41ODYzIDMuNzQ5MzEgMjAuNDYyOCA0LjAxMjAxIDIxLjE0MDEgNC41NDkwMkMyMS43MzIzIDUuMDEyMjggMjIuMTUyMiA1LjY3ODYgMjIuMzEyMyA2LjQwMzY0QzIyLjUwNjEgNy4yNzkxNiAyMi4zNzk4IDguMjMzOTEgMjEuODk5MyA5LjAwNDAzQzIxLjUxOCA5LjYyNDgxIDIwLjkxOSAxMC4xMDgxIDIwLjIzNDUgMTAuMzc5MkMxOS43NTQ5IDEwLjU2OTggMTkuMjM3NyAxMC42Njk5IDE4LjcyIDEwLjY3MTNDMTcuNzY4MyAxMC42NzEzIDE2LjgxNjUgMTAuNjcwOCAxNS44NjQ2IDEwLjY3MTVDMTUuODY0NiA4LjM2MDkzIDE1Ljg2NSA2LjA1MDM0IDE1Ljg2NDMgMy43Mzk3NVpNMTcuNDMwMyA1LjExNjU0QzE3LjQyNzkgNi41MDkyNyAxNy40MzA1IDcuOTAyIDE3LjQyODkgOS4yOTQ5NkMxNy43Mjc2IDkuMjk0NSAxOC4wMjY2IDkuMjk0NzMgMTguMzI1NCA5LjI5NDczQzE4LjU2NiA5LjI5MjkxIDE4LjgwODYgOS4zMDU4OCAxOS4wNDY5IDkuMjYyNjNDMTkuNTEzOSA5LjE5MTYxIDE5Ljk2MzkgOC45NzE5MyAyMC4yNzI3IDguNjE3NDlDMjAuNTQyNiA4LjMxMzgxIDIwLjY5OTQgNy45MjQzMSAyMC43NDY2IDcuNTI3MDdDMjAuNzkwNiA3LjEyMzY4IDIwLjc1NTcgNi43MDU3MyAyMC41OTU4IDYuMzI4NzVDMjAuNDMxMyA1LjkyODA5IDIwLjEyMzcgNS41ODUyNiAxOS43MzUyIDUuMzc5N0MxOS4zODQzIDUuMTg4NDggMTguOTc5IDUuMTE2MzEgMTguNTgwNiA1LjExNjA5QzE4LjE5NzIgNS4xMTcgMTcuODEzNyA1LjExNjA4IDE3LjQzMDMgNS4xMTY1NFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNMjQuMTgzOCAzLjc0NDA3QzI1LjE0NTkgMy43MzQwNiAyNi4xMDg5IDMuNzQyNzEgMjcuMDcxMyAzLjczOTc1QzI3LjMzNTYgMy43NDMzOSAyNy42MDA2IDMuNzI5MDUgMjcuODY0IDMuNzU1NjhDMjguMzMxOSAzLjc5ODI1IDI4LjgwNjEgMy45MzE4OCAyOS4xODA1IDQuMjE5MzlDMjkuNTA2IDQuNDY1MDIgMjkuNzM0NSA0LjgzMTc2IDI5Ljc5NzYgNS4yMzAzNkMyOS44NDMyIDUuNjA3MzQgMjkuODIyIDYuMDA4OTEgMjkuNjMyNCA2LjM0ODc4QzI5LjQ3MTEgNi42NTM2IDI5LjE5MzMgNi44Nzk4OCAyOC44OTQ2IDcuMDQ5N0MyOS4yOTI3IDcuMTk2MyAyOS42ODY0IDcuNDEyNTYgMjkuOTM0MiA3Ljc2MTMxQzMwLjE2NTIgOC4wODM0MyAzMC4yMzI3IDguNDkwNDYgMzAuMjEwMSA4Ljg3NjU1QzMwLjIwMDggOS4yNjkwMSAzMC4wNTQgOS42NjI2IDI5Ljc3OTIgOS45NTE5NEMyOS41MDE2IDEwLjI0ODYgMjkuMTIgMTAuNDMwOSAyOC43Mjg0IDEwLjUzNjhDMjguNDAxMSAxMC42MjMgMjguMDYyNSAxMC42Njc0IDI3LjcyMzcgMTAuNjcwNkMyNi41NDQ1IDEwLjY3MTUgMjUuMzY1MyAxMC42NzE4IDI0LjE4NjEgMTAuNjcwNkMyNC4xODQyIDguMzYxNjEgMjQuMTg4NiA2LjA1Mjg0IDI0LjE4MzggMy43NDQwN1pNMjUuNzA3OCA1LjA4MDM1QzI1LjcwOTQgNS41Njc1IDI1LjcwNjQgNi4wNTQ4OSAyNS43MDkyIDYuNTQyMjhDMjYuMjI1NyA2LjUzOTA5IDI2Ljc0MjMgNi41NDI5NiAyNy4yNTg4IDYuNTQwMjNDMjcuNDkzMSA2LjUyNzk0IDI3LjczNTggNi40OTUzOCAyNy45NDI5IDYuMzc5NzRDMjguMTA2NSA2LjI4OTE0IDI4LjIzMDcgNi4xMjY4MyAyOC4yNTUyIDUuOTQyNDRDMjguMjg5NiA1LjczNDYgMjguMjUzMSA1LjUwMTI2IDI4LjA5NzkgNS4zNDU3OEMyNy45MTEzIDUuMTU3NzQgMjcuNjMzIDUuMDk3NjUgMjcuMzc0OSA1LjA4MjYyQzI2LjgxOTMgNS4wNzgwNyAyNi4yNjM0IDUuMDgyNjIgMjUuNzA3OCA1LjA4MDM1Wk0yNS43MDc2IDcuODE1MjdDMjUuNzA4MyA4LjMyMTMyIDI1LjcwOSA4LjgyNzgzIDI1LjcwNzEgOS4zMzQxMUMyNi4yMDExIDkuMzM4NjcgMjYuNjk1MyA5LjMzNDU3IDI3LjE4OTUgOS4zMzU5M0MyNy40MzYxIDkuMzMyOTcgMjcuNjg1MyA5LjM0OTM2IDI3LjkyOTYgOS4zMDYzNEMyOC4xNDM3IDkuMjcyNjUgMjguMzY0NSA5LjE5Mzg4IDI4LjUwOSA5LjAyODYxQzI4LjY1NDcgOC44NjMxMSAyOC42ODUyIDguNjI3NzMgMjguNjQ4NiA4LjQxODk4QzI4LjYxOTUgOC4yNDE4NyAyOC41MDU4IDguMDgyNzUgMjguMzQ4NSA3Ljk5MTQ2QzI4LjEzNTEgNy44NjQ0NCAyNy44Nzk2IDcuODI0MzcgMjcuNjMzNCA3LjgxNjE4QzI2Ljk5MTUgNy44MTQzNiAyNi4zNDk1IDcuODE2MTggMjUuNzA3NiA3LjgxNTI3WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+Cjwvc3ZnPgo="
+            alt="" />
+        </a>
 
-      <!-- <span
+        <a href="https://store.steampowered.com" target="_blank">
+          <img
+            src="https://store.akamai.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016"
+            width="55"
+            class="ms-1"
+            style="margin-right: -5px"
+            alt="Link to the Steam Homepage" />
+        </a>
+
+        <!-- <span
         class="form-help cursor-help mx-2"
         v-tippy="{
           content: 'Automatic updates are disabled for GOG libraries',
@@ -451,6 +464,7 @@ Selected
         }">
         ?
       </span> -->
+      </template>
     </small>
     <div
       class="d-none d-inline-flex align-items-center nbtn mx-2 text-muted cursor-pointer"
@@ -555,7 +569,7 @@ Selected
             </div>
             <tippy
               class="text-muted ms-auto cursor-help ps-4"
-              :content="'The median score is ....'">
+              :content="'The median is the middle value in a set of scores when arranged in order. It avoids being skewed by extreme values, making it a fairer representation of the central tendency compared to the average.'">
               <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
                 HelpSmall
               </Icon>
@@ -642,8 +656,8 @@ Selected
     *| Selected filters
     *+--------------------------------- -->
   <div
-    class="filters-bar mt-2 mb-4 col-12 d-flex align-items-center"
-    v-if="Object.keys(_filters).length">
+    v-if="Object.keys(_filters).length"
+    class="filters-bar mt-2 mb-4 col-12 d-flex align-items-center">
     <template v-for="(param, key) in _filters" :key="key">
       <div class="btn-group btn-group-sm me-3">
         <div class="btn d-flex align-items-center disabled border-end-0">
@@ -715,17 +729,12 @@ Selected
         </b-btn> -->
   </div>
 
-  <div class="my-2 py-1" v-else></div>
+  <div v-else class="my-2 py-1"></div>
 
   <div class="col-12 d-none">
     <div class="row gap-2 mb-4 align-items-center">
       <div class="col col-12 col-md-5">
-        <b-input
-          v-model="f.string"
-          placeholder="Search games..."
-          clearable
-          @tick="notify"
-          @clear="notify"></b-input>
+        <b-input v-model="f.string" placeholder="Search games..." clearable></b-input>
       </div>
       <div class="col">
         <div class="btn" style="padding: 0.35rem 0.85rem">
@@ -736,7 +745,7 @@ Selected
             Selector
           </Icon>
 
-          <b-tippy-sheety @closed="reset" ref="filters">
+          <b-tippy-sheety ref="filters" @closed="reset">
             <div class="b-menu dropdown-menu show">
               <template v-if="ui.step == 'pick'">
                 <span class="dropdown-header">
@@ -766,7 +775,7 @@ Selected
                   </div>
                   <div class="dropdown-divider"></div>
                 </template>
-                <span class="dropdown-header" v-else>
+                <span v-else class="dropdown-header">
                   <span class="text-muted">Filter by {{ option.label }}</span>
                 </span>
 
@@ -855,7 +864,7 @@ Selected
                       {{ released }}
                     </pre>
                     <div class="input-group mb-1">
-                      <select class="form-control" v-model="released.month">
+                      <select v-model="released.month" class="form-control">
                         <option selected="selected" disabled="disabled">Month</option>
                         <option value="01">January</option>
                         <option value="02">February</option>
@@ -871,10 +880,10 @@ Selected
                         <option value="12">December</option>
                       </select>
                       <select
+                        v-model="released.year"
                         placeholder="asdasd"
                         class="form-control"
-                        style="max-width: 43%"
-                        v-model="released.year">
+                        style="max-width: 43%">
                         <option selected="selected" disabled="disabled">Year</option>
                         <option
                           v-for="year in Array.from(
@@ -1118,40 +1127,6 @@ Selected
             </div>
           </b-tippy-sheety>
         </div>
-
-        <div class="d-inline-flex align-items-center btn btn-sm">
-          <Icon size="19" class="text-muted">ChartScatter3d</Icon>
-
-          <b-tippy-sheety placement="bottom-start">
-            <div class="b-menu dropdown-menu show" style="min-width: 280px">
-              <span class="dropdown-header">
-                <span class="text-muted">Display properties</span>
-              </span>
-
-              <div class="px-2 mx-1 mb-2">
-                <small class="text-muted mb-3">
-                  Select the properties you want to display on the cards
-                </small>
-
-                <div class="my-2"></div>
-                <template v-for="(v, k) in _cardProperties">
-                  <span
-                    class="badge bg-purple-lt ms-auto mx-2 mb-2 cursor-pointer"
-                    style="padding: 0.4rem"
-                    :style="
-                      f.show.card.includes(k)
-                        ? 'outline: 1px solid; outline-offset: -1px;'
-                        : '--tblr-bg-opacity: 0.6;'
-                    "
-                    @click="showInCard(k)">
-                    <!-- <Icon size="16" v-if="f.show.card.includes(k)">Check</Icon> -->
-                    {{ v }}
-                  </span>
-                </template>
-              </div>
-            </div>
-          </b-tippy-sheety>
-        </div>
       </div>
     </div>
   </div>
@@ -1163,26 +1138,26 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Wed 06 November 2024 - 12:08:45
+ * Modified: Thu 16 January 2025 - 16:29:24
  **/
 
 export default {
   name: 'SearchFilters',
 
   props: {
-    filters: {
-      type: Object,
-      default: () => ({}),
-    },
+    // filters: {
+    //   type: Object,
+    //   default: () => ({}),
+    // },
   },
 
   emits: ['updated'],
 
   data() {
     return {
-      f: {
-        string: '',
-      },
+      // f: {
+      //   string: '',
+      // },
 
       option: {},
       selected: {},
@@ -1215,21 +1190,22 @@ export default {
           opValue: 'id',
         },
 
-        released: {
-          search: false,
-          multiple: false,
+        // WIP this is not working...
+        // released: {
+        //   search: false,
+        //   multiple: false,
 
-          by: 'released',
-          filter: 'released',
+        //   by: 'released',
+        //   filter: 'released',
 
-          icon: 'CalendarDot',
-          label: 'Release date',
-          labels: 'Release dates',
+        //   icon: 'CalendarDot',
+        //   label: 'Release date',
+        //   labels: 'Release dates',
 
-          data: 'released',
-          opTitle: 'name',
-          opValue: 'value',
-        },
+        //   data: 'released',
+        //   opTitle: 'name',
+        //   opValue: 'value',
+        // },
       },
 
       released: {
@@ -1246,7 +1222,6 @@ export default {
   },
 
   computed: {
-    // ...mapStores(useDataStore),
     ...mapState(useStateStore, {
       _states: 'states',
     }),
@@ -1255,33 +1230,59 @@ export default {
       _genres: 'genres',
     }),
 
-    ...mapState(useSearchStore, ['stats', 'loading', 'time']),
+    ...mapState(useSearchStore, ['f', 'stats', 'loading', 'time']),
 
-    // //+-------------------------------------------------
-    // // stats()
-    // // Returns stats from results component
-    // // -----
-    // // Created on Fri Apr 05 2024
-    // //+-------------------------------------------------
-    // stats() {
-    //   return this.$parent.stats || { state: 'no stats' }
-    // },
+    //+-------------------------------------------------
+    // sourceLabel()
+    // Appropiate labeling
+    // -----
+    // Created on Mon Jan 13 2025
+    //+-------------------------------------------------
+    sourceLabel() {
+      if (!this.f?.source) return 'Loading...'
+      if (this.f.source == 'all') return 'All games'
+      if (this.f.source == 'library') return 'Your library'
+      if (this.f.source.includes(':fav')) return 'Favorites'
+      if (this.f.source.includes(':pinned')) return 'Pinned games'
+      if (this.f.source.includes(':hidden')) return 'Hidden games'
+
+      if (this.f.source.includes('state:')) {
+        const id = this.f.source.split(':')[1]
+        const state = this._states.find((s) => s.id == id)
+        if (state) return state.name
+      }
+
+      return this.f.source
+    },
+
+    //+-------------------------------------------------
+    // sourceState()
+    // Returns the state object for the current source
+    // -----
+    // Created on Mon Jan 13 2025
+    //+-------------------------------------------------
+    sourceState() {
+      if (!this.f?.source) return null
+      if (this.f.states.length !== 1) return null
+      if (this.f.source.includes('state:')) {
+        const id = this.f.source.split(':')[1]
+        return this._states.find((s) => s.id == id)
+      }
+
+      return null
+    },
 
     sortLabel() {
       return {
         name: 'Name',
         rand: 'Random',
         score: 'Score',
+        metascore: 'Metacritic',
+        steamscore: 'Steam recommendations',
         playtime: 'Your playtime',
         hltb: 'How long to beat',
         released: 'Release date',
       }
-    },
-
-    amountOfApps() {
-      if (this.$parent.source == 'all') return format.num(this.$app.count.api)
-
-      return format.num(this.$app.count.library)
     },
 
     //+-------------------------------------------------
@@ -1355,7 +1356,7 @@ export default {
         }
       }
 
-      let dates = [
+      const dates = [
         {
           name: '15 days ago',
           value: this.$dayjs().subtract(15, 'days').unix(),
@@ -1388,14 +1389,15 @@ export default {
     },
   },
 
-  watch: {
-    filters: {
-      handler: function (val) {
-        this.f = { ...val }
-      },
-      deep: true,
-    },
-  },
+  // watch: {
+  //   filters: {
+  //     handler: function (val) {
+  //       console.warn('xxx')
+  //       this.f = { ...val }
+  //     },
+  //     deep: true,
+  //   },
+  // },
 
   methods: {
     filterLabel(key) {
@@ -1410,19 +1412,26 @@ export default {
     },
 
     //+-------------------------------------------------
-    // browse()
+    // changeSource()
     // Updates the source
     // -----
     // Created on Mon Sep 23 2024
     //+-------------------------------------------------
-    browse(source) {
+    changeSource(source) {
       this.f.source = source
+      this.f.states = []
+
+      if (source.includes('state:')) {
+        const state = parseInt(source.split(':')[1])
+        this.f.states = [state]
+      }
+
       if (source == 'all') {
         this.f.sortBy = 'score'
         this.f.sortDir = 'desc'
       }
 
-      this.notify()
+      // this.notify()
     },
 
     //+-------------------------------------------------
@@ -1440,7 +1449,7 @@ export default {
       }
 
       // this.$refs.tippySort.hide()
-      this.notify()
+      // this.notify()
     },
 
     //+-------------------------------------------------
@@ -1487,12 +1496,13 @@ export default {
     },
 
     //+-------------------------------------------------
-    // showInCard()
-    //
+    // visibleProps()
+    // Define the visible properties for the card
     // -----
     // Created on Fri May 10 2024
+    // Updated on Tue Dec 31 2024 - No longer notifies
     //+-------------------------------------------------
-    showInCard(key) {
+    visibleProps(key) {
       if (this.f.show.card.includes(key)) {
         this.f.show.card = this.f.show.card.filter((item) => item !== key)
       } else {
@@ -1505,7 +1515,7 @@ export default {
         this.f.show.card.splice(this.f.show.card.indexOf('default'), 1)
       }
 
-      this.notify()
+      // this.notify()
     },
 
     // Move selected to filters
@@ -1515,12 +1525,12 @@ export default {
       const values = Object.values(this.selected).map((item) => item[this.option.opValue])
       this.f[this.option.filter] = values
 
-      this.notify()
+      // this.notify()
     },
 
     removeFilter(key) {
       this.f[key] = []
-      this.notify()
+      // this.notify()
     },
 
     restoreFilter(option) {
@@ -1533,17 +1543,6 @@ export default {
 
       return selected
     },
-
-    // //+-------------------------------------------------
-    // // function()
-    // // moves selected to filters
-    // // hides tippy and ui
-    // // -----
-    // // Created on Fri Feb 09 2024
-    // //+-------------------------------------------------
-    // endSelection(){
-
-    // },
 
     //+-------------------------------------------------
     // function()
@@ -1565,13 +1564,9 @@ export default {
     // -----
     // Created on Fri Feb 09 2024
     //+-------------------------------------------------
-    notify() {
-      this.$emit('updated', this.f)
-      // console.warn('✏️ ', this.f.string, JSON.stringify(this.f))
-      // this.$nextTick(() => {
-      //   console.warn('✏️ 2', this.f.string, JSON.stringify(this.f))
-      // })
-    },
+    // notify() {
+    //   this.$emit('updated', this.f)
+    // },
 
     init() {},
   },

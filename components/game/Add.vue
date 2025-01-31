@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="ui.show" max-width="650">
     <v-card>
-      <template v-slot:title>
+      <template #title>
         <Icon>SquareRoundedPlus</Icon>
         Add a new game
       </template>
@@ -45,10 +45,10 @@
                 <div class="list-group card-list-group list-group-hoverable">
                   <div
                     v-for="item in db.items"
-                    @click="add(item)"
                     class="list-group-item p-2 cursor-pointer"
                     :class="{ 'disabled opacity-25': isInLibrary(item) }"
-                    style="border-style: solid">
+                    style="border-style: solid"
+                    @click="add(item)">
                     <div class="row g-4 align-items-center">
                       <div class="col-2 d-flex justify-center">
                         <img
@@ -70,7 +70,7 @@
                           This game is already in your library
                         </template>
 
-                        <div class="d-flex g-2" v-else>
+                        <div v-else class="d-flex g-2">
                           <small class="text-muted">
                             <template v-if="item.released_at">
                               {{ $moment(item.released_at * 1000).format('YYYY') }} •
@@ -121,9 +121,9 @@
                 <v-btn
                   color="deep-purple-lighten-2"
                   block
-                  @click="search"
                   variant="tonal"
-                  :disabled="!item.name">
+                  :disabled="!item.name"
+                  @click="search">
                   Search game
                 </v-btn>
               </div>
@@ -187,7 +187,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 26th June 2024
- * Modified: Thu 12 September 2024 - 16:42:34
+ * Modified: Thu 16 January 2025 - 17:27:49
  **/
 
 //+-------------------------------------------------
@@ -234,14 +234,15 @@ export default {
     company(item) {
       if (!item.companies) return null
 
-      let developer = item.companies.find((company) => company.developer)
+      const developer = item.companies.find((company) => company.developer)
       if (developer) return developer.name
 
       return item.companies[0].name
     },
 
     isInLibrary(item) {
-      return this.dataStore.isInLibrary(item, true)
+      console.warn('isInLibrary WIP, replace for isIndexed and check if lib')
+      // return this.dataStore.isInLibrary(item, true)
     },
 
     //+-------------------------------------------------
@@ -271,7 +272,7 @@ export default {
       this.ui.empty = false
       this.ui.loading = true
 
-      let xhr = await this.repositoryStore.searchGames(this.item.name)
+      const xhr = await this.repositoryStore.searchGames(this.item.name)
       if (!xhr.length) this.ui.empty = true
       this.db.items = xhr
 
@@ -288,7 +289,7 @@ export default {
       item = item || this.item
       item = JSON.parse(JSON.stringify(item))
 
-      let app = this.gameStore.create(item)
+      const app = this.gameStore.create(item)
       app.name = app.name || this.item.name
       app.description = app.summary
 

@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-body">
       <h2 class="mb-2">Account</h2>
-      <p class="card-subtitle">Preferences and profile details</p>
+      <p class="card-subtitle">Basic information</p>
       <!-- <div class="row align-items-center">
         <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url(./static/avatars/000m.jpg)"></span>
         </div>
@@ -16,15 +16,53 @@
 
       <!-- <h3 class="card-title mt-4">Your profile</h3> -->
       <div class="row g-3">
-        <div class="col-md-12 nope-col-lg-8">
-          <div class="form-label">Your username</div>
+        <div class="col-md-12 nope-col-lg-8 mb-3">
+          <div class="form-label font-serif">Your username</div>
           <!-- <h4 class="card-title mb-2">Username2</h4> -->
           <v-text-field
             v-model="$auth.me.username"
             density="comfortable"
             persistent-hint
             hint="This is only you display name"
-            @change="update('account', 'username')" />
+            @change="update('username', $auth.me.username)" />
+        </div>
+
+        <!-- <div v-if="false && $app.wip" class="mb-3">
+          <label class="form-label font-serif">Your public profile URL</label>
+          <div class="input-group input-group-flat">
+            <span class="smadll input-group-text">https://backlog.rip/@</span>
+            <input
+              v-model="$auth.me.slug"
+              type="text"
+              class="form-control ps-0"
+              placeholder="yourusername"
+              autocomplete="off"
+              @change="update('slug', $auth.me.slug)" />
+          </div>
+
+          <div class="v-input__details v-messages" style="transform: translate(6px, 0px)">
+            <small class="form-hint">
+              Your profile url must be 4-20 characters long, contain letters and numbers,
+              and must not contain spaces, special characters, or emoji.
+            </small>
+          </div>
+        </div> -->
+        <div v-if="$app.wip && $cloud.sub" class="mb-3">
+          <div class="form-check-description ms-1" style="vertical-align: top">
+            <Icon
+              size="14"
+              width="1.5"
+              class="tabler-icon tabler-icon-click mt-1 me-2"
+              style="vertical-align: top">
+              Click
+            </Icon>
+            <div class="d-inline-block">
+              To change your appearance on the site community pages
+              <br />
+              go to the
+              <NuxtLink to="/account/community">community configuration</NuxtLink>
+            </div>
+          </div>
         </div>
 
         <!-- <div class="my-2"></div>
@@ -86,7 +124,21 @@
       </div>
     </div>
     <div class="card-footer">
-      Registered {{ $moment($auth.user.created_at).format('LL') }}
+      <small>
+        Registered {{ $moment($auth.user.created_at).format('LL') }}
+        <template v-if="$cloud.sub">
+          🔸
+
+          <span
+            v-tippy="'This is your cloud user identifier'"
+            class="text-muted cursor-help">
+            <Icon width="1.2" size="14" class="me-1" style="transform: translateY(-1px)">
+              CloudRain
+            </Icon>
+            <strong>... {{ ($cloud?.sub || '').substr(-8) }}</strong>
+          </span>
+        </template>
+      </small>
     </div>
   </div>
 </template>
@@ -97,7 +149,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 18 September 2024 - 09:57:40
+ * Modified: Thu 30 January 2025 - 14:21:19
  **/
 
 export default {
@@ -114,11 +166,12 @@ export default {
     // -----
     // Created on Mon Dec 18 2023
     //+-------------------------------------------------
-    async update(store, field) {
-      if (store == 'config') this.$auth.storeConfig(field)
-      else this.$auth.updateAccount(field)
-
+    async update(field, value) {
+      this.$auth.update(field, value)
       this.$toast.success('Your preferences have been updated')
+
+      // if (store == 'config') this.$auth.storeConfig(field)
+      // else this.$auth.updateAccount(field)
     },
 
     async init() {},

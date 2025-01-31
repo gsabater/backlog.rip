@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Sun 22 December 2024 - 11:41:43
+ * Modified: Thu 30 January 2025 - 16:13:27
  */
 
 // import { reactive } from 'vue'
@@ -20,13 +20,14 @@ let $game = null
 let $list = null
 let $state = null
 let $repos = null
+let $guild = null
 let $cloud = null
 let $search = null
 let $integration = null
 
 let app = {
-  v: '0.17.5 β', //β
-  t: 1732274659575, // Date.now()
+  v: '0.18.6 β', //β
+  t: 1738169255103, // Date.now()
 
   // Global app state
   // Controls modules boundaries
@@ -60,12 +61,13 @@ let app = {
     api: 0,
     data: 0,
 
-    library: 0,
+    fav: 0,
     lists: 0,
+    pinned: 0,
+    hidden: 0,
+    library: 0,
 
-    states: {
-      backlog: 0,
-    },
+    states: {},
   },
 
   api: {},
@@ -117,7 +119,6 @@ async function toggleSidebar($nuxt) {
 // Created on Fri Jan 12 2024
 // Updated on Fri Sep 20 2024 - Added app.wip for localhost
 //+-------------------------------------------------
-
 function detectEnvironment() {
   if (window.location.hostname == 'localhost') {
     app.wip = true
@@ -142,11 +143,10 @@ function detectEnvironment() {
 // Created on Sun Feb 04 2024
 //+-------------------------------------------------
 async function init() {
-  if (!$nuxt) $nuxt = useNuxtApp()
-  if (!$game) $game = useGameStore()
+  $nuxt ??= useNuxtApp()
+  $game ??= useGameStore()
 
   $repos ??= useRepositoryStore()
-  $search ??= useSearchStore()
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Initialize stores
@@ -155,7 +155,6 @@ async function init() {
 
   $game.init()
   $repos.init()
-  $search.init()
 }
 
 //+-------------------------------------------------
@@ -170,8 +169,12 @@ async function initClient() {
   $user ??= useUserStore()
   $list ??= useListStore()
   $cloud ??= useCloudStore()
+  $guild ??= useGuildStore()
   $state ??= useStateStore()
+  $search ??= useSearchStore()
   $integration ??= useLibraryStore()
+
+  // console.groupCollapsed('🔸 Initializing')
 
   const breakpoints = useBreakpoints({
     sm: 0,
@@ -182,6 +185,8 @@ async function initClient() {
 
   const { width, height } = useWindowSize()
   const { isFullscreen, toggle } = useFullscreen(document.documentElement)
+
+  detectEnvironment()
 
   app.width = width
   app.device = breakpoints.active()
@@ -195,6 +200,7 @@ async function initClient() {
   // either locally or online and load values
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   await $user.authenticate()
+  $guild.init('ping')
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Initialize stores
@@ -202,6 +208,7 @@ async function initClient() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   await $data.init()
+  $search.init()
   $integration.init()
   await $state.init()
   await $list.init()
@@ -213,8 +220,7 @@ async function initClient() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   $cloud.connect()
 
-  detectEnvironment()
-
+  // console.groupEnd()
   await delay(333)
   app.ready = true
 }

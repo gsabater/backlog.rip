@@ -1,11 +1,9 @@
-/* eslint-disable no-unused-vars */
-
 /*
  * @file:    \stores\gameStore.js
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Tue 17 December 2024 - 12:04:34
+ * Modified: Thu 30 January 2025 - 19:43:38
  */
 
 let $nuxt = null
@@ -64,15 +62,30 @@ export const useGameStore = defineStore('game', {
   //     }
   //   },
   //
-  //   date: {
+  //   dates: {
   //     created_at: 1726666517, ⇢ Timestamp of when the app was created
   //     updated_at: 1726666517, ⇢ Timestamp of when the app was updated
   //     released_at: 1726666517, ⇢ Timestamp of when the app was released
   //   },
   //
+  //   genres: [], ⇢ Array of genres
+  //
+  //   scores: {
+  //     igdb: 81, ⇢ Score from IGDB
+  //     igdbCount: 748, ⇢ Amount of reviews on IGDB
+  //     steamscore: 85, ⇢ Score from Steam
+  //     steamCount: 1106232, ⇢ Amount of reviews on Steam
+  //     steamscoreAlt: Very Positive, ⇢ Score from Steam
+  //     userscore: 86, ⇢ Score from Steam
+  //   },
+  //
   //   playtime: {
   //     steam: 123, ⇢ Playtime (in minutes)
   //     steam_last: 1726666517, ⇢ Timestamp of last playtime
+  //   },
+  //
+  //   cover: {
+  //     igdb: 123, ⇢ Cover ID from IGDB
   //   },
   //
   //   log: [], ⇢ Array of logs
@@ -87,7 +100,7 @@ export const useGameStore = defineStore('game', {
     // -----
     // Created on Thu Jan 11 2024
     //+-------------------------------------------------
-    async load(uuid) {
+    async load(uuid, update = true) {
       const game = $data.get(uuid)
 
       this.app = game
@@ -202,7 +215,8 @@ export const useGameStore = defineStore('game', {
 
         game.languages = 'en,fr,it,de,es_ES,ja,ko,pl,pt_BR,ru,zh_CN,es_LA,th'
       }
-      this.update(game)
+
+      if (update) this.update(game)
     },
 
     //+-------------------------------------------------
@@ -228,105 +242,41 @@ export const useGameStore = defineStore('game', {
     // To modify the data by the user, use modify()
     // -----
     // Created on Sun Feb 11 2024
+    // Created on Fri Jan 17 2025 - New update method
     //+-------------------------------------------------
     async update(uuid, data) {
       let game = null
-      if (uuid === true) {
-        console.error('🔥', uuid, data)
-      }
 
       // Load the game by reference
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (typeof uuid !== 'string') game = uuid
+      if (typeof uuid === 'object') game = uuid
       else game = $data.get(uuid)
-      if (game === true) {
-        console.error('🔥🚫', uuid, data)
-      }
 
-      const update = this.needsUpdate(game, data)
+      if (game.uuid == '4434fa13-4f18-44ec-ad80-db412ba28a96') debugger
+
+      const update = gameService.needsUpdate(game, data)
       if (!update) return false
-
-      // log(`🌠 Update as ${update} for ${game.name}`)
-      // if (update == 'update:match') debugger
 
       // Update the game with the new data from the API
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (!data && update.indexOf(':api') > -1) {
-        data = await this.getFromAPI()
+        data = await this.getFromAPI(game.uuid)
         if (!data) return
       }
 
       // Create the new object with the updated data
-      // And normalize removing unwanted data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let updated = {
-        ...game,
-        ...Object.fromEntries(
-          Object.entries(data).filter(([key, value]) => value !== null)
-        ),
-      }
-
-      updated.uuid = game.uuid
-      updated = this.normalize(updated)
-      // console.warn(JSON.stringify(updated, null, 2))
-      // debugger
+      let updated = gameService.update(game, data)
+      if (!updated.updated) return
 
       // TODO: Add entry in app log
 
       // Update local data, store and indexes
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      $data.process(updated, update)
-      if (this.app.uuid == updated.uuid) this.app = updated
-    },
+      $data.toData(updated.app)
+      // $data.process(updated.app, 'updated:app')
 
-    //+-------------------------------------------------
-    // needsUpdate()
-    // Checks if the app needs to be updated
-    // There are three possible outcomes
-    // - false if update is not required
-    // - true or update:field to get data from the api
-    // - store:db if the app needs to be added to the store
-    // -----
-    // Created on Sun Feb 11 2024
-    //+-------------------------------------------------
-    needsUpdate(app, data) {
-      if (!app) return false
-
-      // This block is only when comparing
-      // local data with the API data
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (data) {
-        // app matched with an api item
-        if (!app.id?.api && (data?.id?.api || data?.api_id)) return 'update:match'
-
-        // Is not working
-        // if (app.uuid.indexOf('local:') > -1 && (data?.id?.api || data?.api_id))
-        //   return 'update:match'
-
-        // disabled as i havent decided if this should be
-        // a match or update:api or what
-        // app has older updated_at than api data
-        // if (app.updated_at < data?.updated_at) return 'update:refresh'
-      }
-
-      // This block is only when checking app data
-      // without a new object
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (!data) {
-        // App has never been updated from the API
-        if (!app.description) return 'update:api'
-        if (!app.providers) {
-          console.warn('should update and save providers')
-        }
-      }
-
-      // For internal updates like changing data
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // nunca ocurre
-      // if (app.state !== data.state) return 'update:state'
-      if (app?.is?.dirty || data?.is?.dirty) return 'store:db'
-
-      return false
+      if (this.app.uuid == updated.app.uuid) this.load(updated.app.uuid, false)
     },
 
     //+-------------------------------------------------
@@ -334,25 +284,13 @@ export const useGameStore = defineStore('game', {
     // Gets more data from the API
     // -----
     // Created on Fri Feb 16 2024
+    // Updated on Thu Jan 30 2025 - Get uuid from param
     //+-------------------------------------------------
-    async getFromAPI() {
-      console.warn('🪝 Going to ask api for more data')
-
-      let app = this.app.uuid
-      let api = this.app.id.api
-
-      if (this.app.is_api) api = this.app.uuid
-      if (this.app.id.api?.length > 0 && app !== this.app.id.api) api = this.app.id.api
-
-      if (!api) {
-        console.error('🪝 No API ID found')
-        return
-      }
-
-      let xhr = await $nuxt.$axios.get(`/get/${api}.json`)
+    async getFromAPI(uuid) {
+      if (uuid.includes('local:')) return
+      let xhr = await $nuxt.$axios.get(`/get/${uuid}.json`)
 
       if (xhr.status == 200) {
-        console.warn('🪝 Data received: Updating')
         return xhr.data
       } else {
         console.error('🪝 Error loading data from API', xhr)
@@ -372,19 +310,31 @@ export const useGameStore = defineStore('game', {
       game.id = game.id || {}
       game.is = game.is || {}
       game.log = game.log || []
-      game.date = game.date || {}
 
+      game.dates = game.dates || {}
       game.scores = game.scores || {}
       game.genres = game.genres || []
       game.playtime = game.playtime || {}
 
       game = this.normalizeID(game)
-
+      game = this.normalizeDates(game)
+      game = this.cleanup(game)
       // game.updated_at = game.updated_at || 0
 
-      delete game.trigger
+      return game
+    },
+
+    //+-------------------------------------------------
+    // cleanup()
+    // -----
+    // Created on Tue Dec 31 2024
+    //+-------------------------------------------------
+    cleanup(game) {
+      if (game.dates) delete game.date
+
       delete game.enabled
       delete game.data
+
       return game
     },
 
@@ -395,11 +345,15 @@ export const useGameStore = defineStore('game', {
     // Created on Mon Dec 16 2024
     //+-------------------------------------------------
     normalizeID(game) {
+      if (game.api_id) game.id.api = game.api_id
+      if (game.igdb_id) game.id.igdb = game.igdb_id
+      if (game.xbox_id) game.id.xbox = game.xbox_id
       if (game.epic_id) game.id.epic = game.epic_id
-      if (game.steam_id) game.steam_id = Number(game.steam_id)
+      if (game.steam_id) game.id.steam = game.steam_id
+      if (game.igdb_slug) game.id.igdb_slug = game.igdb_slug
+
       if (game.id.steam) game.id.steam = Number(game.id.steam)
 
-      if (game.api_id) game.id.api = game.api_id
       if (!game.uuid || game.uuid?.indexOf('local:') > -1) {
         if (game.id.api) {
           // game.uuid = game.id.api
@@ -411,7 +365,33 @@ export const useGameStore = defineStore('game', {
         // }
       }
 
+      delete game.api_id
+      delete game.gog_id
+      delete game.igdb_id
+      delete game.xbox_id
       delete game.epic_id
+      delete game.steam_id
+      delete game.igdb_slug
+
+      return game
+    },
+
+    //+-------------------------------------------------
+    // normalizeDates()
+    // - created_at -> Is the date the game was created in the API
+    // - updated_at -> Is the date the game was updated in the API
+    // - released_at -> Is the date the game was released
+    // -----
+    // Created on Tue Dec 31 2024
+    //+-------------------------------------------------
+    normalizeDates(game) {
+      if (game.released_at) game.dates.released = game.released_at
+      if (game.created_at) game.dates.created = game.created_at
+      if (game.updated_at) game.dates.updated = game.updated_at
+
+      delete game.created_at
+      delete game.updated_at
+      delete game.released_at
 
       return game
     },
@@ -425,6 +405,7 @@ export const useGameStore = defineStore('game', {
     normalize_(game) {
       return {
         score: this._score(game),
+        detail: gameService._detail(game),
         playtime: this._playtime(game),
 
         released: this._dateReleasedAt(game),
@@ -484,18 +465,18 @@ export const useGameStore = defineStore('game', {
     },
 
     _dateReleasedAt(app, format = 'LL') {
-      if (!app.released_at) return null
-      return $nuxt.$moment(app.released_at * 1000).format(format)
+      if (!app.dates.released) return null
+      return $nuxt.$moment(app.dates.released * 1000).format(format)
     },
 
     _dateCreatedAt(app) {
-      if (!app.created_at) return null
-      return $nuxt.$moment(app.created_at).format('LL')
+      if (!app.dates.created) return null
+      return $nuxt.$moment(app.dates.created).format('LL')
     },
 
     _dateUpdatedAt(app) {
-      if (!app.updated_at) return null
-      return $nuxt.$moment(app.updated_at * 1000).format('LL')
+      if (!app.dates.updated) return null
+      return $nuxt.$moment(app.dates.updated * 1000).format('LL')
     },
 
     _dateOwnedAt(app, format = 'LL') {
@@ -506,6 +487,8 @@ export const useGameStore = defineStore('game', {
     async init() {
       if (!$nuxt) $nuxt = useNuxtApp()
       if (!$data) $data = useDataStore()
+
+      if (window) window.$game = this
     },
   },
 })

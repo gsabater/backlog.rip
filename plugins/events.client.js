@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd February 2024
- * Modified: Mon 04 November 2024 - 17:33:06
+ * Modified: Thu 16 January 2025 - 17:05:41
  */
 
 import { useMagicKeys, whenever } from '@vueuse/core'
@@ -38,8 +38,9 @@ async function init() {
     let trigger =
       event.target.closest('.card-game') || event.target.closest('.game--list')
     let attr = trigger?.getAttribute('uuid') || null
+    let disabled = trigger?.classList.contains('is-disabled') || false
 
-    if (trigger && attr) {
+    if (trigger && attr && !disabled) {
       console.log('Right-clicked on an element with class ".card-game"')
 
       $nuxt.$mitt.emit('game:manager', {

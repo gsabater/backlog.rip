@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="ui.show" max-width="725">
     <v-card :loading="ui.loading">
-      <template v-slot:title>
+      <template #title>
         <Icon>Background</Icon>
         <span class="font-serif mx-2">States</span>
       </template>
@@ -10,7 +10,7 @@
         <v-card-text style="padding: 0px 24px 16px">
           <div class="row">
             <div class="col-12 col-md-6">
-              <div class="mb-3">
+              <div class="mb-4">
                 <div class="form-label">Name</div>
                 <!-- <h4 class="card-title mb-2">Username2</h4> -->
                 <v-text-field
@@ -51,7 +51,7 @@
             <div class="col-12 col-md-6 d-flex">
               <v-color-picker
                 v-model="item.color"
-                elevation="3"
+                elevation="2"
                 nhide-sliders
                 hide-inputs
                 :modes="['rgb']"
@@ -85,8 +85,8 @@
             :disabled="ui.loading"
             color="primary"
             variant="tonal"
-            @click="submit"
-            style="text-transform: uppercase">
+            style="text-transform: uppercase"
+            @click="submit">
             Save changes
           </v-btn>
         </v-card-actions>
@@ -108,7 +108,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th June 2024
- * Modified: Fri 11 October 2024 - 15:54:08
+ * Modified: Thu 30 January 2025 - 15:06:31
  **/
 
 export default {
@@ -177,7 +177,7 @@ export default {
       if (modal) this.ui.show = true
       this.$nextTick(() => {
         this.$refs.name.focus()
-        this.$refs.name.$el.select()
+        // this.$refs.name.select()
       })
     },
 
@@ -242,9 +242,9 @@ export default {
     async store() {
       this.ui.loading = true
 
-      let index = this.item.index || 0
-      let action = this.item.action
-      let payload = { ...this.item }
+      const index = this.item.index || 0
+      const action = this.item.action
+      const payload = { ...this.item }
       payload.slug = format.stringToSlug(payload.name)
 
       try {

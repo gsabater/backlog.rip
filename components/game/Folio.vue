@@ -242,7 +242,7 @@
                   style="transform: translateY(-1px)">
                   CalendarWeek
                 </Icon>
-                <span>Owned since {{ app._.owned_at }}</span>
+                <span>{{ app._.owned_at }}</span>
               </div>
               <div v-else class="mb-2">
                 <Icon
@@ -981,7 +981,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st November 2024
- * Modified: Thu 30 January 2025 - 17:02:06
+ * Modified: Tue 04 February 2025 - 17:18:31
  **/
 
 export default {

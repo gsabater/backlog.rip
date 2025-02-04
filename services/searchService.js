@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Tue 28 January 2025 - 17:24:07
+ * Modified: Tue 04 February 2025 - 17:10:37
  */
 
 export default {
@@ -119,25 +119,37 @@ export default {
         }
       }
 
-      // ✨ Sort By: Released at
+      // ✨ Date in library
+      // Include apps that are in lib
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (filters.sortBy == 'date.lib') {
+        if (!app.is?.lib) {
+          filtered.push(app.uuid)
+          // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
+
+          continue
+        }
+      }
+
+      // ✨ Sort By: Release date
       // Include only apps with release date
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.released > 0 || filters?.sortBy == 'released') {
-        if (!app.released_at) {
+      if (filters?.released > 0 || filters?.sortBy == 'date.released') {
+        if (!app.dates?.released) {
           filtered.push(app.uuid)
           // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
 
           continue
         }
 
-        if (app.released_at > now) {
+        if (app.dates.released > now) {
           filtered.push(app.uuid)
           // console.warn('🛑 Skipping because released in the future', filters.released, app.released_at
 
           continue
         }
 
-        if (app.released_at < filters.released) {
+        if (app.dates.released < filters.released) {
           filtered.push(app.uuid)
           // console.warn('🛑 Skipping because released before', filters.released, app.released_at)
 
@@ -161,22 +173,18 @@ export default {
       // ✨ Sort By: Scores
       // Include only apps with data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (['score', 'metascore', 'steamscore'].includes(filters?.sortBy)) {
+      if (
+        ['score', 'metascore', 'oc', 'steamscore', 'steamdb'].includes(filters?.sortBy)
+      ) {
         if (filters.sortBy == 'score' && filters.sortDir == 'asc' && !app.score) {
           filtered.push(app.uuid)
           // console.warn('🛑 Skipping because has no score', filters.sortBy, app.score)
           continue
         }
 
-        if (filters.sortBy == 'metascore' && !app.scores.metascore) {
+        if (filters.sortBy !== 'score' && !app.scores[filters.sortBy]) {
           filtered.push(app.uuid)
           // console.warn('🛑 Skipping because has no metascore', filters.sortBy, app.metascore)
-          continue
-        }
-
-        if (filters.sortBy == 'steamscore' && !app.scores.steamscore) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has no steamscore', filters.sortBy, app.steamscore)
           continue
         }
       }
@@ -205,12 +213,20 @@ export default {
         toSort.push({ uuid: app.uuid, val: app.scores.metascore || 0 })
       }
 
+      if (filters.sortBy == 'oc') {
+        toSort.push({ uuid: app.uuid, val: app.scores.oc || 0 })
+      }
+
       if (filters.sortBy == 'steamscore') {
         toSort.push({ uuid: app.uuid, val: app.scores.steamscore || 0 })
       }
 
-      if (filters?.sortBy == 'released') {
-        toSort.push({ uuid: app.uuid, val: app.released_at || 0 })
+      if (filters.sortBy == 'steamdb') {
+        toSort.push({ uuid: app.uuid, val: app.scores.steamdb || 0 })
+      }
+
+      if (filters?.sortBy == 'date.released') {
+        toSort.push({ uuid: app.uuid, val: app.dates.released || 0 })
       }
 
       if (filters?.sortBy == 'playtime') {
@@ -219,6 +235,10 @@ export default {
 
       if (filters?.sortBy == 'hltb') {
         toSort.push({ uuid: app.uuid, val: app.hltb?.main || 0 })
+      }
+
+      if (filters.sortBy == 'date.lib') {
+        toSort.push({ uuid: app.uuid, val: app.is.lib })
       }
 
       if (!filters?.sortBy || filters?.sortBy == 'user') {
@@ -275,9 +295,12 @@ export default {
         'hltb',
         'score',
         'metascore',
+        'oc',
         'steamscore',
+        'steamdb',
         'playtime',
-        'released',
+        'date.lib',
+        'date.released',
       ].includes(sortBy)
     ) {
       return items

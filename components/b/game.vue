@@ -137,6 +137,17 @@
           </small>
 
           <small
+            v-if="visible.includes('oc') && app.scores && app.scores.oc"
+            class="text-muted">
+            <b-logo
+              name="opencritic"
+              size="12"
+              style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+
+            {{ app.scores.oc ?? 'Unscored' }}
+          </small>
+
+          <small
             v-if="visible.includes('steamscore') && app.scores && app.scores.steamscore"
             class="text-muted">
             <b-logo
@@ -149,7 +160,20 @@
           </small>
 
           <small
-            v-if="visible.includes('released') && app._.released"
+            v-if="visible.includes('steamdb') && app.scores && app.scores.steamdb"
+            class="d-block text-muted text-truncate">
+            <b-logo
+              name="steamdb"
+              size="12"
+              color="#fff"
+              style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+
+            {{ Math.round(app.scores.steamdb) ?? 'Unscored db' }},
+            {{ app.scores.steamscoreAlt }}
+          </small>
+
+          <small
+            v-if="visible.includes('date.released') && app._.released"
             class="d-block text-muted">
             <Icon
               size="12"
@@ -158,6 +182,16 @@
               Calendar
             </Icon>
             {{ app._.released }}
+          </small>
+
+          <small v-if="visible.includes('date.lib')" class="d-block text-muted">
+            <Icon
+              size="12"
+              width="1.8"
+              style="transform: translateY(-1px); margin-right: 3px">
+              Calendar
+            </Icon>
+            {{ app._.owned_at }}
           </small>
 
           <small v-if="visible.includes('playtime')" class="d-block text-muted">
@@ -202,7 +236,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 30 January 2025 - 16:39:30
+ * Modified: Tue 04 February 2025 - 17:20:10
  **/
 
 export default {

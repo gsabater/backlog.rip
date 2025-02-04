@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Fri 31 January 2025 - 10:10:56
+ * Modified: Tue 04 February 2025 - 16:52:11
  */
 
 export default {
@@ -73,7 +73,6 @@ export default {
   smartUpdate(app, data) {
     let api = dataService.prepareToData(data)
     let hasChanges = false
-    debugger
 
     const blacklist = [
       'uuid',
@@ -300,5 +299,27 @@ export default {
         return acc
       }, {})
     return JSON.stringify(ordered)
+  },
+
+  //+-------------------------------------------------
+  // calcSteamdbRating()
+  // https://steamdb.info/blog/steamdb-rating/
+  // -----
+  // Created on Sun Feb 02 2025
+  //+-------------------------------------------------
+  calcSteamdbRating(scores) {
+    // Convert percentage to decimal (e.g. 85% -> 0.85)
+    const positivePercentage = scores.steamscore / 100
+
+    // Calculate actual vote counts
+    const totalVotes = scores.steamCount
+    const positiveVotes = Math.round(totalVotes * positivePercentage)
+    const negativeVotes = totalVotes - positiveVotes
+
+    // Rating calculation
+    const average = positiveVotes / totalVotes
+    const score = average - (average - 0.5) * Math.pow(2, -Math.log10(totalVotes + 1))
+
+    return score * 100
   },
 }

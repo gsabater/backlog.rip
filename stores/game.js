@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Thu 30 January 2025 - 19:43:38
+ * Modified: Sun 02 February 2025 - 22:19:13
  */
 
 let $nuxt = null
@@ -317,7 +317,9 @@ export const useGameStore = defineStore('game', {
       game.playtime = game.playtime || {}
 
       game = this.normalizeID(game)
+      game = this.normalizeScores(game)
       game = this.normalizeDates(game)
+
       game = this.cleanup(game)
       // game.updated_at = game.updated_at || 0
 
@@ -373,6 +375,13 @@ export const useGameStore = defineStore('game', {
       delete game.steam_id
       delete game.igdb_slug
 
+      return game
+    },
+
+    normalizeScores(game) {
+      if (!game.scores.steamscore) return game
+
+      game.scores.steamdb = gameService.calcSteamdbRating(game.scores)
       return game
     },
 

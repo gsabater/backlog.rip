@@ -89,6 +89,10 @@
       <span class="text-muted">By Score</span>
     </span>
 
+    <!--
+      *+---------------------------------
+      *| Median score
+      *+--------------------------------- -->
     <label
       class="dropdown-item ps-1"
       :class="{ active: f.sortBy == 'score' }"
@@ -105,13 +109,17 @@
       </div>
       <tippy
         class="text-muted ms-auto cursor-help ps-4"
-        :content="'The median is the middle value in a set of scores when arranged in order. It avoids being skewed by extreme values, making it a fairer representation of the central tendency compared to the average.'">
+        :content="'Sorting by median will rank games based on their middle review score when arranged in order. This method avoids being skewed by extreme values, making it a fairer representation of overall sentiment.'">
         <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
           HelpSmall
         </Icon>
       </tippy>
     </label>
 
+    <!--
+      *+---------------------------------
+      *| Metacritic score
+      *+--------------------------------- -->
     <label
       class="dropdown-item ps-1"
       :class="{
@@ -139,14 +147,91 @@
       </div>
       <tippy
         class="text-muted ms-auto cursor-help ps-4"
-        :content="'Sorting by Metacritic will show only games with known Metacritic scores. Please note that not all games in the database have Metacritic scores.'">
+        :content="'Sorting by Metacritic will only show games with a known Metacritic score. Not all games in the database have a Metacritic rating.'">
         <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
           HelpSmall
         </Icon>
       </tippy>
     </label>
 
+    <!--
+      *+---------------------------------
+      *| Opencritic score
+      *+--------------------------------- -->
     <label
+      class="dropdown-item ps-1"
+      :class="{
+        'active': f.sortBy == 'oc',
+        'disabled cursor-not-allowed': f.source == 'all',
+      }"
+      @click="sortBy('oc', 'desc', true)">
+      <div class="d-flex justify-center" style="width: 30px">
+        <b-logo name="opencritic" size="14" class="me-1" style="opacity: 0.6" />
+      </div>
+      <div>
+        Opencritic
+        <small v-if="f.source == 'all'" class="d-block text-muted">
+          Not available yet on
+          <strong>all games</strong>
+        </small>
+
+        <div v-else-if="f.sortBy == 'oc'" class="text-muted" style="font-size: 0.75rem">
+          {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
+          <Icon size="14" width="2" class="mx-1">Repeat</Icon>
+        </div>
+      </div>
+      <tippy
+        class="text-muted ms-auto cursor-help ps-4"
+        :content="'Sorting by OpenCritic will rank games based on their OpenCritic score. Only games with a known OpenCritic rating will be included.'">
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
+          HelpSmall
+        </Icon>
+      </tippy>
+    </label>
+
+    <!--
+      *+---------------------------------
+      *| SteamDB rating
+      *+--------------------------------- -->
+    <label
+      class="dropdown-item ps-1"
+      :class="{
+        'active': f.sortBy == 'steamdb',
+        'disabled cursor-not-allowed': f.source == 'all',
+      }"
+      @click="sortBy('steamdb', 'desc', true)">
+      <div class="d-flex justify-center" style="width: 30px">
+        <b-logo color="#fff" name="steamdb" size="14" class="me-1" style="opacity: 0.6" />
+      </div>
+      <div>
+        SteamDB rating
+        <small v-if="f.source == 'all'" class="d-block text-muted">
+          Not available yet on
+          <strong>all games</strong>
+        </small>
+
+        <div
+          v-else-if="f.sortBy == 'steamdb'"
+          class="text-muted"
+          style="font-size: 0.75rem">
+          {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
+          <Icon size="14" width="2" class="mx-1">Repeat</Icon>
+        </div>
+      </div>
+      <tippy
+        class="text-muted ms-auto cursor-help ps-4"
+        :content="'Sorting by SteamDB rating will only show games with a known Steam rating. This metric, calculated by SteamDB.info, adjusts a game\'s Steam rating based on the number of reviews it has, making it a more reliable representation of overall player sentiment.'">
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
+          HelpSmall
+        </Icon>
+      </tippy>
+    </label>
+
+    <!--
+      *+---------------------------------
+      *| Scores block
+      *+--------------------------------- -->
+    <!-- <label
       class="dropdown-item ps-1"
       :class="{
         'active': f.sortBy == 'steamscore',
@@ -178,7 +263,7 @@
           HelpSmall
         </Icon>
       </tippy>
-    </label>
+    </label> -->
 
     <div class="dropdown-divider"></div>
 
@@ -187,50 +272,19 @@
     </span>
 
     <label
-      v-if="$app.wip"
       class="dropdown-item ps-1"
-      :class="{ active: f.sortBy == 'added' }"
-      @click="sortBy('added', 'desc', true)">
+      :class="{ active: f.sortBy == 'date.released' }"
+      @click="sortBy('date.released', 'desc', true)">
       <div class="d-flex justify-center" style="width: 30px">
         <Icon size="16" class="me-1">CalendarDot</Icon>
       </div>
       <div>
-        🔸 Date added to your library
-        <div v-if="f.sortBy == 'added'" class="text-muted" style="font-size: 0.75rem">
+        Release date
+        <div
+          v-if="f.sortBy == 'date.released'"
+          class="text-muted"
+          style="font-size: 0.75rem">
           {{ f.sortDir == 'asc' ? 'Oldest' : 'Newest' }}
-          <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-        </div>
-      </div>
-    </label>
-
-    <label
-      v-if="$app.wip"
-      class="dropdown-item ps-1"
-      :class="{ active: f.sortBy == 'released' }"
-      @click="sortBy('released', 'desc', true)">
-      <div class="d-flex justify-center" style="width: 30px">
-        <Icon size="16" class="me-1">CalendarDot</Icon>
-      </div>
-      <div>
-        🔸 Release date
-        <div v-if="f.sortBy == 'released'" class="text-muted" style="font-size: 0.75rem">
-          {{ f.sortDir == 'asc' ? 'Oldest' : 'Newest' }}
-          <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-        </div>
-      </div>
-    </label>
-
-    <label
-      class="dropdown-item ps-1"
-      :class="{ active: f.sortBy == 'playtime' }"
-      @click="sortBy('playtime', 'desc', true)">
-      <div class="d-flex justify-center" style="width: 30px">
-        <Icon size="16" class="me-1">AlarmAverage</Icon>
-      </div>
-      <div>
-        Your playtime
-        <div v-if="f.sortBy == 'playtime'" class="text-muted" style="font-size: 0.75rem">
-          {{ f.sortDir == 'asc' ? 'Unplayed' : 'Most played' }}
           <Icon size="14" width="2" class="mx-1">Repeat</Icon>
         </div>
       </div>
@@ -258,6 +312,44 @@
         </Icon>
       </tippy>
     </label>
+
+    <div class="dropdown-divider"></div>
+
+    <span class="dropdown-header">
+      <span class="text-muted">Your library</span>
+    </span>
+
+    <label
+      class="dropdown-item ps-1"
+      :class="{ active: f.sortBy == 'playtime' }"
+      @click="sortBy('playtime', 'desc', true)">
+      <div class="d-flex justify-center" style="width: 30px">
+        <Icon size="16" class="me-1">AlarmAverage</Icon>
+      </div>
+      <div>
+        Your playtime
+        <div v-if="f.sortBy == 'playtime'" class="text-muted" style="font-size: 0.75rem">
+          {{ f.sortDir == 'asc' ? 'Unplayed' : 'Most played' }}
+          <Icon size="14" width="2" class="mx-1">Repeat</Icon>
+        </div>
+      </div>
+    </label>
+
+    <label
+      class="dropdown-item ps-1"
+      :class="{ active: f.sortBy == 'date.lib' }"
+      @click="sortBy('date.lib', 'desc', true)">
+      <div class="d-flex justify-center" style="width: 30px">
+        <Icon size="16" class="me-1">CalendarDot</Icon>
+      </div>
+      <div>
+        Date added to your library
+        <div v-if="f.sortBy == 'date.lib'" class="text-muted" style="font-size: 0.75rem">
+          {{ f.sortDir == 'asc' ? 'Oldest' : 'Newest' }}
+          <Icon size="14" width="2" class="mx-1">Repeat</Icon>
+        </div>
+      </div>
+    </label>
   </div>
 </template>
 
@@ -267,7 +359,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st October 2024
- * Modified: Mon 13 January 2025 - 17:07:40
+ * Modified: Tue 04 February 2025 - 17:15:36
  **/
 
 export default {

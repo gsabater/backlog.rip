@@ -1,6 +1,6 @@
 <template>
   <pre
-    class="d-none my-3"
+    class="my-3"
     style="
       position: fixed;
       bottom: 10px;
@@ -20,7 +20,7 @@ Option
 </pre
   >
   <pre
-    class="d-none my-3"
+    class="my-3"
     style="
       position: fixed;
       bottom: 10px;
@@ -110,9 +110,6 @@ Selected
       <b-tippy-sheety ref="source" to="#⚓source" :autoclose="150" trigger="click">
         <search-source-menu :source="f.source" @change="changeSource" />
       </b-tippy-sheety>
-
-      <!-- <b-dropdown style="overflow-x: hidden; min-width: 240px; letter-spacing: normal"> -->
-      <!-- </b-dropdown> -->
     </div>
 
     <!-- <div class="btn-group btn-group-sm filters__source">
@@ -141,16 +138,19 @@ Selected
     <!-- <Icon class="text-muted mx-2">MinusVertical</Icon> -->
     <!-- <div style="border-right: 1px dashed #ccc; margin: 10px"></div> -->
 
-    <v-btn
-      id="⚓filters"
-      variant="text"
-      size="small"
-      class="me-2"
-      color="blue-grey-lighten-1">
-      Apply filters
+    <div id="⚓filters" class="btn btn-sm me-2" style="background: transparent">
+      <Icon size="12" class="text-muted me-1">Filter</Icon>
 
-      <Icon class="text-muted" size="14" width="2" style="transform: translate(5px, 1px)">
-        ChevronDown
+      <!-- <v-btn
+        id="⚓filters"
+        variant="text"
+        size="small"
+        class="me-2"
+        color="blue-grey-lighten-1"> -->
+      Filters
+
+      <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+        Selector
       </Icon>
 
       <b-tippy-sheety
@@ -161,9 +161,9 @@ Selected
         @closed="reset">
         <div class="b-menu dropdown-menu show" style="letter-spacing: normal">
           <template v-if="ui.step == 'pick'">
-            <span class="dropdown-header">
+            <!-- <span class="dropdown-header">
               <span class="text-muted">Choose a filter</span>
-            </span>
+            </span> -->
             <div
               v-for="(param, key) in options"
               :key="key"
@@ -217,15 +217,15 @@ Selected
                 @click="select(param, 'hard')">
                 <template v-if="option.by == 'state'">
                   <!-- <Icon
-                          v-if="param.key == 'favorites'"
-                          size="14"
-                          style="color: red; fill: pink">
-                          Heart
-                        </Icon> -->
+                              v-if="param.key == 'favorites'"
+                              size="14"
+                              style="color: red; fill: pink">
+                              Heart
+                            </Icon> -->
                   <!-- v-else -->
 
                   <!-- <Icon style="color: var(--tblr-primary)">SquareCheck</Icon>
-                      <Icon style="color: #666">Square</Icon> -->
+                          <Icon style="color: #666">Square</Icon> -->
 
                   <template v-if="param.id == -1">
                     <Icon size="12" class="me-1">CircleOff</Icon>
@@ -241,10 +241,10 @@ Selected
                   </span>
 
                   <!-- <tippy
-                        class="text-muted ms-auto ms-2 cursor-help"
-                        :content="param.description">
-                        <Icon size="16" stroke="1">HelpCircleFilled</Icon>
-                      </tippy> -->
+                            class="text-muted ms-auto ms-2 cursor-help"
+                            :content="param.description">
+                            <Icon size="16" stroke="1">HelpCircleFilled</Icon>
+                          </tippy> -->
                   <tippy
                     :allow-h-t-m-l="true"
                     class="text-muted ms-auto cursor-help"
@@ -282,11 +282,11 @@ Selected
               <div class="hr-text mt-2 mb-3">Or pick</div>
               <div style="transform: scale(0.9)">
                 <!-- <div>
-                      <input type="month" value="2018-05" />
-                    </div> -->
+                          <input type="month" value="2018-05" />
+                        </div> -->
                 <pre>
-                      {{ released }}
-                    </pre
+                          {{ released }}
+                        </pre
                 >
                 <div class="input-group mb-1">
                   <select v-model="released.month" class="form-control">
@@ -326,20 +326,21 @@ Selected
           </template>
 
           <!--
-                <div class="dropdown-item">Features</div>
-                <div class="dropdown-item">Languages</div>
-                <div class="dropdown-item">Platform</div>
-                <div class="dropdown-item">Type</div>
-                <div class="dropdown-divider"></div>
-                <div class="dropdown-item">
-                  <div style="width: 30px">
-                    <Icon style="color: red; fill: pink">Heart</Icon>
-                  </div>
-                  <span>Opción</span>
-                </div> -->
+                    <div class="dropdown-item">Features</div>
+                    <div class="dropdown-item">Languages</div>
+                    <div class="dropdown-item">Platform</div>
+                    <div class="dropdown-item">Type</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item">
+                      <div style="width: 30px">
+                        <Icon style="color: red; fill: pink">Heart</Icon>
+                      </div>
+                      <span>Opción</span>
+                    </div> -->
         </div>
       </b-tippy-sheety>
-    </v-btn>
+      <!-- </v-btn> -->
+    </div>
 
     <v-btn
       id="⚓sortby"
@@ -361,18 +362,6 @@ Selected
         <search-sort-menu :f="f" @sort="sortBy" />
       </b-tippy-sheety>
     </v-btn>
-
-    <!-- <div class="btn btn-sm" style="background: transparent">
-      <small>
-        Sorting by
-        <strong>
-          {{ sortLabel[f.sortBy] ?? '...' }}
-        </strong>
-      </small>
-      <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
-        Selector
-      </Icon>
-    </div> -->
 
     <!-- <div class="text-muted mx-3"><Icon size="14">Spaces</Icon></div>
 
@@ -466,188 +455,6 @@ Selected
       </span> -->
       </template>
     </small>
-    <div
-      class="d-none d-inline-flex align-items-center nbtn mx-2 text-muted cursor-pointer"
-      style="padding: 0.35rem 0.85rem">
-      <!-- <Icon size="19" class="text-muted me-2">
-            SortDescending
-            {{ f.sortDir == 'asc' ? 'SortAscending' : 'SortDescending' }}
-          </Icon> -->
-      Sorting by
-      {{ sortLabel[f.sortBy] ?? '--' + f.sortBy }}
-
-      <Icon class="text-muted" size="14" style="transform: translateX(8px)">
-        ChevronDown
-      </Icon>
-
-      <b-tippy-sheety placement="bottom-end">
-        <!-- <tippy
-            ref="tippySort"
-            to="parent"
-            tag="div"
-            content-tag="div"
-            :animate-fill="true"
-            :interactive="true"
-            :interactive-debounce="55"
-            animation="scale-subtle"
-            placement="bottom-start"
-            trigger="click"
-            theme="filters">
-            <template #content="{ hide }"> -->
-        <div
-          class="b-menu dropdown-menu show"
-          style="min-width: 280px; letter-spacing: normal">
-          <span class="dropdown-header">
-            <span class="text-muted">General sorting</span>
-          </span>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'rand' }"
-            @click="sortBy('rand')">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon size="16" width="2" class="me-1" :icon="'Dice' + ui.dice"></Icon>
-            </div>
-
-            <div class="pe-3">Random</div>
-            <tippy
-              class="text-muted ms-auto cursor-help ps-4"
-              :content="'Every click triggers a re-sort!'">
-              <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-                HelpSmall
-              </Icon>
-            </tippy>
-          </label>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'name' }"
-            @click="sortBy('name', 'asc', true)">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon
-                size="16"
-                width="2"
-                class="me-1"
-                :icon="
-                  f.sortDir == 'asc' ? 'SortAscendingLetters' : 'SortDescendingLetters'
-                "></Icon>
-            </div>
-            <div>
-              Name
-              <div
-                v-if="f.sortBy == 'name'"
-                class="text-muted"
-                style="font-size: 0.75rem">
-                {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
-                <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-              </div>
-            </div>
-          </label>
-
-          <div class="dropdown-divider"></div>
-
-          <span class="dropdown-header">
-            <span class="text-muted">By Score</span>
-          </span>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'score' }"
-            @click="sortBy('score', 'desc', true)">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon size="16" class="me-1">Universe</Icon>
-            </div>
-            <div>
-              Median score
-              <div
-                v-if="f.sortBy == 'score'"
-                class="text-muted"
-                style="font-size: 0.75rem">
-                {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
-                <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-              </div>
-            </div>
-            <tippy
-              class="text-muted ms-auto cursor-help ps-4"
-              :content="'The median is the middle value in a set of scores when arranged in order. It avoids being skewed by extreme values, making it a fairer representation of the central tendency compared to the average.'">
-              <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-                HelpSmall
-              </Icon>
-            </tippy>
-          </label>
-
-          <div class="dropdown-divider"></div>
-
-          <span class="dropdown-header">
-            <span class="text-muted">By Time</span>
-          </span>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'released' }"
-            @click="sortBy('released', 'desc', true)">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon size="16" class="me-1">CalendarDot</Icon>
-            </div>
-            <div>
-              Release date
-              <div
-                v-if="f.sortBy == 'released'"
-                class="text-muted"
-                style="font-size: 0.75rem">
-                {{ f.sortDir == 'asc' ? 'Oldest' : 'Newest' }}
-                <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-              </div>
-            </div>
-          </label>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'playtime' }"
-            @click="sortBy('playtime', 'desc', true)">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon size="16" class="me-1">AlarmAverage</Icon>
-            </div>
-            <div>
-              Your playtime
-              <div
-                v-if="f.sortBy == 'playtime'"
-                class="text-muted"
-                style="font-size: 0.75rem">
-                {{ f.sortDir == 'asc' ? 'Unplayed' : 'Most played' }}
-                <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-              </div>
-            </div>
-          </label>
-
-          <label
-            class="dropdown-item ps-1"
-            :class="{ active: f.sortBy == 'hltb' }"
-            @click="sortBy('hltb', 'desc', true)">
-            <div class="d-flex justify-center" style="width: 30px">
-              <Icon size="16" class="me-1">TimeDuration30</Icon>
-            </div>
-            <div>
-              How long to beat
-              <div
-                v-if="f.sortBy == 'hltb'"
-                class="text-muted"
-                style="font-size: 0.75rem">
-                {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
-                <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-              </div>
-            </div>
-            <tippy
-              class="text-muted ms-auto cursor-help ps-4"
-              :content="'How long to beat is a metric that measures how much time is needed to complete a game. Data provided from howlongtobeat.com'">
-              <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-                HelpSmall
-              </Icon>
-            </tippy>
-          </label>
-        </div>
-      </b-tippy-sheety>
-    </div>
   </div>
 
   <!--
@@ -1138,7 +945,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Thu 16 January 2025 - 16:29:24
+ * Modified: Tue 04 February 2025 - 17:26:59
  **/
 
 export default {
@@ -1151,14 +958,8 @@ export default {
     // },
   },
 
-  emits: ['updated'],
-
   data() {
     return {
-      // f: {
-      //   string: '',
-      // },
-
       option: {},
       selected: {},
 
@@ -1190,7 +991,6 @@ export default {
           opValue: 'id',
         },
 
-        // WIP this is not working...
         // released: {
         //   search: false,
         //   multiple: false,
@@ -1203,6 +1003,22 @@ export default {
         //   labels: 'Release dates',
 
         //   data: 'released',
+        //   opTitle: 'name',
+        //   opValue: 'value',
+        // },
+
+        // languages: {
+        //   search: false,
+        //   multiple: false,
+
+        //   by: 'languages',
+        //   filter: 'languages',
+
+        //   icon: 'Language',
+        //   label: 'Languages',
+        //   labels: 'Languages',
+
+        //   data: 'languages',
         //   opTitle: 'name',
         //   opValue: 'value',
         // },
@@ -1272,16 +1088,27 @@ export default {
       return null
     },
 
+    //+-------------------------------------------------
+    // sortLabel()
+    // a human readable array of sort options
+    // -----
+    // TODO: this should be an enum
+    // -----
+    // Created on Mon Feb 03 2025
+    //+-------------------------------------------------
     sortLabel() {
       return {
-        name: 'Name',
-        rand: 'Random',
-        score: 'Score',
-        metascore: 'Metacritic',
-        steamscore: 'Steam recommendations',
-        playtime: 'Your playtime',
-        hltb: 'How long to beat',
-        released: 'Release date',
+        'name': 'Name',
+        'rand': 'Random',
+        'score': 'Score',
+        'metascore': 'Metacritic',
+        'oc': 'OpenCritic',
+        'steamscore': 'Steam recommendations',
+        'steamdb': 'SteamDB rating',
+        'playtime': 'Your playtime',
+        'hltb': 'How long to beat',
+        'date.lib': 'Date added to your library',
+        'date.released': 'Release date',
       }
     },
 

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Fri 31 January 2025 - 13:02:04
+ * Modified: Sun 02 February 2025 - 21:48:42
  */
 
 let $nuxt = null
@@ -329,7 +329,7 @@ export const useDataStore = defineStore('data', {
         // If the game is already indexed and just
         // comes from the api, check if has updates
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (indexed && intent == 'api') {
+        if (indexed && intent.includes('api')) {
           // console.warn('3 ⇢ updating app from API', item.uuid, item.name)
           // if (indexed.uuid == item.uuid) {
 
@@ -347,20 +347,20 @@ export const useDataStore = defineStore('data', {
           }
         }
 
+        // Just add api games to the data pool
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (!indexed && intent.includes('api')) {
+          // console.warn('4 ⇢ app to data from API', item.uuid, item.name)
+          this.toData(item)
+          return
+        }
+
         // An imported game comes from plugins
         // List items are only a subset of data
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (intent == 'import' || intent?.includes('list:')) {
           // console.warn('6 ⇢ Imported app', item.uuid, item.name)
           item.api_id = item.uuid
-          this.toData(item)
-          return
-        }
-
-        // Just add api games to data to be used in searches
-        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (!indexed && intent == 'api') {
-          // console.warn('4 ⇢ app to data from API', item.uuid, item.name)
           this.toData(item)
           return
         }

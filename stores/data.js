@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu 06 February 2025 - 16:29:15
+ * Modified: Fri 07 February 2025 - 18:47:51
  */
 
 let $nuxt = null
@@ -664,11 +664,11 @@ export const useDataStore = defineStore('data', {
       // Add the items to be stored to the queue
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (game.is?.dirty || game.toStore || game.toSwap) {
-        delete game.toStore
-        delete game.is.dirty
-
         if (game.toStore) queueService.queue(game.uuid)
         if (game.toSwap) queueService.queue([game.toSwap, game.uuid], 'swap')
+
+        delete game.toStore
+        delete game.is.dirty
       }
 
       // Add it to data and index

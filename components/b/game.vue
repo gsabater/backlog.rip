@@ -138,13 +138,26 @@
 
           <small
             v-if="visible.includes('oc') && app.scores && app.scores.oc"
-            class="text-muted">
+            class="text-muted text-capitalize">
             <b-logo
               name="opencritic"
               size="12"
               style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
 
             {{ app.scores.oc ?? 'Unscored' }}
+            <img
+              :src="
+                'https://backlog.rip/img/scores/' +
+                format.scoreToHuman(app.scores.oc, 'oc', 'label') +
+                '-head.png'
+              "
+              class="ms-2"
+              style="
+                max-width: 14px;
+                max-height: 14px;
+                transform: translate(-1px, -2px);
+              " />
+            {{ format.scoreToHuman(app.scores.oc, 'oc', 'label') }}
           </small>
 
           <small
@@ -168,7 +181,29 @@
               color="#fff"
               style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
 
-            {{ Math.round(app.scores.steamdb) ?? 'Unscored db' }},
+            {{ Math.round(app.scores.steamdb) ?? 'Unscored db' }}
+
+            <Icon
+              v-if="app.scores.steamCount > 100000"
+              v-tippy="
+                'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'
+              "
+              class="ms-1"
+              width="1"
+              size="12">
+              Sparkles
+            </Icon>
+            <Icon
+              v-else-if="app.scores.steamCount > 10000"
+              v-tippy="
+                'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'
+              "
+              class="ms-1"
+              width="1"
+              size="12">
+              Comet
+            </Icon>
+
             {{ app.scores.steamscoreAlt }}
           </small>
 
@@ -236,7 +271,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 04 February 2025 - 17:20:10
+ * Modified: Fri 07 February 2025 - 19:59:18
  **/
 
 export default {

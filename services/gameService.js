@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Wed 05 February 2025 - 16:35:42
+ * Modified: Fri 07 February 2025 - 20:01:46
  */
 
 export default {
@@ -141,6 +141,7 @@ export default {
   // And returns the status of the update
   // -----
   // Created on Wed Jan 15 2025
+  // Updated on Fri Feb 07 2025
   //+-------------------------------------------------
   update(app, api) {
     let updates = []
@@ -154,6 +155,8 @@ export default {
     for (const key in data) {
       if (data[key] === null) continue
       if (blacklist.includes(key)) continue
+
+      let sample = null
 
       // Check local uuids
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -205,19 +208,21 @@ export default {
             ...app[key],
             ...data[key],
           }
+
+          sample = [serializedApp, serializedData]
         }
       }
 
       // Compare Arrays
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (Array.isArray(data[key])) {
-        if (app[key].length == data[key].length) continue
+        if (app[key] && app[key].length == data[key].length) continue
         else {
           app[key] = data[key]
         }
       }
 
-      updates.push({ key, old: data[key], new: app[key] })
+      updates.push({ key, old: data[key], new: app[key], sample })
     }
 
     // Set flags to update and store

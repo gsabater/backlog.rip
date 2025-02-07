@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 31st December 2024
- * Modified: Fri 07 February 2025 - 14:14:35
+ * Modified: Fri 07 February 2025 - 18:24:55
  */
 
 let $nuxt = null
@@ -59,8 +59,9 @@ export default {
     game.playtime = game.playtime || {}
 
     game = this.normalizeID(game)
-    game = this.normalizeScores(game)
     game = this.normalizeDates(game)
+    game = this.normalizeScores(game)
+    game = this.normalizeLanguages(game)
 
     game = this.cleanup(game)
     // game.updated_at = game.updated_at || 0
@@ -141,6 +142,24 @@ export default {
     delete game.created_at
     delete game.updated_at
     delete game.released_at
+
+    return game
+  },
+
+  //+-------------------------------------------------
+  // normalizeLanguages()
+  // Normalizes the languages string
+  // -----
+  // Created on Fri Feb 07 2025
+  //+-------------------------------------------------
+  normalizeLanguages(game) {
+    if (!game.languages) return game
+    if (typeof game.languages !== 'string') return game
+
+    let languages = game.languages || []
+    game.languages = languages.split(',').map((lang) => {
+      return lang.toLowerCase()
+    })
 
     return game
   },

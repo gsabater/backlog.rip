@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Tue 04 February 2025 - 17:10:37
+ * Modified: Fri 07 February 2025 - 20:02:12
  */
 
 export default {
@@ -13,6 +13,7 @@ export default {
   // -----
   // Created on Tue Jan 09 2024
   // Updated on Wed Jul 24 2024 - Added fav
+  // Updated on Fri Feb 07 2025 - Added languages
   //+-------------------------------------------------
   filter(source, filters) {
     let items = []
@@ -24,10 +25,10 @@ export default {
     let searchString = filters?.string?.toLowerCase().replace(re, '').trim()
 
     for (const index in source) {
-      // if (app.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') debugger
-
       const app = source[index]
       const appName = this.cleanAppName(app.name)
+
+      // if (app.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') debugger
 
       // ✨ Filter: Backlog state
       // Match with app.state
@@ -114,6 +115,18 @@ export default {
         if (!app.genres?.some((item) => filters?.genres.includes(item))) {
           filtered.push(app.uuid)
           // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
+
+          continue
+        }
+      }
+
+      // ✨ Filter: Language
+      // Include only apps with selected language
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (filters?.languages?.length) {
+        if (!app.languages?.some((item) => filters?.languages.includes(item))) {
+          filtered.push(app.uuid)
+          // console.warn('🛑 Skipping because has not language', filters.language, app.languages)
 
           continue
         }
@@ -349,9 +362,10 @@ export default {
       string: filters.string,
       sortBy: filters.sortBy,
       sortDir: filters.sortDir,
-      released: filters.released,
+      // released: filters.released,
       genres: filters.genres,
       states: filters.states,
+      languages: filters.languages,
     }
 
     let json = JSON.stringify(f)

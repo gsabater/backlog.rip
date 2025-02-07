@@ -184,7 +184,7 @@ Selected
                   v-model="ui.findOption"
                   type="text"
                   class="form-control form-control-flush"
-                  placeholder="Filter..." />
+                  placeholder="Search..." />
               </div>
               <div class="dropdown-divider"></div>
             </template>
@@ -266,16 +266,16 @@ Selected
                 <template v-else>
                   <Icon class="me-2" size="16">{{ param.icon ?? option.icon }}</Icon>
                   <span class="me-4">
-                    {{ param.name }}
+                    {{ param[option.opLabel] }}
                   </span>
                 </template>
               </div>
             </div>
 
             <div class="dropdown-divider"></div>
-            <div class="dropdown-item" @click="ui.step = 'pick'">
+            <div class="dropdown-item small" @click="ui.step = 'pick'">
               <Icon class="me-2" size="16">ArrowLeft</Icon>
-              <span class="me-4">Apply more filters</span>
+              <span class="me-4">Go back</span>
             </div>
 
             <template v-if="$app.wip && option.by == 'released'">
@@ -945,7 +945,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Tue 04 February 2025 - 17:26:59
+ * Modified: Fri 07 February 2025 - 20:00:56
  **/
 
 export default {
@@ -973,7 +973,7 @@ export default {
           labels: 'States',
 
           data: 'states',
-          opTitle: 'name',
+          opLabel: 'name',
           opValue: 'id',
         },
 
@@ -987,7 +987,7 @@ export default {
 
           data: 'genres',
           opSort: 'name',
-          opTitle: 'name',
+          opLabel: 'name',
           opValue: 'id',
         },
 
@@ -1003,25 +1003,24 @@ export default {
         //   labels: 'Release dates',
 
         //   data: 'released',
-        //   opTitle: 'name',
+        //   opLabel: 'name',
         //   opValue: 'value',
         // },
 
-        // languages: {
-        //   search: false,
-        //   multiple: false,
+        languages: {
+          // multiple: false,
 
-        //   by: 'languages',
-        //   filter: 'languages',
+          by: 'languages',
+          filter: 'languages',
 
-        //   icon: 'Language',
-        //   label: 'Languages',
-        //   labels: 'Languages',
+          icon: 'Language',
+          label: 'Languages',
+          labels: 'Languages',
 
-        //   data: 'languages',
-        //   opTitle: 'name',
-        //   opValue: 'value',
-        // },
+          data: 'languages',
+          opLabel: 'label',
+          opValue: 'key',
+        },
       },
 
       released: {
@@ -1047,6 +1046,10 @@ export default {
     }),
 
     ...mapState(useSearchStore, ['f', 'stats', 'loading', 'time']),
+
+    _languages() {
+      return enums.LANGUAGES
+    },
 
     //+-------------------------------------------------
     // sourceLabel()
@@ -1124,7 +1127,7 @@ export default {
       if (!this.option?.data) return options
 
       this['_' + this.option.data].forEach((option) => {
-        let title = option[this.option.opTitle]
+        let title = option[this.option.opLabel]
         title = title?.toLowerCase() || ''
         if (title.includes(this.ui.findOption.toLowerCase())) {
           options.push(option)
@@ -1233,7 +1236,7 @@ export default {
 
       data = data.filter((item) => this.f[key].includes(item[this.options[key].opValue]))
 
-      if (data.length == 1) return data[0][this.options[key].opTitle]
+      if (data.length == 1) return data[0][this.options[key].opLabel]
 
       return data.length + ' ' + this.options[key].labels
     },

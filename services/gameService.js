@@ -3,65 +3,10 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Tue 04 February 2025 - 16:52:11
+ * Modified: Wed 05 February 2025 - 16:35:42
  */
 
 export default {
-  //+-------------------------------------------------
-  // _detail
-  // Returns a level of detail available for the game
-  // -----
-  // - empty, no data
-  // - basic, has name, score, scores
-  // - full, has all data available for the game
-  // - source, highest level of detail with sources
-  // -----
-  // Created on Wed Jan 15 2025
-  //+-------------------------------------------------
-  _detail(app) {
-    let detail = 'empty'
-    let outdated = ''
-
-    // debugger
-    // if (app.uuid.includes('local:')) debugger
-
-    // Outdated check
-    // Apps should be refreshed every 3 months
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    const outdatedThreshold = new Date()
-    outdatedThreshold.setMonth(outdatedThreshold.getMonth() - 3)
-    const expiration = Math.floor(outdatedThreshold / 1000)
-
-    if (new Date(app.dates.refreshed) < expiration) {
-      outdated = ':outdated'
-    }
-
-    // Basic detail
-    // Most basic fields are
-    // name, refreshed date and API ID
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (app.name && app.dates.refreshed && app.id.api) {
-      detail = 'basic'
-    } else return detail + outdated
-
-    // Full detail
-    // The app has been requested to the api
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (app.description) {
-      detail = 'full'
-    } else return detail + outdated
-
-    // Source detail
-    // Not implemented yet
-    // The app must have .source
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // if (app.sources && app.sources.length > 0) {
-    //   detail = 'source'
-    // }
-
-    return detail + outdated
-  },
-
   //+-------------------------------------------------
   // function()
   // - tries to update an app with new data.
@@ -299,27 +244,5 @@ export default {
         return acc
       }, {})
     return JSON.stringify(ordered)
-  },
-
-  //+-------------------------------------------------
-  // calcSteamdbRating()
-  // https://steamdb.info/blog/steamdb-rating/
-  // -----
-  // Created on Sun Feb 02 2025
-  //+-------------------------------------------------
-  calcSteamdbRating(scores) {
-    // Convert percentage to decimal (e.g. 85% -> 0.85)
-    const positivePercentage = scores.steamscore / 100
-
-    // Calculate actual vote counts
-    const totalVotes = scores.steamCount
-    const positiveVotes = Math.round(totalVotes * positivePercentage)
-    const negativeVotes = totalVotes - positiveVotes
-
-    // Rating calculation
-    const average = positiveVotes / totalVotes
-    const score = average - (average - 0.5) * Math.pow(2, -Math.log10(totalVotes + 1))
-
-    return score * 100
   },
 }

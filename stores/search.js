@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Fri 31 January 2025 - 11:43:10
+ * Modified: Thu 06 February 2025 - 16:43:59
  */
 
 import search from '~/services/searchService'
@@ -195,6 +195,53 @@ export const useSearchStore = defineStore('search', {
       }
     },
 
+    //+-------------------------------------------------
+    // handleRouteFilters
+    // Append the current filters to the URL with params
+    // -----
+    // Created on Wed Feb 05 2025
+    //+-------------------------------------------------
+
+    handleRouteFilters(filters, hash) {
+      if (!$nuxt.$app.wip) return
+
+      // TODO: this should be this.inRoute or ENUM
+      const allowedFilters = ['string', 'sortBy', 'sortDir']
+
+      // Default filter values to compare against
+      const defaultFilters = {
+        string: '',
+        sortBy: 'score',
+        sortDir: 'desc',
+      }
+
+      // Build query params for non-default, whitelisted filters
+      const queryParams = Object.entries(filters)
+        .filter(([key, value]) => {
+          return (
+            allowedFilters.includes(key) &&
+            value !== defaultFilters[key] &&
+            value !== undefined &&
+            value !== ''
+          )
+        })
+        .map(([key, value]) => {
+          if (key == 'string') key = 'search'
+          return `${key}=${encodeURIComponent(value)}`
+        })
+        .join('&')
+
+      if (!hash || hash == '') return
+      hash = hash.split(':')[1]
+
+      // Update URL without adding to history
+      const newUrl = queryParams
+        ? `${window.location.pathname}?${queryParams}`
+        : window.location.pathname
+
+      window.history.replaceState({}, '', newUrl)
+    },
+
     // replaceRoute(path) {
     //   if (this.$route.path !== path) {
 
@@ -264,10 +311,13 @@ export const useSearchStore = defineStore('search', {
     run(f) {
       this.loading = true
 
+      // let filters = this.loadFilters(f)
       let filters = f || this.f
       let source = this.getSource(filters)
       let hash = search.makeHash(source, filters)
+
       this.handleRouteChanges(filters)
+      this.handleRouteFilters(filters, hash)
       filters.is = source.type
 
       let filtered = null

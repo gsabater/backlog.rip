@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Thu 30 January 2025 - 16:13:27
+ * Modified: Wed 05 February 2025 - 13:58:05
  */
 
 // import { reactive } from 'vue'
@@ -208,6 +208,7 @@ async function initClient() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   await $data.init()
+  apiService.init()
   $search.init()
   $integration.init()
   await $state.init()

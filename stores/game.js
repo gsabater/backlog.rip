@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Sun 02 February 2025 - 22:19:13
+ * Modified: Wed 05 February 2025 - 16:35:12
  */
 
 let $nuxt = null
@@ -229,7 +229,7 @@ export const useGameStore = defineStore('game', {
     create(data = {}) {
       let app = {}
 
-      app = this.normalize({ ...data })
+      app = dataService.normalize({ ...data })
       app.uuid = app.uuid || `local::${$nuxt.$uuid()}`
       app.is.lib = app.is.lib || dates.stamp()
 
@@ -295,202 +295,6 @@ export const useGameStore = defineStore('game', {
       } else {
         console.error('🪝 Error loading data from API', xhr)
       }
-    },
-
-    //+-------------------------------------------------
-    // normalize()
-    // Normalizes data for the game.
-    // This is meant to be used when the game is used in the app
-    // For preparing data to be stored, use process() or prepareToStore()
-    // -----
-    // Created on Tue Feb 20 2024
-    // Created on Wed Dec 11 2024 - Normalize local uuids with API
-    //+-------------------------------------------------
-    normalize(game) {
-      game.id = game.id || {}
-      game.is = game.is || {}
-      game.log = game.log || []
-
-      game.dates = game.dates || {}
-      game.scores = game.scores || {}
-      game.genres = game.genres || []
-      game.playtime = game.playtime || {}
-
-      game = this.normalizeID(game)
-      game = this.normalizeScores(game)
-      game = this.normalizeDates(game)
-
-      game = this.cleanup(game)
-      // game.updated_at = game.updated_at || 0
-
-      return game
-    },
-
-    //+-------------------------------------------------
-    // cleanup()
-    // -----
-    // Created on Tue Dec 31 2024
-    //+-------------------------------------------------
-    cleanup(game) {
-      if (game.dates) delete game.date
-
-      delete game.enabled
-      delete game.data
-
-      return game
-    },
-
-    //+-------------------------------------------------
-    // normalizeID()
-    // Normalizes multiple ID fields
-    // -----
-    // Created on Mon Dec 16 2024
-    //+-------------------------------------------------
-    normalizeID(game) {
-      if (game.api_id) game.id.api = game.api_id
-      if (game.igdb_id) game.id.igdb = game.igdb_id
-      if (game.xbox_id) game.id.xbox = game.xbox_id
-      if (game.epic_id) game.id.epic = game.epic_id
-      if (game.steam_id) game.id.steam = game.steam_id
-      if (game.igdb_slug) game.id.igdb_slug = game.igdb_slug
-
-      if (game.id.steam) game.id.steam = Number(game.id.steam)
-
-      if (!game.uuid || game.uuid?.indexOf('local:') > -1) {
-        if (game.id.api) {
-          // game.uuid = game.id.api
-          game.uuid = $data.reIndex(game.uuid, game.id.api)
-        }
-        // if (game.is_api) {
-        //   game.api_id = game.uuid
-        //   game.uuid = game.api_id
-        // }
-      }
-
-      delete game.api_id
-      delete game.gog_id
-      delete game.igdb_id
-      delete game.xbox_id
-      delete game.epic_id
-      delete game.steam_id
-      delete game.igdb_slug
-
-      return game
-    },
-
-    normalizeScores(game) {
-      if (!game.scores.steamscore) return game
-
-      game.scores.steamdb = gameService.calcSteamdbRating(game.scores)
-      return game
-    },
-
-    //+-------------------------------------------------
-    // normalizeDates()
-    // - created_at -> Is the date the game was created in the API
-    // - updated_at -> Is the date the game was updated in the API
-    // - released_at -> Is the date the game was released
-    // -----
-    // Created on Tue Dec 31 2024
-    //+-------------------------------------------------
-    normalizeDates(game) {
-      if (game.released_at) game.dates.released = game.released_at
-      if (game.created_at) game.dates.created = game.created_at
-      if (game.updated_at) game.dates.updated = game.updated_at
-
-      delete game.created_at
-      delete game.updated_at
-      delete game.released_at
-
-      return game
-    },
-
-    //+-------------------------------------------------
-    // normalize_()
-    // -----
-    // Created on Mon Dec 16 2024
-    // Updated on Tue Dec 17 2024 - Added owned_at
-    //+-------------------------------------------------
-    normalize_(game) {
-      return {
-        score: this._score(game),
-        detail: gameService._detail(game),
-        playtime: this._playtime(game),
-
-        released: this._dateReleasedAt(game),
-        releasedYear: this._dateReleasedAt(game, 'YYYY'),
-
-        owned_at: this._dateOwnedAt(game),
-        created_at: this._dateCreatedAt(game),
-        updated_at: this._dateUpdatedAt(game),
-      }
-    },
-
-    //+-------------------------------------------------
-    // _score()
-    // Generates a new score by taking context into account
-    // -----
-    // Created on Tue Feb 20 2024
-    // Updated on Fri 08 Nov 2024 - Score is now handled in the API
-    //+-------------------------------------------------
-    _score(app) {
-      return app.score || 0
-      // let score = app.score || 0
-
-      // // Avoid very high scores not verified
-      // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // if (!app.scores) score = score - 25
-      // if (app.score >= 96 && !app.scores) {
-      //   score = 50
-      // }
-
-      // // Reduce the final score if the amount of reviews is low
-      // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // if (app.scores?.steamCount < 100) score *= 0.7
-      // else if (app.scores?.steamCount < 1000) score *= 0.8
-      // else if (app.scores?.steamCount < 3000) score *= 0.9
-
-      // if (app.score >= 95 && app.scores?.steamCount < 16000) score *= 0.8
-
-      // // On games outside of steam...
-      // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // if (app.scores.igdb > 0 && app.scores?.igdbCount < 90) score *= 0.8
-
-      // // Only when there is only igdb
-      // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // // if (app.scores && !app.scores?.steamCount) {
-      // //   if (app.scores?.igdb >= 90 && !app.scores.igdbCount) score *= 0.8
-      // // }
-
-      // return score
-    },
-
-    _playtime(app) {
-      if (!app.playtime) return 0
-
-      return Object.entries(app.playtime)
-        .filter(([key]) => !key.endsWith('_last'))
-        .reduce((total, [, num]) => total + num, 0)
-    },
-
-    _dateReleasedAt(app, format = 'LL') {
-      if (!app.dates.released) return null
-      return $nuxt.$moment(app.dates.released * 1000).format(format)
-    },
-
-    _dateCreatedAt(app) {
-      if (!app.dates.created) return null
-      return $nuxt.$moment(app.dates.created).format('LL')
-    },
-
-    _dateUpdatedAt(app) {
-      if (!app.dates.updated) return null
-      return $nuxt.$moment(app.dates.updated * 1000).format('LL')
-    },
-
-    _dateOwnedAt(app, format = 'LL') {
-      if (!app.is.lib) return null
-      return $nuxt.$moment(app.is.lib * 1000).format(format)
     },
 
     async init() {

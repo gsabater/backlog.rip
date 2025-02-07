@@ -3,16 +3,18 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Thu 30 January 2025 - 15:25:31
+ * Modified: Fri 07 February 2025 - 14:17:45
  */
 
 import { useThrottleFn } from '@vueuse/core'
 
+let $nuxt = null
 let $data = null
 let runner = null
 
 let queue = {
   add: [],
+  swap: [],
   cloud: [],
   delete: [],
 }
@@ -26,12 +28,27 @@ let queue = {
 async function run() {
   $data ??= useDataStore()
 
-  if (queue.cloud.length > 0) debugger
-  log(`⛓️ Persisting queue on ${queue.add.length} games`)
-  $data.store(queue.add)
+  console.warn(queue)
 
-  queue.add = []
+  // Handle queue
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (queue.add.length > 0) {
+    log(`⛓️ Persisting queue on ${queue.add.length} games`)
+    await $data.store(queue.add)
+    queue.add = []
+  }
+
+  if (queue.cloud.length > 0) debugger
+
   queue.delete = []
+
+  // Handle swap queue
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (queue.swap.length > 0) {
+    queue.swap.forEach(async (uuid) => {
+      await this.swap(uuid)
+    })
+  }
 }
 
 export default {
@@ -51,18 +68,49 @@ export default {
     if (queue.add.includes(uuid)) return
 
     if (action == 'add') queue.add.push(uuid)
+    if (action == 'swap') queue.swap.push(uuid)
     if (action == 'cloud') queue.cloud.push(uuid)
     if (action == 'delete') queue.delete.push(uuid)
 
-    if (action == 'cloud') log('⛓️ Queueing ' + uuid + ' to the cloud')
-    else log(`⛓️ ${uuid} `, `${queue.add.length}/${queue.delete.length} items`)
+    log(`⛓️ Queueing ${uuid} to ${action} (${queue[action].length})`)
+    // if (action == 'cloud') log('⛓️ Queueing ' + uuid + ' to the cloud')
+    // else log(`⛓️ ${uuid} `, `${queue.add.length}/${queue.delete.length} items`)
 
     clearTimeout(runner)
-    runner = setTimeout(() => this.run(), 2000)
+    runner = setTimeout(() => this.run(), 3000)
   },
 
   unqueue(uuid) {
     if (queue.add[uuid]) delete queue.add[uuid]
+  },
+
+  //+-------------------------------------------------
+  // swap()
+  // swaps a game uuid by creating a new record and deleting
+  // -----
+  // Created on Wed Feb 05 2025
+  //+-------------------------------------------------
+  async swap(data) {
+    let [db, uuid] = data
+    $nuxt ??= useNuxtApp()
+
+    // Check that the db record exists using Dexie.js
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    let game = await $nuxt.$db.games.get(db)
+
+    if (!game) return
+
+    // Swap the uuids
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    game.uuid = uuid
+    game.dates = game.dates || {}
+    game.dates.swapped = dates.stamp()
+
+    // Save the game
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    await $nuxt.$db.games.put(game)
+    await $nuxt.$db.games.delete(db)
+    console.warn('Swapped', db, 'to', uuid)
   },
 
   //+-------------------------------------------------

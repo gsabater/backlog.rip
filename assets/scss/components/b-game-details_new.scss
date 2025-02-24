@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 12th November 2024
- * Modified: Fri 10 January 2025 - 19:31:56
+ * Modified: Mon 24 February 2025 - 17:27:07
  **/
 
 //+-------------------------------------------------
@@ -385,6 +385,17 @@
           // width: 14px !important;
           height: unset !important;
           transform: translateY(-1px);
+        }
+      }
+
+      & .achievements-list {
+        & .list-group-item {
+          background-color: #c6c7c8;
+          color: #3a4049;
+          border-color: #adb3bb;
+          &:hover {
+            background-color: rgb(177, 179, 181);
+          }
         }
       }
     }

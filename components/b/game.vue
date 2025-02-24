@@ -271,7 +271,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri 07 February 2025 - 19:59:18
+ * Modified: Fri 21 February 2025 - 12:52:20
  **/
 
 export default {
@@ -496,7 +496,7 @@ export default {
       this.app.state = null
       this.app.is.fav = false
       this.app.is.lib = false
-      this.app.is.dirty = false
+      // this.app.is.dirty = false
       this.app.is.pinned = false
       this.app.is.hidden = false
 

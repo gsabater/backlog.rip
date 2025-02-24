@@ -1,7 +1,7 @@
 <template>
   <tippy
     ref="tippy"
-    to="parent"
+    :to="to"
     tag="div"
     content-tag="div"
     :trigger="trigger"
@@ -30,12 +30,17 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Sat 11 January 2025 - 19:35:15
+ * Modified: Mon 24 February 2025 - 15:30:43
  **/
 
 export default {
   name: 'TippyDropdown',
   props: {
+    to: {
+      type: [String, Boolean],
+      default: 'parent',
+    },
+
     theme: {
       type: String,
       default: '',

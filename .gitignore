@@ -31,3 +31,6 @@ trigger.config.ts
 .dev/*
 .bruno/*
 pages/dev/*
+
+.stfolder/*
+.stignore

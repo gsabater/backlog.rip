@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Wed 05 February 2025 - 16:35:12
+ * Modified: Mon 24 February 2025 - 17:34:06
  */
 
 let $nuxt = null
@@ -102,119 +102,7 @@ export const useGameStore = defineStore('game', {
     //+-------------------------------------------------
     async load(uuid, update = true) {
       const game = $data.get(uuid)
-
       this.app = game
-      if (uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') {
-        game.id.epic = '1245620'
-        game.id.gog = 'dqwdqwd'
-        game.has_demo = true
-
-        game.scores = {
-          metascore: '92',
-          igdb: 81,
-          igdbCount: 748,
-          steamscore: '85',
-          steamCount: '1106232',
-          steamscoreAlt: 'Very Positive',
-          userscore: 86,
-        }
-
-        game.languages = 'en,fr,de,pl,pt_BR,ru,es_ES,ja,zh_CN'
-
-        game.hltb = {
-          main: 109380,
-          extras: 215280,
-          comp: 527040,
-        }
-
-        game.screenshots = {
-          base: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1245620/ss_',
-          thumb: '.600x338.jpg',
-          full: '.1920x1080.jpg',
-          data: [
-            '943bf6fe62352757d9070c1d33e50b92fe8539f1',
-            'dcdac9e4b26ac0ee5248bfd2967d764fd00cdb42',
-            '3c41384a24d86dddd58a8f61db77f9dc0bfda8b5',
-            'e0316c76f8197405c1312d072b84331dd735d60b',
-            'ef61b771ee6b269b1f0cb484233e07a0bfb5f81b',
-            'b1b91299d7e4b94201ac840aa64de54d9f5cb7f3',
-            '510a02cf3045e841e180f2b77fb87545e0c8b59d',
-            'c494372930ca791bdc6221eca134f2270fb2cb9f',
-            'fa6b881ef7c30522012ab2b2b83001e79baee093',
-            'c2baf8aada6140beee79d701d14043899e91af47',
-          ],
-        }
-
-        game.movies = [
-          {
-            webm: {
-              480: 'http://video.akamai.steamstatic.com/store_trailers/256875470/movie480_vp9.webm?t=1646770161',
-              max: 'http://video.akamai.steamstatic.com/store_trailers/256875470/movie_max_vp9.webm?t=1646770161',
-            },
-            mp4: {
-              480: 'http://video.akamai.steamstatic.com/store_trailers/256875470/movie480.mp4?t=1646770161',
-              max: 'http://video.akamai.steamstatic.com/store_trailers/256875470/movie_max.mp4?t=1646770161',
-            },
-          },
-          {
-            webm: {
-              480: 'http://video.akamai.steamstatic.com/store_trailers/256860549/movie480_vp9.webm?t=1646817731',
-              max: 'http://video.akamai.steamstatic.com/store_trailers/256860549/movie_max_vp9.webm?t=1646817731',
-            },
-            mp4: {
-              480: 'http://video.akamai.steamstatic.com/store_trailers/256860549/movie480.mp4?t=1646817731',
-              max: 'http://video.akamai.steamstatic.com/store_trailers/256860549/movie_max.mp4?t=1646817731',
-            },
-          },
-          {
-            webm: {
-              480: 'http://video.akamai.steamstatic.com/store_trailers/256845672/movie480_vp9.webm?t=1646817747',
-              max: 'http://video.akamai.steamstatic.com/store_trailers/256845672/movie_max_vp9.webm?t=1646817747',
-            },
-            mp4: {
-              480: 'http://video.akamai.steamstatic.com/store_trailers/256845672/movie480.mp4?t=1646817747',
-              max: 'http://video.akamai.steamstatic.com/store_trailers/256845672/movie_max.mp4?t=1646817747',
-            },
-          },
-          {
-            webm: {
-              480: 'http://video.akamai.steamstatic.com/store_trailers/256875472/movie480_vp9.webm?t=1646770169',
-              max: 'http://video.akamai.steamstatic.com/store_trailers/256875472/movie_max_vp9.webm?t=1646770169',
-            },
-            mp4: {
-              480: 'http://video.akamai.steamstatic.com/store_trailers/256875472/movie480.mp4?t=1646770169',
-              max: 'http://video.akamai.steamstatic.com/store_trailers/256875472/movie_max.mp4?t=1646770169',
-            },
-          },
-          {
-            webm: {
-              480: 'http://video.akamai.steamstatic.com/store_trailers/256864455/movie480_vp9.webm?t=1646817701',
-              max: 'http://video.akamai.steamstatic.com/store_trailers/256864455/movie_max_vp9.webm?t=1646817701',
-            },
-            mp4: {
-              480: 'http://video.akamai.steamstatic.com/store_trailers/256864455/movie480.mp4?t=1646817701',
-              max: 'http://video.akamai.steamstatic.com/store_trailers/256864455/movie_max.mp4?t=1646817701',
-            },
-          },
-        ]
-
-        game.ratings = {
-          esrb: {
-            rating: 'm',
-            descriptors: 'Blood and Gore\r\nLanguage\r\nSuggestive Themes\r\nViolence',
-          },
-          pegi: {
-            rating: '16',
-            descriptors: 'Violence',
-          },
-          usk: {
-            rating: '16',
-            descriptors: '',
-          },
-        }
-
-        game.languages = 'en,fr,it,de,es_ES,ja,ko,pl,pt_BR,ru,zh_CN,es_LA,th'
-      }
 
       if (update) this.update(game)
     },
@@ -252,7 +140,10 @@ export const useGameStore = defineStore('game', {
       if (typeof uuid === 'object') game = uuid
       else game = $data.get(uuid)
 
-      if (game.uuid == '4434fa13-4f18-44ec-ad80-db412ba28a96') debugger
+      console.trace('abc')
+      // if (data && game.uuid == '4434fa13-4f18-44ec-ad80-db412ba28a96') debugger
+      // if (data && game.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') debugger
+      // if (data && game.uuid == 'b53cc15c-980a-4a2e-af37-0053f093eaef') debugger
 
       const update = gameService.needsUpdate(game, data)
       if (!update) return false

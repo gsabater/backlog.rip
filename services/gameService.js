@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Fri 07 February 2025 - 20:01:46
+ * Modified: Mon 24 February 2025 - 17:34:47
  */
 
 export default {
@@ -118,6 +118,8 @@ export default {
     if (!data) {
       // App has never been updated from the API
       if (!app.description) return 'update:api'
+      if (app.achievements === undefined) return 'update:api'
+
       if (!app.providers) {
         console.warn('should update and save providers, (hltb ID, opencritic ID, etc)')
       }
@@ -227,7 +229,7 @@ export default {
 
     // Set flags to update and store
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (updates.length || !app.dates.refreshed) {
+    if (updates.length || !app.dates.refreshed || app.toStore) {
       updated = true
       app.toStore = true
       app.dates.refreshed = dates.stamp()

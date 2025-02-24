@@ -3,10 +3,10 @@
     <tippy
       v-if="$app.ready"
       ref="tippy-sheety"
-      theme="filters"
+      :to="to"
       tag="div"
       content-tag="div"
-      :to="to"
+      theme="filters"
       :trigger="trigger"
       :placement="placement"
       :interactive="true"
@@ -31,7 +31,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Wed 30 October 2024 - 15:38:43
+ * Modified: Mon 24 February 2025 - 15:30:30
  **/
 
 export default {

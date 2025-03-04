@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Wed 05 February 2025 - 13:58:05
+ * Modified: Tue 04 March 2025 - 16:40:08
  */
 
 // import { reactive } from 'vue'
@@ -186,8 +186,6 @@ async function initClient() {
   const { width, height } = useWindowSize()
   const { isFullscreen, toggle } = useFullscreen(document.documentElement)
 
-  detectEnvironment()
-
   app.width = width
   app.device = breakpoints.active()
 
@@ -200,6 +198,8 @@ async function initClient() {
   // either locally or online and load values
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   await $user.authenticate()
+
+  detectEnvironment()
   $guild.init('ping')
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -222,8 +222,11 @@ async function initClient() {
   $cloud.connect()
 
   // console.groupEnd()
-  await delay(333)
+  // await delay(333)
   app.ready = true
+
+  // emit.app:ready
+  if (document?.body && app.dev) document.body.classList.add('has-debug')
 }
 
 export default defineNuxtPlugin(() => {

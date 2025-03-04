@@ -101,6 +101,21 @@
         <div class="pe-3">Release date</div>
       </div>
     </label>
+
+    <label class="dropdown-item ps-1" style="align-items: normal">
+      <div class="selection mx-1" style="margin-top: 1px">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          style="transform: scale(0.7)"
+          :checked="f.show.card.includes('achievements')"
+          @change="show('achievements')" />
+      </div>
+
+      <div class="content d-flex align-items-center w-100">
+        <div class="pe-3">Achievements</div>
+      </div>
+    </label>
   </div>
 </template>
 
@@ -110,7 +125,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th December 2024
- * Modified: Tue 31 December 2024 - 11:19:12
+ * Modified: Sun 02 March 2025 - 12:20:41
  **/
 
 export default {

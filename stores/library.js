@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th November 2024
- * Modified: Thu 19 December 2024 - 09:36:12
+ * Modified: Thu 27 February 2025 - 23:25:28
  */
 
 let $nuxt = null
@@ -28,7 +28,30 @@ export const useLibraryStore = defineStore('library', {
     },
   }),
 
+  getters: {
+    // WIP -> change for steamModule ??
+    steam: (state) => state.module.steam,
+  },
+
   actions: {
+    //+-------------------------------------------------
+    // connect()
+    // Connects the module with its link (lib:[module])
+    // Also appends the bearer from the user to enable API calls
+    // -----
+    // Created on Wed Feb 26 2025
+    //+-------------------------------------------------
+    connect(modules) {
+      modules.forEach((module) => {
+        let account = this.linked[module]
+        account.bearer = $nuxt.$auth.user.bearer
+
+        if (this.module[module].connect) {
+          this.module[module].connect(account)
+        }
+      })
+    },
+
     //+-------------------------------------------------
     // autoLink()
     // Quick method to autolink existing credentials
@@ -72,6 +95,7 @@ export const useLibraryStore = defineStore('library', {
     // -----
     // Created on Tue Nov 26 2024
     //+-------------------------------------------------
+    // WIP -> change to bind() ?? and linked to link[]
     async link(source, data) {
       if (!data) return
 
@@ -104,12 +128,14 @@ export const useLibraryStore = defineStore('library', {
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // configure()
+    // Load the library configuration values from $db
+    // This "accounts" are not loaded on user store because
+    // They are specific to the library modules.
     // -----
     // Created on Tue Nov 26 2024
     //+-------------------------------------------------
-    async load() {
+    async configure() {
       if (this.loaded) return
       this.loaded = true
 
@@ -135,12 +161,12 @@ export const useLibraryStore = defineStore('library', {
     },
 
     //+-------------------------------------------------
-    // connect()
-    // Just assign the module to use them later
+    // load()
+    // Assign module instances to this store
     // -----
     // Created on Tue Nov 26 2024
     //+-------------------------------------------------
-    async connect() {
+    async load() {
       this.module.steam = steam
       this.module.steamBacklog = steamBacklog
     },
@@ -154,9 +180,11 @@ export const useLibraryStore = defineStore('library', {
     async init() {
       $nuxt ??= useNuxtApp()
 
-      await this.connect()
       await this.load()
+      await this.configure()
+
       this.autoLink()
+      this.connect(['steam'])
 
       if (window)
         window.$library = {

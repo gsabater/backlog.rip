@@ -3,11 +3,14 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Mon 24 February 2025 - 17:34:06
+ * Modified: Sat 01 March 2025 - 18:47:23
  */
+
+import gameService from '../services/gameService'
 
 let $nuxt = null
 let $data = null
+let $library = null
 
 export const useGameStore = defineStore('game', {
   state: () => ({
@@ -23,7 +26,8 @@ export const useGameStore = defineStore('game', {
   //
   // Retrieve data
   // * load()
-  // * getFromAPI()
+  // * loadFromAPI(), service
+  // * loadAchievements(), service
   //
   // Modify data
   // * create()
@@ -96,15 +100,37 @@ export const useGameStore = defineStore('game', {
     //+-------------------------------------------------
     // load()
     // Loads an item from datastore and sets this.app
-    // Calls update() to check if the app needs to be updated
+    // Can load additional resources if needed
     // -----
     // Created on Thu Jan 11 2024
     //+-------------------------------------------------
-    async load(uuid, update = true) {
+    async load(uuid, hooks = {}) {
+      console.warn('4')
       const game = $data.get(uuid)
       this.app = game
 
-      if (update) this.update(game)
+      if (!hooks.with?.length) return
+
+      let loaded = {}
+      debugger
+      // Load API data
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (hooks.with?.includes('api')) {
+        const api = await gameService.loadFromAPI(game)
+        if (api) loaded = { ...api }
+      }
+
+      // Load additional achievements
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (hooks.with?.includes('achievements')) {
+        const achieved = await gameService.loadAchieved(game)
+        if (achieved) loaded.achieved = achieved
+        // loaded.dates = loaded.dates ?? {}
+        // loaded.dates.achieved = dates.stamp()
+      }
+
+      if (Object.keys(loaded).length == 0) return
+      this.update(game, loaded)
     },
 
     //+-------------------------------------------------
@@ -126,13 +152,55 @@ export const useGameStore = defineStore('game', {
 
     //+-------------------------------------------------
     // update()
+    //
+    // -----
+    // Created on Tue Feb 25 2025
+    //+-------------------------------------------------
+    async update(uuid, data) {
+      // if (needsupdate because of stale or missing data)
+      // if needsupdate because of different data provided
+      debugger
+      // do load api
+      // do load achievements
+      //-> do merge
+      console.warn('6')
+      // Load the game by reference
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      const app = uuid.uuid ? uuid : $data.get(uuid)
+
+      // update
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // MOVED >  will be checked on process api
+      // if (data.uuid) {
+      //   const needsUpdate = gameService.needsUpdate(app, data)
+      //   if (!needsUpdate) return false
+      // }
+
+      // Make a new item with merged data
+      // Sometimes, the merged does not have any updates
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      let updated = gameService.merge(app, data)
+      if (!updated.updated) return
+
+      // Update local data, store and indexes
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (app.is.lib) app.toStore = true
+      await $data.process(updated.app, 'updated', false)
+
+      // Update the current app if it's the same
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (this.app.uuid == updated.app.uuid) this.load(updated.app.uuid, false)
+    },
+
+    //+-------------------------------------------------
+    // update()
     // Updates local data from API data
     // To modify the data by the user, use modify()
     // -----
     // Created on Sun Feb 11 2024
     // Created on Fri Jan 17 2025 - New update method
     //+-------------------------------------------------
-    async update(uuid, data) {
+    async updatex(uuid, data) {
       let game = null
 
       // Load the game by reference
@@ -151,7 +219,7 @@ export const useGameStore = defineStore('game', {
       // Update the game with the new data from the API
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (!data && update.indexOf(':api') > -1) {
-        data = await this.getFromAPI(game.uuid)
+        data = await this.loadFromAPI(game.uuid)
         if (!data) return
       }
 
@@ -170,27 +238,10 @@ export const useGameStore = defineStore('game', {
       if (this.app.uuid == updated.app.uuid) this.load(updated.app.uuid, false)
     },
 
-    //+-------------------------------------------------
-    // getFromAPI()
-    // Gets more data from the API
-    // -----
-    // Created on Fri Feb 16 2024
-    // Updated on Thu Jan 30 2025 - Get uuid from param
-    //+-------------------------------------------------
-    async getFromAPI(uuid) {
-      if (uuid.includes('local:')) return
-      let xhr = await $nuxt.$axios.get(`/get/${uuid}.json`)
-
-      if (xhr.status == 200) {
-        return xhr.data
-      } else {
-        console.error('🪝 Error loading data from API', xhr)
-      }
-    },
-
     async init() {
-      if (!$nuxt) $nuxt = useNuxtApp()
-      if (!$data) $data = useDataStore()
+      $nuxt ??= useNuxtApp()
+      $data ??= useDataStore()
+      // $library ??= useLibraryStore()
 
       if (window) window.$game = this
     },

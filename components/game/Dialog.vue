@@ -648,7 +648,7 @@
  * @desc:    ... https://davidwalsh.name/detect-sticky
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Mon 16 December 2024 - 17:03:28
+ * Modified: Tue 04 March 2025 - 16:37:30
  **/
 
 export default {
@@ -750,13 +750,17 @@ export default {
     // Receives an uuid or object and tries to load the game
     // -----
     // Created on Tue Jul 23 2024
+    // Created on Tue Mar 04 2025 - Appended context for loading content
     //+-------------------------------------------------
     load(app) {
       let uuid = null
       if (typeof app === 'string') uuid = app
       else if (typeof app === 'object') uuid = app.uuid
 
-      this.gameStore.load(uuid)
+      this.gameStore.load(uuid, {
+        context: 'dialog',
+        with: ['api', 'achievements'],
+      })
     },
 
     //+-------------------------------------------------
@@ -767,7 +771,7 @@ export default {
     // Updated on Mon Nov 25 2024 - Added URL replacement
     //+-------------------------------------------------
     async loadAndShow(payload) {
-      this.$list = payload.$list
+      this.$list = payload.$list.items || payload.list
       this.load(payload.uuid)
       this.show()
 
@@ -912,11 +916,11 @@ export default {
   },
 
   mounted() {
-    this.$mitt.on('game:modal', this.loadAndShow)
+    this.$mitt.on('game:dialog', this.loadAndShow)
   },
 
   beforeUnmount() {
-    this.$mitt.off('game:modal', this.loadAndShow)
+    this.$mitt.off('game:dialog')
     window.removeEventListener('popstate', this.handlePopState)
   },
 }

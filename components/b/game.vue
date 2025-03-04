@@ -212,7 +212,7 @@
             class="d-block text-muted">
             <Icon
               size="12"
-              width="1.8"
+              width="1.4"
               style="transform: translateY(-1px); margin-right: 3px">
               Calendar
             </Icon>
@@ -222,7 +222,7 @@
           <small v-if="visible.includes('date.lib')" class="d-block text-muted">
             <Icon
               size="12"
-              width="1.8"
+              width="1.4"
               style="transform: translateY(-1px); margin-right: 3px">
               Calendar
             </Icon>
@@ -232,7 +232,7 @@
           <small v-if="visible.includes('playtime')" class="d-block text-muted">
             <Icon
               size="12"
-              width="1.8"
+              width="1.4"
               style="transform: translateY(-1px); margin-right: 3px">
               ClockHour3
             </Icon>
@@ -252,12 +252,27 @@
             class="d-block text-muted">
             <Icon
               size="12"
-              width="1.8"
+              width="1.4"
               style="transform: translateY(-1px); margin-right: 3px">
               SquareRoundedCheck
             </Icon>
             {{ dates.minToHours(app.hltb.main / 60) }}
           </small>
+
+          <small
+            v-if="visible.includes('achievements') && app._.released"
+            class="d-block text-muted">
+            <Icon
+              size="12"
+              width="1.4"
+              style="transform: translateY(-1px); margin-right: 3px">
+              Trophy
+            </Icon>
+            {{ app._.astats.completed }} / {{ app._.astats.total }} ({{
+              app._.astats.percentage
+            }}%)
+          </small>
+
           <slot name="details:append"></slot>
         </div>
       </slot>
@@ -271,7 +286,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri 21 February 2025 - 12:52:20
+ * Modified: Sun 02 March 2025 - 12:31:42
  **/
 
 export default {
@@ -373,8 +388,8 @@ export default {
         this.action(this.app)
         return
       }
-
-      this.$mitt.emit('game:modal', {
+      console.warn('1')
+      this.$mitt.emit('game:dialog', {
         uuid: this.app.uuid,
         $list: this.$parent,
       })

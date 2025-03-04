@@ -584,7 +584,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 2nd January 2025
- * Modified: Tue 07 January 2025 - 17:19:29
+ * Modified: Tue 25 February 2025 - 19:13:08
  **/
 
 export default {
@@ -682,7 +682,7 @@ export default {
     },
 
     openDetails() {
-      this.$mitt.emit('game:modal', {
+      this.$mitt.emit('game:dialog', {
         uuid: this.app.uuid,
       })
 

@@ -210,7 +210,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th March 2024
- * Modified: Thu 16 January 2025 - 16:06:36
+ * Modified: Tue 25 February 2025 - 19:13:13
  **/
 
 export default {
@@ -361,7 +361,7 @@ export default {
       }
 
       if (item.modal) {
-        this.$mitt.emit('game:modal', {
+        this.$mitt.emit('game:dialog', {
           uuid: item.modal,
         })
       }

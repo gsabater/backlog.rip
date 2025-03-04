@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th November 2024
- * Modified: Thu 30 January 2025 - 14:19:53
+ * Modified: Fri 21 February 2025 - 12:47:30
  */
 
 let $nuxt = null
@@ -103,6 +103,7 @@ export const useGuildStore = defineStore('guild', {
     // Created on Wed Dec 18 2024
     //+-------------------------------------------------
     async ping() {
+      // debugger
       let profile = this.build()
 
       if (!$user.hasApi) return

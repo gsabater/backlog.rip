@@ -553,7 +553,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Thu 30 January 2025 - 16:35:23
+ * Modified: Sat 01 March 2025 - 16:10:40
  **/
 
 export default {
@@ -628,19 +628,30 @@ export default {
     //+-------------------------------------------------
     // addToLibrary()
     // Adds a game to the user library
-    // NOTE: There should be a method in dataStore that does this
     // -----
     // Created on Tue Jul 23 2024
+    // Updated on Fri Feb 28 2025 - throught $data
     //+-------------------------------------------------
     addToLibrary() {
-      const app = { ...this.app }
-      app.is.lib = dates.stamp()
-      app.is.dirty = true
+      this.dataStore.addToLibrary(this.app.uuid)
 
-      this.gameStore.update(this.appUUID, { ...app })
-      this.$nuxt.$toast.success(app.name + ' has been added to your library')
-
+      this.$toast.success(this.app.name + ' has been added to your library')
       this.$mitt.emit('library:added')
+
+      this.hide()
+    },
+
+    //+-------------------------------------------------
+    // setState()
+    // Change state on item
+    // -----
+    // Created on Sat Jan 06 2024
+    // Updated on Sat Mar 01 2025 - throught $state
+    //+-------------------------------------------------
+    setState(state) {
+      this.value = state?.id || null
+      this.stateStore.set(this.app.uuid, state.id)
+
       this.hide()
     },
 
@@ -676,19 +687,6 @@ export default {
     createList() {
       // const app = { ...this.app }
       this.$mitt.emit('list:create')
-
-      this.hide()
-    },
-
-    //+-------------------------------------------------
-    // setState()
-    // Change state on item
-    // -----
-    // Created on Sat Jan 06 2024
-    //+-------------------------------------------------
-    setState(state) {
-      this.value = state?.id || null
-      this.stateStore.set(this.appUUID, state.id)
 
       this.hide()
     },

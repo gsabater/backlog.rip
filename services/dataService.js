@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 31st December 2024
- * Modified: Fri 07 February 2025 - 18:24:55
+ * Modified: Tue 04 March 2025 - 16:24:20
  */
 
 let $nuxt = null
@@ -27,12 +27,13 @@ export default {
     item = this.normalize(item)
     item._ = this.normalize_(item)
 
-    if (item.is?.dirty) {
+    if (item.is?.dirty || item.toSwap) {
       // this is not used anymore
       debugger
       // item.uuid = item.uuid || $nuxt.$uuid()
     }
 
+    delete item.toStore
     delete item.services
     delete item.platforms
 
@@ -131,6 +132,7 @@ export default {
   // - created_at -> Is the date the game was created in the API
   // - updated_at -> Is the date the game was updated in the API
   // - released_at -> Is the date the game was released
+  // - refreshed -> The date where the data has been merged from the API
   // -----
   // Created on Tue Dec 31 2024
   //+-------------------------------------------------
@@ -174,6 +176,7 @@ export default {
     return {
       score: this._score(game),
       detail: this._detail(game),
+      astats: this._astats(game),
       playtime: this._playtime(game),
 
       released: this._dateReleasedAt(game),
@@ -234,10 +237,59 @@ export default {
     // The app must have .source
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // if (app.sources && app.sources.length > 0) {
-    //   detail = 'source'
+    //   detail = 'fullsource'
     // }
 
     return detail + outdated
+  },
+
+  //+-------------------------------------------------
+  // _astats()
+  // Gather achievement stats
+  // -----
+  // Created on Sun Mar 02 2025
+  //+-------------------------------------------------
+  _astats(app) {
+    let stats = {
+      total: 0,
+      completed: 0,
+      percentage: 0,
+      latest: null,
+    }
+
+    // Early return if no achievements
+    if (!app.achievements?.length) return stats
+
+    // Filter achievements by status
+    const completedAchievements = app.achievements.filter(
+      (achievement) => achievement.is?.status === 'unlocked'
+    )
+
+    const validAchievements = app.achievements.filter(
+      (ach) =>
+        !ach.is?.status || (ach.is.status !== 'abandoned' && ach.is.status !== 'bugged')
+    )
+
+    // Calculate basic stats
+    stats.total = validAchievements.length
+    stats.completed = completedAchievements.length
+
+    // Calculate completion percentage (avoid division by zero)
+    if (stats.total > 0) {
+      stats.percentage = Math.round((stats.completed / stats.total) * 100)
+    }
+
+    // Find the most recent achievement unlock timestamp
+    if (completedAchievements.length) {
+      const latestTimestamp = completedAchievements.reduce((latest, achievement) => {
+        const unlockTime = achievement.is?.time || 0
+        return unlockTime > latest ? unlockTime : latest
+      }, 0)
+
+      stats.latest = latestTimestamp || null
+    }
+
+    return stats
   },
 
   //+-------------------------------------------------
@@ -370,7 +422,7 @@ export default {
     const xhr = await $nuxt.$axios.post(`get/batch`, apps)
     if (xhr.status) {
       log('🪂 Data from API', xhr.data)
-      await $data.process(xhr.data, 'api:update:batch')
+      await $data.process(xhr.data, 'api:batch')
     }
   },
 

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Tue 10 December 2024 - 15:41:31
+ * Modified: Sun 02 March 2025 - 10:58:57
  */
 
 import importer from '~/utils/importer'
@@ -242,6 +242,7 @@ async function store(options = {}) {
 // Adds to journal, and ends the process
 // -----
 // Created on Wed Jan 24 2024
+// Updated on Sun Mar 02 2025 - Emit a notification
 //+-------------------------------------------------
 function notify() {
   importer.wrap(_sync.x)
@@ -250,6 +251,8 @@ function notify() {
   $nuxt.$toast.info('Your ' + _sync.x.source + ' library has been updated', {
     description: 'Updated ' + _sync.x.apps.stored.length + ' games in your library',
   })
+
+  $nuxt.$mitt.emit('library:added')
 }
 
 //+-------------------------------------------------

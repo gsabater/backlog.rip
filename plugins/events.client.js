@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd February 2024
- * Modified: Thu 16 January 2025 - 17:05:41
+ * Modified: Tue 25 February 2025 - 17:35:26
  */
 
 import { useMagicKeys, whenever } from '@vueuse/core'
@@ -28,7 +28,7 @@ let $tree = {
 
 async function init() {
   if (!$nuxt) $nuxt = useNuxtApp()
-  log('🔅 Registering interface interactions')
+  // log('🔅 Registering interface interactions')
 
   registerMagicKeys()
 

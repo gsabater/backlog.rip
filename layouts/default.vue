@@ -994,7 +994,7 @@
 
     <!-- <v-layout>
     </v-layout> -->
-    <game-add />
+    <!-- <game-add /> -->
     <game-dialog />
     <game-manager />
     <game-random-dialog />
@@ -1003,7 +1003,7 @@
     <list-crud-dialog />
     <!-- <list-cover id="cover-helper" /> -->
 
-    <search-palette></search-palette>
+    <!-- <search-palette></search-palette> -->
     <!-- <b-backdrop></b-backdrop> -->
     <!-- <ModalsContainer /> -->
 
@@ -1020,7 +1020,6 @@
 
     <!-- TODO: Make this a component -->
     <component :is="'style'" id="dynamic-style" type="text/css">
-      <template v-if="!$app.dev">pre{ display: none !important; }</template>
       :root{
       <template v-for="(state, i) in states">
         --bckg-state-{{ state.id }}: {{ state.color }};
@@ -1174,7 +1173,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu 30 January 2025 - 16:51:26
+ * Modified: Mon 03 March 2025 - 16:30:41
  **/
 
 export default {

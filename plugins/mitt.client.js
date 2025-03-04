@@ -3,34 +3,28 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Thu 30 January 2025 - 17:53:13
+ * Modified: Sun 02 March 2025 - 11:01:15
  */
 
 //+-------------------------------------------------
 // Codex: List of events
-// ✨ search:palette
-//
-// ✨ game:modal
-// ✨ game:manager
-//
-// ✨ state:change
-//
-// ✨ list:create
-// ✨ list:edit
-//
-// ✨ ask:confirm
-//
-// ✨ app.render
-//
-// ✨ data:ready     <- Fired when datastore is ready and loaded
-// ✨ data:updated   <- Fired when datastore is updated and has new data
-//
+// ⇢ Initial lifecycle
+// |- $app.initClient() , on mounted from default layout
+//   |- $user.authenticate()
+//   |- $guild.ping() <- CHANGE TO EVENT on user:ready
+//   |- $data.init()
+//   |- apiService.init() <- CHANGE TO EVENT on data:ready
+//   |- $integration.init() <- CHANGE TO EVENT on user:ready
+//   |- $state.init() <- remove this.indexlibrary and make it an event on data:ready. no need to await anything
+//   |- $list.init() <- no need to await anything
+//   |- $cloud.connect() <- CHANGE TO EVENT on user:ready
 //+-------------------------------------------------
 
 import mitt from 'mitt'
 
 let $data = null
 let $game = null
+let $state = null
 
 //+-------------------------------------------------
 // handle()
@@ -40,28 +34,46 @@ let $game = null
 //+-------------------------------------------------
 function handle(event, payload) {
   switch (event) {
-    // Library changes.
-    // Similar to data changes but specific to library or owned
+    // Application hooks
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    case 'library:added':
+    case 'data:ready':
       $data ??= useDataStore()
       $data.countLibrary()
       break
 
-    // State events
+    // Hook used by search to search again
+    case 'data:updated':
+      break
+
+    // A game has been added to the library
+    // Similar to data changes but specific to library or owned
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    case 'library:added':
+      debugger
+      $data ??= useDataStore()
+      $data.countLibrary()
+      break
+
+    // A game has changed its state
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     case 'state:change':
       $data ??= useDataStore()
-      $game ??= useGameStore()
+      $state ??= useStateStore()
 
       $data.countLibrary()
+      $state.indexLibrary('all')
       break
 
     // Cloud sync events
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     case 'sync:done':
-      dataService.updateBatch(['empty', ':outdated'])
+      // dataService.updateBatch(['empty', ':outdated'])
       break
+
+    // Game events
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // case 'game:modal':
+    //   break
 
     default:
       break

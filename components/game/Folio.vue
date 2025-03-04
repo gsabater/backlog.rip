@@ -1,5 +1,5 @@
 <template>
-  <div v-if="app.uuid" class="game-details__content" @click.stop="() => {}">
+  <div class="game-details__content" @click.stop="() => {}">
     <button type="button" class="game-details__close" @click="$emit('close')">
       <Icon width="2">X</Icon>
     </button>
@@ -16,7 +16,7 @@
         "
         :style="`
             background-image: url(https://steamcdn-a.akamaihd.net/steam/apps/${app.id.steam || ''}/library_hero.jpg);`"></div> -->
-    <div class="game-details__header">
+    <div v-if="app.uuid" class="game-details__header">
       <div
         class="game-details__header-background"
         :style="`
@@ -145,7 +145,7 @@
           <h1>{{ app.name }}</h1>
         </div> -->
     </div>
-    <div class="game-details__body mt-0">
+    <div v-if="app.uuid" class="game-details__body mt-0">
       <!-- <div class="d-none game-details__body-sticky">
           <div class="game-details__body-sticky-inner row">
             <div class="col-auto">
@@ -176,7 +176,7 @@
         <div class="col-3 my-3"></div>
         <div class="col-9 my-2 px-3">
           <v-btn
-            variant="tonal"
+            :variant="ui.tab == 'general' ? 'tonal' : 'text'"
             ncolor="blue-grey-lighten-1"
             size="small"
             class="me-2"
@@ -185,12 +185,13 @@
           </v-btn>
 
           <v-btn
-            variant="text"
+            v-if="achievements.length"
+            :variant="ui.tab == 'achievements' ? 'tonal' : 'text'"
             ncolor="blue-grey-lighten-1"
             size="small"
             class="me-2"
             @click="ui.tab = 'achievements'">
-            {{ achievements.length }} achievements
+            Achievements ({{ achievements.length }})
           </v-btn>
 
           <!-- <ul class="nav nav-underline">
@@ -215,13 +216,7 @@
           `"></div> -->
         <div class="row w-100 h-100 m-0">
           <div class="col-3">
-            <div
-              class="cover ambilight"
-              @click="
-                $mitt.emit('game:modal', {
-                  uuid: app.uuid,
-                })
-              ">
+            <div class="cover ambilight">
               <game-asset
                 ref="cover"
                 :app="app"
@@ -541,7 +536,7 @@
               <div v-if="app.hltb && app.hltb.main" class="col-12 my-5">
                 <h5>Time to complete</h5>
 
-                <div v-if="app.hltb" class="row row-cards">
+                <div v-if="app.hltb" class="row row-cards row-deck">
                   <div v-if="app.hltb.main" class="col-sm-6 col-lg-3">
                     <div class="card card-sm">
                       <div class="card-body">
@@ -933,244 +928,7 @@
             </div>
 
             <div v-if="ui.tab == 'achievements'">
-              <div class="col-12">
-                <h5>Your achievements</h5>
-              </div>
-
-              <div class="row row-cards">
-                <div class="col-6">
-                  <div class="card card-sm" style="aspect-ratio: none">
-                    <!-- <div class="card-body">
-                      <span class="avatar avatar-1 mb-2">
-                        <img :src="achievement.icon" alt="" />
-                      </span>
-
-                      <small class="font-serif" style="color: rgb(58, 64, 73)">
-                        {{ achievement.name }}
-                      </small>
-
-                      <small class="font-serif text-muted">Latest achievement</small>
-                    </div> -->
-                    <div
-                      class="card-body row"
-                      style="
-                        display: flex;
-                        flex-direction: row;
-                        align-items: center;
-                        justify-content: flex-start;
-                      ">
-                      <div class="col-auto">
-                        <span class="avatar avatar-3">
-                          <img
-                            src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/2358720/17dcc00a299e2c211217a15afff28248dc79ef7a.jpg"
-                            style="
-                              outline: 1px solid rgba(255, 255, 255, 0.15);
-                              outline-offset: -1px;
-                              box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.36);
-                              border-radius: 1px;
-                            " />
-                        </span>
-                      </div>
-                      <div class="col">
-                        <small class="font-serif" style="color: rgb(58, 64, 73)">
-                          Home is Behind
-                        </small>
-                        <br />
-                        <small class="font-serif text-muted">Latest achievement</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                  <div class="card card-sm">
-                    <div class="card-body">
-                      <small class="font-serif" style="color: rgb(58, 64, 73)">95%</small>
-                      <small class="font-serif text-muted">Achievement completion</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row mb-3">
-                <div class="col-12">
-                  <h5>All Achievements</h5>
-                </div>
-
-                <div class="col col-auto">
-                  <v-btn variant="text" ncolor="blue-grey-lighten-1" size="small">
-                    <Icon class="text-muted me-1" size="12" width="1.5">Refresh</Icon>
-                    Sync my achievements
-                  </v-btn>
-                  <!-- <v-btn
-                    variant="tonal"
-                    ncolor="blue-grey-lighten-2"
-                    size="small"
-                    class="me-2">
-                    All achievements
-                  </v-btn>
-
-                  <v-btn
-                    variant="text"
-                    ncolor="blue-grey-lighten-1"
-                    size="small"
-                    class="me-2">
-                    Completed
-                  </v-btn>
-
-                  <v-btn variant="text" ncolor="blue-grey-lighten-1" size="small">
-                    Incompleted
-                  </v-btn> -->
-                </div>
-                <div class="col col-auto ms-auto text-right">
-                  <v-btn
-                    id="xxx"
-                    variant="tonal"
-                    ncolor="blue-grey-lighten-1"
-                    size="small">
-                    Resources
-
-                    <Icon
-                      class="text-muted"
-                      size="14"
-                      width="2"
-                      style="transform: translate(5px, 1px)">
-                      ChevronDown
-                    </Icon>
-                  </v-btn>
-                  <b-dropdown
-                    to="#xxx"
-                    trigger="mouseenter focus click hover manual"
-                    placement="bottom-start"
-                    :debounce="15"
-                    style="min-width: 200px">
-                    <a
-                      class="dropdown-item"
-                      :href="`https://steamcommunity.com/app/${app.id.steam}/guides/`"
-                      target="_blank">
-                      <b-logo
-                        name="steam"
-                        size="12"
-                        class="me-2"
-                        color="white"
-                        style="transform: translateY(1px); opacity: 0.6" />
-                      <span class="pe-2">Guides on Steam</span>
-                      <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
-                    </a>
-                    <a
-                      class="dropdown-item"
-                      :href="`https://steamcommunity.com/stats/${app.id.steam}/achievements`"
-                      target="_blank">
-                      <b-logo
-                        name="steam"
-                        size="12"
-                        class="me-2"
-                        color="white"
-                        style="transform: translateY(1px); opacity: 0.6" />
-                      <span class="pe-2">Achievements on Steam</span>
-                      <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
-                    </a>
-                  </b-dropdown>
-                </div>
-              </div>
-              <!--
-              *+---------------------------------
-              *| Achievements
-              *+--------------------------------- -->
-              <div
-                class="card mb-3"
-                v-if="app.achievements && app.achievements.length"
-                style="border-color: #adb3bb">
-                <div class="list-group card-list-group achievements-list">
-                  <template v-for="achievement in achievements" :key="achievement.uuid">
-                    <div
-                      class="list-group-item px-3 cursor-pointer text-decoration-none"
-                      style="padding-top: 0.8rem; padding-bottom: 0.8rem">
-                      <div class="row gx-3 align-items-center">
-                        <div class="col-auto">
-                          <span class="avatar avatar-2">
-                            <img
-                              :src="achievement.icon"
-                              style="
-                                outline: 1px solid rgba(255, 255, 255, 0.15);
-                                outline-offset: -1px;
-                                box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.36);
-                                border-radius: 1px;
-                              " />
-                          </span>
-                        </div>
-                        <div class="col">
-                          <span class="font-serif text-bold">{{ achievement.name }}</span>
-                          <div class="v-list-item-subtitle">
-                            <small>
-                              {{ achievement.description }}
-                            </small>
-                          </div>
-                        </div>
-
-                        <div
-                          class="col-auto small"
-                          v-tippy="
-                            'Completed by ' + achievement.completion + '% of players'
-                          ">
-                          <v-btn
-                            variant="tonal"
-                            size="x-small"
-                            color="blue-grey-lighten-1">
-                            {{ achievement.completion }}%
-                          </v-btn>
-                        </div>
-
-                        <div class="col-auto" @click.prevent="() => {}">
-                          <div style="position: relative">
-                            <v-btn
-                              variant="text"
-                              icon="mdi-chevron-right"
-                              size="x-small"
-                              color="grey-darken-1">
-                              <Icon size="14" width="1.5">DotsVertical</Icon>
-                            </v-btn>
-                            <b-dropdown
-                              trigger="mouseenter focus click hover manual"
-                              placement="bottom-end"
-                              :debounce="15"
-                              style="min-width: 180px">
-                              <div
-                                class="dropdown-item"
-                                @click.stop="$mitt.emit('list:edit', { item })">
-                                <Icon size="16" class="me-2 text-muted">TiltShift</Icon>
-                                Focus on it
-                              </div>
-                              <div
-                                class="dropdown-item"
-                                @click.stop="$mitt.emit('list:edit', { item })">
-                                <Icon size="16" class="me-2 text-muted">X</Icon>
-                                Abandon this achievement
-                              </div>
-
-                              <div class="dropdown-item">
-                                <Icon size="16" class="me-2 text-muted">Bug</Icon>
-                                Mark as broken
-                              </div>
-                              <div class="dropdown-divider"></div>
-                              <div class="dropdown-item disabled small">
-                                Earned by the {{ achievement.completion }}% of players
-                                <br />
-                                Achievement ID #{{ achievement.steam_key }}
-                              </div>
-                            </b-dropdown>
-                          </div>
-                        </div>
-
-                        <!-- <div class="col-auto text-secondary">
-            <v-btn variant="tonal" icon="mdi-chevron-right" size="small">
-              <Icon>ChevronRight</Icon>
-            </v-btn>
-          </div> -->
-                      </div>
-                    </div>
-                  </template>
-                </div>
-              </div>
+              <game-tab-achievements />
             </div>
 
             <div class="col-12 my-3 text-muted" style="zoom: 0.9">
@@ -1285,7 +1043,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st November 2024
- * Modified: Mon 24 February 2025 - 17:22:50
+ * Modified: Tue 04 March 2025 - 16:38:04
  **/
 
 export default {
@@ -1389,13 +1147,6 @@ export default {
   },
 
   methods: {
-    // async load() {
-    //   this.state = 4
-    //   this.app = this.game
-    //   this.gameStore.load(this.game.uuid)
-    //   this.state = 5
-    // },
-
     initLightbox() {
       // debugger
       if (this.lightbox) {

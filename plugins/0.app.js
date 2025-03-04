@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Thu 30 January 2025 - 16:13:27
+ * Modified: Tue 04 March 2025 - 17:31:05
  */
 
 // import { reactive } from 'vue'
@@ -186,8 +186,6 @@ async function initClient() {
   const { width, height } = useWindowSize()
   const { isFullscreen, toggle } = useFullscreen(document.documentElement)
 
-  detectEnvironment()
-
   app.width = width
   app.device = breakpoints.active()
 
@@ -200,6 +198,8 @@ async function initClient() {
   // either locally or online and load values
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   await $user.authenticate()
+
+  detectEnvironment()
   $guild.init('ping')
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

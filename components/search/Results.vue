@@ -106,11 +106,15 @@
         v-if="items.length || loading"
         class="row row-deck row-cards row-games-list"
         v-bind="$attrs">
-        <template v-for="(app, i) in items" :key="'card' + app">
+        <template v-for="(app, i) in items" :key="`card-${i}-${app}`">
           <div
             class="col col-6 col-sm-4 col-md-3 col-lg-custom pt-1 pb-3"
             style="padding-left: 0.75rem; padding-right: 0.75rem">
-            <b-game :key="app" :uuid="app" :visible="visibleProps" tracking></b-game>
+            <b-game
+              :key="`game-card-${i}-${app}`"
+              :uuid="app"
+              :visible="visibleProps"
+              tracking></b-game>
           </div>
         </template>
 
@@ -156,7 +160,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri 31 January 2025 - 11:43:31
+ * Modified: Tue 04 March 2025 - 17:35:20
  **/
 
 import { useThrottleFn } from '@vueuse/core'

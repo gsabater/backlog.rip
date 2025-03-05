@@ -3,8 +3,10 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 31st December 2024
- * Modified: Tue 04 March 2025 - 16:24:20
+ * Modified: Wed 05 March 2025 - 16:50:33
  */
+
+import queueService from './queueService'
 
 let $nuxt = null
 let $data = null
@@ -21,14 +23,14 @@ export default {
   //+-------------------------------------------------
   prepareToData(item) {
     $nuxt ??= useNuxtApp()
-    $game ??= useGameStore()
     $data ??= useDataStore()
+    $game ??= useGameStore()
 
     item = this.normalize(item)
     item._ = this.normalize_(item)
 
+    // this is not used anymore
     if (item.is?.dirty || item.toSwap) {
-      // this is not used anymore
       debugger
       // item.uuid = item.uuid || $nuxt.$uuid()
     }
@@ -75,6 +77,7 @@ export default {
   // Normalizes multiple ID fields
   // -----
   // Created on Mon Dec 16 2024
+  // Updated on Wed Mar 05 2025 - Added game swapping
   //+-------------------------------------------------
   normalizeID(game) {
     if (game.api_id) game.id.api = game.api_id
@@ -85,21 +88,20 @@ export default {
     if (game.id.steam) game.id.steam = Number(game.id.steam)
     if (game.igdb_slug) game.id.igdb_slug = game.igdb_slug
 
-    // Handle local games and wrong UUIDs
+    // Handle local games with wrong UUIDs
+    // This is called swapping
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (game.id.api && (!game.uuid || game.uuid !== game.id.api)) {
-      // let data1 = $data.get(game.uuid)
-      // let data2 = $data.get(game.id.api)
-
-      // debugger
-
+      debugger
       // Since swapping is something delicate
       // Control the last swap so it doesn't stays in a loop
-      // This can happen when there are duplicated on the API
+      // swap loop can happen when there are duplicates on the API
       const weekInSeconds = 7 * 24 * 60 * 60
-      const now = Math.floor(Date.now() / 1000)
+      const now = dates.stamp()
       if (!game.dates?.swapped || now - game.dates.swapped > weekInSeconds) {
-        game.toSwap = game.uuid
+        queueService.queue([game.uuid, game.id.api], 'swap')
+
+        game.dates.swapped = now
         game.uuid = game.id.api
       }
     }
@@ -446,5 +448,38 @@ export default {
     const score = average - (average - 0.5) * Math.pow(2, -Math.log10(totalVotes + 1))
 
     return score * 100
+  },
+
+  //+-------------------------------------------------
+  // deduplicate()
+  // This function compares two items that index for the same store,
+  // And tries to deduplicate them
+  // -----
+  // Created on Wed Mar 05 2025
+  //+-------------------------------------------------
+  async deduplicate(item, indexed) {
+    $nuxt ??= useNuxtApp()
+    $data ??= useDataStore()
+    $game ??= useGameStore()
+
+    if (!item.is?.lib) return
+    let app = $data.get(indexed.uuid)
+
+    if (!app.is?.lib) return
+
+    // If the item is a local one, and the indexed is not
+    // update the indexed app and delete the local item
+    if (item.uuid.includes('local:') && !app.uuid.includes('local:')) {
+      $game.update(app, {
+        is: item.is || {},
+        dates: item.dates || {},
+        achievements: item.achievements || [],
+      })
+
+      queueService.queue(item.uuid, 'delete')
+      return
+    }
+
+    debugger
   },
 }

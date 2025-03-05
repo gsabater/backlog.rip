@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Fri 07 February 2025 - 14:17:45
+ * Modified: Wed 05 March 2025 - 16:29:42
  */
 
 import { useThrottleFn } from '@vueuse/core'
@@ -27,10 +27,9 @@ let queue = {
 //+-------------------------------------------------
 async function run() {
   $data ??= useDataStore()
+  debugger
 
-  console.warn(queue)
-
-  // Handle queue
+  // Handle queue "add"
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (queue.add.length > 0) {
     log(`⛓️ Persisting queue on ${queue.add.length} games`)
@@ -38,17 +37,23 @@ async function run() {
     queue.add = []
   }
 
-  if (queue.cloud.length > 0) debugger
+  // Handle queue "delete"
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (queue.delete.length > 0) {
+    log(`⛓️ Clearing queue of deletes ${queue.delete.length}`)
+    await $data.delete(queue.delete)
+    queue.delete = []
+  }
 
-  queue.delete = []
-
-  // Handle swap queue
+  // Handle queue "swap"
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (queue.swap.length > 0) {
     queue.swap.forEach(async (uuid) => {
       await this.swap(uuid)
     })
   }
+
+  if (queue.cloud.length > 0) debugger
 }
 
 export default {
@@ -72,7 +77,7 @@ export default {
     if (action == 'cloud') queue.cloud.push(uuid)
     if (action == 'delete') queue.delete.push(uuid)
 
-    log(`⛓️ Queueing ${uuid} to ${action} (${queue[action].length})`)
+    log(`⛓️ Queueing to ${action} (${queue[action].length})`, uuid)
     // if (action == 'cloud') log('⛓️ Queueing ' + uuid + ' to the cloud')
     // else log(`⛓️ ${uuid} `, `${queue.add.length}/${queue.delete.length} items`)
 

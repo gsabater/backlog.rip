@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Tue 04 March 2025 - 15:53:00
+ * Modified: Wed 05 March 2025 - 15:46:56
  */
 
 let $nuxt = null
@@ -377,7 +377,7 @@ export default {
     // Sets the refreshed date
     // This is later used by ._.detail and appends :outdated
     // +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (updates.length || !app.dates.refreshed) {
+    if (api.uuid && (updates.length || !app.dates.refreshed)) {
       app.dates.refreshed = dates.stamp()
     }
 
@@ -427,6 +427,7 @@ export default {
   // Created on Sat Mar 01 2025
   //+-------------------------------------------------
   mergeArray(app, api) {
+    if (api.length == 0) return { updated: false }
     if (app && app.length == api.length) return { updated: false }
 
     let merge = {
@@ -483,6 +484,8 @@ export default {
   // Created on Thu Feb 27 2025
   //+-------------------------------------------------
   mergeAchievements(app, achievements = [], status = []) {
+    if (achievements.length == 0 && status.length == 0) return { updated: false }
+
     // Create a copy of the achievements array to avoid modifying the original
     let updated = structuredClone(app.achievements || [])
 
@@ -550,6 +553,8 @@ export default {
     }
 
     debugger
+    if (updated.length == 0) return { updated: false }
+
     return {
       updated: true,
       value: updated,

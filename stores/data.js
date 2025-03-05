@@ -3,7 +3,7 @@
  * @desc:    Handle operations related to data with their index
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue 04 March 2025 - 16:42:13
+ * Modified: Wed 05 March 2025 - 16:29:14
  */
 
 import gameService from '../services/gameService'
@@ -20,18 +20,6 @@ let $cloud = null
 //+-------------------------------------------------
 
 let data = {}
-
-// Buffer is a top-list of games fetch from the api
-// let buffer = {}
-
-//+-------------------------------------------------
-// Repos
-// Repositories are searches and preset filters
-// They are stored in the database and can be updated
-//+-------------------------------------------------
-
-let repos = {}
-let search = {}
 
 //+-------------------------------------------------
 // index (ed, api, epic, igdb, steam)
@@ -68,9 +56,6 @@ let index = {
 // * pinned() <-- data where is.pinned == true
 // * hidden() <-- data where is.hidden == true
 // * getRandom() <-- Get random elements
-//
-// Methods to Query the API
-// * search() <- apiservice
 //
 // Methods to persist data
 // * addToLibrary() <-- Adds an item to the library
@@ -133,8 +118,8 @@ export const useDataStore = defineStore('data', {
       console.warn(
         '🔸 Process',
         intent,
-        apps.length,
-        apps[Math.floor(Math.random() * apps.length)]
+        items.length,
+        items[Math.floor(Math.random() * items.length)]
       )
 
       // Precompute intent-related flags
@@ -165,8 +150,9 @@ export const useDataStore = defineStore('data', {
           // debugger
         }
 
-        if (intent !== 'library' && intent !== 'api' && intent !== 'updated') debugger
+        // if (intent !== 'library' && intent !== 'api' && intent !== 'updated') debugger
         // if (item.uuid == '338c704c-260e-44a6-b063-d541ef351fa8') debugger
+        if (item.id?.steam == 250900) debugger
 
         // Find the index in data
         let indexed = this.isIndexed(item)
@@ -176,21 +162,14 @@ export const useDataStore = defineStore('data', {
         // console.warn(' ⇢ app to lib', item.uuid, item.name)
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (intent === 'library') {
-          this.toData(item)
+          if (indexed) dataService.deduplicate(item, indexed)
+          else this.toData(item)
           continue
         }
 
         if (!intent.includes) {
           console.warn(item, intent)
           debugger
-        }
-
-        // Just add api games to the data pool
-        // console.warn(' ⇢ app to data from API', item.uuid, item.name)
-        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (!indexed && intent === 'library') {
-          this.toData(item)
-          continue
         }
 
         // Handle api items
@@ -664,27 +643,34 @@ export const useDataStore = defineStore('data', {
     // deletes an item from the database
     // -----
     // Created on Wed Feb 14 2024
+    // Updated on Wed Mar 05 2025 - Handle a batch of uuids
     //+-------------------------------------------------
     async delete(uuid) {
       if (!uuid) return
-      let item = data[uuid]
-      console.warn('🔥 Deleting', uuid)
 
-      delete data[uuid]
-      $nuxt.$db.games.delete(uuid)
+      // Convert single UUID to an array for uniform handling
+      const uuids = Array.isArray(uuid) ? uuid : [uuid]
+      console.warn('🔥 Deleting', uuids)
 
-      // Delete indexes
-      delete index.ed[index.ed.indexOf(uuid)]
-      delete index.lib[index.lib.indexOf(uuid)]
-      delete index.igdb[item.id.igdb]
-      delete index.steam[item.id.steam]
+      // Delete from the database using Dexie's bulkDelete
+      await $nuxt.$db.games.bulkDelete(uuids)
 
-      // update counters
-      $nuxt.$app.count.data = Object.keys(data).length || 0
-      $nuxt.$app.count.library = index.lib.length || 0
+      // Delete from in-memory data structure
+      uuids.forEach((id) => {
+        let item = data[id]
+        if (!item) return
+
+        delete data[id]
+
+        // Remove from indexes safely
+        index.ed = index.ed.filter((e) => e !== id)
+        index.lib = index.lib.filter((e) => e !== id)
+        if (item.id.igdb) delete index.igdb[item.id.igdb]
+        if (item.id.steam) delete index.steam[item.id.steam]
+      })
 
       // Emits event
-      $nuxt.$mitt.emit('data:deleted', { uuid })
+      $nuxt.$mitt.emit('data:deleted', { uuids })
     },
 
     //+-------------------------------------------------
@@ -772,9 +758,9 @@ export const useDataStore = defineStore('data', {
     // Updated on Thu Jan 16 2025 - Return index information
     //+-------------------------------------------------
     isIndexed(item) {
-      for (const store of this.indexes) {
+      for (const store of Object.keys(index)) {
         if (
-          (item.id?.store && index[store][item.id[store]]) ||
+          (item.id?.[store] && index[store][item.id[store]]) ||
           (item[store + '_id'] && index[store][item[store + '_id']])
         ) {
           return {
@@ -784,7 +770,8 @@ export const useDataStore = defineStore('data', {
         }
       }
 
-      if (index.ed.includes(item.uuid))
+      // Check if item exists in the "ed" index by UUID
+      if (item.uuid && index.ed.includes(item.uuid))
         return {
           index: 'ed',
           uuid: item.uuid,

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Sun 02 March 2025 - 11:01:15
+ * Modified: Wed 05 March 2025 - 16:28:28
  */
 
 //+-------------------------------------------------
@@ -43,6 +43,11 @@ function handle(event, payload) {
 
     // Hook used by search to search again
     case 'data:updated':
+      break
+
+    case 'data:deleted':
+      $data ??= useDataStore()
+      $data.countLibrary()
       break
 
     // A game has been added to the library

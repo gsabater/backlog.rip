@@ -1,5 +1,5 @@
 # Backlog.rip
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip?ref=badge_shield)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip?ref=badge_shield) [![MadeWithVueJs.com shield](https://madewithvuejs.com/storage/repo-shields/5535-shield.svg)](https://madewithvuejs.com/p/backlogrip/shield-link)
 
 
 Backlog.rip is an online library manager for all your games.
@@ -25,7 +25,7 @@ npm run dev
 
 ### Project health
 
-https://repobeats.axiom.co/api/embed/8ad80c908f2c331683b4aa34bb542501b3332bb5.svg
+![Alt](https://repobeats.axiom.co/api/embed/8ad80c908f2c331683b4aa34bb542501b3332bb5.svg "Repobeats analytics image")
 
 ### Emoji Cheat Sheet
 

@@ -3,9 +3,10 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Sat 01 March 2025 - 18:47:23
+ * Modified: Wed 05 March 2025 - 16:17:03
  */
 
+import dataService from '../services/dataService'
 import gameService from '../services/gameService'
 
 let $nuxt = null
@@ -152,29 +153,17 @@ export const useGameStore = defineStore('game', {
 
     //+-------------------------------------------------
     // update()
-    //
+    // Gets some data, compares it with game and updates it
+    // Then processes the resulting data to store it and sets this.app
     // -----
     // Created on Tue Feb 25 2025
     //+-------------------------------------------------
     async update(uuid, data) {
-      // if (needsupdate because of stale or missing data)
-      // if needsupdate because of different data provided
-      debugger
-      // do load api
-      // do load achievements
-      //-> do merge
-      console.warn('6')
+      // debugger
+
       // Load the game by reference
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       const app = uuid.uuid ? uuid : $data.get(uuid)
-
-      // update
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // MOVED >  will be checked on process api
-      // if (data.uuid) {
-      //   const needsUpdate = gameService.needsUpdate(app, data)
-      //   if (!needsUpdate) return false
-      // }
 
       // Make a new item with merged data
       // Sometimes, the merged does not have any updates

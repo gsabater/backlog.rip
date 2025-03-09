@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Thu 27 February 2025 - 19:56:46
+ * Modified: Wed 05 March 2025 - 17:51:05
  */
 
 let $nuxt = null
@@ -154,6 +154,8 @@ export default {
   timeAgo(time) {
     if (!time) return ''
     if (!$nuxt) $nuxt = useNuxtApp()
+
+    if (time < 10000000000) time *= 1000 // convert to milliseconds if needed
 
     // const timeAgo = formatTimeAgo(time)
     const timeAgo = $nuxt.$dayjs(time).fromNow()

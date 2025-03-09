@@ -76,9 +76,9 @@
                 Import your library
               </b-btn>
 
-              <b-btn class="me-3" @click.stop="$mitt.emit('game:add')">
+              <!-- <b-btn class="me-3" @click.stop="$mitt.emit('game:add')">
                 Manually add a game
-              </b-btn>
+              </b-btn> -->
 
               <b-btn to="/games">Browse all games</b-btn>
             </div>
@@ -196,7 +196,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 29 January 2025 - 17:57:42
+ * Modified: Fri 07 March 2025 - 15:35:57
  **/
 
 export default {

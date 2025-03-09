@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 31st December 2024
- * Modified: Wed 05 March 2025 - 16:50:33
+ * Modified: Wed 05 March 2025 - 22:36:50
  */
 
 import queueService from './queueService'
@@ -254,6 +254,7 @@ export default {
   _astats(app) {
     let stats = {
       total: 0,
+      hidden: 0,
       completed: 0,
       percentage: 0,
       latest: null,
@@ -274,6 +275,7 @@ export default {
 
     // Calculate basic stats
     stats.total = validAchievements.length
+    stats.hidden = app.achievements.length - validAchievements.length
     stats.completed = completedAchievements.length
 
     // Calculate completion percentage (avoid division by zero)
@@ -281,14 +283,13 @@ export default {
       stats.percentage = Math.round((stats.completed / stats.total) * 100)
     }
 
-    // Find the most recent achievement unlock timestamp
+    // Find the most recent achievement
     if (completedAchievements.length) {
-      const latestTimestamp = completedAchievements.reduce((latest, achievement) => {
-        const unlockTime = achievement.is?.time || 0
-        return unlockTime > latest ? unlockTime : latest
-      }, 0)
+      let recent = completedAchievements.reduce((latest, ach) => {
+        return ach.is?.time > latest.is?.time ? ach : latest
+      })
 
-      stats.latest = latestTimestamp || null
+      if (recent) stats.latest = recent.steam_key
     }
 
     return stats

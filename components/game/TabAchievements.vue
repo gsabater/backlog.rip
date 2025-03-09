@@ -5,21 +5,23 @@
         <h5 class="m-0">Your achievements</h5>
       </div>
       <div class="col-auto ms-auto">
-        <v-btn variant="text" ncolor="blue-grey-lighten-1" size="small">
+        <small
+          class="text-muted"
+          v-tippy="'Achievements are synced with Steam once every 24 hours'">
+          <Icon class="text-muted me-1" size="14" width="1.4">Refresh</Icon>
+
+          Synchronized
+          {{ dates.timeAgo(app.dates.achievements) }}
+        </small>
+        <!-- <pre>{{ app }}</pre> -->
+        <!-- <v-btn variant="text" ncolor="blue-grey-lighten-1" size="small" @click="reloadAchievements">
           Sync my achievements
 
-          <Icon
-            class="text-muted"
-            size="14"
-            width="2"
-            style="transform: translate(5px, 1px)">
-            Refresh
-          </Icon>
-        </v-btn>
+        </v-btn> -->
       </div>
     </div>
 
-    <div class="row row-cards row-deck mb-3" style="--tblr-gutter-x: 1.1rem">
+    <div class="row row-cards row-deck mb-4" style="--tblr-gutter-x: 1.1rem">
       <div class="col-sm-6 col-lg-3">
         <div class="card card-sm" style="max-height: 75px">
           <div class="card-body">
@@ -37,7 +39,7 @@
                 v-if="hiddenAchievements.length"
                 v-tippy="
                   hiddenAchievements.length +
-                  ' achievements are hidden or marked as bugged. Displayed count is adjusted accordingly'
+                  ' achievements are hidden or marked as bugged. Achievements count is adjusted accordingly'
                 ">
                 ˟
               </small>
@@ -93,7 +95,7 @@
               </span>
               <br />
               <small class="font-serif text-muted">
-                Latest achievement, earned {{ dates.timeAgo(latest.is.time * 1000) }}
+                Latest achievement, unlocked {{ dates.timeAgo(latest.is.time * 1000) }}
               </small>
             </div>
           </div>
@@ -101,35 +103,88 @@
       </div>
     </div>
 
-    <div class="d-none row row-cards mb-3" style="--tblr-gutter-x: 2rem">
-      <v-carousel show-arrows="hover" progress="primary">
-        <v-carousel-item>
-          <div class="col-6 col-md-6">
-            <div class="card">
-              <div class="card-body">asdasd</div>
-            </div>
-          </div>
-        </v-carousel-item>
+    <template v-if="focusedAchievements.length">
+      <div class="row my-2 align-items-center">
+        <div class="col-6">
+          <h5 class="m-0">Prioritized</h5>
+        </div>
+      </div>
 
-        <v-carousel-item>
-          <div class="col-6 col-md-6">
-            <div class="card">
-              <div class="card-body">asdasd</div>
-            </div>
-          </div>
-        </v-carousel-item>
+      <div style="position: relative">
+        <v-btn
+          id="swiper-prev"
+          size="small"
+          class="text-muted"
+          icon
+          variant="text"
+          style="position: absolute; top: 17px; left: -32px; z-index: 9999">
+          <Icon size="24">ChevronLeft</Icon>
+        </v-btn>
+        <v-btn
+          id="swiper-next"
+          size="small"
+          class="text-muted"
+          icon
+          variant="text"
+          style="position: absolute; top: 17px; right: -32px; z-index: 9999">
+          <Icon size="24">ChevronRight</Icon>
+        </v-btn>
 
-        <v-carousel-item>
-          <div class="col-6 col-md-6">
-            <div class="card">
-              <div class="card-body">asdasd</div>
+        <swiper
+          :loop="focusedAchievements.length > 2"
+          :grab-cursor="true"
+          :slides-per-view="2"
+          :space-between="20"
+          :navigation="{
+            nextEl: '#swiper-next',
+            prevEl: '#swiper-prev',
+          }"
+          npagination="{ type: 'fraction' }"
+          :modules="$swiperModules"
+          class="row-cards mb-4">
+          <swiper-slide
+            v-for="achievement in focusedAchievements"
+            :key="achievement.uuid">
+            <div class="card card-sm" style="max-height: 75px; aspect-ratio: unset">
+              <div
+                class="card-body row"
+                style="
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                  justify-content: flex-start;
+                ">
+                <div class="col-auto">
+                  <span class="avatar avatar-3">
+                    <img
+                      :src="achievement.icon"
+                      style="
+                        outline: 1px solid rgba(255, 255, 255, 0.15);
+                        outline-offset: -1px;
+                        box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.36);
+                        border-radius: 1px;
+                      " />
+                  </span>
+                </div>
+                <div class="col">
+                  <span class="font-serif text-bold" style="color: rgb(58, 64, 73)">
+                    {{ achievement.name }}
+                  </span>
+                  <!-- <br />
+                  <small
+                    class="font-serif text-muted"
+                    >
+                    {{ achievement.description }}
+                  </small> -->
+                </div>
+              </div>
             </div>
-          </div>
-        </v-carousel-item>
-      </v-carousel>
-    </div>
+          </swiper-slide>
+        </swiper>
+      </div>
+    </template>
 
-    <div class="row mb-2 align-items-center">
+    <div class="row my-2 align-items-center">
       <div class="col-6">
         <h5 class="m-0">All achievements</h5>
       </div>
@@ -149,7 +204,7 @@
           to="#resources"
           trigger="mouseenter focus click hover manual"
           placement="bottom-start"
-          :debounce="15"
+          :debounce="150"
           style="min-width: 200px">
           <a
             class="dropdown-item"
@@ -262,7 +317,10 @@
                 </template>
                 <template v-if="achievement.is.status == 'focused'">
                   <div class="d-flex flex-column small text-right">
-                    <strong>Achievement set as {{ achievement.is.status }}</strong>
+                    <strong v-if="achievement.is.status == 'focused'">
+                      Achievement prioritized
+                    </strong>
+                    <strong v-else>Achievement set as {{ achievement.is.status }}</strong>
                     <em class="d-block small">
                       {{ dates.timeAgo(achievement.is.time * 1000) }}
                     </em>
@@ -291,20 +349,28 @@
                   <b-dropdown
                     trigger="mouseenter focus click hover manual"
                     placement="bottom-end"
-                    :debounce="15"
+                    :debounce="150"
                     style="min-width: 180px">
                     <div class="dropdown-header">{{ achievement.name }}</div>
-                    <template
-                      v-if="!achievement.is || achievement.is.status !== 'unlocked'">
-                      <div
-                        class="dropdown-item"
-                        @click.stop="setAchAs(achievement.steam_key, 'unlocked')">
-                        ✅ Mark as unlocked
-                      </div>
-                      <div class="dropdown-divider"></div>
-                    </template>
 
                     <div
+                      v-if="!achievement.is || achievement.is.status !== 'unlocked'"
+                      class="dropdown-item"
+                      @click.stop="setAchAs(achievement.steam_key, 'unlocked')">
+                      ✅ Mark as unlocked
+                    </div>
+
+                    <div
+                      v-if="achievement.is && achievement.is.time"
+                      class="dropdown-item"
+                      @click.stop="setAchAs(achievement.steam_key, 'clear')">
+                      <Icon size="16" class="me-2 text-muted">ArrowBack</Icon>
+                      Clear state
+                    </div>
+
+                    <div class="dropdown-divider"></div>
+                    <div
+                      v-if="!achievement.is || achievement.is.status !== 'focused'"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'focused')">
                       <Icon size="16" class="me-2 text-muted">ChevronsUp</Icon>
@@ -312,6 +378,7 @@
                     </div>
 
                     <div
+                      v-if="!achievement.is || achievement.is.status !== 'abandoned'"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'abandoned')">
                       <Icon size="16" class="me-2 text-muted">X</Icon>
@@ -319,6 +386,7 @@
                     </div>
 
                     <div
+                      v-if="!achievement.is || achievement.is.status !== 'bugged'"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'bugged')">
                       <Icon size="16" class="me-2 text-muted">Bug</Icon>
@@ -326,20 +394,12 @@
                     </div>
 
                     <div class="dropdown-divider"></div>
-                    <div
-                      v-if="achievement.completion"
-                      class="dropdown-item disabled small"
-                      style="
-                        display: flex;
-                        flex-direction: column;
-                        margin-left: -10px;
-                        line-height: 1.1rem;
-                      ">
-                      <span>
+                    <div v-if="achievement.completion" class="dropdown-item disabled">
+                      <small>
                         Earned by the
                         <code>{{ achievement.completion }}%</code>
                         of players
-                      </span>
+                      </small>
                       <!-- <br />
                                 Achievement ID
                                 <code>#{{ achievement.steam_key }}</code> -->
@@ -424,7 +484,7 @@
                   <b-dropdown
                     trigger="mouseenter focus click hover manual"
                     placement="bottom-end"
-                    :debounce="15"
+                    :debounce="150"
                     style="min-width: 180px">
                     <div class="dropdown-header">{{ achievement.name }}</div>
                     <div
@@ -433,6 +493,15 @@
                       @click.stop="setAchAs(achievement.steam_key, 'unlocked')">
                       ✅ Mark as unlocked
                     </div>
+
+                    <div
+                      v-if="achievement.is && achievement.is.time"
+                      class="dropdown-item"
+                      @click.stop="setAchAs(achievement.steam_key, 'clear')">
+                      <Icon size="16" class="me-2 text-muted">ArrowBack</Icon>
+                      Clear state
+                    </div>
+
                     <div class="dropdown-divider"></div>
 
                     <div
@@ -443,6 +512,7 @@
                     </div>
 
                     <div
+                      v-if="!achievement.is || achievement.is.status !== 'abandoned'"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'abandoned')">
                       <Icon size="16" class="me-2 text-muted">X</Icon>
@@ -450,6 +520,7 @@
                     </div>
 
                     <div
+                      v-if="!achievement.is || achievement.is.status !== 'bugged'"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'bugged')">
                       <Icon size="16" class="me-2 text-muted">Bug</Icon>
@@ -478,7 +549,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 3rd March 2025
- * Modified: Tue 04 March 2025 - 16:28:14
+ * Modified: Sun 09 March 2025 - 11:37:54
  **/
 
 export default {
@@ -522,6 +593,12 @@ export default {
       )
     },
 
+    //+-------------------------------------------------
+    // hiddenAchievements()
+    // Returns an array of hidden achievements
+    // -----
+    // Created on Thu Mar 06 2025
+    //+-------------------------------------------------
     hiddenAchievements() {
       if (!this.app?.achievements?.length) return false
 
@@ -530,28 +607,49 @@ export default {
       )
     },
 
+    //+-------------------------------------------------
+    // focusedAchievements()
+    // Returns an array of focused achievements to use with Swiper
+    // -----
+    // Created on Thu Mar 06 2025
+    //+-------------------------------------------------
+    focusedAchievements() {
+      if (!this.app?.achievements?.length) return false
+      return this.achievements.filter((a) => a.is?.status == 'focused')
+    },
+
+    //+-------------------------------------------------
+    // latest()
+    // Returns the latest achievement from astats
+    // -----
+    // Created on Wed Mar 05 2025
+    //+-------------------------------------------------
     latest() {
+      if (!this.astats?.latest) return false
       if (!this.app?.achievements?.length) return false
 
-      return this.app.achievements.find((a) => a.is && a.is.status == 'unlocked')
+      return this.app.achievements.find((a) => a.steam_key == this.astats.latest)
     },
   },
 
   methods: {
     //+-------------------------------------------------
     // setAchAs()
-    //
+    // Sets or clears the state of an achievement
     // -----
     // Created on Sun Mar 02 2025
     //+-------------------------------------------------
     setAchAs(achKey, status) {
-      let ach = this.app.achievements.find((a) => a.steam_key == achKey)
-      ach.is = ach.is || {}
-      ach.is.status = status
-      ach.is.time = dates.stamp()
       debugger
+      let ach = this.app.achievements.find((a) => a.steam_key == achKey)
+      if (status == 'clear') delete ach.is
+      else {
+        ach.is = ach.is || {}
+        ach.is.status = status
+        ach.is.time = dates.stamp()
+      }
+
       this.gameStore.update(this.app.uuid, { achievements: this.app.achievements })
-      // this.app._ = this.dataService._astats(this.app)
     },
 
     init() {},

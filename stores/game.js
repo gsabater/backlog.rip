@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Wed 05 March 2025 - 16:17:03
+ * Modified: Thu 06 March 2025 - 19:44:24
  */
 
 import dataService from '../services/dataService'
@@ -11,7 +11,6 @@ import gameService from '../services/gameService'
 
 let $nuxt = null
 let $data = null
-let $library = null
 
 export const useGameStore = defineStore('game', {
   state: () => ({
@@ -41,62 +40,6 @@ export const useGameStore = defineStore('game', {
   //
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Game Object
-  // {
-  //   uuid: '5c1c9b5a-1c02-4a56-85df-f0cf97929a48',
-  //   name: 'DOOM',
-  //   description: 'Lorem',
-  //   state: 1, ⇢ State ID from states table
-  //
-  //   id: { 🔸 Added in this.normalize
-  //     api: '5c1c9b5a-1c02-4a56-85df-f0cf97929a48', ⇢ UUID assigned by the API
-  //     gog: 'ABC',
-  //     xbox: 'C3QH42WRGM3R',
-  //     epic: 'ABC',
-  //     igdb: 7351,
-  //     steam: 379720,
-  //   },
-  //
-  //   is: {
-  //     lib: 1726666517, ⇢ Timestamp of when the app was added to the library
-  //     steam: 1726666517, ⇢ Timestamp of when the app was added to the steam library
-  //     state: {
-  //       state_1: 1726666517, ⇢ Timestamp of when assigned to state 1
-  //       state_2: 1726666517, ⇢ Timestamp of when assigned to state 2...
-  //     }
-  //   },
-  //
-  //   dates: {
-  //     created_at: 1726666517, ⇢ Timestamp of when the app was created
-  //     updated_at: 1726666517, ⇢ Timestamp of when the app was updated
-  //     released_at: 1726666517, ⇢ Timestamp of when the app was released
-  //   },
-  //
-  //   genres: [], ⇢ Array of genres
-  //
-  //   scores: {
-  //     igdb: 81, ⇢ Score from IGDB
-  //     igdbCount: 748, ⇢ Amount of reviews on IGDB
-  //     steamscore: 85, ⇢ Score from Steam
-  //     steamCount: 1106232, ⇢ Amount of reviews on Steam
-  //     steamscoreAlt: Very Positive, ⇢ Score from Steam
-  //     userscore: 86, ⇢ Score from Steam
-  //   },
-  //
-  //   playtime: {
-  //     steam: 123, ⇢ Playtime (in minutes)
-  //     steam_last: 1726666517, ⇢ Timestamp of last playtime
-  //   },
-  //
-  //   cover: {
-  //     igdb: 123, ⇢ Cover ID from IGDB
-  //   },
-  //
-  //   log: [], ⇢ Array of logs
-  // }
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   actions: {
     //+-------------------------------------------------
     // load()
@@ -106,7 +49,6 @@ export const useGameStore = defineStore('game', {
     // Created on Thu Jan 11 2024
     //+-------------------------------------------------
     async load(uuid, hooks = {}) {
-      console.warn('4')
       const game = $data.get(uuid)
       this.app = game
 
@@ -175,6 +117,7 @@ export const useGameStore = defineStore('game', {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (app.is.lib) app.toStore = true
       await $data.process(updated.app, 'updated', false)
+      $nuxt.$mitt.emit('game:data', { uuid: updated.app.uuid })
 
       // Update the current app if it's the same
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -224,6 +167,7 @@ export const useGameStore = defineStore('game', {
       $data.toData(updated.app)
       // $data.process(updated.app, 'updated:app')
 
+      $nuxt.$mitt.emit('game:data', { uuid: updated.app.uuid })
       if (this.app.uuid == updated.app.uuid) this.load(updated.app.uuid, false)
     },
 

@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Tue 04 March 2025 - 16:40:08
+ * Modified: Thu 06 March 2025 - 17:36:19
  */
 
 // import { reactive } from 'vue'
@@ -26,8 +26,8 @@ let $search = null
 let $integration = null
 
 let app = {
-  v: '0.18.6 β', //β
-  t: 1738169255103, // Date.now()
+  v: '0.19.4 β', //β
+  t: 1741278088181, // Date.now()
 
   // Global app state
   // Controls modules boundaries

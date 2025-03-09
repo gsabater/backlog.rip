@@ -259,9 +259,15 @@
             {{ dates.minToHours(app.hltb.main / 60) }}
           </small>
 
-          <small
+          <div
             v-if="visible.includes('achievements') && app._.released"
-            class="d-block text-muted">
+            class="d-block text-muted"
+            v-tippy="
+              app._.astats.hidden
+                ? app._.astats.hidden +
+                  ' achievements are hidden or marked as bugged. Achievements count is adjusted accordingly'
+                : false
+            ">
             <Icon
               size="12"
               width="1.4"
@@ -271,7 +277,8 @@
             {{ app._.astats.completed }} / {{ app._.astats.total }} ({{
               app._.astats.percentage
             }}%)
-          </small>
+            <small class="cursor-help" v-if="app._.astats.hidden > 0">˟</small>
+          </div>
 
           <slot name="details:append"></slot>
         </div>
@@ -286,7 +293,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sun 02 March 2025 - 12:31:42
+ * Modified: Thu 06 March 2025 - 19:43:11
  **/
 
 export default {
@@ -468,6 +475,17 @@ export default {
     },
 
     //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Thu Mar 06 2025
+    //+-------------------------------------------------
+    updateData(payload) {
+      debugger
+      this.app = this.dataStore.get(payload.uuid)
+    },
+
+    //+-------------------------------------------------
     // init()
     // Loads data from dataStore and sets to this.app
     // -----
@@ -486,6 +504,12 @@ export default {
 
   mounted() {
     this.init()
+
+    this.$mitt.on('game:data', (payload) => {
+      debugger
+      if (payload.uuid != this.app.uuid) return
+      this.updateData(payload)
+    })
 
     this.$mitt.on('state:change', (payload) => {
       if (payload.uuid != this.app.uuid) return
@@ -520,6 +544,7 @@ export default {
   },
 
   beforeUnmount() {
+    this.$mitt.off('game:data')
     this.$mitt.off('data:deleted')
     this.$mitt.off('state:change')
     this.$mitt.off('pinned:change')

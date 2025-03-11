@@ -1043,7 +1043,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st November 2024
- * Modified: Tue 04 March 2025 - 16:38:04
+ * Modified: Tue 11 March 2025 - 19:07:23
  **/
 
 export default {
@@ -1063,7 +1063,7 @@ export default {
       lightbox: null,
 
       ui: {
-        tab: 'achievements',
+        tab: 'general',
         showTitle: true,
       },
     }

@@ -743,11 +743,9 @@
                 By
                 <strong>{{ manifest.author }}</strong>
                 <span class="px-1">•</span>
-                <a :href="manifest.url" target="_blank">
-                  version {{ manifest.ver }} ({{ manifest.v }})
-                </a>
+                <a :href="manifest.url" target="_blank">version {{ manifest.ver }}</a>
                 <br />
-                Last updated
+                Last build
                 {{ dates.format(manifest.updated_at, 'LL') }}
               </small>
             </div>
@@ -809,7 +807,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Wed 29 January 2025 - 17:52:32
+ * Modified: Tue 11 March 2025 - 14:31:04
  **/
 
 export default {

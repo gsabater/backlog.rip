@@ -584,7 +584,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 2nd January 2025
- * Modified: Tue 07 January 2025 - 17:19:29
+ * Modified: Mon 10 March 2025 - 14:49:21
  **/
 
 export default {
@@ -678,11 +678,14 @@ export default {
       }
 
       this.shown.push(selected)
-      await this.gameStore.load(selected)
+      await this.gameStore.load(selected, {
+        context: 'dialog',
+        with: ['api'],
+      })
     },
 
     openDetails() {
-      this.$mitt.emit('game:modal', {
+      this.$mitt.emit('game:dialog', {
         uuid: this.app.uuid,
       })
 
@@ -700,6 +703,18 @@ export default {
   mounted() {
     this.$mitt.on('game:random', (payload) => {
       this.loadAndShow(payload)
+    })
+
+    this.$mitt.on('state:change', (payload) => {
+      if (payload.uuid != this.app.uuid) return
+
+      if (payload.state == 'fav') {
+        this.app.is.fav = payload.fav
+      } else {
+        this.app.state = payload.state
+      }
+
+      this.$forceUpdate()
     })
   },
 }

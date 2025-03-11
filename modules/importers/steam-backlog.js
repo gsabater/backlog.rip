@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th November 2024
- * Modified: Wed 29 January 2025 - 17:52:07
+ * Modified: Tue 11 March 2025 - 14:30:49
  */
 
 let $log = null
@@ -30,7 +30,6 @@ export default {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   manifest: {
-    v: 1,
     ver: '1.0',
     name: 'Steam Backlog integration',
     author: 'Gaspar S.',
@@ -190,8 +189,8 @@ export default {
 
     if (states[data.state]) app.state = states[data.state]
 
-    // Flag this item as dirty to be saved by datastore
-    app.is.dirty = true
+    // Flag the item to store
+    app.toStore = true
 
     return app
   },

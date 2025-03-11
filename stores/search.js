@@ -3,10 +3,8 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Fri 31 January 2025 - 11:43:10
+ * Modified: Tue 11 March 2025 - 16:43:16
  */
-
-import search from '~/services/searchService'
 
 let $nuxt = null
 let $data = null
@@ -195,6 +193,53 @@ export const useSearchStore = defineStore('search', {
       }
     },
 
+    //+-------------------------------------------------
+    // handleRouteFilters
+    // Append the current filters to the URL with params
+    // -----
+    // Created on Wed Feb 05 2025
+    //+-------------------------------------------------
+
+    handleRouteFilters(filters, hash) {
+      if (!$nuxt.$app.wip) return
+
+      // TODO: this should be this.inRoute or ENUM
+      const blacklist = ['source', 'is', 'mods', 'show']
+
+      // Default filter values to compare against
+      const defaultFilters = {
+        string: '',
+        sortBy: 'score',
+        sortDir: 'desc',
+      }
+
+      // Build query params for non-default, whitelisted filters
+      const queryParams = Object.entries(filters)
+        .filter(([key, value]) => {
+          return (
+            value &&
+            value !== '' &&
+            value.length != 0 &&
+            !blacklist.includes(key) &&
+            value !== defaultFilters[key]
+          )
+        })
+        .map(([key, value]) => {
+          if (key == 'string') key = 'search'
+          let encoded = encodeURIComponent(value)
+          encoded = encoded.replace(/%2C/g, '+')
+          return `${key}=${encoded}`
+        })
+        .join('&')
+
+      // Update URL without adding to history
+      const newUrl = queryParams
+        ? `${window.location.pathname}?${queryParams}`
+        : window.location.pathname
+
+      window.history.replaceState({}, '', newUrl)
+    },
+
     // replaceRoute(path) {
     //   if (this.$route.path !== path) {
 
@@ -212,8 +257,10 @@ export const useSearchStore = defineStore('search', {
     getSource(filters) {
       // Source is an array of fixed items
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (Array.isArray(filters.source) && filters.source.length)
-        return { type: 'array', apps: filters.source }
+      if (Array.isArray(filters.source)) {
+        if (filters.source.length) return { type: 'array', apps: filters.source }
+        else return { type: 'array', apps: [] }
+      }
 
       // Source is all games
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -230,21 +277,21 @@ export const useSearchStore = defineStore('search', {
         filters.source == 'library' ||
         filters.source.includes('state:')
       ) {
-        return { type: 'library', apps: $data.library('object') }
+        return { type: 'library', apps: $data.library() }
       }
 
       if (filters.source.includes(':pinned')) {
-        return { type: 'pinned', apps: $data.library('object') }
+        return { type: 'pinned', apps: $data.list() }
       }
 
       // TODO: this could be a pre-filter in $data
       // that can potentially be better than filtering in the service the whole lib
       if (filters.source.includes(':hidden')) {
-        return { type: 'hidden', apps: $data.library('object') }
+        return { type: 'hidden', apps: $data.library() }
       }
 
       if (filters.source.includes(':favorites')) {
-        return { type: 'favorites', apps: $data.library('object') }
+        return { type: 'favorites', apps: $data.library() }
       }
 
       // if (!filters.is) apps = $data.library('object')
@@ -264,10 +311,13 @@ export const useSearchStore = defineStore('search', {
     run(f) {
       this.loading = true
 
+      // let filters = this.loadFilters(f)
       let filters = f || this.f
       let source = this.getSource(filters)
-      let hash = search.makeHash(source, filters)
+      let hash = searchService.makeHash(source, filters)
+
       this.handleRouteChanges(filters)
+      this.handleRouteFilters(filters, hash)
       filters.is = source.type
 
       let filtered = null
@@ -288,14 +338,14 @@ export const useSearchStore = defineStore('search', {
 
       this.searchAPI(source, filters)
       filtered = this.filter(hash, source, filters)
-      paginated = search.paginate(filtered.items, filters.show)
+      paginated = searchService.paginate(filtered.items, filters.show)
 
       this.stats.end = performance.now()
       this.stats.results = filtered.results
       this.stats.filtered = filtered.filtered || 0
 
-      this.stats.showing = search.calcShowing(filters, filtered.results)
-      this.stats.nextPage = search.calcNextPage(filters, filtered.results)
+      this.stats.showing = searchService.calcShowing(filters, filtered.results)
+      this.stats.nextPage = searchService.calcNextPage(filters, filtered.results)
 
       this.loading = false
       log('search', '· ⇢ search:end @ ' + source.type)
@@ -316,7 +366,7 @@ export const useSearchStore = defineStore('search', {
     // Created on Sun Jan 05 2025
     //+-------------------------------------------------
     filter(hash, source, filters) {
-      if (!hash) return search.filter(source.apps, filters)
+      if (!hash) return searchService.filter(source.apps, filters)
 
       this.latest = hash
       if (hashed[hash]) {
@@ -324,7 +374,7 @@ export const useSearchStore = defineStore('search', {
         return hashed[hash]
       }
 
-      let filtered = search.filter(source.apps, filters)
+      let filtered = searchService.filter(source.apps, filters)
       hashed[hash] = filtered
       log('search', `· ⇢  Hash cached ✅`, hash)
 
@@ -357,7 +407,7 @@ export const useSearchStore = defineStore('search', {
     // Created on Tue Jan 14 2025
     //+-------------------------------------------------
     async callAPI(filters) {
-      let hasher = search.makeApiHash(filters)
+      let hasher = searchService.makeApiHash(filters)
       if (!hasher) {
         log('search', '🛑 Skipping search on API')
         return false

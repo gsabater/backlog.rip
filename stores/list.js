@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: Fri 31 January 2025 - 13:07:21
+ * Modified: Tue 11 March 2025 - 17:51:42
  */
 
 let $nuxt = null
@@ -43,6 +43,8 @@ export const useListStore = defineStore('list', {
     // Created on Fri Oct 25 2024
     //+-------------------------------------------------
     use(ref, populate = true) {
+      if (this.lists.length == 0) return
+
       let list = this.lists.find((item) => {
         return item.uuid == ref || item.slug == ref
       })

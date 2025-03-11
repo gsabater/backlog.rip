@@ -137,6 +137,30 @@
           </small>
 
           <small
+            v-if="visible.includes('oc') && app.scores && app.scores.oc"
+            class="text-muted text-capitalize">
+            <b-logo
+              name="opencritic"
+              size="12"
+              style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+
+            {{ app.scores.oc ?? 'Unscored' }}
+            <img
+              :src="
+                'https://backlog.rip/img/scores/' +
+                format.scoreToHuman(app.scores.oc, 'oc', 'label') +
+                '-head.png'
+              "
+              class="ms-2"
+              style="
+                max-width: 14px;
+                max-height: 14px;
+                transform: translate(-1px, -2px);
+              " />
+            {{ format.scoreToHuman(app.scores.oc, 'oc', 'label') }}
+          </small>
+
+          <small
             v-if="visible.includes('steamscore') && app.scores && app.scores.steamscore"
             class="text-muted">
             <b-logo
@@ -149,21 +173,66 @@
           </small>
 
           <small
-            v-if="visible.includes('released') && app._.released"
+            v-if="visible.includes('steamdb') && app.scores && app.scores.steamdb"
+            class="d-block text-muted text-truncate">
+            <b-logo
+              name="steamdb"
+              size="12"
+              color="#fff"
+              style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+
+            {{ Math.round(app.scores.steamdb) ?? 'Unscored db' }}
+
+            <Icon
+              v-if="app.scores.steamCount > 100000"
+              v-tippy="
+                'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'
+              "
+              class="ms-1"
+              width="1"
+              size="12">
+              Sparkles
+            </Icon>
+            <Icon
+              v-else-if="app.scores.steamCount > 10000"
+              v-tippy="
+                'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'
+              "
+              class="ms-1"
+              width="1"
+              size="12">
+              Comet
+            </Icon>
+
+            {{ app.scores.steamscoreAlt }}
+          </small>
+
+          <small
+            v-if="visible.includes('date.released') && app._.released"
             class="d-block text-muted">
             <Icon
               size="12"
-              width="1.8"
+              width="1.4"
               style="transform: translateY(-1px); margin-right: 3px">
               Calendar
             </Icon>
             {{ app._.released }}
           </small>
 
+          <small v-if="visible.includes('date.lib')" class="d-block text-muted">
+            <Icon
+              size="12"
+              width="1.4"
+              style="transform: translateY(-1px); margin-right: 3px">
+              Calendar
+            </Icon>
+            {{ app._.owned_at }}
+          </small>
+
           <small v-if="visible.includes('playtime')" class="d-block text-muted">
             <Icon
               size="12"
-              width="1.8"
+              width="1.4"
               style="transform: translateY(-1px); margin-right: 3px">
               ClockHour3
             </Icon>
@@ -183,12 +252,34 @@
             class="d-block text-muted">
             <Icon
               size="12"
-              width="1.8"
+              width="1.4"
               style="transform: translateY(-1px); margin-right: 3px">
               SquareRoundedCheck
             </Icon>
             {{ dates.minToHours(app.hltb.main / 60) }}
           </small>
+
+          <div
+            v-if="visible.includes('achievements') && app._.released"
+            class="d-block text-muted"
+            v-tippy="
+              app._.astats.hidden
+                ? app._.astats.hidden +
+                  ' achievements are hidden or marked as bugged. Achievements count is adjusted accordingly'
+                : false
+            ">
+            <Icon
+              size="12"
+              width="1.4"
+              style="transform: translateY(-1px); margin-right: 3px">
+              Trophy
+            </Icon>
+            {{ app._.astats.completed }} / {{ app._.astats.total }} ({{
+              app._.astats.percentage
+            }}%)
+            <small class="cursor-help" v-if="app._.astats.hidden > 0">˟</small>
+          </div>
+
           <slot name="details:append"></slot>
         </div>
       </slot>
@@ -202,7 +293,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 30 January 2025 - 16:39:30
+ * Modified: Mon 10 March 2025 - 15:38:21
  **/
 
 export default {
@@ -305,7 +396,7 @@ export default {
         return
       }
 
-      this.$mitt.emit('game:modal', {
+      this.$mitt.emit('game:dialog', {
         uuid: this.app.uuid,
         $list: this.$parent,
       })
@@ -384,6 +475,16 @@ export default {
     },
 
     //+-------------------------------------------------
+    // updateData()
+    // Performs a re-load of the data from the store
+    // -----
+    // Created on Thu Mar 06 2025
+    //+-------------------------------------------------
+    updateData(payload) {
+      this.app = this.dataStore.get(payload.uuid)
+    },
+
+    //+-------------------------------------------------
     // init()
     // Loads data from dataStore and sets to this.app
     // -----
@@ -402,6 +503,11 @@ export default {
 
   mounted() {
     this.init()
+
+    this.$mitt.on('game:data', (payload) => {
+      if (payload.uuid != this.app.uuid) return
+      this.updateData(payload)
+    })
 
     this.$mitt.on('state:change', (payload) => {
       if (payload.uuid != this.app.uuid) return
@@ -427,7 +533,7 @@ export default {
       this.app.state = null
       this.app.is.fav = false
       this.app.is.lib = false
-      this.app.is.dirty = false
+      // this.app.is.dirty = false
       this.app.is.pinned = false
       this.app.is.hidden = false
 
@@ -436,6 +542,7 @@ export default {
   },
 
   beforeUnmount() {
+    this.$mitt.off('game:data')
     this.$mitt.off('data:deleted')
     this.$mitt.off('state:change')
     this.$mitt.off('pinned:change')

@@ -3,8 +3,11 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Fri 17 January 2025 - 13:21:30
+ * Modified: Tue 11 March 2025 - 14:30:45
  */
+
+import axios from 'axios'
+import steamAPI from '~/services/steamAPIService'
 
 let $log = null
 let $axios = null
@@ -19,11 +22,10 @@ export default {
   //+-------------------------------------------------
 
   manifest: {
-    v: 2,
-    ver: '1.4',
+    ver: '1.5',
     name: 'Steam library integration',
     author: 'Gaspar S.',
-    updated_at: '2024-12-17',
+    updated_at: '2025-03-11',
     description:
       'Synchronize all your games and playtime for every game on Steam, including free games.',
     url: 'https://github.com/gsabater/backlog.rip/blob/master/modules/importers/steam.js',
@@ -69,11 +71,15 @@ export default {
   // Methods available are setStep, log, onError...
   // -----
   // Created on Tue Nov 29 2022
+  // Created on Wed Feb 26 2025 - Initialize axios instance
   //+-------------------------------------------------
-  connect(account, axios, log) {
-    $log = log
-    $axios = axios
+  connect(account, log) {
+    $log = log || console.debug
     $account = account
+
+    $axios ??= axios.create({
+      timeout: 60000,
+    })
 
     $axios.defaults.headers.common['Authorization'] = 'Bearer ' + account.bearer
     $log('🆗 Connection established', {
@@ -113,6 +119,38 @@ export default {
     if (xhr.data.status == 'success') {
       return xhr.data?.fetch?.data?.games || []
     }
+  },
+
+  //+-------------------------------------------------
+  // getAchievements()
+  // Gets an app achievements
+  // -----
+  // Created on Wed Feb 26 2025
+  //+-------------------------------------------------
+  async getAchievements(game) {
+    console.warn($account)
+    if (!game.id.steam) return
+    let data = null
+
+    // // Achievements via Steam API using user key
+    // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // achievements = steamAPI.GetPlayerAchievements(
+    //   $account.api_token,
+    //   $account.account,
+    //   game.id.steam
+    // )
+
+    // Get the achievements using the Backlog API
+    // This is just a proxy to "lend" the API key
+    // to users without a Steam API key
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    let url = 'https://api.backlog.rip/fetch/steam/achievements/' + game.id.steam
+    let xhr = await $axios.get(url)
+    if (xhr.data.status.includes('success')) {
+      data = xhr.data?.fetch?.data || []
+    }
+
+    return data
   },
 
   //+-------------------------------------------------
@@ -178,8 +216,8 @@ export default {
     app.playtime.steam = data.playtime_forever
     app.playtime.steam_last = data.rtime_last_played
 
-    // Flag this item as dirty to be saved by datastore
-    app.is.dirty = true
+    // Flag the item to store
+    app.toStore = true
 
     // delete app.last_played
     // delete app.enabled
@@ -187,6 +225,55 @@ export default {
     // delete app.data
 
     return app
+  },
+
+  //+-------------------------------------------------
+  // updateAchievements()
+  // Updates the achievements array with the new data
+  // -----
+  // Created on Thu Feb 27 2025
+  //+-------------------------------------------------
+  updateAchievements(app, data) {
+    let achievements = structuredClone(app.achievements || [])
+    if (!data || !data.length) return achievements
+    debugger
+
+    data.forEach((ach) => {
+      const isUnlocked = ach.achieved > 0
+      const achvStatus = {
+        status: isUnlocked ? 'unlocked' : 'locked',
+        steam: isUnlocked ? ach.unlocktime : null,
+      }
+
+      // Find existing achievement or create a new one
+      let item = achievements.find((a) => a.steam_key === ach.apiname)
+
+      // Update existing achievement
+      if (item) {
+        if (isUnlocked) {
+          item.is = item.is || {}
+          item.is.steam = achvStatus.steam
+          item.is.status = achvStatus.status
+        }
+
+        // Create new achievement
+      } else {
+        const newAchievement = {
+          name: ach.name,
+          steam_key: ach.apiname,
+          description: ach.description,
+        }
+
+        // Only add the steam unlock time if it's unlocked
+        if (isUnlocked) {
+          newAchievement.is = achvStatus
+        }
+
+        achievements.push(newAchievement)
+      }
+    })
+
+    return achievements
   },
 
   // //+-------------------------------------------------
@@ -234,30 +321,6 @@ export default {
 
     return item
   },
-
-  //+-------------------------------------------------
-  // (Deprecated) prepareToStore()
-  // Gets an app and appends data to it
-  // -----
-  // Created on Sun Dec 24 2023
-  // Updated on Tue Mar 05 2024 - New item properties
-  //+-------------------------------------------------
-  // prepareToStore(app) {
-  //   if (!app.data) console.warn('prepareToStore() called without data', app)
-
-  //   app.is.dirty = true
-
-  //   app.is.in = app.is.in || {}
-  //   app.is.in.steam = dates.stamp()
-
-  //   app.playtime = app.playtime || {}
-  //   app.playtime.steam = app.data.playtime_forever
-
-  //   app.last_played = app.last_played || {}
-  //   app.last_played.steam = app.data.rtime_last_played
-
-  //   return app
-  // },
 }
 
 // {

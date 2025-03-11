@@ -23,7 +23,7 @@
     >
 
     <div class="row">
-      <search-filters></search-filters>
+      <search-filters ref="filters"></search-filters>
 
       <div class="col-12">
         <search-results ref="results" />
@@ -76,9 +76,9 @@
                 Import your library
               </b-btn>
 
-              <b-btn class="me-3" @click.stop="$mitt.emit('game:add')">
+              <!-- <b-btn class="me-3" @click.stop="$mitt.emit('game:add')">
                 Manually add a game
-              </b-btn>
+              </b-btn> -->
 
               <b-btn to="/games">Browse all games</b-btn>
             </div>
@@ -131,14 +131,13 @@
               </p>
 
               <div v-if="isLibrary" class="empty-action mt-3">
-                <b-btn to="/import" class="btn-primary btn-sm me-3">
+                <b-btn to="/import" class="me-3">
                   <!-- <Icon>StepInto</Icon> -->
                   Import your library
                 </b-btn>
 
-                <b-btn class="btn-sm btn-primary">
+                <b-btn @click="$refs.filters.changeSource('all')">
                   Search in all games
-                  <h1>WIP</h1>
                 </b-btn>
               </div>
 
@@ -155,7 +154,7 @@
                   You can just create a game for yourself.
                 </p>
                 <div class="empty-action mt-2">
-                  <b-btn class="btn-sm btn-primary" @click="createCustomGame">
+                  <b-btn @click="createCustomGame">
                     <!-- <Icon>StepInto</Icon> -->
                     Add a game "{{ f.string }}" to your library
                   </b-btn>
@@ -196,7 +195,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Wed 29 January 2025 - 17:57:42
+ * Modified: Mon 10 March 2025 - 15:47:59
  **/
 
 export default {

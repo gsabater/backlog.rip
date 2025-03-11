@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Thu 16 January 2025 - 17:21:10
+ * Modified: Sun 02 March 2025 - 11:46:29
  */
 
 import axios from 'axios'
@@ -353,13 +353,17 @@ export default {
       let app = $data.findBySource(map[1], item.data[map[0]])
       if (!app) app = $game.create({})
 
+      // Set the game to the lib now, this ensures
+      // that the process will index the app as well
+      app.is.lib = app.is.lib || dates.stamp()
+
       app = x.module.update(app, item.data)
       items.push(app)
     })
 
     x.log('Check 6.2: Storing apps')
     await $data.process(items, 'import')
-    await $state.indexLibrary('all')
+    // await $state.indexLibrary('all')
 
     x.log('✅ Data stored')
 

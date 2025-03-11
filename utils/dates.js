@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Wed 08 January 2025 - 15:36:03
+ * Modified: Wed 05 March 2025 - 17:51:05
  */
 
 let $nuxt = null
@@ -155,6 +155,8 @@ export default {
     if (!time) return ''
     if (!$nuxt) $nuxt = useNuxtApp()
 
+    if (time < 10000000000) time *= 1000 // convert to milliseconds if needed
+
     // const timeAgo = formatTimeAgo(time)
     const timeAgo = $nuxt.$dayjs(time).fromNow()
     return timeAgo ?? 'xxx'
@@ -170,5 +172,43 @@ export default {
   microTime(ms) {
     if (ms > 1000) return format.round(ms / 1000, 2) + 's'
     return format.round(ms, 0) + 'ms'
+  },
+
+  //+-------------------------------------------------
+  // isStale()
+  // Checks if a unix timestamp is older than a specified amount of time
+  // -----
+  // Created on Thu Feb 27 2025
+  //+-------------------------------------------------
+  isStale(timestamp, amount, unit = 'hours') {
+    timestamp = parseInt(timestamp) || 0
+
+    const now = Math.floor(Date.now() / 1000) // Current unix timestamp in seconds
+    let timeToStale = amount
+
+    // Convert the amount to seconds based on unit
+    switch (unit) {
+      case 'seconds':
+        // No conversion needed
+        break
+      case 'minutes':
+        timeToStale = amount * 60
+        break
+      case 'hours':
+        timeToStale = amount * 60 * 60
+        break
+      case 'days':
+        timeToStale = amount * 24 * 60 * 60
+        break
+      case 'weeks':
+        timeToStale = amount * 7 * 24 * 60 * 60
+        break
+      default:
+        // Default to hours if unit not recognized
+        timeToStale = amount * 60 * 60
+    }
+
+    // If the timestamp is older than (now - timeToStale), it's stale
+    return now - timestamp >= timeToStale
   },
 }

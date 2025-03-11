@@ -305,11 +305,31 @@
         *| Sidebar bottom block
         *| Used to display search and other options
         *+--------------------------------- -->
-      <div
-        class="d-none d-lg-block aside-bottom w-100"
-        style="position: absolute; bottom: 10px">
-        <div v-if="$app.updating" class="px-3 my-2">
-          <div class="input-icon" style="overflow: hidden; border-radius: 4px">
+      <div class="d-lg-block aside-bottom w-100" style="position: absolute; bottom: 10px">
+        <div v-if="$app.wip || $app.updating" class="px-2 my-1">
+          <div class="card">
+            <div class="card-body" style="padding: 13px">
+              <div class="d-flex align-items-center mb-3">
+                <Icon size="18" width="1.5">Refresh</Icon>
+
+                <div class="ms-3">
+                  <div class="text-body">Sync. achievements</div>
+                  <small class="text-secondary">Please wait a moment</small>
+                </div>
+
+                <!-- <div class="ms-auto">
+                  <a href="#" class="icon d-none d-md-inline-block text-muted">
+                    <Icon size="12">DotsVertical</Icon>
+                  </a>
+                </div> -->
+              </div>
+
+              <div class="progress progress-sm">
+                <div class="progress-bar progress-bar-indeterminate"></div>
+              </div>
+            </div>
+          </div>
+          <div class="d-none input-icon" style="overflow: hidden; border-radius: 4px">
             <div class="progress progress-sm" style="position: absolute; height: 0.15rem">
               <div class="progress-bar progress-bar-indeterminate"></div>
             </div>
@@ -367,7 +387,7 @@
           <span class="v-kbd">Control + K</span>
         </button> -->
 
-        <div class="row w-100">
+        <div v-else class="row w-100">
           <div class="col col d-flex justify-content-center">
             <v-btn icon size="small" variant="text">
               <Icon size="18" style="transform: translateY(1px)">Terminal2</Icon>
@@ -994,7 +1014,7 @@
 
     <!-- <v-layout>
     </v-layout> -->
-    <game-add />
+    <!-- <game-add /> -->
     <game-dialog />
     <game-manager />
     <game-random-dialog />
@@ -1003,7 +1023,7 @@
     <list-crud-dialog />
     <!-- <list-cover id="cover-helper" /> -->
 
-    <search-palette></search-palette>
+    <!-- <search-palette></search-palette> -->
     <!-- <b-backdrop></b-backdrop> -->
     <!-- <ModalsContainer /> -->
 
@@ -1020,7 +1040,6 @@
 
     <!-- TODO: Make this a component -->
     <component :is="'style'" id="dynamic-style" type="text/css">
-      <template v-if="!$app.dev">pre{ display: none !important; }</template>
       :root{
       <template v-for="(state, i) in states">
         --bckg-state-{{ state.id }}: {{ state.color }};
@@ -1174,7 +1193,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu 30 January 2025 - 16:51:26
+ * Modified: Tue 11 March 2025 - 17:56:21
  **/
 
 export default {

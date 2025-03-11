@@ -41,6 +41,16 @@ h6 {
   letter-spacing: 0.6px;
 }
 
+pre {
+  display: none;
+}
+
+body.has-debug {
+  pre {
+    display: block;
+  }
+}
+
 // body{
 //   // background: linear-gradient(rgb(44, 45, 60) 0%, rgb(25, 26, 35) 50%);
 // }
@@ -70,11 +80,8 @@ h6 {
   --geist-background: #151f2c;
   --gradient-from: 247 185 85;
   --gradient-to: 255 0 128;
-  background: linear-gradient(
-      to top,
-      var(--geist-background) 0,
-      hsla(0, 0%, 100%, 0) 100%
-    ),
+  background:
+    linear-gradient(to top, var(--geist-background) 0, hsla(0, 0%, 100%, 0) 100%),
     linear-gradient(
       90deg,
       rgb(var(--gradient-from, 85 85 85) / 0.2) 0,

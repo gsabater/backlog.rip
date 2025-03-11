@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Thu 30 January 2025 - 16:38:19
+ * Modified: Sat 01 March 2025 - 16:52:04
  */
 
 let $nuxt = null
@@ -178,13 +178,14 @@ export const useStateStore = defineStore('state', {
     // - ✅ updates the app's state in library
     // - ✅ updates the app's states timestamp
     // - ✅ updates the state's index array
-    // - ✅ logs the change in the journal
+    // - logs the change in the journal
     // - ✅ emits a state change event
     // -----
     // Created on Sat Jan 06 2024
     // Updated on Fri May 10 2024 - Added pinned
-    // Created on Thu Jul 11 2024 - Added hidden
+    // Updated on Thu Jul 11 2024 - Added hidden
     // Updated on Thu Sep 05 2024 - Toggle a state
+    // Updated on Sat Mar 01 2025
     //+-------------------------------------------------
     set(uuid, state) {
       if (state == 'fav') {
@@ -207,32 +208,39 @@ export const useStateStore = defineStore('state', {
       let old = app.state || null
 
       if (state == app.state) {
-        this.clear(uuid, state)
+        this.clear(app, state)
         return
       }
 
       // Update the state
-      // on $game and $data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       app.state = state
-      app.is.dirty = true
       app.is.state = app.is.state || {}
       app.is.state[obj.key] = dates.stamp()
       app.is.lib = app.is.lib ?? dates.stamp()
 
       $game.app.state = state
-      $game.update(uuid, { ...app })
+      $data.process(app, 'store:state')
+
+      // Notify the app and the user
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      let amount = this.index[state]?.length ?? 0
+      $nuxt.$toast.success(app.name + ' state set as ' + obj.name, {
+        description: `${amount + 1} games in ${obj.name}`,
+      })
 
       $nuxt.$mitt.emit('state:change', {
         uuid: uuid,
         state: state,
       })
 
-      $nuxt.$toast.success(app.name + ' set as ' + obj.name, {
-        // description: 'Monday, January 3rd at 6:00pm',
-      })
+      return state
 
-      this.indexLibrary()
+      // $nuxt.$toast.success(app.name + ' set as ' + obj.name, {
+      //   // description: 'Monday, January 3rd at 6:00pm',
+      // })
+
+      // this.indexLibrary()
 
       // $journal.add({
       //   event: 'state',
@@ -250,29 +258,26 @@ export const useStateStore = defineStore('state', {
     // -----
     // Created on Mon Sep 02 2024
     //+-------------------------------------------------
-    clear(uuid, state) {
-      let app = $data.get(uuid)
+    clear(app, state) {
       let obj = this.keyed[state]
 
-      app.is.dirty = true
-      app.is.state = app.is.state || {}
-
       delete app.state
-      delete app.is.state[obj.key]
+      delete app.is.state[state]
 
       delete $game.app.state
-      $game.update(uuid, { ...app })
+      $data.process(app, 'store:state')
+
+      // Notify the app and the user
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      let amount = this.index[state]?.length ?? 1
+      $nuxt.$toast.success('The state has been cleared on ' + app.name, {
+        description: `${amount - 1} games in ${obj.name}`,
+      })
 
       $nuxt.$mitt.emit('state:change', {
-        uuid: uuid,
-        state: null,
+        uuid: app.uuid,
+        state: 'clear:' + state,
       })
-
-      $nuxt.$toast.success('The state has been cleared on ' + app.name, {
-        // description: 'Monday, January 3rd at 6:00pm',
-      })
-
-      this.indexLibrary()
     },
 
     //+-------------------------------------------------
@@ -286,28 +291,25 @@ export const useStateStore = defineStore('state', {
       let old = app.is?.fav || false
       let isFav = !old
 
-      // Update the status
-      // on $game and $data
+      // Update the state
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
       app.is.fav = isFav
-      app.is.dirty = true
       app.is.lib = app.is.lib ?? dates.stamp()
 
       $game.app.is.fav = isFav
-      $game.update(uuid, { ...app })
+      $data.process(app, 'store:state:fav')
+
+      // Notify the app and the user
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      $nuxt.$toast.success(
+        app.name + ' has been ' + (old ? 'removed from favorites' : 'added to favorites')
+      )
 
       $nuxt.$mitt.emit('state:change', {
         uuid: uuid,
         state: 'fav',
         fav: isFav,
       })
-
-      $nuxt.$toast.success(
-        'Game has been ' + (old ? 'removed from favorites' : 'added to favorites')
-      )
-
-      this.indexLibrary('fav')
     },
 
     //+-------------------------------------------------
@@ -319,28 +321,24 @@ export const useStateStore = defineStore('state', {
     pin(uuid) {
       let app = $data.get(uuid)
       let old = app.is?.pinned || false
+      let isPinned = !old
 
-      // Update the status
-      // on $game and $data
+      // Update the state
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-      app.is.dirty = true
-      app.is.pinned = !old
+      app.is.pinned = isPinned
       app.is.lib = app.is.lib ?? 0
 
-      $game.app.is.pinned = !old
-      $game.update(uuid, { ...app })
+      $game.app.is.pinned = isPinned
+      $data.process(app, 'store:state:pinned')
 
-      $nuxt.$mitt.emit('pinned:change', {
+      // Notify the app and the user
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      $nuxt.$toast.success(app.name + ' has been ' + (!isPinned ? 'unpinned' : 'pinned'))
+
+      $nuxt.$mitt.emit('state:change', {
         uuid: uuid,
-        pinned: !old,
+        pinned: isPinned,
       })
-
-      $nuxt.$toast.success('Game has been ' + (old ? 'unpinned' : 'pinned'), {
-        // description: 'Monday, January 3rd at 6:00pm',
-      })
-
-      this.indexLibrary('pinned')
     },
 
     //+-------------------------------------------------
@@ -353,27 +351,22 @@ export const useStateStore = defineStore('state', {
       let app = $data.get(uuid)
       let old = app.is?.hidden || false
 
-      // Update the hidden status
-      // on $game and $data
+      // Update the state
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-      app.is.dirty = true
       app.is.hidden = !old
       app.is.lib = app.is.lib ?? 0
 
       $game.app.is.hidden = !old
-      $game.update(uuid, { ...app })
+      $data.process(app, 'store:state:hidden')
 
-      $nuxt.$mitt.emit('hidden:change', {
+      // Notify the app and the user
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      $nuxt.$toast.success(app.name + ' has been ' + (!old ? 'hidden' : 'restored'))
+
+      $nuxt.$mitt.emit('state:change', {
         uuid: uuid,
         hidden: !old,
       })
-
-      $nuxt.$toast.success('Game has been ' + (old ? 'unhidden' : 'hidden'), {
-        // description: 'Monday, January 3rd at 6:00pm',
-      })
-
-      this.indexLibrary('hidden')
     },
 
     //+-------------------------------------------------
@@ -423,6 +416,7 @@ export const useStateStore = defineStore('state', {
       if (scan == 'fav' || scan == 'all') {
         let fav = library.filter((app) => app.is && app.is.fav).map((app) => app.uuid)
         $data.setIndex('fav', fav)
+        $nuxt.$app.count['fav'] = fav.length || 0
       }
 
       // Scan all data for special
@@ -435,7 +429,10 @@ export const useStateStore = defineStore('state', {
         let hidden = data.filter((app) => app.is && app.is.hidden).map((app) => app.uuid)
 
         $data.setIndex('pinned', pinned)
+        $nuxt.$app.count['pinned'] = pinned.length || 0
+
         $data.setIndex('hidden', hidden)
+        $nuxt.$app.count['hidden'] = hidden.length || 0
       }
     },
 

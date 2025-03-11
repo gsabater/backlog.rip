@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Tue 04 March 2025 - 17:31:05
+ * Modified: Tue 11 March 2025 - 17:59:01
  */
 
 // import { reactive } from 'vue'
@@ -26,8 +26,8 @@ let $search = null
 let $integration = null
 
 let app = {
-  v: '0.18.6 β', //β
-  t: 1738169255103, // Date.now()
+  v: '0.19.4 β', //β
+  t: 1741278088181, // Date.now()
 
   // Global app state
   // Controls modules boundaries
@@ -208,6 +208,7 @@ async function initClient() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   await $data.init()
+  apiService.init()
   $search.init()
   $integration.init()
   await $state.init()
@@ -221,8 +222,11 @@ async function initClient() {
   $cloud.connect()
 
   // console.groupEnd()
-  await delay(333)
+  // await delay(333)
   app.ready = true
+
+  // emit.app:ready
+  if (document?.body && app.dev) document.body.classList.add('has-debug')
 }
 
 export default defineNuxtPlugin(() => {

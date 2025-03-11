@@ -3,7 +3,7 @@
  * @desc:    Handle operations related to data with their index
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Wed 05 March 2025 - 16:29:14
+ * Modified: Tue 11 March 2025 - 17:57:17
  */
 
 import gameService from '../services/gameService'
@@ -122,14 +122,6 @@ export const useDataStore = defineStore('data', {
         items[Math.floor(Math.random() * items.length)]
       )
 
-      // Precompute intent-related flags
-      const isLibrary = intent === 'library'
-      const isAPI = intent.includes('api')
-      const isUpdate = intent.includes('update:')
-      const isStore = intent.includes('store:') || intent.includes('updated:')
-      const isImport = intent === 'import' || intent.includes('list:')
-      const isAdd = intent.includes('add:')
-
       for (const item of items) {
         if (!item?.uuid || item === true || (Array.isArray(item) && item.length === 0)) {
           console.error('🔥', item, intent)
@@ -175,9 +167,14 @@ export const useDataStore = defineStore('data', {
         // Handle api items
         // Those items come from the api and usually they arent prepared to data
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (intent === 'api' || intent.includes('api:')) {
+        if (intent === 'api' || intent.includes('api:') || intent.includes('list:')) {
           item.id = item.id || {}
           item.id.api = item.uuid
+
+          if (intent.includes('list:')) {
+            this.toData(item)
+            continue
+          }
 
           // If the game is already indexed and just
           // comes from the api, check if contains updates

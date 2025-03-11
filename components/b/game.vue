@@ -293,7 +293,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 06 March 2025 - 19:43:11
+ * Modified: Mon 10 March 2025 - 15:38:21
  **/
 
 export default {
@@ -395,7 +395,7 @@ export default {
         this.action(this.app)
         return
       }
-      console.warn('1')
+
       this.$mitt.emit('game:dialog', {
         uuid: this.app.uuid,
         $list: this.$parent,
@@ -475,13 +475,12 @@ export default {
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // updateData()
+    // Performs a re-load of the data from the store
     // -----
     // Created on Thu Mar 06 2025
     //+-------------------------------------------------
     updateData(payload) {
-      debugger
       this.app = this.dataStore.get(payload.uuid)
     },
 
@@ -506,7 +505,6 @@ export default {
     this.init()
 
     this.$mitt.on('game:data', (payload) => {
-      debugger
       if (payload.uuid != this.app.uuid) return
       this.updateData(payload)
     })

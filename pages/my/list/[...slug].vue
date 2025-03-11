@@ -83,7 +83,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th September 2024
- * Modified: Fri 31 January 2025 - 11:11:00
+ * Modified: Tue 11 March 2025 - 16:45:04
  **/
 
 export default {
@@ -193,15 +193,16 @@ export default {
   backdrop-filter: blur(var(--blur));
   --r: max(var(--transition-length), calc(var(--radius) - var(--inset)));
   --corner-size: calc(var(--r) + var(--inset)) calc(var(--r) + var(--inset));
-  --corner-gradient: transparent 0px,
-    transparent calc(var(--r) - var(--transition-length)), black var(--r);
-  --fill-gradient: black, black var(--inset),
-    transparent calc(var(--inset) + var(--transition-length)),
+  --corner-gradient:
+    transparent 0px, transparent calc(var(--r) - var(--transition-length)), black var(--r);
+  --fill-gradient:
+    black, black var(--inset), transparent calc(var(--inset) + var(--transition-length)),
     transparent calc(100% - var(--transition-length) - var(--inset)),
     black calc(100% - var(--inset));
   --fill-narrow-size: calc(100% - (var(--inset) + var(--r)) * 2);
   --fill-farther-position: calc(var(--inset) + var(--r));
-  -webkit-mask-image: linear-gradient(to right, var(--fill-gradient)),
+  -webkit-mask-image:
+    linear-gradient(to right, var(--fill-gradient)),
     linear-gradient(to bottom, var(--fill-gradient)),
     radial-gradient(at bottom right, var(--corner-gradient)),
     radial-gradient(at bottom left, var(--corner-gradient)),

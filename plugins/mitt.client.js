@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Wed 05 March 2025 - 16:28:28
+ * Modified: Mon 10 March 2025 - 12:49:45
  */
 
 //+-------------------------------------------------
@@ -54,7 +54,6 @@ function handle(event, payload) {
     // Similar to data changes but specific to library or owned
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     case 'library:added':
-      debugger
       $data ??= useDataStore()
       $data.countLibrary()
       break

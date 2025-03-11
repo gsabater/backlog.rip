@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Fri 07 February 2025 - 17:57:40
+ * Modified: Tue 11 March 2025 - 16:43:16
  */
 
 let $nuxt = null
@@ -257,8 +257,10 @@ export const useSearchStore = defineStore('search', {
     getSource(filters) {
       // Source is an array of fixed items
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (Array.isArray(filters.source) && filters.source.length)
-        return { type: 'array', apps: filters.source }
+      if (Array.isArray(filters.source)) {
+        if (filters.source.length) return { type: 'array', apps: filters.source }
+        else return { type: 'array', apps: [] }
+      }
 
       // Source is all games
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -275,21 +277,21 @@ export const useSearchStore = defineStore('search', {
         filters.source == 'library' ||
         filters.source.includes('state:')
       ) {
-        return { type: 'library', apps: $data.library('object') }
+        return { type: 'library', apps: $data.library() }
       }
 
       if (filters.source.includes(':pinned')) {
-        return { type: 'pinned', apps: $data.library('object') }
+        return { type: 'pinned', apps: $data.list() }
       }
 
       // TODO: this could be a pre-filter in $data
       // that can potentially be better than filtering in the service the whole lib
       if (filters.source.includes(':hidden')) {
-        return { type: 'hidden', apps: $data.library('object') }
+        return { type: 'hidden', apps: $data.library() }
       }
 
       if (filters.source.includes(':favorites')) {
-        return { type: 'favorites', apps: $data.library('object') }
+        return { type: 'favorites', apps: $data.library() }
       }
 
       // if (!filters.is) apps = $data.library('object')

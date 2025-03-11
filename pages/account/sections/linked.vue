@@ -27,7 +27,160 @@
     </div>
   </div> -->
 
-  <div class="card mb-3">
+  <template v-for="account in accounts">
+    <div class="card mb-3">
+      <div class="list-group card-list-group">
+        <div
+          v-if="linked[account]"
+          class="list-group-item px-3 cursor-pointer text-decoration-none"
+          style="padding-top: 0.8rem; padding-bottom: 0.8rem">
+          <div class="row g-3 align-items-center">
+            <!-- <div class="col-auto text-secondary">
+            <v-btn variant="text" icon="mdi-chevron-right" size="small">
+              <Icon>Badge</Icon>
+            </v-btn>
+          </div> -->
+
+            <div class="col-auto">
+              <span
+                v-if="linked[account].avatar"
+                class="avatar"
+                style="
+                  background-image: url(/img/logos/steam.png);
+                  background-color: transparent;
+                "
+                :style="{
+                  backgroundImage: `url(${linked[account].avatar})`,
+                }">
+                <span
+                  v-if="libraryStore.isLinked(account)"
+                  class="badge bg-success"></span>
+                <span v-else class="badge bg-danger"></span>
+              </span>
+              <span v-else>
+                <img
+                  :src="linked[account].manifest.source.logo"
+                  alt=""
+                  style="max-height: 40px" />
+              </span>
+            </div>
+            <div v-if="linked[account]" class="col">
+              <span class="font-serif">{{ linked[account].manifest.source.name }}</span>
+              <div class="v-list-item-subtitle">
+                <small>{{ text[account].description }}</small>
+              </div>
+            </div>
+
+            <div class="col-auto">
+              <v-btn
+                v-if="libraryStore.isLinked(account)"
+                variant="tonal"
+                size="small"
+                color="green-darken-2">
+                <span class="status-dot status-dot-animated status-green me-2"></span>
+                {{ linked[account].username }}
+              </v-btn>
+
+              <v-btn v-else variant="text" size="small" color="blue-grey-lighten-3">
+                Connect account
+                <Icon size="12" width="1.5" class="ms-2">ExternalLink</Icon>
+              </v-btn>
+            </div>
+
+            <!-- <div class="col-auto text-secondary" @click.prevent="() => {}">
+            <div style="position: relative">
+              <v-btn
+                variant="text"
+                icon="mdi-chevron-right"
+                size="x-small"
+                color="grey-lighten-1">
+                <Icon size="18" width="2">DotsVertical</Icon>
+              </v-btn>
+              <b-dropdown
+                trigger="mouseenter focus click hover manual"
+                placement="bottom-end"
+                :debounce="15"
+                style="min-width: 180px">
+                <div class="dropdown-item">
+                  <Icon size="16" class="me-2 text-muted">Pencil</Icon>
+                  Edit details
+                </div>
+
+                <div class="dropdown-item">
+                  <Icon size="16" class="me-2 text-muted">Replace</Icon>
+                  Modify list
+                </div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item text-red">
+                  <Icon size="16" class="me-2 text-red">Trash</Icon>
+                  Delete list
+                </div>
+              </b-dropdown>
+            </div>
+          </div> -->
+
+            <!-- <div class="col-auto text-secondary">
+            <v-btn variant="tonal" icon="mdi-chevron-right" size="small">
+              <Icon>ChevronRight</Icon>
+            </v-btn>
+          </div> -->
+          </div>
+        </div>
+        <div
+          class="list-group-item px-3 text-decoration-none"
+          style="
+            padding-top: 0.4rem;
+            padding-bottom: 0.8rem;
+            background-color: rgb(0 0 0 / 25%);
+          ">
+          <div class="row g-3 align-items-center">
+            <!-- <div class="col-auto text-secondary">
+            <v-btn variant="text" icon="mdi-chevron-right" size="small">
+              <Icon>Badge</Icon>
+            </v-btn>
+          </div> -->
+            <div class="col">
+              <h5 class="mt-2 mb-1">Syncronize</h5>
+              <div
+                class="v-list-item-subtitle ps-1"
+                style="font-size: 85.714285% !important">
+                Update your library with your Steam games and playtime.
+                <br />
+                Unlock and track achievements automatically.
+              </div>
+
+              <h5 class="mt-3 mb-1">Requirements</h5>
+              <div
+                class="v-list-item-subtitle ps-1"
+                style="font-size: 85.714285% !important">
+                A public Steam profile or a Steam API Key is needed.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="$app.wip && libraryStore.isLinked(account)" class="card-footer">
+        <small>
+          Last updated {{ $moment(linked[account].updated_at).format('LL') }}
+          <template v-if="$cloud.sub">
+            🔸
+            <span class="text-muted cursor-help">
+              <Icon
+                width="1.2"
+                size="14"
+                class="me-1"
+                style="transform: translateY(-1px)">
+                Cards
+              </Icon>
+              <strong>{{ linked[account].games }} games in this integration</strong>
+            </span>
+          </template>
+        </small>
+      </div>
+    </div>
+  </template>
+
+  <div v-if="$app.wip" class="card mb-3">
     <div class="list-group card-list-group">
       <div
         class="list-group-item px-3 cursor-pointer text-decoration-none"
@@ -136,7 +289,7 @@
     </div>
   </div>
 
-  <div class="card mb-3">
+  <div v-if="$app.wip" class="card mb-3">
     <div class="list-group card-list-group">
       <div
         class="list-group-item px-3 cursor-pointer text-decoration-none"
@@ -211,7 +364,7 @@
     </div>
   </div>
 
-  <div class="row row-cards">
+  <div v-if="$app.wip" class="row row-cards">
     <template v-for="(mod, platform) in libraryStore.module" :key="platform">
       <div v-if="mod && mod.manifest" class="col-6">
         <import-card :module="mod" :integration="integration(platform)">
@@ -257,21 +410,34 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Thu 27 February 2025 - 23:19:58
+ * Modified: Tue 11 March 2025 - 15:57:38
  **/
 
 export default {
   name: 'AccountLinked',
 
   data() {
-    return {}
+    return {
+      text: {
+        steam: {
+          description: 'Import your Steam library, playtime and achievements',
+        },
+        steamBacklog: {
+          description: 'Import game statuses and progress from steam-backlog.com',
+        },
+      },
+    }
   },
 
   computed: {
     ...mapStores(useLibraryStore),
 
-    section() {
-      return this.$route.params.section
+    accounts() {
+      return this.libraryStore?.integrations ?? {}
+    },
+
+    linked() {
+      return this.libraryStore?.linked ?? {}
     },
   },
 

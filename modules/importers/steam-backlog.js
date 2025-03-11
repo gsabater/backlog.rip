@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th November 2024
- * Modified: Sat 01 March 2025 - 22:45:31
+ * Modified: Tue 11 March 2025 - 14:30:49
  */
 
 let $log = null
@@ -30,7 +30,6 @@ export default {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   manifest: {
-    v: 1,
     ver: '1.0',
     name: 'Steam Backlog integration',
     author: 'Gaspar S.',

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 31st December 2024
- * Modified: Wed 05 March 2025 - 22:36:50
+ * Modified: Tue 11 March 2025 - 16:32:00
  */
 
 import queueService from './queueService'
@@ -481,6 +481,8 @@ export default {
       return
     }
 
-    debugger
+    // This means the app is duplicated but did not fall in the previous case
+    // WIP there is still work to be done
+    // debugger
   },
 }

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th November 2024
- * Modified: Thu 27 February 2025 - 23:25:28
+ * Modified: Tue 11 March 2025 - 15:49:47
  */
 
 let $nuxt = null
@@ -11,11 +11,14 @@ let $nuxt = null
 import steam from '~/modules/importers/steam'
 import steamBacklog from '~/modules/importers/steam-backlog'
 
+// Available integration modules
+const INTEGRATIONS = ['steam', 'steamBacklog']
+
 export const useLibraryStore = defineStore('library', {
   state: () => ({
     linked: {},
     module: {},
-    integrations: ['steam', 'steamBacklog'],
+    integrations: INTEGRATIONS,
 
     base: {
       data: {},
@@ -36,85 +39,121 @@ export const useLibraryStore = defineStore('library', {
   actions: {
     //+-------------------------------------------------
     // connect()
-    // Connects the module with its link (lib:[module])
-    // Also appends the bearer from the user to enable API calls
+    // Connects modules with their respective links
+    // Appends the bearer token from the user to enable API calls
     // -----
     // Created on Wed Feb 26 2025
     //+-------------------------------------------------
     connect(modules) {
       modules.forEach((module) => {
-        let account = this.linked[module]
+        const account = this.linked[module]
+        if (!account) return
+
         account.bearer = $nuxt.$auth.user.bearer
 
-        if (this.module[module].connect) {
+        if (this.module[module]?.connect) {
           this.module[module].connect(account)
         }
       })
     },
 
     //+-------------------------------------------------
-    // autoLink()
-    // Quick method to autolink existing credentials
+    // autoLinkAccounts()
+    // Automatically links existing credentials from auth providers
     // -----
     // Created on Tue Nov 26 2024
     //+-------------------------------------------------
-    autoLink() {
-      // Autolink Steam
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (
-        $nuxt.$auth.user.steam &&
-        (!this.linked.steam?.v || this.module.steam.manifest.v > this.linked.steam.v)
-      ) {
-        let provider = $nuxt.$auth.user.providers.find((p) => p.provider == 'steam')
+    autoLinkAccounts() {
+      this._autolinkSteam()
+      this._autolinkSteamBacklog()
+    },
 
-        this.link('steam', {
-          ...provider.data,
-          updated_at: $nuxt.$auth.user.steam_updated_at,
-        })
+    _autolinkSteam() {
+      const user = $nuxt.$auth.user
+      if (!user.steam) return
+      if (this.linked.steam) return
 
-        delete $nuxt.$auth.user.steam_data
-        delete $nuxt.$auth.user.steam_updated_at
+      const provider = user.providers.find((p) => p.provider == 'steam')
+      if (!provider) {
+        console.warn('Steam provider not found')
+        return
       }
 
-      // Autolink Steam Backlog
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (
-        $nuxt.$auth.user.steam &&
-        (!this.linked.steamBacklog?.v ||
-          this.module.steamBacklog.manifest.v > this.linked.steamBacklog.v)
-      ) {
-        this.link('steamBacklog', {
-          steamid: $nuxt.$auth.user.steam,
-        })
-      }
+      this.registerLib('steam', {
+        ...provider.data,
+      })
+
+      delete $nuxt.$auth.user.steam_data
+      delete $nuxt.$auth.user.steam_updated_at
+    },
+
+    _autolinkSteamBacklog() {
+      const user = $nuxt.$auth.user
+      if (!user.steam) return
+      if (this.linked.steamBacklog) return
+
+      this.registerLib('steamBacklog', {
+        steamid: $nuxt.$auth.user.steam,
+      })
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // registerLib()
+    // Registers a platform with account data
+    // Registering means storing the account data into $db
     // -----
     // Created on Tue Nov 26 2024
     //+-------------------------------------------------
-    // WIP -> change to bind() ?? and linked to link[]
-    async link(source, data) {
-      if (!data) return
-
-      // await $nuxt.$db.account.put({
-      //   uuid: 'lib:' + source,
-      //   ...data,
-      // })
+    async registerLib(source, value) {
+      if (!value) return
 
       // prettier-ignore
-      let item = this.module[source].linkAccount({
-        ...this.base}, data)
+      let item = this.module[source].linkAccount(
+        { ...this.base}, value
+      )
 
-      this.linked[source] = item
+      item.uuid = 'lib:' + source
       await $nuxt.$db.account.put({
-        uuid: 'lib:' + source,
         ...item,
       })
 
+      this.link(source, item)
       log('🔗 Platform linked', source, this.linked)
+    },
+
+    //+-------------------------------------------------
+    // updateLib()
+    // Updates a linked library. Takes values from this.linked
+    // -----
+    // Created on Tue Mar 11 2025
+    //+-------------------------------------------------
+    async updateLib(source) {
+      const data = JSON.parse(JSON.stringify(this.linked[source]))
+      delete data.manifest
+      await $nuxt.$db.account.put({
+        ...data,
+      })
+    },
+
+    //+-------------------------------------------------
+    // link()
+    // Links a $db library to their module into this.linked
+    // This is the main object used by the app
+    // -----
+    // Created on Sat Mar 08 2025
+    //+-------------------------------------------------
+    link(source, data) {
+      data.uuid = 'lib:' + source
+      data.manifest = this.module[source].manifest
+
+      // Dynamic fields on Steam Backlog
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (source == 'steamBacklog') {
+        data.avatar = this.linked.steam.avatar
+        data.username = this.linked.steam.username
+      }
+
+      this.linked[source] = data
     },
 
     //+-------------------------------------------------
@@ -128,28 +167,26 @@ export const useLibraryStore = defineStore('library', {
     },
 
     //+-------------------------------------------------
-    // configure()
-    // Load the library configuration values from $db
+    // loadRegisteredPlatforms()
+    // Loads registered platforms from database
     // This "accounts" are not loaded on user store because
     // They are specific to the library modules.
     // -----
     // Created on Tue Nov 26 2024
     //+-------------------------------------------------
-    async configure() {
+    async loadRegisteredPlatforms() {
       if (this.loaded) return
       this.loaded = true
 
+      // Only load active integrations
+      const activeIntegrations = this.integrations.filter((source) => this.module[source])
+
       await Promise.all(
-        Object.keys(this.module).map(async (source) => {
-          let db = await $nuxt.$db.account.get('lib:' + source)
+        activeIntegrations.map(async (source) => {
+          const db = await $nuxt.$db.account.get('lib:' + source)
           if (!db) return
 
-          if (source == 'steamBacklog' && this.linked.steam) {
-            db.avatar = this.linked.steam.avatar
-            db.username = this.linked.steam.username
-          }
-
-          this.linked[source] = db
+          this.link(source, db)
         })
       )
 
@@ -161,12 +198,12 @@ export const useLibraryStore = defineStore('library', {
     },
 
     //+-------------------------------------------------
-    // load()
-    // Assign module instances to this store
+    // loadModules()
+    // Loads integration module implementations
     // -----
     // Created on Tue Nov 26 2024
     //+-------------------------------------------------
-    async load() {
+    async loadModules() {
       this.module.steam = steam
       this.module.steamBacklog = steamBacklog
     },
@@ -180,10 +217,10 @@ export const useLibraryStore = defineStore('library', {
     async init() {
       $nuxt ??= useNuxtApp()
 
-      await this.load()
-      await this.configure()
+      await this.loadModules()
+      await this.loadRegisteredPlatforms()
 
-      this.autoLink()
+      this.autoLinkAccounts()
       this.connect(['steam'])
 
       if (window)

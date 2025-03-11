@@ -648,7 +648,7 @@
  * @desc:    ... https://davidwalsh.name/detect-sticky
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Tue 04 March 2025 - 16:37:30
+ * Modified: Mon 10 March 2025 - 15:39:22
  **/
 
 export default {
@@ -771,7 +771,7 @@ export default {
     // Updated on Mon Nov 25 2024 - Added URL replacement
     //+-------------------------------------------------
     async loadAndShow(payload) {
-      this.$list = payload.$list.items || payload.list
+      this.$list = payload.$list?.items || payload.list
       this.load(payload.uuid)
       this.show()
 

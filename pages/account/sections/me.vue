@@ -149,7 +149,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 30 January 2025 - 14:21:19
+ * Modified: Thu 13 March 2025 - 15:02:23
  **/
 
 export default {
@@ -170,7 +170,7 @@ export default {
       this.$auth.update(field, value)
       this.$toast.success('Your preferences have been updated')
 
-      // if (store == 'config') this.$auth.storeConfig(field)
+      // if (store == 'config') this.$auth.setConfig(field)
       // else this.$auth.updateAccount(field)
     },
 

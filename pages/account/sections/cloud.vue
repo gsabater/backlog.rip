@@ -39,7 +39,7 @@
               v-model="$auth.config.cloud"
               class="form-check-input position-static"
               type="checkbox"
-              @change="storeConfig('cloud')" />
+              @change="setConfig('cloud')" />
             <span class="form-check-label form-check-label-on">
               Cloud Sync is enabled
             </span>
@@ -74,7 +74,7 @@
                   v-model="$auth.config.cloud_resolve"
                   type="checkbox"
                   class="form-check-input"
-                  @change="storeConfig('cloud_resolve')" />
+                  @change="setConfig('cloud_resolve')" />
                 <span class="form-check-label form-label">
                   <Icon
                     size="14"
@@ -99,7 +99,7 @@
                 v-model.number="$auth.config.cloud_tolerance"
                 density="comfortable"
                 type="number"
-                @blur="storeConfig('cloud_tolerance')" />
+                @blur="setConfig('cloud_tolerance')" />
             </div>
             <div class="col-4">
               <label class="form-label">Action on conflict</label>
@@ -112,7 +112,7 @@
                 ]"
                 item-title="title"
                 item-value="value"
-                @update:model-value="storeConfig('cloud_action')" />
+                @update:model-value="setConfig('cloud_action')" />
             </div>
           </div>
         </div>
@@ -402,7 +402,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th August 2024
- * Modified: Wed 29 January 2025 - 17:52:16
+ * Modified: Thu 13 March 2025 - 15:02:12
  **/
 
 export default {
@@ -418,13 +418,13 @@ export default {
 
   methods: {
     //+-------------------------------------------------
-    // storeConfig()
+    // setConfig()
     // Updates a field in the db via $auth
     // -----
     // Created on Mon Dec 18 2023
     //+-------------------------------------------------
-    async storeConfig(field) {
-      this.$auth.storeConfig(field)
+    async setConfig(field) {
+      this.$auth.setConfig(field)
       this.$toast.success('Your preferences have been saved')
       await delay(333)
 

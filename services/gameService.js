@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Wed 05 March 2025 - 15:46:56
+ * Modified: Thu 13 March 2025 - 17:09:50
  */
 
 let $nuxt = null
@@ -24,10 +24,12 @@ export default {
     if (app.uuid.includes('local:') && !app.id.api) return
     if (app._.detail.includes('full') && !app._.detail.includes(':outdated')) return
 
+    const uuid = app.id.api || app.uuid
+    if (!uuid || uuid.includes('local:')) return
+
     // Load and return
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     $nuxt ??= useNuxtApp()
-    const uuid = app.id.api || app.uuid
     const xhr = await $nuxt.$axios.get(`/get/${uuid}.json`)
 
     if (xhr.status == 200) {

@@ -3,12 +3,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Mon 10 March 2025 - 12:49:45
+ * Modified: Thu 13 March 2025 - 17:22:09
  */
 
 //+-------------------------------------------------
 // Codex: List of events
-// ⇢ Initial lifecycle
+// ⇢ engine initialization
 // |- $app.initClient() , on mounted from default layout
 //   |- $user.authenticate()
 //   |- $guild.ping() <- CHANGE TO EVENT on user:ready
@@ -21,6 +21,7 @@
 //+-------------------------------------------------
 
 import mitt from 'mitt'
+import queueService from '../services/queueService'
 
 let $data = null
 let $game = null
@@ -34,20 +35,19 @@ let $state = null
 //+-------------------------------------------------
 function handle(event, payload) {
   switch (event) {
-    // Application hooks
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     case 'data:ready':
       $data ??= useDataStore()
       $data.countLibrary()
       break
 
-    // Hook used by search to search again
     case 'data:updated':
       break
 
     case 'data:deleted':
       $data ??= useDataStore()
       $data.countLibrary()
+
+      queueService.queue('library', 'cloud')
       break
 
     // A game has been added to the library
@@ -59,7 +59,6 @@ function handle(event, payload) {
       break
 
     // A game has changed its state
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     case 'state:change':
       $data ??= useDataStore()
       $state ??= useStateStore()
@@ -68,16 +67,30 @@ function handle(event, payload) {
       $state.indexLibrary('all')
       break
 
-    // Cloud sync events
+    // A game dialog is opened
+    // case 'game:modal':
+    //   break
+
+    // States have been changed
+    case 'state:created':
+    case 'state:updated':
+    case 'state:deleted':
+      $state ??= useStateStore()
+
+      $state.load('reload')
+      queueService.queue('states', 'cloud')
+      break
+
+    // The user data has been updated
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    case 'config:updated':
+    case 'account:updated':
+      queueService.queue('account', 'cloud')
+      break
+
     case 'sync:done':
       // dataService.updateBatch(['empty', ':outdated'])
       break
-
-    // Game events
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // case 'game:modal':
-    //   break
 
     default:
       break

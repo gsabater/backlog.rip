@@ -549,7 +549,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 3rd March 2025
- * Modified: Sun 09 March 2025 - 11:37:54
+ * Modified: Thu 13 March 2025 - 17:21:05
  **/
 
 export default {
@@ -640,7 +640,6 @@ export default {
     // Created on Sun Mar 02 2025
     //+-------------------------------------------------
     setAchAs(achKey, status) {
-      debugger
       let ach = this.app.achievements.find((a) => a.steam_key == achKey)
       if (status == 'clear') delete ach.is
       else {

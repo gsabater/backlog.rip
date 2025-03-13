@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Tue 11 March 2025 - 17:59:01
+ * Modified: Thu 13 March 2025 - 17:28:58
  */
 
 // import { reactive } from 'vue'
@@ -26,7 +26,7 @@ let $search = null
 let $integration = null
 
 let app = {
-  v: '0.19.4 β', //β
+  v: '0.19.5 β', //β
   t: 1741278088181, // Date.now()
 
   // Global app state
@@ -226,7 +226,41 @@ async function initClient() {
   app.ready = true
 
   // emit.app:ready
-  if (document?.body && app.dev) document.body.classList.add('has-debug')
+  setDebug()
+}
+
+//+-------------------------------------------------
+// setDebug()
+// Sets the debug mode
+// -----
+// Created on Thu Mar 13 2025
+//+-------------------------------------------------
+function setDebug(value = null) {
+  if (value !== null) app.dev = value
+
+  if (app.dev) {
+    if (document?.body) document.body.classList.add('has-debug')
+  } else {
+    if (document?.body) document.body.classList.remove('has-debug')
+  }
+}
+
+//+-------------------------------------------------
+// startEngines()
+//
+// -----
+// Created on Wed Mar 12 2025
+//+-------------------------------------------------
+async function startEngines() {
+  // Make requests in batches and await them
+  // Level 0, user authenticate
+  // Level 1, data init
+  // Level 2, service init...
+  // ...
+  // Level 9, ready
+  // Level 10, sync background library
+  // Level 11, sync background achievements
+  // Level 12, cloud sync
 }
 
 export default defineNuxtPlugin(() => {
@@ -235,6 +269,8 @@ export default defineNuxtPlugin(() => {
   app = reactive({
     init,
     initClient,
+
+    setDebug,
     toggleSidebar,
 
     ...app,

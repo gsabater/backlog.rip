@@ -807,7 +807,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Tue 11 March 2025 - 14:31:04
+ * Modified: Thu 13 March 2025 - 15:02:34
  **/
 
 export default {
@@ -1277,8 +1277,8 @@ export default {
       this.process.ready = true
     },
 
-    storeConfig(field) {
-      this.$auth.storeConfig(field)
+    setConfig(field) {
+      this.$auth.setConfig(field)
       this.$toast.success('Your preferences have been updated')
     },
 

@@ -3,13 +3,14 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Tue 11 March 2025 - 15:52:05
+ * Modified: Thu 13 March 2025 - 16:09:37
  */
 
 import { useThrottleFn } from '@vueuse/core'
 
 let $nuxt = null
 let $data = null
+let $cloud = null
 let runner = null
 
 let queue = {
@@ -24,12 +25,10 @@ let queue = {
 // Runs the queue to persist data
 // -----
 // Created on Thu Jan 30 2025
+// Updated on Wed Mar 12 2025 - Handle cloud queue
 //+-------------------------------------------------
 async function run() {
   $data ??= useDataStore()
-
-  // WIP: cloud queue
-  // debugger
 
   // Handle queue "add"
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,9 +52,21 @@ async function run() {
     queue.swap.forEach(async (uuid) => {
       await this.swap(uuid)
     })
+
+    queue.swap = []
   }
 
-  if (queue.cloud.length > 0) debugger
+  // Handle cloud sync
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (queue.cloud.length > 0) {
+    $cloud ??= useCloudStore()
+    queue.cloud.forEach((dimension) => {
+      $cloud.client[dimension] = '0.update'
+    })
+
+    $cloud.sync()
+    queue.cloud = []
+  }
 }
 
 export default {
@@ -76,8 +87,10 @@ export default {
 
     if (action == 'add') queue.add.push(uuid)
     if (action == 'swap') queue.swap.push(uuid)
-    if (action == 'cloud') queue.cloud.push(uuid)
     if (action == 'delete') queue.delete.push(uuid)
+
+    if (action == 'cloud') queue.cloud.push(uuid)
+    else queue.cloud.push('library')
 
     log(`⛓️ Queueing to ${action} (${queue[action].length})`, uuid)
     // if (action == 'cloud') log('⛓️ Queueing ' + uuid + ' to the cloud')

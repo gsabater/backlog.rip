@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Sat 01 March 2025 - 16:52:04
+ * Modified: Wed 12 March 2025 - 16:22:02
  */
 
 let $nuxt = null
@@ -89,6 +89,7 @@ export const useStateStore = defineStore('state', {
     // -----
     // Created on Tue Jun 18 2024
     // Updated on Thu Sep 05 2024 - Up`dates the cloud
+    // Updated on Wed Mar 12 2025 - Emit event
     //+-------------------------------------------------
     async create(data) {
       delete data.action
@@ -97,8 +98,11 @@ export const useStateStore = defineStore('state', {
       data.updated_at = dates.now()
 
       const id = await $nuxt.$db.states.put(data)
-      await this.load(true)
-      $cloud.update('states')
+      $nuxt.$mitt.emit('state:created', data)
+
+      // this.load(true)
+      // $cloud.update('states')
+      // queueService.queue('states', 'cloud')
 
       return id
     },
@@ -109,14 +113,17 @@ export const useStateStore = defineStore('state', {
     // -----
     // Created on Thu Jun 20 2024
     // Updated on Thu Sep 05 2024 - Up`dates the cloud
+    // Updated on Wed Mar 12 2025 - Emit event
     //+-------------------------------------------------
     async update(data) {
       delete data.action
 
       data.updated_at = dates.now()
       await $nuxt.$db.states.put(data)
-      await this.load(true)
-      $cloud.update('states')
+      $nuxt.$mitt.emit('state:updated', data)
+
+      // this.load(true)
+      // $cloud.update('states')
     },
 
     //+-------------------------------------------------
@@ -125,13 +132,16 @@ export const useStateStore = defineStore('state', {
     // -----
     // Created on Thu Jun 20 2024
     // Updated on Thu Sep 05 2024 - Up`dates the cloud
+    // Updated on Wed Mar 12 2025 - Emit event
     //+-------------------------------------------------
     async delete(id) {
       this.states = this.states.filter((state) => state.id !== id)
 
       await $nuxt.$db.states.delete(id)
-      await this.load(true)
-      $cloud.update('states')
+      $nuxt.$mitt.emit('state:deleted')
+
+      // this.load(true)
+      // $cloud.update('states')
 
       return true
     },
@@ -142,6 +152,7 @@ export const useStateStore = defineStore('state', {
     // -----
     // Created on Wed Jan 17 2024
     // Updated on Thu Sep 05 2024 - Up`dates the cloud
+    // Updated on Wed Mar 12 2025 - Emit event
     //+-------------------------------------------------
     sort(direction, id) {
       let states = this.states
@@ -169,7 +180,8 @@ export const useStateStore = defineStore('state', {
         // description: 'Monday, January 3rd at 6:00pm',
       })
 
-      $cloud.update('states')
+      // $cloud.update('states')
+      $nuxt.$mitt.emit('state:updated')
     },
 
     //+-------------------------------------------------

@@ -172,7 +172,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Thu 30 January 2025 - 15:04:54
+ * Modified: Thu 13 March 2025 - 15:02:32
  **/
 
 export default {
@@ -203,7 +203,7 @@ export default {
       }
 
       this.$auth.config.menu.states = pinned
-      this.$auth.storeConfig('menu')
+      this.$auth.setConfig('menu')
       this.$toast.success('Sidebar updated')
     },
 

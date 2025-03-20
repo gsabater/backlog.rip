@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Wed 05 March 2025 - 17:51:05
+ * Modified: Thu 20 March 2025 - 15:41:37
  */
 
 let $nuxt = null
@@ -197,9 +197,12 @@ export default {
       case 'hours':
         timeToStale = amount * 60 * 60
         break
+
+      case 'd':
       case 'days':
         timeToStale = amount * 24 * 60 * 60
         break
+
       case 'weeks':
         timeToStale = amount * 7 * 24 * 60 * 60
         break

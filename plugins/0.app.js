@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Thu 06 March 2025 - 17:36:19
+ * Modified: Wed 19 March 2025 - 17:36:11
  */
 
 // import { reactive } from 'vue'
@@ -30,14 +30,14 @@ let app = {
   t: 1741278088181, // Date.now()
 
   // Global app state
-  // Controls modules boundaries
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   wip: false,
   dev: false,
   beta: false,
-
-  ready: false,
   offline: false,
+
+  has: [],
+  ready: false,
 
   // $db.status
   // can be true when is ready or a status
@@ -84,6 +84,12 @@ let app = {
     sidebar: false,
     updating: false,
     fullscreen: false,
+  },
+
+  // Background service
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  background: {
+    running: false,
   },
 
   // Global log
@@ -136,22 +142,14 @@ function detectEnvironment() {
 
 //+-------------------------------------------------
 // init()
-// Initializes the plugin. The idea of this plugin is
-// to be able to serve as a global object to get app
-// properties and methods
+// Initializes which itself initializes some early modules
 // -----
 // Created on Sun Feb 04 2024
 //+-------------------------------------------------
 async function init() {
   $nuxt ??= useNuxtApp()
   $game ??= useGameStore()
-
   $repos ??= useRepositoryStore()
-
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Initialize stores
-  // Initialize only the stores that are needed
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   $game.init()
   $repos.init()
@@ -165,16 +163,14 @@ async function init() {
 // Updated on Tue Nov 26 2024
 //+-------------------------------------------------
 async function initClient() {
-  $data ??= useDataStore()
-  $user ??= useUserStore()
-  $list ??= useListStore()
-  $cloud ??= useCloudStore()
-  $guild ??= useGuildStore()
-  $state ??= useStateStore()
-  $search ??= useSearchStore()
-  $integration ??= useLibraryStore()
-
-  // console.groupCollapsed('🔸 Initializing')
+  // $data ??= useDataStore()
+  // $user ??= useUserStore()
+  // $list ??= useListStore()
+  // $cloud ??= useCloudStore()
+  // $guild ??= useGuildStore()
+  // $state ??= useStateStore()
+  // $search ??= useSearchStore()
+  // $integration ??= useLibraryStore()
 
   const breakpoints = useBreakpoints({
     sm: 0,
@@ -192,6 +188,13 @@ async function initClient() {
   app.f.toggleFullscreen = toggle
   app.ui.fullscreen = isFullscreen
 
+  detectEnvironment()
+
+  $nuxt.$mitt.emit('app:start')
+
+  // console.groupCollapsed('🔸 Initializing')
+  return
+
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Authenticate the user
   // Try to determinate if the user has an account
@@ -199,7 +202,6 @@ async function initClient() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   await $user.authenticate()
 
-  detectEnvironment()
   $guild.init('ping')
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -214,19 +216,11 @@ async function initClient() {
   await $state.init()
   await $list.init()
 
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Connect to the cloud
-  // This process is tightly coupled with the user account
-  // But also needs the local data to be loaded
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  $cloud.connect()
-
   // console.groupEnd()
   // await delay(333)
   app.ready = true
 
   // emit.app:ready
-  if (document?.body && app.dev) document.body.classList.add('has-debug')
 }
 
 export default defineNuxtPlugin(() => {

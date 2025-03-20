@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 31st December 2024
- * Modified: Tue 11 March 2025 - 16:32:00
+ * Modified: Thu 20 March 2025 - 12:48:04
  */
 
 import queueService from './queueService'
@@ -134,7 +134,7 @@ export default {
   // - created_at -> Is the date the game was created in the API
   // - updated_at -> Is the date the game was updated in the API
   // - released_at -> Is the date the game was released
-  // - refreshed -> The date where the data has been merged from the API
+  // - refreshed -> The date where metadata has been updated/checked from the API
   // -----
   // Created on Tue Dec 31 2024
   //+-------------------------------------------------
@@ -383,7 +383,7 @@ export default {
   // -----
   // Created on Wed Jan 15 2025
   //+-------------------------------------------------
-  updateBatch(levels = ['empty']) {
+  async updateBatch(levels = ['empty']) {
     $data ??= useDataStore()
 
     let outdated = {
@@ -406,8 +406,8 @@ export default {
       return
     }
 
-    log('↻ Updating a batch...', outdated)
-    this.getBatch(outdated)
+    // log('↻ Updating a batch...', outdated)
+    await this.getBatch(outdated)
   },
 
   //+-------------------------------------------------

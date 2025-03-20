@@ -3,7 +3,7 @@
  * @desc:    Handle operations related to data with their index
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Tue 11 March 2025 - 17:57:17
+ * Modified: Thu 20 March 2025 - 16:58:22
  */
 
 import gameService from '../services/gameService'
@@ -181,12 +181,19 @@ export const useDataStore = defineStore('data', {
           // console.warn(' ⇢ updating app from API', item.uuid, item.name)
           //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           if (indexed) {
+            if (intent.includes(':batch')) {
+              item.dates = item.dates || {}
+              item.dates.refreshed = dates.stamp()
+              $game.update(indexed.uuid, item)
+              continue
+            }
+
             if (index.lib.includes(indexed.uuid)) {
-              let data = this.get(indexed.uuid, false)
-              const needsUpdate = gameService.needsUpdate(data, item)
+              let app = this.get(indexed.uuid, false)
+              const needsUpdate = gameService.needsUpdate(app, item)
 
               if (!needsUpdate) continue
-              else $game.update(data, item)
+              else $game.update(app, item)
 
               continue
             }
@@ -241,7 +248,7 @@ export const useDataStore = defineStore('data', {
         debugger
       }
 
-      if (!emit) return
+      if (!emit || !$nuxt.$app.ready) return
 
       await delay(100)
       $nuxt.$mitt.emit('data:updated')
@@ -834,11 +841,12 @@ export const useDataStore = defineStore('data', {
       await this.process(games, 'library')
       this.loaded.push('library')
 
-      log(
-        '🎴 local:games',
-        `${games.length} apps in local DB`,
-        games[Math.floor(Math.random() * games.length)]
-      )
+      // WIP improve in a global comment
+      // log(
+      //   '🎴 local:games',
+      //   `${games.length} apps in local DB`,
+      //   games[Math.floor(Math.random() * games.length)]
+      // )
     },
 
     //+-------------------------------------------------
@@ -880,43 +888,6 @@ export const useDataStore = defineStore('data', {
     },
 
     //+-------------------------------------------------
-    // updateMissing()
-    // Builds an array of IDs that should be updated
-    // Tries to follow similar logic than $game.needsUpdate()
-    // -----
-    // Created on Thu Apr 11 2024
-    // Updated on Fri Dec 13 2024 - Accept requested
-    //+-------------------------------------------------
-    async updateMissing(requested = null) {
-      debugger
-      return
-      let missing =
-        requested ||
-        Object.values(data)
-          .filter((game) => {
-            // const needsUpdate = $game.needsUpdate(game)
-            // return needsUpdate !== false
-            if (!game.id.steam) return false
-            if (!game.id.api) return true
-            // if (game.description == undefined) return true
-
-            return false
-          })
-          .map((game) => game.id.steam)
-
-      log('🪂 Updating missing games', missing)
-
-      const xhr = await $nuxt.$axios.post(`get/batch`, { steam: missing })
-      if (xhr.status) {
-        log('🪂 Data from API', xhr.data)
-        await this.process(xhr.data, 'api')
-        return true
-      }
-
-      return false
-    },
-
-    //+-------------------------------------------------
     // init()
     // Initialize the data store
     // -----
@@ -944,16 +915,16 @@ export const useDataStore = defineStore('data', {
         get: this.get,
         api: this.search,
         status: this.status,
-        updateMissing: this.updateMissing,
       }
 
       // Finally, data is ready
       $nuxt.$mitt.emit('data:ready', '🟢 Go!')
 
-      log('💽 Data is ready to use', {
-        data: Object.keys(data).length,
-        library: index.lib.length,
-      })
+      // WIP improve in a global comment
+      // log('💽 Data is ready to use', {
+      //   data: Object.keys(data).length,
+      //   library: index.lib.length,
+      // })
     },
   },
 })

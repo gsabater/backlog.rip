@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Thu 06 March 2025 - 19:44:24
+ * Modified: Thu 20 March 2025 - 16:58:55
  */
 
 import dataService from '../services/dataService'
@@ -22,22 +22,20 @@ export const useGameStore = defineStore('game', {
   }),
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Index of methods
+  // Codex of methods
   //
   // Retrieve data
   // * load()
-  // * loadFromAPI(), service
-  // * loadAchievements(), service
+  // * gameService.loadFromAPI()
+  // * gameService.getAchieved()
   //
-  // Modify data
+  // Handle data
   // * create()
   // * update()
-  // * normalize()
   //
   // Getters
   // * _score()
   // * _playtime()
-  //
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   actions: {
@@ -66,7 +64,7 @@ export const useGameStore = defineStore('game', {
       // Load additional achievements
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (hooks.with?.includes('achievements')) {
-        const achieved = await gameService.loadAchieved(game)
+        let achieved = await gameService.getAchievements(game, loaded)
         if (achieved) loaded.achieved = achieved
         // loaded.dates = loaded.dates ?? {}
         // loaded.dates.achieved = dates.stamp()

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Wed 29 January 2025 - 17:58:28
+ * Modified: Thu 20 March 2025 - 15:00:01
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -64,13 +64,6 @@ export const useCloudStore = defineStore('cloud', {
         down: 'restoreLibrary',
       },
     },
-
-    anon: {
-      url: 'https://qmavxjmcknvrpdpczswh.supabase.co',
-      head: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.',
-      body: 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtYXZ4am1ja252cnBkcGN6c3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU1OTcwNjEsImV4cCI6MjAyMTE3MzA2MX0.',
-      sign: 'W4ucizFl9U0A_oIcZBpILsPXoP5cXbBi6l8LFeIS7e4',
-    },
   }),
 
   actions: {
@@ -84,7 +77,6 @@ export const useCloudStore = defineStore('cloud', {
     async sync() {
       console.groupCollapsed('🔸 ⚡Cloud sync')
       this.status = 'syncing'
-      await delay(500)
 
       // Prepare and analyze the backup
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -119,30 +111,6 @@ export const useCloudStore = defineStore('cloud', {
 
       this.status = 'sync:done'
       $nuxt.$mitt.emit('sync:done')
-    },
-
-    //+-------------------------------------------------
-    // checkCredentials()
-    // Checks the user credentials. Credentials are required
-    // to connect to the cloud client and sync data
-    // -----
-    // Created on Thu Aug 15 2024
-    //+-------------------------------------------------
-    checkCredentials() {
-      if (!$user.jwt) {
-        log(
-          '⚡ Unable to establish cloud connection due to missing credentials',
-          $user.jwt,
-          $user
-        )
-        this.status = 'local'
-        return false
-      }
-
-      this.jwt = $user.jwt
-      this.sub = $user.cloud.sub
-
-      return true
     },
 
     //+-------------------------------------------------
@@ -315,7 +283,7 @@ export const useCloudStore = defineStore('cloud', {
         this.backup.created_at = dates.timestamp()
       }
 
-      const { data, error } = await this.$sb
+      const { data, error } = await $nuxt.$sync.sb
         .from('cloud')
         .upsert(this.backup, { onConflict: ['hash'] })
 
@@ -488,7 +456,7 @@ export const useCloudStore = defineStore('cloud', {
       // Upload the data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       log('⚡ uploading account...', JSON.stringify(data))
-      const { xhr, error } = await this.$sb.from('cloud_accounts').upsert(
+      const { xhr, error } = await $nuxt.$sync.sb.from('cloud_accounts').upsert(
         {
           user_id: this.sub,
           data: JSON.stringify(data),
@@ -550,7 +518,7 @@ export const useCloudStore = defineStore('cloud', {
       // Upload the data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       log('⚡ uploading states...')
-      const { xhr, error } = await this.$sb.from('cloud_states').upsert(
+      const { xhr, error } = await $nuxt.$sync.sb.from('cloud_states').upsert(
         {
           user_id: this.sub,
           signature: sign.hash,
@@ -595,7 +563,7 @@ export const useCloudStore = defineStore('cloud', {
       this.backup.sign_library = sign.full
 
       let date = $nuxt.$moment(sign.time * 1000).format('YYYY-MM-DD')
-      let { xhr, error } = await this.$sb.storage
+      let { xhr, error } = await $nuxt.$sync.sb.storage
         .from('libraries')
         .upload(`${this.backup.user_id}/${date}.json`, blob, {
           cacheControl: '3600',
@@ -635,7 +603,7 @@ export const useCloudStore = defineStore('cloud', {
 
       // ⇢ Fetch data from the cloud
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let xhr = await this.$sb
+      let xhr = await $nuxt.$sync.sb
         .from('cloud_accounts')
         .select('data')
         .eq('signature', this.b['account.clo.hash'])
@@ -679,7 +647,7 @@ export const useCloudStore = defineStore('cloud', {
 
       // ⇢ Fetch data from the cloud
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let xhr = await this.$sb
+      let xhr = await $nuxt.$sync.sb
         .from('cloud_states')
         .select('data')
         .eq('signature', this.b['states.clo.hash'])
@@ -709,7 +677,7 @@ export const useCloudStore = defineStore('cloud', {
       // ⇢ Fetch data from the cloud
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let date = $nuxt.$moment(this.b['library.clo.at'] * 1000).format('YYYY-MM-DD')
-      let { data, error } = await this.$sb.storage
+      let { data, error } = await $nuxt.$sync.sb.storage
         .from('libraries')
         .download(`${this.backup.user_id}/${date}.json`)
 
@@ -892,48 +860,10 @@ export const useCloudStore = defineStore('cloud', {
         return
       }
 
-      log('⚡ cloud:connecting')
+      // log('⚡ cloud:connecting')
       this.status = 'connecting'
 
-      if (!this.checkCredentials()) return
-
-      this.$sb = createClient(
-        this.anon.url,
-        this.anon.head + this.anon.body + this.anon.sign,
-        {
-          // auth: {
-          //   autoRefreshToken: false,
-          //   persistSession: false,
-          //   detectSessionInUrl: false,
-          // },
-
-          global: {
-            headers: {
-              Authorization: `Bearer ${this.jwt}`,
-            },
-          },
-        }
-      )
-
-      const { data } = this.$sb.auth.onAuthStateChange((event, session) => {
-        // log(event, session)
-
-        if (event === 'INITIAL_SESSION') {
-          // handle initial session
-        } else if (event === 'SIGNED_IN') {
-          // handle sign in event
-        } else if (event === 'SIGNED_OUT') {
-          // handle sign out event
-        } else if (event === 'PASSWORD_RECOVERY') {
-          // handle password recovery event
-        } else if (event === 'TOKEN_REFRESHED') {
-          // handle token refreshed event
-        } else if (event === 'USER_UPDATED') {
-          // handle user updated event
-        }
-      })
-
-      const { data: backups, error } = await this.$sb
+      const { data: backups, error } = await $nuxt.$sync.sb
         .from('cloud')
         .select('*')
         .order('id', { ascending: false })
@@ -945,7 +875,7 @@ export const useCloudStore = defineStore('cloud', {
       }
 
       this.backups = backups
-      this.sync()
+      await this.sync()
     },
   },
 

@@ -3,7 +3,7 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 11 March 2025 - 14:30:45
+ * Modified: Thu 20 March 2025 - 16:54:49
  */
 
 import axios from 'axios'
@@ -15,17 +15,16 @@ let $account = null
 
 export default {
   //+-------------------------------------------------
-  // Module manifest v1.2
+  // Module manifest
   // ---
   // This object is used to define the module
   // and its capabilities to the importer plugin
   //+-------------------------------------------------
-
   manifest: {
-    ver: '1.5',
+    ver: '1.6',
     name: 'Steam library integration',
     author: 'Gaspar S.',
-    updated_at: '2025-03-11',
+    updated_at: '2025-03-20',
     description:
       'Synchronize all your games and playtime for every game on Steam, including free games.',
     url: 'https://github.com/gsabater/backlog.rip/blob/master/modules/importers/steam.js',
@@ -82,9 +81,10 @@ export default {
     })
 
     $axios.defaults.headers.common['Authorization'] = 'Bearer ' + account.bearer
-    $log('🆗 Connection established', {
-      account,
-    })
+    // WIP
+    // $log('🆗 Connected', {
+    //   account,
+    // })
 
     return true
   },
@@ -115,6 +115,23 @@ export default {
   async getLibrary() {
     let url = 'https://api.backlog.rip/fetch/steam/games'
     let xhr = await $axios.get(url + '?steamid=' + $account.account)
+
+    if (xhr.data.status == 'success') {
+      return xhr.data?.fetch?.data?.games || []
+    }
+  },
+
+  //+-------------------------------------------------
+  // requestAchievements()
+  // Requests achievements. Requesting means a job will be requested to the worker
+  // And the achievements will be fetched in the background
+  // A queue is created and notified using $sync
+  // -----
+  // Created on Wed Mar 19 2025
+  //+-------------------------------------------------
+  async requestAchievements(appIDs) {
+    let url = 'https://api.backlog.rip/fetch/achievements'
+    let xhr = await $axios.post(url, appIDs)
 
     if (xhr.data.status == 'success') {
       return xhr.data?.fetch?.data?.games || []
@@ -218,11 +235,6 @@ export default {
 
     // Flag the item to store
     app.toStore = true
-
-    // delete app.last_played
-    // delete app.enabled
-    // delete app.appid
-    // delete app.data
 
     return app
   },

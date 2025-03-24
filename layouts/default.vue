@@ -306,16 +306,35 @@
         *| Used to display search and other options
         *+--------------------------------- -->
       <div class="d-lg-block aside-bottom w-100" style="position: absolute; bottom: 10px">
-        <div v-if="$app.wip || $app.updating" class="px-2 my-1">
+        <!--
+        *+---------------------------------
+        *| Background process indicator
+        *| Displays background services status
+        *+--------------------------------- -->
+        <!-- <code>{{ $app.background.running }}</code> -->
+        <div v-if="$app.background.running" class="px-2 my-1">
           <div class="card">
             <div class="card-body" style="padding: 13px">
               <div class="d-flex align-items-center mb-3">
-                <Icon size="18" width="1.5">Refresh</Icon>
+                <template v-if="$app.background.running == 'updatingLibrary'">
+                  <!-- <Icon size="18" width="1.5">Refresh</Icon> -->
 
-                <div class="ms-3">
-                  <div class="text-body">Sync. achievements</div>
-                  <small class="text-secondary">Please wait a moment</small>
-                </div>
+                  <div class="nms-3">
+                    <div class="text-body">Updating library</div>
+                    <small class="text-secondary">Please wait a moment</small>
+                  </div>
+                </template>
+                <template v-if="$app.background.running == 'achievements'">
+                  <!-- <Icon size="18" width="1.5">Refresh</Icon> -->
+
+                  <div class="nms-3">
+                    <div class="text-body mb-2">Sync. achievements</div>
+                    <small class="text-secondary">
+                      This process is handled in the background, you can close the window
+                      if you want
+                    </small>
+                  </div>
+                </template>
 
                 <!-- <div class="ms-auto">
                   <a href="#" class="icon d-none d-md-inline-block text-muted">
@@ -1193,7 +1212,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu 13 March 2025 - 15:23:00
+ * Modified: Mon 24 March 2025 - 19:23:59
  **/
 
 export default {

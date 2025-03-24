@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Tue 11 March 2025 - 16:43:16
+ * Modified: Wed 19 March 2025 - 16:09:59
  */
 
 let $nuxt = null
@@ -465,7 +465,7 @@ export const useSearchStore = defineStore('search', {
     // -----
     // Created on Thu Sep 26 2024
     //+-------------------------------------------------
-    init() {
+    async init() {
       $nuxt ??= useNuxtApp()
       $data ??= useDataStore()
       $state ??= useStateStore()

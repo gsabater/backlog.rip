@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Thu 13 March 2025 - 15:50:25
+ * Modified: Mon 24 March 2025 - 19:22:53
  */
 
 let $nuxt = null
@@ -40,7 +40,6 @@ export const useUserStore = defineStore('user', {
     config: {},
 
     is: {
-      guest: false,
       cloud: false,
       logged: false,
       checked: false,
@@ -75,7 +74,7 @@ export const useUserStore = defineStore('user', {
       this.is.checked = true
       if (this.bearer) this.is.logged = true
 
-      return true
+      $nuxt.$mitt.emit('user:ready')
     },
 
     //+-------------------------------------------------

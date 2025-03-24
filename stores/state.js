@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Wed 12 March 2025 - 16:22:02
+ * Modified: Mon 24 March 2025 - 19:22:58
  */
 
 let $nuxt = null
@@ -476,11 +476,12 @@ export const useStateStore = defineStore('state', {
         return obj
       }, {})
 
-      log(
-        '❇️ States loaded',
-        `${states.length} states in DB`,
-        states[Math.floor(Math.random() * states.length)]
-      )
+      // WIP - improve
+      // log(
+      //   '❇️ States loaded',
+      //   `${states.length} states in DB`,
+      //   states[Math.floor(Math.random() * states.length)]
+      // )
 
       this.meta.loaded = true
     },

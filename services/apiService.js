@@ -3,20 +3,22 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 5th February 2025
- * Modified: Wed 05 February 2025 - 13:59:18
+ * Modified: Wed 19 March 2025 - 15:52:26
  */
 
 let $nuxt = null
 
 export default {
   //+-------------------------------------------------
-  // loadApiStatus()
+  // getApiStatus()
   // Load general status from API
   // -----
   // Created on Fri Dec 22 2023
   // Updated on Wed Feb 05 2025 - Moved to apiService
   //+-------------------------------------------------
-  async loadApiStatus() {
+  async getApiStatus() {
+    $nuxt ??= useNuxtApp()
+
     try {
       const xhr = await $nuxt.$axios.get(`get/status.json`)
       if (xhr.status) {
@@ -30,11 +32,5 @@ export default {
       $nuxt.$app.offline = true
       $nuxt.$app.count.api = 0
     }
-  },
-
-  async init() {
-    $nuxt ??= useNuxtApp()
-
-    this.loadApiStatus()
   },
 }

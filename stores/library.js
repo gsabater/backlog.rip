@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th November 2024
- * Modified: Tue 11 March 2025 - 15:49:47
+ * Modified: Wed 19 March 2025 - 16:06:09
  */
 
 let $nuxt = null
@@ -190,11 +190,12 @@ export const useLibraryStore = defineStore('library', {
         })
       )
 
-      log(
-        '🧩 Libraries loaded',
-        `${Object.keys(this.linked).length} platforms`,
-        this.linked
-      )
+      // WIP improve this
+      // log(
+      //   '🧩 Libraries loaded',
+      //   `${Object.keys(this.linked).length} platforms`,
+      //   this.linked
+      // )
     },
 
     //+-------------------------------------------------

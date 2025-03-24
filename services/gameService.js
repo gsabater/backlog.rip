@@ -3,8 +3,10 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Thu 13 March 2025 - 17:09:50
+ * Modified: Mon 24 March 2025 - 19:23:15
  */
+
+import steamAPIService from './steamAPIService'
 
 let $nuxt = null
 let $library = null
@@ -41,12 +43,50 @@ export default {
   },
 
   //+-------------------------------------------------
-  // loadAchieved()
+  // function()
+  // Loads game achievements using the Steam API bridge
+  // -----
+  // Created on Fri Mar 14 2025
+  //+-------------------------------------------------
+  async getAchievements(game, loaded) {
+    if (!game.id.steam) return
+
+    debugger
+    let achievements = game.achievements || []
+
+    // First, check if the API has achievements
+    // if no achievements and api key, GetSchemaForGame
+    // if (!achievements.length && game.id.api) {
+    //   let c = await steamAPIService.GetSchemaForGame(game.id.steam)
+    //   achievements = this.mergeAchievements(achievements, c)
+    // }
+
+    // If the achievements list is not empty:
+    // and there are games without percentages, GetGlobalAchievementPercentagesForApp
+    // let missing = !achievements.length || achievements.some((a) => !a.completion)
+    // if (missing) {
+    //   let c = await steamAPIService.GetGlobalAchievementPercentagesForApp(game.id.steam)
+    //   achievements = this.mergeAchievements(achievements, c)
+    // }
+
+    debugger
+    // if is in lib:
+    // if no key get achievements from api
+    // else get achievements from steam api
+
+    // merge achievements after each step
+
+    // First, check if any achievement in game has missing completion rate
+    let achieved = steamAPIService.getAchievements(game.id.steam)
+  },
+
+  //+-------------------------------------------------
+  // getAchieved()
   // Gets user achievements and updates the game object
   // -----
   // Created on Thu Feb 27 2025
   //+-------------------------------------------------
-  async loadAchieved(game) {
+  async getAchieved(game) {
     if (!game.id.steam) return
     // Only load achievements for games in the library
     // WIP - if the game is not in lib but has api token and no achievements in api, look for them them
@@ -485,179 +525,64 @@ export default {
   // -----
   // Created on Thu Feb 27 2025
   //+-------------------------------------------------
-  mergeAchievements(app, achievements = [], status = []) {
-    if (achievements.length == 0 && status.length == 0) return { updated: false }
+  mergeAchievements(app, entries = []) {
+    if (entries.length == 0) return { updated: false }
 
-    // Create a copy of the achievements array to avoid modifying the original
+    // Create a copy of the achievements array
     let updated = structuredClone(app.achievements || [])
 
-    // Create a map of existing achievements by steam_key for quick lookups
+    // Create a map of existing entries by steam_key for quick lookups
     // +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     const map = new Map()
     updated.forEach((achievement) => {
       map.set(achievement.steam_key, achievement)
     })
 
-    // Add or update achievements
+    // Process achievements
     // +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (achievements.length > 0) {
-      achievements.forEach((newAchievement) => {
-        let exists = map.get(newAchievement.steam_key)
+    entries.forEach((newAchievement) => {
+      if (newAchievement.apiname) {
+        newAchievement.steam_key = newAchievement.apiname
+        delete newAchievement.apiname
+      }
 
-        if (exists) {
-          exists.name = newAchievement.name
-          exists.description = newAchievement.description
-          exists.completion = newAchievement.completion
-          exists.icon = newAchievement.icon
-          exists.gray = newAchievement.gray
-          exists.hide = newAchievement.hide
-          exists.highlighted = newAchievement.highlighted
-        } else {
-          // Add new achievement
-          updated.push({ ...newAchievement })
-          map.set(newAchievement.steam_key, newAchievement)
+      let existing = map.get(newAchievement.steam_key)
+      if (!existing) {
+        // Create new achievement object with steam_key
+        existing = {
+          steam_key: newAchievement.steam_key,
         }
+
+        // Add the new achievement to the map
+        updated.push(existing)
+        map.set(existing.steam_key, existing)
+      }
+
+      Object.assign(existing, {
+        name: newAchievement.name,
+        description: newAchievement.description,
+        completion: newAchievement.completion,
+        icon: newAchievement.icon,
+        gray: newAchievement.gray,
+        hide: newAchievement.hide,
+        highlighted: newAchievement.highlighted,
       })
-    }
-    debugger
-    // Update achievement status
-    // +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (status.length > 0) {
-      status.forEach((element) => {
-        let achievement = map.get(element.apiname)
-        if (!achievement) {
-          achievement = {
-            steam_key: element.apiname,
-            name: element.name,
-            description: element.description,
-          }
 
-          if (element.achieved === 1) {
-            achievement.is = {
-              status: 'unlocked',
-              time: element.unlocktime,
-              steam: element.unlocktime,
-            }
-          }
-
-          updated.push(achievement)
-        } else if (element.achieved === 1) {
-          achievement.is = achievement.is || {}
-          achievement.is.status = 'unlocked'
-          achievement.is.time = element.unlocktime
-          achievement.is.steam = element.unlocktime
-
-          // update the updated item with achievement data
-          let index = updated.findIndex((a) => a.steam_key === achievement.steam_key)
-          updated[index] = achievement
-        }
-      })
-    }
+      // Update achievement status
+      // +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (newAchievement.achieved === 1) {
+        existing.is = existing.is || {}
+        existing.is.status = 'unlocked'
+        existing.is.time = newAchievement.unlocktime
+        existing.is.steam = newAchievement.unlocktime
+      }
+    })
 
     debugger
-    if (updated.length == 0) return { updated: false }
 
     return {
-      updated: true,
+      updated: updated.length > 0,
       value: updated,
     }
   },
-  // mergeAchievements(app, data, achieved) {
-  //   // Clone existing achievements or create empty array
-  //   let achievements = structuredClone(app.achievements || [])
-
-  //   // If both data and achieved are empty, no changes needed
-  //   if ((!data || data.length === 0) && (!achieved || achieved.length === 0)) {
-  //     return {
-  //       updated: false,
-  //       value: achievements
-  //     }
-  //   }
-
-  //   let achievements = structuredClone(app.achievements || [])
-
-  //   // Case: data is empty but achieved has content
-  //   // Update existing achievements with achievement status only
-  //   if ((!data || data.length === 0) && achieved && achieved.length > 0) {
-  //     achievements = achievements.map((achievement) => {
-  //       const key = achievement.steam_key
-  //       const status = achieved.find((a) => a.apiname === key)
-
-  //       if (status) {
-  //         const isUnlocked = status.achieved > 0 || false
-  //         achievement.is = achievement.is || {}
-  //         achievement.is.status = isUnlocked ? 'unlocked' : 'locked'
-  //         if (isUnlocked) {
-  //           achievement.is.steam = status.unlocktime
-  //         }
-  //       }
-
-  //       return achievement
-  //     })
-
-  //     return {
-  //       updated: true,
-  //       value: achievements,
-  //     }
-  //   }
-
-  //   // Regular case: process data and potentially merge with achieved
-  //   data.forEach((ach) => {
-  //     // Find existing achievement or create a new one
-  //     const key = ach.apiname || ach.steam_key
-  //     let index = achievements.findIndex((a) => a.steam_key === key)
-  //     let status = achieved?.find((a) => a.apiname === key)
-
-  //     const isUnlocked = status?.achieved > 0 || false
-  //     const achvStatus = {
-  //       status: isUnlocked ? 'unlocked' : 'locked',
-  //       steam: isUnlocked ? status.unlocktime : null,
-  //     }
-
-  //     // Update existing achievement
-  //     if (index !== -1) {
-  //       let item = achievements[index]
-  //       let achievement = { ...item, ...ach }
-
-  //       if (isUnlocked) {
-  //         achievement.is = achievement.is || {}
-  //         achievement.is.steam = achvStatus.steam
-  //         achievement.is.status = achvStatus.status
-  //       }
-
-  //       achievements[index] = achievement
-
-  //       // Create new achievement
-  //     } else {
-  //       let newAchievement = ach.completion
-  //         ? {
-  //             icon: ach.icon,
-  //             gray: ach.gray,
-  //             name: ach.name,
-  //             description: ach.description,
-  //             completion: ach.completion,
-  //             hide: ach.hide,
-  //             highlighted: ach.highlighted,
-  //             steam_key: ach.steam_key,
-  //           }
-  //         : {
-  //             name: ach.name,
-  //             steam_key: ach.apiname || ach.steam_key,
-  //             description: ach.description,
-  //           }
-
-  //       // Only add the steam unlock time if it's unlocked
-  //       if (isUnlocked) {
-  //         newAchievement.is = achvStatus
-  //       }
-
-  //       achievements.push(newAchievement)
-  //     }
-  //   })
-
-  //   return {
-  //     updated: true,
-  //     value: achievements,
-  //   }
-  // },
 }

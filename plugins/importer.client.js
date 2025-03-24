@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Sun 02 March 2025 - 10:58:57
+ * Modified: Wed 19 March 2025 - 15:31:41
  */
 
 import importer from '~/utils/importer'
@@ -261,11 +261,11 @@ function notify() {
 // -----
 // Created on Mon Jan 22 2024
 //+-------------------------------------------------
-function init() {
-  window.setTimeout(() => {
-    autoSync()
-  }, 4000)
-}
+// function init() {
+//   window.setTimeout(() => {
+//     autoSync()
+//   }, 4000)
+// }
 
 //+-------------------------------------------------
 // Define Nuxt plugin
@@ -277,7 +277,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   if (!$nuxt) $nuxt = nuxtApp
 
   window.$_sync = _sync
-  init()
+  // init()
 
   _sync.sync = sync
   _sync.scan = scan

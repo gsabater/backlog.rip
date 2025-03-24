@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 12th November 2024
- * Modified: Mon 24 February 2025 - 17:27:07
+ * Modified: Sun 23 March 2025 - 15:39:08
  **/
 
 //+-------------------------------------------------
@@ -28,7 +28,7 @@
     background: black;
     inset: 0;
     pointer-events: none;
-    user-select: none;
+    // user-select: none;
   }
 
   .game-details__container {
@@ -72,7 +72,7 @@
     align-items: center;
     -webkit-box-pack: center;
     justify-content: center;
-    user-select: none;
+    // user-select: none;
     position: absolute;
     white-space: nowrap;
     vertical-align: middle;
@@ -223,7 +223,7 @@
     position: relative; // Ensure this is set
     margin-top: -131px; // Pull body up to overlap with header
     pointer-events: initial;
-    user-select: none;
+    // user-select: none;
 
     // Add an observer sentinel
     &::before {

@@ -5,7 +5,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Mon 27 January 2025 - 17:56:46
+ * Modified: Wed 19 March 2025 - 15:32:27
  */
 
 import Dexie from 'dexie'
@@ -59,7 +59,7 @@ function check() {
     return false
   }
 
-  log('💽 IndexedDB is supported. Using Dexie v' + Dexie.semVer)
+  // log('💽 IndexedDB is supported. Using Dexie v' + Dexie.semVer)
   return true
 }
 

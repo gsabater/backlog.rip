@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Thu 13 March 2025 - 17:28:58
+ * Modified: Mon 24 March 2025 - 19:23:46
  */
 
 // import { reactive } from 'vue'
@@ -30,14 +30,14 @@ let app = {
   t: 1741278088181, // Date.now()
 
   // Global app state
-  // Controls modules boundaries
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   wip: false,
   dev: false,
   beta: false,
-
-  ready: false,
   offline: false,
+
+  has: [],
+  ready: false,
 
   // $db.status
   // can be true when is ready or a status
@@ -84,6 +84,12 @@ let app = {
     sidebar: false,
     updating: false,
     fullscreen: false,
+  },
+
+  // Background service
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  background: {
+    running: false,
   },
 
   // Global log
@@ -136,22 +142,14 @@ function detectEnvironment() {
 
 //+-------------------------------------------------
 // init()
-// Initializes the plugin. The idea of this plugin is
-// to be able to serve as a global object to get app
-// properties and methods
+// Initializes which itself initializes some early modules
 // -----
 // Created on Sun Feb 04 2024
 //+-------------------------------------------------
 async function init() {
   $nuxt ??= useNuxtApp()
   $game ??= useGameStore()
-
   $repos ??= useRepositoryStore()
-
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Initialize stores
-  // Initialize only the stores that are needed
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   $game.init()
   $repos.init()
@@ -165,16 +163,14 @@ async function init() {
 // Updated on Tue Nov 26 2024
 //+-------------------------------------------------
 async function initClient() {
-  $data ??= useDataStore()
-  $user ??= useUserStore()
-  $list ??= useListStore()
-  $cloud ??= useCloudStore()
-  $guild ??= useGuildStore()
-  $state ??= useStateStore()
-  $search ??= useSearchStore()
-  $integration ??= useLibraryStore()
-
-  // console.groupCollapsed('🔸 Initializing')
+  // $data ??= useDataStore()
+  // $user ??= useUserStore()
+  // $list ??= useListStore()
+  // $cloud ??= useCloudStore()
+  // $guild ??= useGuildStore()
+  // $state ??= useStateStore()
+  // $search ??= useSearchStore()
+  // $integration ??= useLibraryStore()
 
   const breakpoints = useBreakpoints({
     sm: 0,
@@ -192,6 +188,13 @@ async function initClient() {
   app.f.toggleFullscreen = toggle
   app.ui.fullscreen = isFullscreen
 
+  detectEnvironment()
+
+  $nuxt.$mitt.emit('app:start')
+
+  // console.groupCollapsed('🔸 Initializing')
+  return
+
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Authenticate the user
   // Try to determinate if the user has an account
@@ -199,7 +202,6 @@ async function initClient() {
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   await $user.authenticate()
 
-  detectEnvironment()
   $guild.init('ping')
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -214,53 +216,11 @@ async function initClient() {
   await $state.init()
   await $list.init()
 
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Connect to the cloud
-  // This process is tightly coupled with the user account
-  // But also needs the local data to be loaded
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  $cloud.connect()
-
   // console.groupEnd()
   // await delay(333)
   app.ready = true
 
   // emit.app:ready
-  setDebug()
-}
-
-//+-------------------------------------------------
-// setDebug()
-// Sets the debug mode
-// -----
-// Created on Thu Mar 13 2025
-//+-------------------------------------------------
-function setDebug(value = null) {
-  if (value !== null) app.dev = value
-
-  if (app.dev) {
-    if (document?.body) document.body.classList.add('has-debug')
-  } else {
-    if (document?.body) document.body.classList.remove('has-debug')
-  }
-}
-
-//+-------------------------------------------------
-// startEngines()
-//
-// -----
-// Created on Wed Mar 12 2025
-//+-------------------------------------------------
-async function startEngines() {
-  // Make requests in batches and await them
-  // Level 0, user authenticate
-  // Level 1, data init
-  // Level 2, service init...
-  // ...
-  // Level 9, ready
-  // Level 10, sync background library
-  // Level 11, sync background achievements
-  // Level 12, cloud sync
 }
 
 export default defineNuxtPlugin(() => {

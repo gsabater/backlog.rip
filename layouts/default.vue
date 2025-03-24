@@ -311,24 +311,24 @@
         *| Background process indicator
         *| Displays background services status
         *+--------------------------------- -->
-        <code>{{ $app.background.running }}</code>
+        <!-- <code>{{ $app.background.running }}</code> -->
         <div v-if="$app.background.running" class="px-2 my-1">
           <div class="card">
             <div class="card-body" style="padding: 13px">
               <div class="d-flex align-items-center mb-3">
                 <template v-if="$app.background.running == 'updatingLibrary'">
-                  <Icon size="18" width="1.5">Refresh</Icon>
+                  <!-- <Icon size="18" width="1.5">Refresh</Icon> -->
 
-                  <div class="ms-3">
+                  <div class="nms-3">
                     <div class="text-body">Updating library</div>
                     <small class="text-secondary">Please wait a moment</small>
                   </div>
                 </template>
                 <template v-if="$app.background.running == 'achievements'">
-                  <Icon size="18" width="1.5">Refresh</Icon>
+                  <!-- <Icon size="18" width="1.5">Refresh</Icon> -->
 
-                  <div class="ms-3">
-                    <div class="text-body">Sync. achievements</div>
+                  <div class="nms-3">
+                    <div class="text-body mb-2">Sync. achievements</div>
                     <small class="text-secondary">
                       This process is handled in the background, you can close the window
                       if you want
@@ -1212,7 +1212,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu 20 March 2025 - 16:48:23
+ * Modified: Mon 24 March 2025 - 14:56:11
  **/
 
 export default {

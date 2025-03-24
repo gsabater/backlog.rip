@@ -3,7 +3,7 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 20 March 2025 - 16:54:49
+ * Modified: Mon 24 March 2025 - 15:25:18
  */
 
 import axios from 'axios'
@@ -131,11 +131,9 @@ export default {
   //+-------------------------------------------------
   async requestAchievements(appIDs) {
     let url = 'https://api.backlog.rip/fetch/achievements'
-    let xhr = await $axios.post(url, appIDs)
+    let xhr = await $axios.post(url, { apps: appIDs })
 
-    if (xhr.data.status == 'success') {
-      return xhr.data?.fetch?.data?.games || []
-    }
+    return xhr.status == 200
   },
 
   //+-------------------------------------------------

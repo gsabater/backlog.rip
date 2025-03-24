@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: Tue 11 March 2025 - 17:51:42
+ * Modified: Wed 19 March 2025 - 16:21:25
  */
 
 let $nuxt = null
@@ -341,11 +341,12 @@ export const useListStore = defineStore('list', {
       this.meta.loaded = true
       $nuxt.$app.count.lists = lists.length || 0
 
-      log(
-        '🔖 Lists loaded',
-        `${lists.length} lists in local DB`,
-        lists[Math.floor(Math.random() * lists.length)]
-      )
+      // WIP improve this
+      // log(
+      //   '🔖 Lists loaded',
+      //   `${lists.length} lists in local DB`,
+      //   lists[Math.floor(Math.random() * lists.length)]
+      // )
     },
 
     //+-------------------------------------------------

@@ -3,7 +3,7 @@
  * @desc:    Handle operations related to data with their index
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu 20 March 2025 - 16:58:22
+ * Modified: Mon 24 March 2025 - 11:30:16
  */
 
 import gameService from '../services/gameService'
@@ -348,9 +348,17 @@ export const useDataStore = defineStore('data', {
       }
     },
 
-    findBySource(source, id) {
+    //+-------------------------------------------------
+    // findBySource()
+    // Returns an uuid or an app by its source and id
+    // -----
+    // Created on Mon Mar 24 2025
+    //+-------------------------------------------------
+    findBySource(source, id, as = 'app') {
       let uuid = index[source][id]
-      return data[uuid]
+      if (as == 'uuid') return uuid
+
+      return this.get(uuid, false)
     },
 
     //+-------------------------------------------------

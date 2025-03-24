@@ -3,11 +3,13 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 18th March 2025
- * Modified: Thu 20 March 2025 - 16:45:50
+ * Modified: Mon 24 March 2025 - 16:03:01
  */
 
 import { createClient } from '@supabase/supabase-js'
+import supabaseService from '../services/supabaseService'
 
+let $nuxt = null
 let $user = null
 
 const anon = {
@@ -31,7 +33,8 @@ let sync = {
 // Created on Thu Mar 20 2025
 //+-------------------------------------------------
 async function connect() {
-  $user = useUserStore()
+  $nuxt ??= useNuxtApp()
+  $user ??= useUserStore()
 
   // Check the auth state and user credentials
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,6 +61,10 @@ async function connect() {
       },
     },
   })
+
+  // Initialize the supabaseService
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  supabaseService.init()
 
   // Kept for reference
   // Those are the events that can be listened for state changes
@@ -90,12 +97,27 @@ async function connect() {
 async function subscribe(channel_name) {
   const channel = sync.sb.channel(channel_name)
   channel
-    .on('broadcast', { event: 'message' }, (payload) => {
-      $nuxt.$mitt.emit('sb:message', payload.payload)
+    .on('broadcast', { event: 'queue' }, (event) => {
+      // console.warn('🛜 Received message from channel ' + channel_name, event)
+
+      if (event?.payload?.sub !== sync.sub) return
+      $nuxt.$mitt.emit('sync:message', event)
     })
     .subscribe()
 
   console.warn('🛜 Subscribed to channel ' + channel_name)
+}
+
+//+-------------------------------------------------
+// unsubscribe()
+//
+// -----
+// Created on Mon Mar 24 2025
+//+-------------------------------------------------
+async function unsubscribe(channel_name) {
+  const channel = sync.sb.channel(channel_name)
+  channel.unsubscribe()
+  console.warn('🛜 Unsubscribed from channel ' + channel_name)
 }
 
 //+-------------------------------------------------
@@ -105,40 +127,9 @@ async function subscribe(channel_name) {
 // Created on Thu Mar 20 2025
 //+-------------------------------------------------
 export default defineNuxtPlugin((nuxtApp) => {
-  // const $cloud = useCloudStore()
-  // const supabase = $cloud.$sb
-
-  // const subscribeToTable = (table, onInsert, onUpdate) => {
-  //   const key = `table-${table}`
-
-  //   if (subscriptions[key]) {
-  //     console.warn(`Ya estás suscrito a ${table}`)
-  //     return
-  //   }
-
-  //   const channel = supabase
-  //     .channel(`realtime:${table}`)
-  //     .on('postgres_changes', { event: 'INSERT', schema: 'public', table }, (payload) =>
-  //       onInsert(payload)
-  //     )
-  //     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table }, (payload) =>
-  //       onUpdate(payload)
-  //     )
-  //     .subscribe()
-
-  //   subscriptions[key] = channel
-  // }
-
-  // const unsubscribeFromTable = (table) => {
-  //   const key = `table-${table}`
-  //   if (subscriptions[key]) {
-  //     supabase.removeChannel(subscriptions[key])
-  //     delete subscriptions[key]
-  //   }
-  // }
-
   sync.connect = connect
   sync.subscribe = subscribe
+  sync.unsubscribe = unsubscribe
 
   window.$sync = sync
 

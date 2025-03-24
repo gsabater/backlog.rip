@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 11th January 2024
- * Modified: Thu 20 March 2025 - 16:58:55
+ * Modified: Mon 24 March 2025 - 15:37:12
  */
 
 import dataService from '../services/dataService'
@@ -53,7 +53,7 @@ export const useGameStore = defineStore('game', {
       if (!hooks.with?.length) return
 
       let loaded = {}
-      debugger
+      // debugger
       // Load API data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (hooks.with?.includes('api')) {
@@ -63,12 +63,12 @@ export const useGameStore = defineStore('game', {
 
       // Load additional achievements
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (hooks.with?.includes('achievements')) {
-        let achieved = await gameService.getAchievements(game, loaded)
-        if (achieved) loaded.achieved = achieved
-        // loaded.dates = loaded.dates ?? {}
-        // loaded.dates.achieved = dates.stamp()
-      }
+      // if (hooks.with?.includes('achievements')) {
+      //   let achieved = await gameService.getAchievements(game, loaded)
+      //   if (achieved) loaded.achieved = achieved
+      //   // loaded.dates = loaded.dates ?? {}
+      //   // loaded.dates.achieved = dates.stamp()
+      // }
 
       if (Object.keys(loaded).length == 0) return
       this.update(game, loaded)

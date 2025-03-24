@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Thu 20 March 2025 - 15:11:23
+ * Modified: Mon 24 March 2025 - 15:50:05
  */
 
 import synchronizationService from '../services/synchronizationService'
@@ -22,6 +22,7 @@ const emitter = mitt()
 //   |- apiService.init()
 // |- user:ready
 //   |- $libs.init()
+//   |- $sync.init()
 // |- app:ready
 //   |- synchronizationService.sync()
 
@@ -90,6 +91,8 @@ function handle(event, payload) {
     case 'app:ready':
       synchronizationService.sync()
       if (document?.body && $nuxt.$app.dev) document.body.classList.add('has-debug')
+
+      overview()
       break
 
     // User hooks
@@ -153,15 +156,49 @@ function handle(event, payload) {
     // case 'game:modal':
     //   break
 
+    // The game data has been changed
+    // Used on game components not tied to scripts
+    // case 'game:data':
+    //   break
+
     // Real time events
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    case 'sb:message':
+    case 'sync:message':
       console.log('Received message:', payload)
+      if (payload.event == 'queue') {
+        synchronizationService.syncAchievements()
+      }
       break
 
     default:
       break
   }
+}
+
+//+-------------------------------------------------
+// function()
+//
+// -----
+// Created on Mon Mar 24 2025
+//+-------------------------------------------------
+function overview() {
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Overview state of the application
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  let state = {
+    app: {
+      ready: $nuxt.$app.ready,
+      dev: $nuxt.$app.dev || $nuxt.$app.wip,
+    },
+
+    user: {},
+
+    data: {
+      library: $data.library(),
+    },
+  }
+
+  log('Overview state', state)
 }
 
 export default defineNuxtPlugin(() => {
@@ -173,7 +210,7 @@ export default defineNuxtPlugin(() => {
     const blacklist = ['app:start', 'user:ready', 'data:ready']
     if (blacklist.includes(e)) return
     // log('✨ ' + e, payload)
-    console.info(`🔸 "${e}"`, payload)
+    console.info(`🔸 "${e}"`, payload ?? null)
   })
 
   return {

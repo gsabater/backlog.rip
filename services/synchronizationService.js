@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 19th March 2025
- * Modified: Thu 20 March 2025 - 16:47:16
+ * Modified: Mon 24 March 2025 - 15:50:13
  */
 
 import dataService from './dataService'
@@ -29,7 +29,7 @@ export default {
   async sync() {
     $nuxt ??= useNuxtApp()
     $cloud ??= useCloudStore()
-
+    debugger
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Connect with the cloud
     // Check if the cloud is synced before continue
@@ -71,21 +71,43 @@ export default {
   // Created on Wed Mar 19 2025
   //+-------------------------------------------------
   async syncAchievements() {
+    // Check the state of other previous requests
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    let status = await supabaseService.getQueueStatus()
+
+    if (status?.completed?.length) {
+      await achievementsService.processSync(status.completed)
+      this.endSynchronization()
+      return
+    }
+
     // Get achievements worth syncing
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     let missing = achievementsService.findToUpdate()
-    if (!missing.length) return
-
-    // Subscribe to the queue
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    $nuxt.$sync.subscribe('queue')
+    if (!missing.length) {
+      this.endSynchronization()
+      return
+    }
 
     // Request the achievements
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     $libs ??= useLibraryStore()
     if (!$libs.linked.steam) return
-    $libs.module.steam.requestAchievements(missing)
+    let request = await $libs.module.steam.requestAchievements(missing)
+    if (!request) {
+      this.endSynchronization()
+      return
+    }
+
+    // Subscribe to the queue
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    $nuxt.$sync.subscribe('queue')
   },
 
   backup() {},
+
+  endSynchronization() {
+    $nuxt.$app.background.running = false
+    $nuxt.$sync.unsubscribe('queue')
+  },
 }

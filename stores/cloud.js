@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Thu 20 March 2025 - 15:00:01
+ * Modified: Mon 24 March 2025 - 19:01:57
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -857,6 +857,11 @@ export const useCloudStore = defineStore('cloud', {
       if ($nuxt.$auth.config.cloud == false) {
         log('⚡ Cloud sync is disabled in the user settings')
         this.status = 'disabled'
+        return
+      }
+
+      if ($nuxt.$sync.ready == false) {
+        log('⚡ Cloud connection cannot be established')
         return
       }
 

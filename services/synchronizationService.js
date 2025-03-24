@@ -3,13 +3,14 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 19th March 2025
- * Modified: Mon 24 March 2025 - 15:50:13
+ * Modified: Mon 24 March 2025 - 19:15:02
  */
 
 import dataService from './dataService'
 import achievementsService from './achievementsService'
 
 let $nuxt = null
+let $user = null
 let $libs = null
 let $cloud = null
 
@@ -28,8 +29,15 @@ export default {
   //+-------------------------------------------------
   async sync() {
     $nuxt ??= useNuxtApp()
+    $user ??= useUserStore()
     $cloud ??= useCloudStore()
-    debugger
+
+    // Check if the user is logged in
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if (!$user.is.logged) {
+      return
+    }
+
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Connect with the cloud
     // Check if the cloud is synced before continue
@@ -39,7 +47,6 @@ export default {
     }
 
     if ($cloud.is == 'conflict') {
-      $nuxt.$app.background.running = false
       return
     }
 
@@ -58,8 +65,6 @@ export default {
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     $nuxt.$app.background.running = 'achievements'
     await this.syncAchievements()
-
-    // $nuxt.$app.background.running = false
   },
 
   syncLibrary() {},

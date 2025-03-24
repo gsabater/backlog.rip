@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 18th March 2025
- * Modified: Mon 24 March 2025 - 16:03:01
+ * Modified: Mon 24 March 2025 - 19:06:44
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -20,10 +20,12 @@ const anon = {
 }
 
 let sync = {
+  sb: null,
   jwt: null,
   sub: null,
+  channels: [],
 
-  sb: null,
+  ready: false,
 }
 
 //+-------------------------------------------------
@@ -64,6 +66,7 @@ async function connect() {
 
   // Initialize the supabaseService
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  sync.ready = true
   supabaseService.init()
 
   // Kept for reference
@@ -105,6 +108,7 @@ async function subscribe(channel_name) {
     })
     .subscribe()
 
+  sync.channels.push(channel_name)
   console.warn('🛜 Subscribed to channel ' + channel_name)
 }
 
@@ -115,6 +119,11 @@ async function subscribe(channel_name) {
 // Created on Mon Mar 24 2025
 //+-------------------------------------------------
 async function unsubscribe(channel_name) {
+  if (!sync.channels.includes(channel_name)) {
+    // console.warn('⚡ Channel ' + channel_name + ' is not subscribed')
+    return
+  }
+
   const channel = sync.sb.channel(channel_name)
   channel.unsubscribe()
   console.warn('🛜 Unsubscribed from channel ' + channel_name)

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Wed 19 March 2025 - 15:38:34
+ * Modified: Mon 24 March 2025 - 19:15:24
  */
 
 let $nuxt = null
@@ -40,7 +40,6 @@ export const useUserStore = defineStore('user', {
     config: {},
 
     is: {
-      guest: false,
       cloud: false,
       logged: false,
       checked: false,

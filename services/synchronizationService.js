@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 19th March 2025
- * Modified: Tue 25 March 2025 - 15:27:32
+ * Modified: Tue 25 March 2025 - 17:43:19
  */
 
 import dataService from './dataService'
@@ -32,13 +32,41 @@ export default {
     $user ??= useUserStore()
     $cloud ??= useCloudStore()
 
+    // Check if the user and the system are ready
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    let prepared = await this.prepareSync()
+    if (!prepared) return
+
+    // Sync the steam library
+    // Disabled until the script is better optimized
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // await this.syncLibrary()
+
+    // Update the library
+    // ⇢ fetch updated metadata for new or stale games
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    await this.syncLibrary()
+
+    // Sync the achievements
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    await this.syncAchievements()
+  },
+
+  //+-------------------------------------------------
+  // function()
+  // Checks if the user has the credentials to sync
+  // And if the system has finished backing up
+  // -----
+  // Created on Tue Mar 25 2025
+  //+-------------------------------------------------
+  async prepareSync() {
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Check if the user is logged in
     // A not logged in user does not have a Bearer token to call the API
     // And also does not have JWT token to sync with Supabase
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (!$user.is.logged) {
-      return
+      return false
     }
 
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,24 +78,14 @@ export default {
     }
 
     if ($cloud.is == 'conflict') {
-      return
-    } else {
-      $cloud.status = 'syncing'
+      return false
     }
 
-    // Sync the steam library
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // await this.syncLibrary()
+    // Block the cloud status to avoid having
+    // Multiple syncs before ending
+    $cloud.status = 'blocked'
 
-    // Update the library
-    // ⇢ fetch updated metadata for new or stale games
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    await this.syncLibrary()
-
-    // Sync the achievements
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    $nuxt.$app.background.running = 'achievements'
-    await this.syncAchievements()
+    return true
   },
 
   //+-------------------------------------------------
@@ -79,7 +97,7 @@ export default {
   //+-------------------------------------------------
   async syncLibrary(check = true) {
     let stale = dates.isStale($user.cron.updateLibrary, 24, 'h')
-    let toUpdate = await dataService.updateBatch(['empty', ':outdated'], 'return')
+    let toUpdate = await dataService.findAppsToUpdate(['empty', ':outdated'], 'return')
 
     if (!stale || toUpdate.amount == 0) return
 
@@ -98,6 +116,8 @@ export default {
   // Created on Wed Mar 19 2025
   //+-------------------------------------------------
   async syncAchievements() {
+    $nuxt.$app.background.running = 'achievements'
+
     // Check the status of other previous achievement requests
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     let status = await supabaseService.getQueueAchievements()
@@ -153,10 +173,8 @@ export default {
   // Created on Tue Mar 25 2025
   //+-------------------------------------------------
   endSynchronization() {
-    if ($cloud.is == 'syncing') {
-      $cloud.status = 'sync:done'
-      $cloud.sync()
-    }
+    if ($cloud.status == 'blocked') $cloud.status = 'sync:done'
+    // $cloud.sync()
 
     $nuxt.$sync.unsubscribe('queue')
     $nuxt.$app.background.running = false

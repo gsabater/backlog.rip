@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Tue 25 March 2025 - 14:35:24
+ * Modified: Tue 25 March 2025 - 16:50:58
  */
 
 import synchronizationService from '../services/synchronizationService'
@@ -164,11 +164,6 @@ function handle(event, payload) {
     case 'config:updated':
     case 'account:updated':
       queueService.queue('account', 'cloud')
-      break
-
-    case 'sync:done':
-      // WIP
-      // dataService.updateBatch(['empty', ':outdated'])
       break
 
     // Game events

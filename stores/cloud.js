@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Mon 24 March 2025 - 19:23:10
+ * Modified: Tue 25 March 2025 - 15:27:56
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -29,14 +29,10 @@ let $state = null
 export const useCloudStore = defineStore('cloud', {
   state: () => ({
     status: 'local',
-    connected: false,
-
-    $sb: null, // Supabase client
-    jwt: null, // JWT token identifying the user
-    sub: null, // Subject uuid defined in supabase
-    backups: [], // Array of backups
 
     b: {},
+    backups: [], // Array of backups
+
     backup: {
       enabled: false,
 
@@ -77,6 +73,7 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     async sync() {
       if ($nuxt.$auth.config.cloud == false) return
+      if (this.status == 'syncing') return
 
       console.groupCollapsed('🔸 ⚡Cloud sync')
       this.status = 'syncing'
@@ -882,6 +879,14 @@ export const useCloudStore = defineStore('cloud', {
   },
 
   getters: {
+    jwt() {
+      return $user.jwt
+    },
+
+    sub() {
+      return $user.cloud.sub
+    },
+
     //+-------------------------------------------------
     // is()
     // Returns "ok" or this.status

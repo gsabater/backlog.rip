@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 19th March 2025
- * Modified: Tue 25 March 2025 - 09:50:40
+ * Modified: Tue 25 March 2025 - 15:27:32
  */
 
 import dataService from './dataService'
@@ -51,18 +51,18 @@ export default {
 
     if ($cloud.is == 'conflict') {
       return
+    } else {
+      $cloud.status = 'syncing'
     }
 
     // Sync the steam library
-    // using the steam module
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // await this.syncLibrary()
 
     // Update the library
-    // And fetch updated metadata for new or stale games
+    // ⇢ fetch updated metadata for new or stale games
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    $nuxt.$app.background.running = 'updatingLibrary'
-    await dataService.updateBatch(['empty', ':outdated'])
+    await this.syncLibrary()
 
     // Sync the achievements
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,7 +70,26 @@ export default {
     await this.syncAchievements()
   },
 
-  syncLibrary() {},
+  //+-------------------------------------------------
+  // syncLibrary()
+  // Updates a batch of IDs against the API
+  // Do that only once every 24h
+  // -----
+  // Created on Tue Mar 25 2025
+  //+-------------------------------------------------
+  async syncLibrary(check = true) {
+    let stale = dates.isStale($user.cron.updateLibrary, 24, 'h')
+    let toUpdate = await dataService.updateBatch(['empty', ':outdated'], 'return')
+
+    if (!stale || toUpdate.amount == 0) return
+
+    $nuxt.$app.background.running = 'updatingLibrary'
+    await dataService.getBatch(toUpdate)
+
+    // Update the cron values
+    $user.config.cron.updateLibrary = dates.stamp()
+    $user.setConfig('cron')
+  },
 
   //+-------------------------------------------------
   // syncAchievements()
@@ -83,16 +102,27 @@ export default {
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     let status = await supabaseService.getQueueAchievements()
 
+    // Case A
+    // There are achievements to process from the worker
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (status?.completed?.length) {
       await achievementsService.processSync(status.completed)
+
+      // Update the cron values
+      $user.config.cron.updateAchievements = dates.stamp()
+      $user.setConfig('cron')
+
       this.endSynchronization()
       return
     }
 
-    // Get achievements worth syncing
+    // Case B
+    // Try to sync a new batch of achievements
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    let stale = dates.isStale($user.cron.updateAchievements, 24, 'h')
     let missing = achievementsService.findToUpdate()
-    if (!missing.length) {
+
+    if (!missing.length || !stale) {
       this.endSynchronization()
       return
     }
@@ -114,8 +144,21 @@ export default {
 
   backup() {},
 
+  //+-------------------------------------------------
+  // endSynchronization()
+  // Ends the syncronization process
+  // -----
+  // NOTE: should this be an event?
+  // -----
+  // Created on Tue Mar 25 2025
+  //+-------------------------------------------------
   endSynchronization() {
-    $nuxt.$app.background.running = false
+    if ($cloud.is == 'syncing') {
+      $cloud.status = 'sync:done'
+      $cloud.sync()
+    }
+
     $nuxt.$sync.unsubscribe('queue')
+    $nuxt.$app.background.running = false
   },
 }

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Mon 24 March 2025 - 19:22:53
+ * Modified: Tue 25 March 2025 - 11:36:55
  */
 
 let $nuxt = null
@@ -298,10 +298,16 @@ export const useUserStore = defineStore('user', {
 
   getters: {
     //+-------------------------------------------------
+    // cron()
+    // Getter for the cron object
+    //+-------------------------------------------------
+    cron() {
+      return this.config.cron || {}
+    },
+
+    //+-------------------------------------------------
     // menu()
     // Getter for the menu object
-    // -----
-    // Created on Fri Jul 19 2024
     //+-------------------------------------------------
     menu() {
       let menu = this.config.menu || {}

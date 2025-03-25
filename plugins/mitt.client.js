@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Mon 24 March 2025 - 19:23:36
+ * Modified: Tue 25 March 2025 - 14:35:24
  */
 
 import synchronizationService from '../services/synchronizationService'
@@ -24,6 +24,7 @@ const emitter = mitt()
 //   |- $libs.init()
 //   |- $sync.init()
 // |- app:ready
+//   |- overview() to display the state of the app and the user
 //   |- synchronizationService.sync()
 
 //   |- $guild.ping() <- CHANGE TO EVENT on user:ready
@@ -90,10 +91,9 @@ function handle(event, payload) {
     // This event is listened by most components directly
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     case 'app:ready':
+      overview()
       synchronizationService.sync()
       if (document?.body && $nuxt.$app.dev) document.body.classList.add('has-debug')
-
-      overview()
       break
 
     // User hooks
@@ -211,10 +211,13 @@ function overview() {
       dev: $nuxt.$app.dev || $nuxt.$app.wip,
     },
 
-    user: {},
+    cron: JSON.parse(JSON.stringify($nuxt.$auth.cron)),
+
+    user: $nuxt.$auth.user,
+    config: $nuxt.$auth.config,
 
     data: {
-      library: $data.library(),
+      count: $nuxt.$app.count,
     },
   }
 

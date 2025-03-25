@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 31st December 2024
- * Modified: Thu 20 March 2025 - 12:48:04
+ * Modified: Tue 25 March 2025 - 11:32:23
  */
 
 import queueService from './queueService'
@@ -383,7 +383,7 @@ export default {
   // -----
   // Created on Wed Jan 15 2025
   //+-------------------------------------------------
-  async updateBatch(levels = ['empty']) {
+  async updateBatch(levels = ['empty'], action = 'get') {
     $data ??= useDataStore()
 
     let outdated = {
@@ -406,8 +406,17 @@ export default {
       return
     }
 
-    // log('↻ Updating a batch...', outdated)
-    await this.getBatch(outdated)
+    if (action === 'get') {
+      // log('↻ Updating a batch...', outdated)
+      await this.getBatch(outdated)
+    }
+
+    if (action === 'return') {
+      return {
+        amount: outdated.api.length + outdated.steam.length,
+        ...outdated,
+      }
+    }
   },
 
   //+-------------------------------------------------

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th November 2023
- * Modified: Thu 30 January 2025 - 15:17:20
+ * Modified: Tue 25 March 2025 - 11:19:04
  */
 
 export class DexieInstaller {
@@ -129,6 +129,7 @@ export class DexieInstaller {
         states: [1, 2, 3],
       },
 
+      cron: {},
       created_at: dates.now(),
     }
 

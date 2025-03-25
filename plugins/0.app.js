@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Mon 24 March 2025 - 19:23:46
+ * Modified: Tue 25 March 2025 - 09:46:20
  */
 
 // import { reactive } from 'vue'
@@ -229,8 +229,6 @@ export default defineNuxtPlugin(() => {
   app = reactive({
     init,
     initClient,
-
-    setDebug,
     toggleSidebar,
 
     ...app,

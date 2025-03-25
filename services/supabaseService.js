@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 24th March 2025
- * Modified: Mon 24 March 2025 - 11:17:20
+ * Modified: Tue 25 March 2025 - 10:01:20
  */
 
 let $nuxt = null
@@ -13,13 +13,13 @@ let client = null
 
 export default {
   //+-------------------------------------------------
-  // function()
+  // getQueueAchievements()
   // -----
   // Note: .eq('user_id', cred.sub) is implicit in the JWT
   // -----
   // Created on Mon Mar 24 2025
   //+-------------------------------------------------
-  async getQueueStatus() {
+  async getQueueAchievements() {
     let jxr = await client.from('queue_achievements').select('*')
 
     if (!jxr.data.length) {
@@ -33,6 +33,18 @@ export default {
       queued: queued,
       completed: completed,
     }
+  },
+
+  //+-------------------------------------------------
+  // clearQueueAchievements()
+  // Clears completed jobs
+  // -----
+  // Created on Tue Mar 25 2025
+  //+-------------------------------------------------
+  async clearQueueAchievements(ids) {
+    let jxr = await client.from('queue_achievements').delete().in('id', ids)
+
+    return jxr
   },
 
   //+-------------------------------------------------

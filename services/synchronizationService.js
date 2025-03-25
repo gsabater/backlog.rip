@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 19th March 2025
- * Modified: Mon 24 March 2025 - 19:15:02
+ * Modified: Tue 25 March 2025 - 09:50:40
  */
 
 import dataService from './dataService'
@@ -32,7 +32,10 @@ export default {
     $user ??= useUserStore()
     $cloud ??= useCloudStore()
 
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Check if the user is logged in
+    // A not logged in user does not have a Bearer token to call the API
+    // And also does not have JWT token to sync with Supabase
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (!$user.is.logged) {
       return
@@ -76,9 +79,9 @@ export default {
   // Created on Wed Mar 19 2025
   //+-------------------------------------------------
   async syncAchievements() {
-    // Check the state of other previous requests
+    // Check the status of other previous achievement requests
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    let status = await supabaseService.getQueueStatus()
+    let status = await supabaseService.getQueueAchievements()
 
     if (status?.completed?.length) {
       await achievementsService.processSync(status.completed)

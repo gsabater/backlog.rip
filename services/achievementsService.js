@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 19th March 2025
- * Modified: Mon 24 March 2025 - 15:38:53
+ * Modified: Tue 25 March 2025 - 10:04:21
  */
 
 let $data = null
@@ -69,9 +69,10 @@ export default {
     $data ??= useDataStore()
     $game ??= useGameStore()
 
+    let synced = []
     queues.forEach((work) => {
+      synced.push(work.id)
       if (!work.data) return
-      debugger
 
       for (const appid in work.data) {
         const achievements = work.data[appid]
@@ -84,5 +85,8 @@ export default {
         }
       }
     })
+
+    // Remove the items from the queue
+    await supabaseService.clearQueueAchievements(synced)
   },
 }

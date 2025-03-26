@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Mon 24 March 2025 - 15:50:05
+ * Modified: Tue 25 March 2025 - 16:50:58
  */
 
 import synchronizationService from '../services/synchronizationService'
@@ -24,6 +24,7 @@ const emitter = mitt()
 //   |- $libs.init()
 //   |- $sync.init()
 // |- app:ready
+//   |- overview() to display the state of the app and the user
 //   |- synchronizationService.sync()
 
 //   |- $guild.ping() <- CHANGE TO EVENT on user:ready
@@ -39,6 +40,7 @@ const emitter = mitt()
 //+-------------------------------------------------
 
 import mitt from 'mitt'
+import queueService from '../services/queueService'
 
 let $nuxt = null
 let $user = null
@@ -89,10 +91,9 @@ function handle(event, payload) {
     // This event is listened by most components directly
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     case 'app:ready':
+      overview()
       synchronizationService.sync()
       if (document?.body && $nuxt.$app.dev) document.body.classList.add('has-debug')
-
-      overview()
       break
 
     // User hooks
@@ -117,13 +118,14 @@ function handle(event, payload) {
       $nuxt.$app.has.push('data')
       break
 
-    // Hook used by search to search again
     case 'data:updated':
       break
 
     case 'data:deleted':
       $data ??= useDataStore()
       $data.countLibrary()
+
+      queueService.queue('library', 'cloud')
       break
 
     // A game has been added to the library
@@ -135,7 +137,6 @@ function handle(event, payload) {
       break
 
     // A game has changed its state
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     case 'state:change':
       $data ??= useDataStore()
       $state ??= useStateStore()
@@ -144,11 +145,25 @@ function handle(event, payload) {
       $state.indexLibrary('all')
       break
 
-    // Cloud sync events
+    // A game dialog is opened
+    // case 'game:modal':
+    //   break
+
+    // States have been changed
+    case 'state:created':
+    case 'state:updated':
+    case 'state:deleted':
+      $state ??= useStateStore()
+
+      $state.load('reload')
+      queueService.queue('states', 'cloud')
+      break
+
+    // The user data has been updated
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    case 'sync:done':
-      // WIP
-      // dataService.updateBatch(['empty', ':outdated'])
+    case 'config:updated':
+    case 'account:updated':
+      queueService.queue('account', 'cloud')
       break
 
     // Game events
@@ -191,10 +206,13 @@ function overview() {
       dev: $nuxt.$app.dev || $nuxt.$app.wip,
     },
 
-    user: {},
+    cron: JSON.parse(JSON.stringify($nuxt.$auth.cron)),
+
+    user: $nuxt.$auth.user,
+    config: $nuxt.$auth.config,
 
     data: {
-      library: $data.library(),
+      count: $nuxt.$app.count,
     },
   }
 

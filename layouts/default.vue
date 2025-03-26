@@ -823,7 +823,7 @@
                   <div class="ms-3">
                     <a href="javascript:void(0)" class="text-body">Synchronized</a>
                     <div v-tippy="$auth.cloud.updated_at" class="text-secondary">
-                      Last backup
+                      Synchronized
                       {{ dates.dynamicTimeAgo($auth.cloud.updated_at) }} ago
                     </div>
                   </div>
@@ -1212,7 +1212,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Mon 24 March 2025 - 14:56:11
+ * Modified: Mon 24 March 2025 - 19:23:59
  **/
 
 export default {

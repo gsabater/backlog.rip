@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 31st December 2024
- * Modified: Thu 20 March 2025 - 12:48:04
+ * Modified: Tue 25 March 2025 - 17:34:32
  */
 
 import queueService from './queueService'
@@ -377,18 +377,19 @@ export default {
   },
 
   //+-------------------------------------------------
-  // updateBatch()
+  // findAppsToUpdate()
   // Searches for games under the detail level
   // And calls the api for an update
   // -----
   // Created on Wed Jan 15 2025
   //+-------------------------------------------------
-  async updateBatch(levels = ['empty']) {
+  async findAppsToUpdate(levels = ['empty'], action = 'get') {
     $data ??= useDataStore()
 
     let outdated = {
       api: [],
       steam: [],
+      amount: 0,
     }
 
     $data
@@ -401,13 +402,14 @@ export default {
         else if (game.id.steam) outdated.steam.push(game.id.steam)
       })
 
-    // Check if no games were added
-    if (outdated.api.length === 0 && outdated.steam.length === 0) {
-      return
+    outdated.amount = outdated.api.length + outdated.steam.length
+
+    if (action === 'get') {
+      // log('↻ Updating a batch...', outdated)
+      await this.getBatch(outdated)
     }
 
-    // log('↻ Updating a batch...', outdated)
-    await this.getBatch(outdated)
+    return outdated
   },
 
   //+-------------------------------------------------
@@ -417,6 +419,8 @@ export default {
   // Created on Wed Jan 15 2025
   //+-------------------------------------------------
   async getBatch(apps) {
+    if (!apps.amount) return
+
     $nuxt ??= useNuxtApp()
     $data ??= useDataStore()
 

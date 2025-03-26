@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Thu 20 March 2025 - 15:41:37
+ * Modified: Tue 25 March 2025 - 11:29:18
  */
 
 let $nuxt = null
@@ -127,6 +127,7 @@ export default {
     const ref = $nuxt.$dayjs(time)
 
     let seconds = now.diff(ref, 'seconds')
+    if (seconds < 30) return 'now'
     if (seconds < 60) return `${seconds}s`
 
     let minutes = Math.floor(seconds / 60)
@@ -194,6 +195,8 @@ export default {
       case 'minutes':
         timeToStale = amount * 60
         break
+
+      case 'h':
       case 'hours':
         timeToStale = amount * 60 * 60
         break

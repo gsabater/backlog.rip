@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 18th March 2025
- * Modified: Mon 24 March 2025 - 19:06:44
+ * Modified: Tue 25 March 2025 - 15:04:45
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -20,9 +20,9 @@ const anon = {
 }
 
 let sync = {
-  sb: null,
-  jwt: null,
-  sub: null,
+  sb: null, // Supabase client
+  jwt: null, // JWT token identifying the user
+  sub: null, // Subject uuid defined in supabase
   channels: [],
 
   ready: false,

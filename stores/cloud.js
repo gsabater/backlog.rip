@@ -3,10 +3,11 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Mon 24 March 2025 - 19:01:57
+ * Modified: Tue 25 March 2025 - 15:27:56
  */
 
 import { createClient } from '@supabase/supabase-js'
+import cloudService from '../services/cloudService'
 
 let $nuxt = null
 let $data = null
@@ -28,14 +29,10 @@ let $state = null
 export const useCloudStore = defineStore('cloud', {
   state: () => ({
     status: 'local',
-    connected: false,
-
-    $sb: null, // Supabase client
-    jwt: null, // JWT token identifying the user
-    sub: null, // Subject uuid defined in supabase
-    backups: [], // Array of backups
 
     b: {},
+    backups: [], // Array of backups
+
     backup: {
       enabled: false,
 
@@ -70,17 +67,31 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     // sync()
     // Starts the synchronization process for every object
-    // Starts the synchronization process for every object
     // -----
     // Created on Mon Aug 19 2024
+    // Updated on Thu Mar 13 2025
     //+-------------------------------------------------
     async sync() {
+      if ($nuxt.$auth.config.cloud == false) return
+      if (this.status == 'syncing') return
+
       console.groupCollapsed('🔸 ⚡Cloud sync')
       this.status = 'syncing'
 
       // Prepare and analyze the backup
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       await this.prepareAndAnalyze()
+
+      // Everything is all right
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (this.isAllOk) {
+        console.groupEnd()
+        log('⚡✅ Synchronization is ok')
+
+        this.status = 'sync:done'
+        $nuxt.$mitt.emit('sync:done')
+        return
+      }
 
       // Whoops, we have a conflict
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,25 +100,24 @@ export const useCloudStore = defineStore('cloud', {
         return
       }
 
-      // Synchronize library
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      await this.doSync('library')
-
       // Synchronize local account
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       await this.doSync('account')
 
       // Synchronize states
-      // Synchronize states
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       await this.doSync('states')
 
+      // Synchronize library
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      await this.doSync('library')
+
       // Finalize the backup
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (this.backup.enabled) await this.storeBckp()
+      if (this.backup.enabled) await this.storeBackup()
 
-      log('⚡✅ Synchronization complete')
       console.groupEnd()
+      log('⚡✅ Synchronization complete')
 
       this.status = 'sync:done'
       $nuxt.$mitt.emit('sync:done')
@@ -176,21 +186,15 @@ export const useCloudStore = defineStore('cloud', {
     // -----
     // Created on Fri Aug 30 2024
     // Updated on Mon Dec 23 2024 - Moved logic to prepare()
-    // Updated on Tue Jan 28 2025 - Use a cloud queue
     //+-------------------------------------------------
     async analyze() {
-      let queue = queueService.get()
-
       log(`⚡ cli:${this.client.hash} ⇢ clo:${this.backup.hash}`)
 
       // ⇢ Analyze the integrity of each dimension
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let dimensions = Object.keys(this.dimensions)
       for (let dimension of dimensions) {
-        if (this.initialized && !queue.cloud.includes(dimension)) continue
-
         this.integrityCheck(dimension)
-        log(` ⇢ ${dimension}: ${this.b[dimension]}`)
       }
     },
 
@@ -250,11 +254,11 @@ export const useCloudStore = defineStore('cloud', {
     // -----
     // Created on Wed Aug 21 2024
     //+-------------------------------------------------
-    async storeBckp() {
-      log(`⚡ Storing the backup... (5s)`)
-      clearTimeout(this._backupTimeout)
-      this._backupTimeout = setTimeout(() => this.storeBackup(), 5000)
-    },
+    // async storeBckp() {
+    //   log(`⚡ Storing the backup... (5s)`)
+    //   clearTimeout(this._backupTimeout)
+    //   this._backupTimeout = setTimeout(() => this.storeBackup(), 5000)
+    // },
 
     //+-------------------------------------------------
     // storeBackup()
@@ -475,32 +479,6 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     async backupStates() {
       let data = await $nuxt.$db.states.toArray()
-      // let installer = new DexieInstaller()
-      // let baseStates = installer.defaultStates
-
-      // let unique = data.filter((state) => {
-      //   let found = baseStates.find((base) => base.id == state.id)
-      //   if (!found) return true
-
-      //   if (
-      //     found.id != state.id ||
-      //     found.order != state.order ||
-      //     found.key != state.key ||
-      //     found.color != state.color ||
-      //     found.name != state.name ||
-      //     found.description != state.description
-      //   )
-      //     return true
-
-      //   return false
-      // })
-
-      // Default states
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (!data.length) {
-        log('⚡ states ~ The states are default so no sync is needed')
-        return
-      }
 
       // Compare and assign signatures
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -583,11 +561,25 @@ export const useCloudStore = defineStore('cloud', {
     // Created on Tue Aug 20 2024
     //+-------------------------------------------------
     cleanGame(game) {
-      let whitelist = ['uuid', 'name', 'id', 'is', 'state', 'cover', 'playtime']
       let clean = {}
+      let whitelist = [
+        'uuid',
+        'name',
+        'id',
+        'is',
+        'state',
+        'cover',
+        'playtime',
+        'achievements',
+      ]
+
       for (const key in game) {
-        if (whitelist.includes(key)) clean[key] = game[key]
+        if (key == 'achievements') {
+          let ach = cloudService.prepareAchievements(game)
+          if (ach) clean[key] = ach
+        } else if (whitelist.includes(key)) clean[key] = game[key]
       }
+
       return clean
     },
 
@@ -745,8 +737,10 @@ export const useCloudStore = defineStore('cloud', {
       if (!this.client[source]) return
       if ($nuxt.$auth.config.cloud == false) return
 
+      debugger
       log(`⚡⌛ queue to Sync ~ ${source}`, this.client[source])
       if (this.client[source]) this.client[source] = '0.update'
+      return
 
       if (this.status == 'syncing') return
       this.status = 'syncing'
@@ -778,7 +772,7 @@ export const useCloudStore = defineStore('cloud', {
       // We're ok
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (signed && client === signed) {
-        // log(`⚡ ${dimension} ⇢ synchronized (ok)`)
+        log(`⚡ ${dimension} ⇢ synchronized (ok)`)
         this.b[dimension] = 'ok'
         return 'ok'
       }
@@ -885,6 +879,14 @@ export const useCloudStore = defineStore('cloud', {
   },
 
   getters: {
+    jwt() {
+      return $user.jwt
+    },
+
+    sub() {
+      return $user.cloud.sub
+    },
+
     //+-------------------------------------------------
     // is()
     // Returns "ok" or this.status
@@ -893,6 +895,15 @@ export const useCloudStore = defineStore('cloud', {
     //+-------------------------------------------------
     is() {
       return this.status // == 'sync:done' ? 'ok' : this.status
+    },
+
+    isAllOk() {
+      let dimensions = Object.keys(this.dimensions)
+      for (let dimension of dimensions) {
+        if (this.b[dimension] !== 'ok') return false
+      }
+
+      return true
     },
 
     //+-------------------------------------------------

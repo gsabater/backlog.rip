@@ -3,7 +3,7 @@
  * @desc:    Handle operations related to data with their index
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Mon 24 March 2025 - 11:30:16
+ * Modified: Mon 24 March 2025 - 19:23:04
  */
 
 import gameService from '../services/gameService'
@@ -144,7 +144,7 @@ export const useDataStore = defineStore('data', {
 
         // if (intent !== 'library' && intent !== 'api' && intent !== 'updated') debugger
         // if (item.uuid == '338c704c-260e-44a6-b063-d541ef351fa8') debugger
-        if (item.id?.steam == 250900) debugger
+        // if (item.id?.steam == 250900) debugger
 
         // Find the index in data
         let indexed = this.isIndexed(item)

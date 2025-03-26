@@ -97,7 +97,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 23rd December 2024
- * Modified: Mon 27 January 2025 - 17:48:38
+ * Modified: Thu 13 March 2025 - 15:02:16
  **/
 
 export default {
@@ -120,13 +120,13 @@ export default {
     },
 
     // //+-------------------------------------------------
-    // // storeConfig()
+    // // setConfig()
     // // Updates a field in the db via $auth
     // // -----
     // // Created on Mon Dec 18 2023
     // //+-------------------------------------------------
-    // async storeConfig(field) {
-    //   this.$auth.storeConfig(field)
+    // async setConfig(field) {
+    //   this.$auth.setConfig(field)
     //   // this.$toast.success('Sidebar updated')
     //   this.$toast.success('Your preferences have been updated')
     // },

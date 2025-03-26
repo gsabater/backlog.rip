@@ -28,7 +28,7 @@
                 v-model="$auth.config.game_state_borders"
                 type="checkbox"
                 class="form-check-input"
-                @change="storeConfig('game_state_borders')" />
+                @change="setConfig('game_state_borders')" />
               <span class="form-check-label">Display state borders</span>
               <span class="form-check-description">
                 Adds colored borders to game cards, visually indicating their current
@@ -84,7 +84,7 @@
                 v-model="$auth.config.favorites"
                 type="checkbox"
                 class="form-check-input"
-                @change="storeConfig('favorites')" />
+                @change="setConfig('favorites')" />
               <span class="form-check-label">
                 <Icon size="14" width="1.5" style="transform: translateY(-2px)">
                   Heart
@@ -124,7 +124,7 @@
                 v-model="$auth.config.pinned"
                 type="checkbox"
                 class="form-check-input"
-                @change="storeConfig('pinned')" />
+                @change="setConfig('pinned')" />
               <span class="form-check-label">
                 <Icon size="14" width="1.5" style="transform: translateY(-2px)">
                   Bookmark
@@ -155,7 +155,7 @@
                 v-model="$auth.config.hidden"
                 type="checkbox"
                 class="form-check-input"
-                @change="storeConfig('hidden')" />
+                @change="setConfig('hidden')" />
               <span class="form-check-label">Hidden games</span>
               <span class="form-check-description">
                 Allows you to hide games from any source. Hidden games will be excluded
@@ -206,7 +206,7 @@
           v-model="$auth.config.debug"
           type="checkbox"
           class="form-check-input"
-          @change="storeConfig('debug')" />
+          @change="setConfig('debug')" />
         <span class="form-check-label form-check-label-on">Debugging enabled</span>
         <span class="form-check-label form-check-label-off">Developer mode is off</span>
       </div>
@@ -220,7 +220,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th July 2024
- * Modified: Mon 27 January 2025 - 17:43:01
+ * Modified: Thu 13 March 2025 - 15:27:51
  **/
 
 export default {
@@ -232,14 +232,13 @@ export default {
 
   methods: {
     //+-------------------------------------------------
-    // storeConfig()
+    // setConfig()
     // Updates a field in the db via $auth
     // -----
     // Created on Mon Dec 18 2023
     //+-------------------------------------------------
-    async storeConfig(field) {
-      this.$auth.storeConfig(field)
-      // this.$toast.success('Sidebar updated')
+    async setConfig(field) {
+      this.$auth.setConfig(field)
       this.$toast.success('Your preferences have been updated')
     },
 

@@ -63,7 +63,7 @@
                 v-model="$auth.config.autosync_steam"
                 class="form-check-input position-static"
                 type="checkbox"
-                @change="storeConfig('autosync_steam')" />
+                @change="setConfig('autosync_steam')" />
               <span class="form-check-label form-check-label-on">
                 Auto updates are enabled
               </span>
@@ -96,7 +96,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 4th December 2024
- * Modified: Sun 09 March 2025 - 11:46:43
+ * Modified: Thu 13 March 2025 - 15:11:46
  **/
 
 export default {

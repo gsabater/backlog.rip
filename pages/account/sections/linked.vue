@@ -133,15 +133,31 @@
             padding-bottom: 0.8rem;
             background-color: rgb(0 0 0 / 25%);
           ">
-          <div class="row g-3 align-items-center">
+          <div class="pt-2">
             <!-- <div class="col-auto text-secondary">
             <v-btn variant="text" icon="mdi-chevron-right" size="small">
               <Icon>Badge</Icon>
             </v-btn>
           </div> -->
             <div class="col">
-              <h5 class="mt-2 mb-1">Syncronize</h5>
-              <div
+              <!-- <h5 class="mt-2 mb-1">Syncronize</h5> -->
+              <ul class="list-unstyled space-y mb-0">
+                <template v-for="item in text[account].features">
+                  <li class="row g-2">
+                    <span class="col-auto">
+                      <Icon size="14" width="1.5" class="me-1 text-success">
+                        {{ item.icon }}
+                      </Icon>
+                    </span>
+                    <span class="col">
+                      <strong class="d-block">{{ item.text }}</strong>
+                      <span class="d-block text-secondary">{{ item.more }}</span>
+                    </span>
+                  </li>
+                </template>
+              </ul>
+
+              <!-- <div
                 class="v-list-item-subtitle ps-1"
                 style="font-size: 85.714285% !important">
                 Update your library with your Steam games and playtime.
@@ -154,7 +170,7 @@
                 class="v-list-item-subtitle ps-1"
                 style="font-size: 85.714285% !important">
                 A public Steam profile or a Steam API Key is needed.
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -410,7 +426,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Tue 11 March 2025 - 15:57:38
+ * Modified: Thu 13 March 2025 - 16:05:14
  **/
 
 export default {
@@ -421,9 +437,29 @@ export default {
       text: {
         steam: {
           description: 'Import your Steam library, playtime and achievements',
+          features: [
+            {
+              icon: 'Check',
+              text: 'Import your Steam games',
+              more: 'Including your playtime and last date played',
+            },
+
+            {
+              icon: 'Check',
+              text: 'Synchronize your Achievements',
+              more: 'Including the progress and date of each achievement',
+            },
+          ],
         },
         steamBacklog: {
           description: 'Import game statuses and progress from steam-backlog.com',
+          features: [
+            {
+              icon: 'Check',
+              text: 'Game state',
+              more: 'Individual progress for each game',
+            },
+          ],
         },
       },
     }
@@ -447,7 +483,7 @@ export default {
     },
 
     async update(store, field) {
-      this.$auth.storeConfig(field)
+      this.$auth.setConfig(field)
       this.$toast.success('Your preferences have been updated')
     },
   },

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Mon 24 March 2025 - 19:15:24
+ * Modified: Tue 25 March 2025 - 11:36:55
  */
 
 let $nuxt = null
@@ -205,31 +205,26 @@ export const useUserStore = defineStore('user', {
 
     //+-------------------------------------------------
     // update()
-    // a try to streamline updates across local $db, $guild and $cloud
+    // serves as a common entry point to update any account
+    // Accounts are rows under $db.account (me, cloud, guild, lib:xxx)
+    // based on the field, the update is performed with one or another method
     // -----
     // Created on Fri Dec 27 2024
     //+-------------------------------------------------
-    async update(field) {
+    async update(field, value) {
       const me = ['slug', 'username']
-      const cloud = []
       const guild = ['guild', 'slug', 'username']
       const config = ['guild', 'debug', 'two']
 
       if (me.includes(field)) {
-        console.warn('updating account (me)', field)
-        this.updateAccount(field)
-      }
-
-      if (config.includes(field)) {
-        console.warn('updating config', field)
-        this.storeConfig(field)
+        this.updateMe(field)
       }
     },
 
     //+-------------------------------------------------
     // putAccount()
     // Writes an account object to the database
-    // Use updateAccount() to update a single field instead
+    // Use updateMe() to update a single field instead
     // -----
     // Created on Mon Aug 19 2024
     //+-------------------------------------------------
@@ -243,49 +238,76 @@ export const useUserStore = defineStore('user', {
     },
 
     //+-------------------------------------------------
-    // updateAccount()
-    // updates $account store and this.me data
+    // updateMe()
+    // updates an account row a single field at a time
+    // To ensure integrity, the account is loaded from the database first
     // -----
     // Created on Fri Dec 29 2023
-    // Created on Mon Aug 26 2024 - Integrate with cloud
+    // Updated on Mon Aug 26 2024 - Integrate with cloud
+    // Updated on Thu Mar 13 2025 - Replaced cloud with an event
     //+-------------------------------------------------
-    async updateAccount(field = null) {
-      console.warn('🔴🔴🔴 Updating account', field)
+    async updateMe(field = null) {
+      if (!field) return
+      log(`Updating $db.account('me').${field} with value ${this.me[field]}`)
+
       let account = await $nuxt.$db.account.get('me')
-
       let data = { ...account }
-      if (field) data[field] = this.me[field]
-      this.user = { ...this.api, ...this.me }
 
-      await $cloud.update('account')
-      await $nuxt.$db.account.put(data)
+      if (field) data[field] = this.me[field]
+      if (this.user[field]) this.user[field] = this.me[field]
+      // this.user = { ...this.api, ...this.me }
+
+      // await $cloud.update('account')
+      $nuxt.$db.account.put(data)
+      $nuxt.$mitt.emit('account:updated', {
+        account: 'me',
+        field,
+        value: this.me[field],
+      })
     },
 
     //+-------------------------------------------------
-    // storeConfig()
+    // setConfig()
     // Updates $config store and this.config data
     // -----
     // Created on Sun Feb 18 2024
+    // Created on Thu Mar 13 2025 - Emit an event
     //+-------------------------------------------------
-    async storeConfig(field) {
-      console.warn('🔴🔴🔴 Updating config', field)
+    async setConfig(field) {
+      if (!field) return
+
       let value = JSON.parse(JSON.stringify(this.config[field]))
+      log(`Updating $db.config.${field} with value`, value)
+
       await $nuxt.$db.config.put({
         key: field,
-        value: value,
+        value,
       })
 
-      $nuxt.$app.dev = this.config.debug
-      if (field !== 'cloud') await $cloud.update('account')
+      if (field == 'debug') {
+        $nuxt.$app.setDebug(this.config.debug)
+      }
+
+      // if (field !== 'cloud') await $cloud.update('account')
+      $nuxt.$mitt.emit('config:updated', {
+        field,
+        value: this.config[field],
+      })
     },
   },
 
   getters: {
     //+-------------------------------------------------
+    // cron()
+    // Getter for the cron object
+    //+-------------------------------------------------
+    cron() {
+      return this.config.cron || {}
+    },
+
+    //+-------------------------------------------------
     // menu()
     // Getter for the menu object
-    // -----
-    // Created on Fri Jul 19 2024
     //+-------------------------------------------------
     menu() {
       let menu = this.config.menu || {}

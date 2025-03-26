@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Mon 24 March 2025 - 14:45:17
+ * Modified: Mon 24 March 2025 - 19:23:15
  */
 
 import steamAPIService from './steamAPIService'
@@ -26,10 +26,12 @@ export default {
     if (app.uuid.includes('local:') && !app.id.api) return
     if (app._.detail.includes('full') && !app._.detail.includes(':outdated')) return
 
+    const uuid = app.id.api || app.uuid
+    if (!uuid || uuid.includes('local:')) return
+
     // Load and return
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     $nuxt ??= useNuxtApp()
-    const uuid = app.id.api || app.uuid
     const xhr = await $nuxt.$axios.get(`/get/${uuid}.json`)
 
     if (xhr.status == 200) {

@@ -328,7 +328,7 @@
           <th>Account</th>
           <th>Games</th>
           <th>States</th>
-          <!-- <th></th> -->
+          <th>&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -384,16 +384,21 @@
                 }}
               </small>
             </td>
-            <!-- <td class="text-end">
-              <div class="btn-action">
-                <Icon>CloudDownload</Icon>
+            <td class="text-end">
+              <div
+                class="btn-action"
+                v-tippy="'Restore this backup locally'"
+                @click="restoreBackup(backup)">
+                <Icon size="14">CloudDownload</Icon>
               </div>
-            </td> -->
+            </td>
           </tr>
         </template>
       </tbody>
     </table>
   </div>
+
+  <cloud-restored ref="restore"></cloud-restored>
 </template>
 
 <script>
@@ -402,7 +407,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th August 2024
- * Modified: Thu 13 March 2025 - 15:02:12
+ * Modified: Tue 01 April 2025 - 12:15:18
  **/
 
 export default {
@@ -429,6 +434,16 @@ export default {
       await delay(333)
 
       this.cloudStore.connect()
+    },
+
+    //+-------------------------------------------------
+    // restoreBackup()
+    // -----
+    // Created on Tue Apr 01 2025
+    //+-------------------------------------------------
+    async restoreBackup(backup) {
+      await this.$cloud.restoreBackup(backup)
+      this.$refs.restore.show(backup)
     },
 
     async init() {},

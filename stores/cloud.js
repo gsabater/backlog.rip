@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Wed 26 March 2025 - 17:44:02
+ * Modified: Thu 03 April 2025 - 16:44:42
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -23,6 +23,7 @@ let $state = null
 // - conflict
 // - error
 // - syncing
+// - syncing:backup
 // - sync:done
 //+-------------------------------------------------
 
@@ -359,7 +360,7 @@ export const useCloudStore = defineStore('cloud', {
     // Created on Fri Sep 13 2024
     //+-------------------------------------------------
     async resolve(action, sync = true) {
-      this.status = 'syncing'
+      this.status = 'syncing:backup'
       this.b.conflict = null
 
       if (action == 'upload') {
@@ -584,6 +585,29 @@ export const useCloudStore = defineStore('cloud', {
     },
 
     //+-------------------------------------------------
+    // restoreBackup()
+    // Sets backup values on this.backup
+    // and calls for a synchronization
+    // -----
+    // Created on Tue Apr 01 2025
+    //+-------------------------------------------------
+    async restoreBackup(backup) {
+      log('Downloading backup from cloud…')
+
+      // Sign the latest backup with the selected values
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      let dimensions = Object.keys(this.dimensions)
+      for (let dimension of dimensions) {
+        this.b[dimension] = 'download'
+        this.backups[0]['sign_' + dimension] = backup['sign_' + dimension]
+      }
+
+      console.warn(this.backups[0])
+
+      await this.resolve('download')
+    },
+
+    //+-------------------------------------------------
     // restoreAccount()
     // Restores the local data from the cloud
     // -----
@@ -657,18 +681,18 @@ export const useCloudStore = defineStore('cloud', {
     },
 
     //+-------------------------------------------------
-    // function()
-    //
+    // restoreLibrary()
+    // Downloads a json file from the user bucket
     // -----
     // Created on Thu Sep 05 2024
     //+-------------------------------------------------
     async restoreLibrary() {
-      log('⚡ Downloading library...')
+      let date = $nuxt.$moment(this.b['library.clo.at'] * 1000).format('YYYY-MM-DD')
+      log('⚡ Downloading library...', date)
       this.backup.enabled = true
 
       // ⇢ Fetch data from the cloud
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let date = $nuxt.$moment(this.b['library.clo.at'] * 1000).format('YYYY-MM-DD')
       let { data, error } = await $nuxt.$sync.sb.storage
         .from('libraries')
         .download(`${this.backup.user_id}/${date}.json`)

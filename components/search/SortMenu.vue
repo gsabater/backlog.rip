@@ -359,18 +359,13 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st October 2024
- * Modified: Tue 04 February 2025 - 17:15:36
+ * Modified: Tue 01 April 2025 - 19:11:48
  **/
 
 export default {
   name: 'SortMenu',
 
   props: {
-    f: {
-      type: Object,
-      default: () => ({}),
-    },
-
     withUser: {
       type: Boolean,
       default: false,
@@ -387,29 +382,37 @@ export default {
     }
   },
 
+  computed: {
+    ...mapState(useSearchStore, ['f']),
+  },
+
   methods: {
     //+-------------------------------------------------
     // sortBy()
     // Notifies the parent to apply the new sorting
     // -----
     // Created on Tue Oct 22 2024
+    // Created on Tue Apr 01 2025 - Handles toggle
     //+-------------------------------------------------
     sortBy(by, dir = 'desc', toggle = false) {
-      if (by == 'rand') {
+      // Handle random sorting
+      if (by === 'rand') {
         this.ui.dice = Math.floor(Math.random() * 6) + 1
-      }
-
-      if (by == 'rand' || by == 'user') {
         dir = null
       }
 
-      this.$emit('sort', {
-        by,
-        dir,
-        toggle,
-      })
+      // Handle user sorting
+      if (by === 'user') {
+        dir = null
+      }
 
-      // this.$refs.tippySort.hide()
+      // Toggle direction if the same sort field is selected
+      if (toggle && by === this.f.sortBy) {
+        dir = this.f.sortDir === 'asc' ? 'desc' : 'asc'
+      }
+
+      // Emit the sort event with the updated parameters
+      this.$emit('sort', { by, dir, toggle })
     },
   },
 

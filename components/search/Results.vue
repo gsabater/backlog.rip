@@ -160,7 +160,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 04 March 2025 - 17:35:20
+ * Modified: Mon 31 March 2025 - 22:04:57
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -221,9 +221,9 @@ export default {
         if (props.disabled) return
         // if (Object.keys(props.filters).length === 0) return
 
-        console.groupCollapsed('🔸 Search at ..' + $route.path + ' (' + trigger + ')')
-        log('search', '⇢ search:start', trigger || 'direct')
-        emit('search:start', trigger)
+        // console.groupCollapsed('🔸 Search at ..' + $route.path + ' (' + trigger + ')')
+        // log('search', '⇢ search:start', trigger || 'direct')
+        // emit('search:start', trigger)
 
         // let filters = null
         // if (props.filters?.source) {
@@ -234,7 +234,7 @@ export default {
         items.value = search.items
 
         emit('search:end')
-        console.groupEnd()
+        // console.groupEnd()
       },
       1000,
       true
@@ -243,15 +243,15 @@ export default {
     // Watcher
     // Trigger to fire a search
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    watch(
-      () => $search.f,
-      (value, old) => {
-        if (props.disabled) return
-        // console.warn('💢💢💢💥💥💥', value)
-        search('filters:updated')
-      },
-      { deep: true }
-    )
+    // watch(
+    //   () => $search.f,
+    //   (value, old) => {
+    //     // if (props.disabled) return
+    //     console.warn('💢💢💢💥💥💥', value)
+    //     // search('filters:updated')
+    //   },
+    //   { deep: true }
+    // )
 
     return { search, items, loading: $search.loading }
   },
@@ -304,11 +304,22 @@ export default {
       await this.searchStore.prepare(filters)
       this.$emit('search:ready')
 
+      // Initial search
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      this.search('init')
+
+      // @search:run
+      // Perform a search
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      this.$mitt.on('search:run', () => {
+        this.search('event:run')
+      })
+
       // @data:updated
       // Reset the search hashed cache
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       this.$mitt.on('data:updated', () => {
-        this.searchStore.resetHashed()
+        // this.searchStore.resetHashed()
         this.search('data:updated')
       })
     },
@@ -325,6 +336,7 @@ export default {
   },
 
   beforeUnmount() {
+    this.$mitt.off('search:run')
     this.$mitt.off('data:updated')
     // this.$mitt.off('data:deleted')
   },

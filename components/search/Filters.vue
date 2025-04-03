@@ -40,79 +40,44 @@ Selected
 </pre
   >
 
-  <!--
-  *+---------------------------------
-  *| First row
-  *| Search field
-  *+--------------------------------- -->
-  <div class="col-12 row gx-2 mx-0 mb-2 align-items-center">
-    <div class="col">
-      <v-text-field
-        v-model="f.string"
-        placeholder="Search a game..."
-        clearable
-        density="comfortable">
-        <!-- <template v-slot:prepend-inner>
-          <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
-        </template> -->
-        <!-- <template v-slot:clear>
-          <Icon size="16" style="min-width: 1em; transform: translateY(1px)">
-            SquareRoundedX
-          </Icon>
-        </template> -->
-      </v-text-field>
+  <div class="col-12 row align-items-center mt-2 mb-3">
+    <div v-if="$app.wip" class="col-auto">
+      <v-btn id="⚓f">
+        F
+        <b-tippy-sheety ref="source" to="#⚓f" trigger="click">
+          <pre class="d-block">
+            {{ f }}
+          </pre>
+        </b-tippy-sheety>
+      </v-btn>
     </div>
-    <div class="col-auto">
-      <!-- <button type="submit" class="btn" style="padding: 0.35rem 0.85rem">Search</button> -->
-      <!-- <v-btn variant="tonal" color="secondary">Search</v-btn> -->
-      <div class="btn" style="background: rgb(30 31 41 / 20%)">
-        <!-- <Icon class="me-2" size="16">ColorFilter</Icon> -->
-        <!-- <small>Search</small> -->
-        <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
-      </div>
-    </div>
-  </div>
+    <div class="col-auto d-flex align-items-center">
+      <v-btn id="⚓source" variant="tonal" color="rgb(110 116 180)">
+        <Icon v-if="f.source == 'all'" size="16" class="me-1">Cards</Icon>
+        <Icon v-if="f.source == 'library'" size="16" class="me-1">LayoutDashboard</Icon>
+        <Icon v-if="f.source == 'library:favorites'" size="16" class="me-1">Heart</Icon>
 
-  <!--
-  *+---------------------------------
-  *| Second line
-  *| Select souce and apply filters
-  *+--------------------------------- -->
-  <div class="col-6 d-flex align-items-center">
-    <div id="⚓source" class="btn btn-sm me-2" style="background: transparent">
-      <Icon v-if="f.source == 'all'" size="12" class="text-muted me-1">Cards</Icon>
-      <Icon v-if="f.source == 'library'" size="12" class="text-muted me-1">
-        LayoutDashboard
-      </Icon>
-      <Icon v-if="f.source == 'library:favorites'" size="12" class="text-muted me-1">
-        Heart
-      </Icon>
+        <Icon v-if="f.source == 'library:pinned'" size="16" class="me-1">Bookmark</Icon>
 
-      <Icon v-if="f.source == 'library:pinned'" size="12" class="text-muted me-1">
-        Bookmark
-      </Icon>
+        <Icon v-if="f.source == 'library:hidden'" size="16" class="me-1">Cancel</Icon>
 
-      <Icon v-if="f.source == 'library:hidden'" size="12" class="text-muted me-1">
-        Cancel
-      </Icon>
+        <span
+          v-if="sourceState"
+          class="status-dot ms-1 me-4"
+          :style="{ 'background-color': sourceState.color || '' }"></span>
 
-      <span
-        v-if="sourceState"
-        class="status-dot ms-1 me-4"
-        :style="{ 'background-color': sourceState.color || '' }"></span>
+        {{ sourceLabel }}
 
-      <small>{{ sourceLabel }}</small>
+        <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+          Selector
+        </Icon>
 
-      <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
-        Selector
-      </Icon>
+        <b-tippy-sheety ref="source" to="#⚓source" trigger="click">
+          <search-source-menu :source="f.source" @change="changeSource" />
+        </b-tippy-sheety>
+      </v-btn>
 
-      <b-tippy-sheety ref="source" to="#⚓source" :autoclose="150" trigger="click">
-        <search-source-menu :source="f.source" @change="changeSource" />
-      </b-tippy-sheety>
-    </div>
-
-    <!-- <div class="btn-group btn-group-sm filters__source">
+      <!-- <div class="btn-group btn-group-sm filters__source">
       <div
         class="btn d-flex align-items-center border-end-0"
         :class="{ active: f.source == 'all' }"
@@ -135,235 +100,7 @@ Selected
       </div>
     </div> -->
 
-    <!-- <Icon class="text-muted mx-2">MinusVertical</Icon> -->
-    <!-- <div style="border-right: 1px dashed #ccc; margin: 10px"></div> -->
-
-    <div id="⚓filters" class="btn btn-sm me-2" style="background: transparent">
-      <Icon size="12" class="text-muted me-1">Filter</Icon>
-
-      <!-- <v-btn
-        id="⚓filters"
-        variant="text"
-        size="small"
-        class="me-2"
-        color="blue-grey-lighten-1"> -->
-      Filters
-
-      <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
-        Selector
-      </Icon>
-
-      <b-tippy-sheety
-        ref="filters"
-        to="#⚓filters"
-        trigger="click"
-        :autoclose="150"
-        @closed="reset">
-        <div class="b-menu dropdown-menu show" style="letter-spacing: normal">
-          <template v-if="ui.step == 'pick'">
-            <!-- <span class="dropdown-header">
-              <span class="text-muted">Choose a filter</span>
-            </span> -->
-            <div
-              v-for="(param, key) in options"
-              :key="key"
-              class="dropdown-item"
-              @click="pick(param)">
-              <div style="width: 30px">
-                <Icon size="16" class="me-1">{{ param.icon }}</Icon>
-              </div>
-              <span>{{ param.label }}</span>
-            </div>
-          </template>
-
-          <template v-if="ui.step == 'picked'">
-            <template v-if="option.search !== false">
-              <div class="dropdown-item">
-                <input
-                  ref="findOption"
-                  v-model="ui.findOption"
-                  type="text"
-                  class="form-control form-control-flush"
-                  placeholder="Search..." />
-              </div>
-              <div class="dropdown-divider"></div>
-            </template>
-            <span v-else class="dropdown-header">
-              <span class="text-muted">Filter by {{ option.label }}</span>
-            </span>
-
-            <div
-              v-for="(param, key) in picked"
-              :key="key"
-              class="dropdown-item"
-              :class="{
-                'selected': selected[param[option.opValue]],
-                'px-2': option.multiple !== false,
-              }">
-              <div
-                v-if="option.multiple !== false"
-                class="selection"
-                style="margin-right: 0.55rem"
-                @click="select(param, 'soft')">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  style="transform: scale(0.8)"
-                  :checked="selected[param[option.opValue]]" />
-              </div>
-
-              <div
-                class="content d-flex align-items-center w-100"
-                @click="select(param, 'hard')">
-                <template v-if="option.by == 'state'">
-                  <!-- <Icon
-                              v-if="param.key == 'favorites'"
-                              size="14"
-                              style="color: red; fill: pink">
-                              Heart
-                            </Icon> -->
-                  <!-- v-else -->
-
-                  <!-- <Icon style="color: var(--tblr-primary)">SquareCheck</Icon>
-                          <Icon style="color: #666">Square</Icon> -->
-
-                  <template v-if="param.id == -1">
-                    <Icon size="12" class="me-1">CircleOff</Icon>
-                  </template>
-
-                  <span
-                    v-else
-                    class="badge me-2"
-                    :style="{ 'background-color': param.color || '' }"></span>
-
-                  <span class="me-4">
-                    {{ param.name }}
-                  </span>
-
-                  <!-- <tippy
-                            class="text-muted ms-auto ms-2 cursor-help"
-                            :content="param.description">
-                            <Icon size="16" stroke="1">HelpCircleFilled</Icon>
-                          </tippy> -->
-                  <tippy
-                    :allow-h-t-m-l="true"
-                    class="text-muted ms-auto cursor-help"
-                    :content="param.description">
-                    <span class="form-help">?</span>
-                  </tippy>
-                </template>
-
-                <template v-else-if="option.by == 'genre'">
-                  <span class="avatar avatar-xs me-2">
-                    {{ param.name[0] }}
-                  </span>
-
-                  <span class="me-4">
-                    {{ param.name }}
-                  </span>
-                </template>
-
-                <template v-else>
-                  <Icon class="me-2" size="16">{{ param.icon ?? option.icon }}</Icon>
-                  <span class="me-4">
-                    {{ param[option.opLabel] }}
-                  </span>
-                </template>
-              </div>
-            </div>
-
-            <div class="dropdown-divider"></div>
-            <div class="dropdown-item small" @click="ui.step = 'pick'">
-              <Icon class="me-2" size="16">ArrowLeft</Icon>
-              <span class="me-4">Go back</span>
-            </div>
-
-            <template v-if="$app.wip && option.by == 'released'">
-              <div class="hr-text mt-2 mb-3">Or pick</div>
-              <div style="transform: scale(0.9)">
-                <!-- <div>
-                          <input type="month" value="2018-05" />
-                        </div> -->
-                <pre>
-                          {{ released }}
-                        </pre
-                >
-                <div class="input-group mb-1">
-                  <select v-model="released.month" class="form-control">
-                    <option selected="selected" disabled="disabled">Month</option>
-                    <option value="01">January</option>
-                    <option value="02">February</option>
-                    <option value="03">March</option>
-                    <option value="04">April</option>
-                    <option value="05">May</option>
-                    <option value="06">June</option>
-                    <option value="07">July</option>
-                    <option value="08">August</option>
-                    <option value="09">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
-                  </select>
-                  <select
-                    v-model="released.year"
-                    placeholder="asdasd"
-                    class="form-control"
-                    style="max-width: 43%">
-                    <option selected="selected" disabled="disabled">Year</option>
-                    <option
-                      v-for="year in Array.from(
-                        { length: $moment().year() - 1994 },
-                        (_, i) => $moment().year() - i
-                      )"
-                      :value="year">
-                      {{ year }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <!-- </div> -->
-            </template>
-          </template>
-
-          <!--
-                    <div class="dropdown-item">Features</div>
-                    <div class="dropdown-item">Languages</div>
-                    <div class="dropdown-item">Platform</div>
-                    <div class="dropdown-item">Type</div>
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown-item">
-                      <div style="width: 30px">
-                        <Icon style="color: red; fill: pink">Heart</Icon>
-                      </div>
-                      <span>Opción</span>
-                    </div> -->
-        </div>
-      </b-tippy-sheety>
-      <!-- </v-btn> -->
-    </div>
-
-    <v-btn
-      id="⚓sortby"
-      variant="text"
-      size="small"
-      class="me-2"
-      color="blue-grey-lighten-1">
-      Sorting by
-      <strong class="ps-1">
-        {{ sortLabel[f.sortBy] ?? '...' }}
-        {{ !f.sortBy || !f.sortDir ? '' : f.sortDir == 'asc' ? '(Asc)' : '(Desc)' }}
-      </strong>
-
-      <Icon class="text-muted" size="14" width="2" style="transform: translate(5px, 1px)">
-        ChevronDown
-      </Icon>
-
-      <b-tippy-sheety to="#⚓sortby" :autoclose="150" trigger="click">
-        <search-sort-menu :f="f" @sort="sortBy" />
-      </b-tippy-sheety>
-    </v-btn>
-
-    <!-- <div class="text-muted mx-3"><Icon size="14">Spaces</Icon></div>
+      <!-- <div class="text-muted mx-3"><Icon size="14">Spaces</Icon></div>
 
     <v-btn
       color="secondary"
@@ -380,72 +117,614 @@ Selected
       style="min-width: 20px; width: 30px; padding: 0">
       <Icon>LayoutList</Icon>
     </v-btn> -->
+    </div>
+
+    <div v-if="false" class="col-auto">
+      <!-- <v-btn><Icon>Clock</Icon></v-btn> -->
+      <v-btn-group
+        variant="tonal"
+        :divided="false"
+        style="
+          height: auto;
+          color: inherit;
+          background-color: none;
+          outline: rgb(108 122 145 / 40%) solid 1px;
+        ">
+        <!-- <v-btn
+          v-tippy="'Run via Steam '"
+          :href="'steam://run/'"
+          slim
+          style="height: 36px; min-width: 0">
+          <Icon size="14" width="1.5">BrowserShare</Icon>
+        </v-btn> -->
+      </v-btn-group>
+    </div>
+
+    <div class="col-auto d-flex align-items-center">
+      <v-btn id="⚓filtersMenu" variant="tonal" color="rgb(110 116 180)">
+        <Icon size="15" class="me-1">Filter</Icon>
+        Filter
+
+        <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+          Selector
+        </Icon>
+
+        <b-tippy-sheety to="#⚓filtersMenu" trigger="click">
+          <search-filters-menu ref="filtersMenu" @selected="handleNewFilter" />
+        </b-tippy-sheety>
+      </v-btn>
+    </div>
+
+    <div class="col">
+      <v-text-field
+        id="⚓searchBox"
+        ref="searchBox"
+        v-model="f.string"
+        clearable
+        density="comfortable"
+        @keydown="handleKeydown"
+        style="position: relative; z-index: 10">
+        <template v-slot:prepend-inner>
+          <Icon size="14" class="text-secondary me-2" style="nmin-width: 1em">
+            Search
+          </Icon>
+
+          <template v-if="showTags == 'inline'" v-for="(filter, i) in f.filters" :key="i">
+            <search-filter-tag :index="i" :current="filter" mode="keyboard" />
+          </template>
+        </template>
+
+        <template v-slot:clear>
+          <Icon size="16" style="min-width: 1em; transform: translateY(1px)">
+            SquareRoundedX
+          </Icon>
+        </template>
+
+        <!-- <template #append>
+            <v-btn
+              variant="text"
+              color="blue-grey-lighten-1"
+              class="mx-2"
+              @click="$emit('search')">
+              Search
+            </v-btn>
+          </template> -->
+
+        <!-- <template #details>
+          <v-spacer />
+
+          See our
+          <a href="#">Terms and Service</a>
+        </template> -->
+      </v-text-field>
+
+      <b-tippy-sheety ref="filtersTippy" to="#⚓searchBox" trigger="focusin">
+        <search-filters-menu
+          ref="filtersMenuKbd"
+          mode="keyboard"
+          @selected="handleNewFilter" />
+      </b-tippy-sheety>
+    </div>
+    <div class="col-auto">
+      <v-btn id="⚓sortby" variant="text" size="small" color="blue-grey-lighten-1">
+        <small>
+          Sorting by
+          <strong class="ps-1">
+            {{ sortLabel[f.sortBy] ?? '...' }}
+            {{ !f.sortBy || !f.sortDir ? '' : f.sortDir == 'asc' ? '(Asc)' : '(Desc)' }}
+          </strong>
+        </small>
+
+        <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+          Selector
+        </Icon>
+
+        <b-tippy-sheety to="#⚓sortby" trigger="click">
+          <search-sort-menu @sort="sortBy" />
+        </b-tippy-sheety>
+      </v-btn>
+    </div>
   </div>
 
-  <div class="col text-end d-flex align-items-center" style="justify-content: flex-end">
-    <v-btn
-      v-tippy="'Get a random game from this list'"
-      variant="tonal"
-      size="small"
-      class="mx-1 p-0"
-      color="blue-grey-lighten-1"
-      style="min-width: 1px; aspect-ratio: 1; --v-activated-opacity: 0.05"
-      @click="$mitt.emit('game:random', { filters: f })">
-      <Icon width="1.2" size="16" class="mx-1">Dice5</Icon>
-      <!-- <Icon class="text-muted" size="12" width="2">ChevronDown</Icon> -->
-    </v-btn>
+  <div class="col-12 row align-items-center mb-5">
+    <div class="col">
+      <template v-if="showTags !== 'inline'" v-for="(filter, i) in f.filters" :key="i">
+        <search-filter-tag :index="i" :current="filter" :open="false" class="is-chip" />
+      </template>
+    </div>
+    <div class="col-auto d-flex align-items-center ms-auto">
+      <!-- <v-btn-group
+        class="me-2"
+        variant="tonal"
+        style="
+          height: auto;
+          color: inherit;
+          background-color: none;
+          outline: rgb(108 122 145 / 40%) solid 1px;
+        ">
+        <v-btn
+          v-tippy="'Run via Steam '"
+          :href="'steam://run/'"
+          slim
+          style="height: 36px; min-width: 0">
+          <Icon size="14" width="1.5">BrowserShare</Icon>
+        </v-btn>
+        <v-btn
+          v-tippy="'Run via Steam '"
+          :href="'steam://run/'"
+          slim
+          style="height: 36px; min-width: 0">
+          <Icon size="14" width="1.5">BrowserShare</Icon>
+        </v-btn>
+        <v-btn
+          v-tippy="'Run via Steam '"
+          :href="'steam://run/'"
+          slim
+          style="height: 36px; min-width: 0">
+          <Icon size="14" width="1.5">BrowserShare</Icon>
+        </v-btn>
+      </v-btn-group> -->
 
-    <v-btn
-      id="⚓itemDetails"
-      variant="tonal"
-      size="small"
-      class="mx-1 p-0"
-      color="blue-grey-lighten-1"
-      style="--v-activated-opacity: 0.05">
-      <Icon width="1.2" size="16" class="me-1">PlayCardStar</Icon>
-      <Icon class="text-muted" size="12" width="2">ChevronDown</Icon>
+      <!-- <v-btn class="me-2">Display options</v-btn> -->
+      <!-- <v-btn class="me-2">Random</v-btn> -->
+    </div>
+  </div>
 
-      <b-tippy-sheety to="#⚓itemDetails" :autoclose="150" trigger="click">
-        <search-item-details :f="f" @show="visibleProps" />
-      </b-tippy-sheety>
-    </v-btn>
+  <!-- <pre style="display: block !important">
+    {{ f.filters }}
+  </pre> -->
 
-    <small class="text-muted">
-      <template v-if="false">
-        <div
-          v-if="loading"
-          class="spinner-grow"
-          role="status"
-          style="width: 13px; height: 13px"></div>
+  <div v-if="false" class="col-12 row align-items-center">
+    <div class="col">
+      <v-text-field
+        v-model="f.string"
+        placeholder="Search by name, genres, tags and more"
+        clearable
+        density="comfortable">
+        <!-- <template v-slot:prepend-inner>
+          <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
+        </template> -->
+        <!-- <template v-slot:clear>
+          <Icon size="16" style="min-width: 1em; transform: translateY(1px)">
+            SquareRoundedX
+          </Icon>
+        </template> -->
+      </v-text-field>
+    </div>
+    <div class="col-auto">
+      <v-btn
+        id="⚓sortbyWIP2"
+        variant="text"
+        size="small"
+        class="me-2"
+        color="blue-grey-lighten-1">
+        Sorting by
+        <strong class="ps-1">
+          {{ sortLabel[f.sortBy] ?? '...' }}
+          {{ !f.sortBy || !f.sortDir ? '' : f.sortDir == 'asc' ? '(Asc)' : '(Desc)' }}
+        </strong>
+
+        <Icon
+          class="text-muted"
+          size="14"
+          width="2"
+          style="transform: translate(5px, 1px)">
+          ChevronDown
+        </Icon>
+
+        <!-- <b-tippy-sheety to="#⚓sortby" trigger="click">
+          <search-sort-menu @sort="sortBy" />
+        </b-tippy-sheety> -->
+      </v-btn>
+    </div>
+  </div>
+
+  <div class="d-none d-wip">
+    <!--
+  *+---------------------------------
+  *| First row
+  *| Search field
+  *+--------------------------------- -->
+    <div class="col-12 row gx-2 mx-0 mb-2 align-items-center">
+      <div class="col">
+        <v-text-field
+          v-model="f.string"
+          placeholder="Search a game..."
+          clearable
+          density="comfortable">
+          <!-- <template v-slot:prepend-inner>
+          <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
+        </template> -->
+          <!-- <template v-slot:clear>
+          <Icon size="16" style="min-width: 1em; transform: translateY(1px)">
+            SquareRoundedX
+          </Icon>
+        </template> -->
+        </v-text-field>
+      </div>
+      <div class="col-auto">
+        <!-- <button type="submit" class="btn" style="padding: 0.35rem 0.85rem">Search</button> -->
+        <!-- <v-btn variant="tonal" color="secondary">Search</v-btn> -->
+        <div class="btn" style="background: rgb(30 31 41 / 20%)">
+          <!-- <Icon class="me-2" size="16">ColorFilter</Icon> -->
+          <!-- <small>Search</small> -->
+          <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
+        </div>
+      </div>
+    </div>
+
+    <!--
+  *+---------------------------------
+  *| Second line
+  *| Select souce and apply filters
+  *+--------------------------------- -->
+    <div class="col-6 d-flex align-items-center">
+      <div id="⚓source" class="btn btn-sm me-2" style="background: transparent">
+        <Icon v-if="f.source == 'all'" size="12" class="text-muted me-1">Cards</Icon>
+        <Icon v-if="f.source == 'library'" size="12" class="text-muted me-1">
+          LayoutDashboard
+        </Icon>
+        <Icon v-if="f.source == 'library:favorites'" size="12" class="text-muted me-1">
+          Heart
+        </Icon>
+
+        <Icon v-if="f.source == 'library:pinned'" size="12" class="text-muted me-1">
+          Bookmark
+        </Icon>
+
+        <Icon v-if="f.source == 'library:hidden'" size="12" class="text-muted me-1">
+          Cancel
+        </Icon>
 
         <span
-          v-else
-          v-tippy="
-            'Time to search, filter and sort results ◈ When searching in all games, this includes the API calls as well'
-          "
-          style="cursor: help">
-          {{ dates.microTime(time) }}
-        </span>
-        <span class="mx-2">◈</span>
-        Data from
-        <a href="https://www.igdb.com" target="_blank">
-          <img
-            class="mx-2 text-muted"
-            width="25"
-            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNCIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDM0IDE2IiBmaWxsPSJub25lIj4KICAgIDxwYXRoCiAgICAgICAgZD0iTTYuNzE2ODVlLTA1IDAuMDAwOTExNDY4QzExLjMzMzEgMC4wMDA2ODM4MjMgMjIuNjY2NSAwLjAwMjUwNDA5IDMzLjk5OTggMEMzNCA1LjMzMzI2IDM0LjAwMDIgMTAuNjY2NyAzMy45OTk1IDE2QzMxLjc5MzcgMTUuNjUyNCAyOS41Nzc5IDE1LjM2MTIgMjcuMzU0IDE1LjE0ODJDMTkuMzI5MSAxNC4zNjg1IDExLjIxMjIgMTQuNDk5MSAzLjIxNzc4IDE1LjUzNjdDMi4xNDI1NyAxNS42NzMxIDEuMDcxMDkgMTUuODM1OSA2LjcxNjg1ZS0wNSAxNS45OTkzQy0wLjAwMDE2NTUxIDEwLjY2NjUgMC4wMDAyOTk4NDcgNS4zMzM3MSA2LjcxNjg1ZS0wNSAwLjAwMDkxMTQ2OFpNMS4wMDA4MiAwLjk4MDIzOEMxLjAwMTI4IDUuNjA1NzUgMS4wMDA4MiAxMC4yMzE1IDEuMDAwODIgMTQuODU3QzExLjU4NDcgMTMuMjcyMSAyMi40MTU0IDEzLjI3MDggMzIuOTk5IDE0Ljg1NzVDMzIuOTk5NyAxMC4yMzE1IDMyLjk5OTIgNS42MDU1MiAzMi45OTkyIDAuOTc5NTU1QzIyLjMzMyAwLjk4MTE0OSAxMS42NjY4IDAuOTgwMDEgMS4wMDA4MiAwLjk4MDIzOFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNOC4zMTkyNiA0LjYxOEM5LjAxMjg3IDMuOTU3MzcgOS45ODU5NCAzLjYwNTQ0IDEwLjk0OTcgMy42MjAyM0MxMS42MDc3IDMuNjE3OTYgMTIuMjc5NCAzLjcxODggMTIuODcxMiA0LjAxMjY5QzEzLjE3NjIgNC4xNjE1NyAxMy40NTQ5IDQuMzU2ODkgMTMuNzE1MSA0LjU3MTU2QzEzLjM4NzcgNC45NTgzMyAxMy4wNTc1IDUuMzQyNTkgMTIuNzMzOSA1LjczMjA5QzEyLjUzOTEgNS41ODkzNiAxMi4zNDk3IDUuNDM3MDYgMTIuMTM0MyA1LjMyNDE1QzExLjcwMTcgNS4wODUzNSAxMS4xOTIxIDUuMDAyNzIgMTAuNzAwNSA1LjAzNzc4QzEwLjA5ODggNS4wODgwOCA5LjU0ODI3IDUuNDQyOTggOS4yMjIyOCA1LjkzNDQ3QzguODAyMDcgNi41NTE4NCA4LjczNjY4IDcuMzY0MyA4Ljk5MTIzIDguMDU1NjZDOS4xNDUyNyA4LjQ3NTY2IDkuNDM5MzcgOC44NDgzMiA5LjgyNjc4IDkuMDg2MjFDMTAuMjEyMSA5LjMyODQyIDEwLjY4IDkuNDI1NjIgMTEuMTM0MiA5LjM5ODk5QzExLjYgOS4zODE0NiAxMi4wNzQyIDkuMjU3MTcgMTIuNDUzNSA4Ljk4NDY4QzEyLjQ0OTggOC42NTY4NyAxMi40NTM1IDguMzI4ODMgMTIuNDUxNiA4LjAwMTAyQzExLjkyOTcgOC4wMDIzOSAxMS40MDc2IDguMDAwNTcgMTAuODg1NyA4LjAwMTk0QzEwLjg4NDUgNy41NjIxMyAxMC44ODg1IDcuMTIyMzIgMTAuODgzOCA2LjY4MjczQzExLjkxMDQgNi42NzYzNiAxMi45MzcyIDYuNjg1MDEgMTMuOTYzOCA2LjY3ODQxQzEzLjk3MDEgNy42ODI1NSAxMy45NjMxIDguNjg2OTIgMTMuOTY3MyA5LjY5MTA2QzEzLjI2MDcgMTAuMjg3OSAxMi4zNjg4IDEwLjY3OTUgMTEuNDM3NCAxMC43Njg1QzEwLjUyODEgMTAuODY2MiA5LjU2OTQ0IDEwLjcwMjUgOC43OTQzOSAxMC4yMTE5QzguMTczMzcgOS44MjQ2OCA3LjY5MzU5IDkuMjMwNzYgNy40NDI1MyA4LjU1NDJDNy4xOTQ3MiA3Ljg4ODU3IDcuMTQ1ODYgNy4xNTUxIDcuMjg1IDYuNDYxMjRDNy40Mjk5NiA1Ljc2MzczIDcuNzkyNDcgNS4xMDk3MSA4LjMxOTI2IDQuNjE4WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+CiAgICA8cGF0aAogICAgICAgIGQ9Ik0zLjc4NzYxIDMuNzM5NTJDNC4zMDgxMSAzLjc0MDY2IDQuODI4NjEgMy43Mzg2MSA1LjM0OTEyIDMuNzQwNjZDNS4zNDc5NSA2LjA1MDc5IDUuMzQ5MTIgOC4zNjExNiA1LjM0ODY1IDEwLjY3MTVDNC44MjgzOCAxMC42NzEzIDQuMzA4MTEgMTAuNjcwNiAzLjc4Nzg0IDEwLjY3MThDMy43ODc2MSA4LjM2MTE2IDMuNzg4MDggNi4wNTAzNCAzLjc4NzYxIDMuNzM5NTJaIgogICAgICAgIGZpbGw9IndoaXRlIgogICAgLz4KICAgIDxwYXRoCiAgICAgICAgZD0iTTE1Ljg2NDMgMy43Mzk3NUMxNi44MTY1IDMuNzM5OTcgMTcuNzY4NiAzLjczOTc1IDE4LjcyMDcgMy43Mzk5N0MxOS41ODYzIDMuNzQ5MzEgMjAuNDYyOCA0LjAxMjAxIDIxLjE0MDEgNC41NDkwMkMyMS43MzIzIDUuMDEyMjggMjIuMTUyMiA1LjY3ODYgMjIuMzEyMyA2LjQwMzY0QzIyLjUwNjEgNy4yNzkxNiAyMi4zNzk4IDguMjMzOTEgMjEuODk5MyA5LjAwNDAzQzIxLjUxOCA5LjYyNDgxIDIwLjkxOSAxMC4xMDgxIDIwLjIzNDUgMTAuMzc5MkMxOS43NTQ5IDEwLjU2OTggMTkuMjM3NyAxMC42Njk5IDE4LjcyIDEwLjY3MTNDMTcuNzY4MyAxMC42NzEzIDE2LjgxNjUgMTAuNjcwOCAxNS44NjQ2IDEwLjY3MTVDMTUuODY0NiA4LjM2MDkzIDE1Ljg2NSA2LjA1MDM0IDE1Ljg2NDMgMy43Mzk3NVpNMTcuNDMwMyA1LjExNjU0QzE3LjQyNzkgNi41MDkyNyAxNy40MzA1IDcuOTAyIDE3LjQyODkgOS4yOTQ5NkMxNy43Mjc2IDkuMjk0NSAxOC4wMjY2IDkuMjk0NzMgMTguMzI1NCA5LjI5NDczQzE4LjU2NiA5LjI5MjkxIDE4LjgwODYgOS4zMDU4OCAxOS4wNDY5IDkuMjYyNjNDMTkuNTEzOSA5LjE5MTYxIDE5Ljk2MzkgOC45NzE5MyAyMC4yNzI3IDguNjE3NDlDMjAuNTQyNiA4LjMxMzgxIDIwLjY5OTQgNy45MjQzMSAyMC43NDY2IDcuNTI3MDdDMjAuNzkwNiA3LjEyMzY4IDIwLjc1NTcgNi43MDU3MyAyMC41OTU4IDYuMzI4NzVDMjAuNDMxMyA1LjkyODA5IDIwLjEyMzcgNS41ODUyNiAxOS43MzUyIDUuMzc5N0MxOS4zODQzIDUuMTg4NDggMTguOTc5IDUuMTE2MzEgMTguNTgwNiA1LjExNjA5QzE4LjE5NzIgNS4xMTcgMTcuODEzNyA1LjExNjA4IDE3LjQzMDMgNS4xMTY1NFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNMjQuMTgzOCAzLjc0NDA3QzI1LjE0NTkgMy43MzQwNiAyNi4xMDg5IDMuNzQyNzEgMjcuMDcxMyAzLjczOTc1QzI3LjMzNTYgMy43NDMzOSAyNy42MDA2IDMuNzI5MDUgMjcuODY0IDMuNzU1NjhDMjguMzMxOSAzLjc5ODI1IDI4LjgwNjEgMy45MzE4OCAyOS4xODA1IDQuMjE5MzlDMjkuNTA2IDQuNDY1MDIgMjkuNzM0NSA0LjgzMTc2IDI5Ljc5NzYgNS4yMzAzNkMyOS44NDMyIDUuNjA3MzQgMjkuODIyIDYuMDA4OTEgMjkuNjMyNCA2LjM0ODc4QzI5LjQ3MTEgNi42NTM2IDI5LjE5MzMgNi44Nzk4OCAyOC44OTQ2IDcuMDQ5N0MyOS4yOTI3IDcuMTk2MyAyOS42ODY0IDcuNDEyNTYgMjkuOTM0MiA3Ljc2MTMxQzMwLjE2NTIgOC4wODM0MyAzMC4yMzI3IDguNDkwNDYgMzAuMjEwMSA4Ljg3NjU1QzMwLjIwMDggOS4yNjkwMSAzMC4wNTQgOS42NjI2IDI5Ljc3OTIgOS45NTE5NEMyOS41MDE2IDEwLjI0ODYgMjkuMTIgMTAuNDMwOSAyOC43Mjg0IDEwLjUzNjhDMjguNDAxMSAxMC42MjMgMjguMDYyNSAxMC42Njc0IDI3LjcyMzcgMTAuNjcwNkMyNi41NDQ1IDEwLjY3MTUgMjUuMzY1MyAxMC42NzE4IDI0LjE4NjEgMTAuNjcwNkMyNC4xODQyIDguMzYxNjEgMjQuMTg4NiA2LjA1Mjg0IDI0LjE4MzggMy43NDQwN1pNMjUuNzA3OCA1LjA4MDM1QzI1LjcwOTQgNS41Njc1IDI1LjcwNjQgNi4wNTQ4OSAyNS43MDkyIDYuNTQyMjhDMjYuMjI1NyA2LjUzOTA5IDI2Ljc0MjMgNi41NDI5NiAyNy4yNTg4IDYuNTQwMjNDMjcuNDkzMSA2LjUyNzk0IDI3LjczNTggNi40OTUzOCAyNy45NDI5IDYuMzc5NzRDMjguMTA2NSA2LjI4OTE0IDI4LjIzMDcgNi4xMjY4MyAyOC4yNTUyIDUuOTQyNDRDMjguMjg5NiA1LjczNDYgMjguMjUzMSA1LjUwMTI2IDI4LjA5NzkgNS4zNDU3OEMyNy45MTEzIDUuMTU3NzQgMjcuNjMzIDUuMDk3NjUgMjcuMzc0OSA1LjA4MjYyQzI2LjgxOTMgNS4wNzgwNyAyNi4yNjM0IDUuMDgyNjIgMjUuNzA3OCA1LjA4MDM1Wk0yNS43MDc2IDcuODE1MjdDMjUuNzA4MyA4LjMyMTMyIDI1LjcwOSA4LjgyNzgzIDI1LjcwNzEgOS4zMzQxMUMyNi4yMDExIDkuMzM4NjcgMjYuNjk1MyA5LjMzNDU3IDI3LjE4OTUgOS4zMzU5M0MyNy40MzYxIDkuMzMyOTcgMjcuNjg1MyA5LjM0OTM2IDI3LjkyOTYgOS4zMDYzNEMyOC4xNDM3IDkuMjcyNjUgMjguMzY0NSA5LjE5Mzg4IDI4LjUwOSA5LjAyODYxQzI4LjY1NDcgOC44NjMxMSAyOC42ODUyIDguNjI3NzMgMjguNjQ4NiA4LjQxODk4QzI4LjYxOTUgOC4yNDE4NyAyOC41MDU4IDguMDgyNzUgMjguMzQ4NSA3Ljk5MTQ2QzI4LjEzNTEgNy44NjQ0NCAyNy44Nzk2IDcuODI0MzcgMjcuNjMzNCA3LjgxNjE4QzI2Ljk5MTUgNy44MTQzNiAyNi4zNDk1IDcuODE2MTggMjUuNzA3NiA3LjgxNTI3WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+Cjwvc3ZnPgo="
-            alt="" />
-        </a>
+          v-if="sourceState"
+          class="status-dot ms-1 me-4"
+          :style="{ 'background-color': sourceState.color || '' }"></span>
 
-        <a href="https://store.steampowered.com" target="_blank">
-          <img
-            src="https://store.akamai.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016"
-            width="55"
-            class="ms-1"
-            style="margin-right: -5px"
-            alt="Link to the Steam Homepage" />
-        </a>
+        <small>{{ sourceLabel }}</small>
 
-        <!-- <span
+        <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+          Selector
+        </Icon>
+
+        <b-tippy-sheety ref="source" to="#⚓source" trigger="click">
+          <search-source-menu :source="f.source" @change="changeSource" />
+        </b-tippy-sheety>
+      </div>
+
+      <!-- <div class="btn-group btn-group-sm filters__source">
+      <div
+        class="btn d-flex align-items-center border-end-0"
+        :class="{ active: f.source == 'all' }"
+        @click="browse('all')"
+        nstyle="
+
+        ">
+        <Icon v-if="f.source == 'all'" size="14" class="text-muted me-1">Cards</Icon>
+        <small>All games</small>
+      </div>
+
+      <div
+        class="btn d-flex align-items-center"
+        @click="browse('library')"
+        :class="{ active: f.source == 'library' }">
+        <Icon v-if="f.source == 'library'" size="14" class="text-muted me-1">
+          LayoutDashboard
+        </Icon>
+        <small>Library</small>
+      </div>
+    </div> -->
+
+      <!-- <Icon class="text-muted mx-2">MinusVertical</Icon> -->
+      <!-- <div style="border-right: 1px dashed #ccc; margin: 10px"></div> -->
+
+      <div id="⚓filters" class="btn btn-sm me-2" style="background: transparent">
+        <Icon size="12" class="text-muted me-1">Filter</Icon>
+
+        <!-- <v-btn
+        id="⚓filters"
+        variant="text"
+        size="small"
+        class="me-2"
+        color="blue-grey-lighten-1"> -->
+        Filters
+
+        <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+          Selector
+        </Icon>
+
+        <b-tippy-sheety ref="filters" to="#⚓filters" trigger="click" @closed="reset">
+          <div class="b-menu dropdown-menu show" style="letter-spacing: normal">
+            <template v-if="ui.step == 'pick'">
+              <!-- <span class="dropdown-header">
+              <span class="text-muted">Choose a filter</span>
+            </span> -->
+              <div
+                v-for="(param, key) in options"
+                :key="key"
+                class="dropdown-item"
+                @click="pick(param)">
+                <div style="width: 30px">
+                  <Icon size="16" class="me-1">{{ param.icon }}</Icon>
+                </div>
+                <span>{{ param.label }}</span>
+              </div>
+            </template>
+
+            <template v-if="ui.step == 'picked'">
+              <template v-if="option.search !== false">
+                <div class="dropdown-item">
+                  <input
+                    ref="findOption"
+                    v-model="ui.findOption"
+                    type="text"
+                    class="form-control form-control-flush"
+                    placeholder="Search..." />
+                </div>
+                <div class="dropdown-divider"></div>
+              </template>
+              <span v-else class="dropdown-header">
+                <span class="text-muted">Filter by {{ option.label }}</span>
+              </span>
+
+              <div
+                v-for="(param, key) in picked"
+                :key="key"
+                class="dropdown-item"
+                :class="{
+                  'selected': selected[param[option.opValue]],
+                  'px-2': option.multiple !== false,
+                }">
+                <div
+                  v-if="option.multiple !== false"
+                  class="selection"
+                  style="margin-right: 0.55rem"
+                  @click="select(param, 'soft')">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    style="transform: scale(0.8)"
+                    :checked="selected[param[option.opValue]]" />
+                </div>
+
+                <div
+                  class="content d-flex align-items-center w-100"
+                  @click="select(param, 'hard')">
+                  <template v-if="option.by == 'state'">
+                    <!-- <Icon
+                              v-if="param.key == 'favorites'"
+                              size="14"
+                              style="color: red; fill: pink">
+                              Heart
+                            </Icon> -->
+                    <!-- v-else -->
+
+                    <!-- <Icon style="color: var(--tblr-primary)">SquareCheck</Icon>
+                          <Icon style="color: #666">Square</Icon> -->
+
+                    <template v-if="param.id == -1">
+                      <Icon size="12" class="me-1">CircleOff</Icon>
+                    </template>
+
+                    <span
+                      v-else
+                      class="badge me-2"
+                      :style="{ 'background-color': param.color || '' }"></span>
+
+                    <span class="me-4">
+                      {{ param.name }}
+                    </span>
+
+                    <!-- <tippy
+                            class="text-muted ms-auto ms-2 cursor-help"
+                            :content="param.description">
+                            <Icon size="16" stroke="1">HelpCircleFilled</Icon>
+                          </tippy> -->
+                    <tippy
+                      :allow-h-t-m-l="true"
+                      class="text-muted ms-auto cursor-help"
+                      :content="param.description">
+                      <span class="form-help">?</span>
+                    </tippy>
+                  </template>
+
+                  <template v-else-if="option.by == 'genre'">
+                    <span class="avatar avatar-xs me-2">
+                      {{ param.name[0] }}
+                    </span>
+
+                    <span class="me-4">
+                      {{ param.name }}
+                    </span>
+                  </template>
+
+                  <template v-else>
+                    <Icon class="me-2" size="16">{{ param.icon ?? option.icon }}</Icon>
+                    <span class="me-4">
+                      {{ param[option.opLabel] }}
+                    </span>
+                  </template>
+                </div>
+              </div>
+
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item small" @click="ui.step = 'pick'">
+                <Icon class="me-2" size="16">ArrowLeft</Icon>
+                <span class="me-4">Go back</span>
+              </div>
+
+              <template v-if="$app.wip && option.by == 'released'">
+                <div class="hr-text mt-2 mb-3">Or pick</div>
+                <div style="transform: scale(0.9)">
+                  <!-- <div>
+                          <input type="month" value="2018-05" />
+                        </div> -->
+                  <pre>
+                          {{ released }}
+                        </pre
+                  >
+                  <div class="input-group mb-1">
+                    <select v-model="released.month" class="form-control">
+                      <option selected="selected" disabled="disabled">Month</option>
+                      <option value="01">January</option>
+                      <option value="02">February</option>
+                      <option value="03">March</option>
+                      <option value="04">April</option>
+                      <option value="05">May</option>
+                      <option value="06">June</option>
+                      <option value="07">July</option>
+                      <option value="08">August</option>
+                      <option value="09">September</option>
+                      <option value="10">October</option>
+                      <option value="11">November</option>
+                      <option value="12">December</option>
+                    </select>
+                    <select
+                      v-model="released.year"
+                      placeholder="asdasd"
+                      class="form-control"
+                      style="max-width: 43%">
+                      <option selected="selected" disabled="disabled">Year</option>
+                      <option
+                        v-for="year in Array.from(
+                          { length: $moment().year() - 1994 },
+                          (_, i) => $moment().year() - i
+                        )"
+                        :value="year">
+                        {{ year }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <!-- </div> -->
+              </template>
+            </template>
+
+            <!--
+                    <div class="dropdown-item">Features</div>
+                    <div class="dropdown-item">Languages</div>
+                    <div class="dropdown-item">Platform</div>
+                    <div class="dropdown-item">Type</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item">
+                      <div style="width: 30px">
+                        <Icon style="color: red; fill: pink">Heart</Icon>
+                      </div>
+                      <span>Opción</span>
+                    </div> -->
+          </div>
+        </b-tippy-sheety>
+        <!-- </v-btn> -->
+      </div>
+
+      <v-btn
+        id="⚓sortbywip"
+        variant="text"
+        size="small"
+        class="me-2"
+        color="blue-grey-lighten-1">
+        Sorting by
+        <strong class="ps-1">
+          {{ sortLabel[f.sortBy] ?? '...' }}
+          {{ !f.sortBy || !f.sortDir ? '' : f.sortDir == 'asc' ? '(Asc)' : '(Desc)' }}
+        </strong>
+
+        <Icon
+          class="text-muted"
+          size="14"
+          width="2"
+          style="transform: translate(5px, 1px)">
+          ChevronDown
+        </Icon>
+
+        <!-- <b-tippy-sheety to="#⚓sortby" trigger="click">
+          <search-sort-menu @sort="sortBy" />
+        </b-tippy-sheety> -->
+      </v-btn>
+
+      <!-- <div class="text-muted mx-3"><Icon size="14">Spaces</Icon></div>
+
+    <v-btn
+      color="secondary"
+      variant="tonal"
+      size="small"
+      style="min-width: 20px; width: 30px; padding: 0">
+      <Icon>LayoutGrid</Icon>
+    </v-btn>
+    <v-btn
+      class="active ms-2"
+      color="secondary"
+      variant="tonal"
+      size="small"
+      style="min-width: 20px; width: 30px; padding: 0">
+      <Icon>LayoutList</Icon>
+    </v-btn> -->
+    </div>
+
+    <div class="col text-end d-flex align-items-center" style="justify-content: flex-end">
+      <v-btn
+        v-tippy="'Get a random game from this list'"
+        variant="tonal"
+        size="small"
+        class="mx-1 p-0"
+        color="blue-grey-lighten-1"
+        style="min-width: 1px; aspect-ratio: 1; --v-activated-opacity: 0.05"
+        @click="$mitt.emit('game:random', { filters: f })">
+        <Icon width="1.2" size="16" class="mx-1">Dice5</Icon>
+        <!-- <Icon class="text-muted" size="12" width="2">ChevronDown</Icon> -->
+      </v-btn>
+
+      <v-btn
+        id="⚓itemDetails"
+        variant="tonal"
+        size="small"
+        class="mx-1 p-0"
+        color="blue-grey-lighten-1"
+        style="--v-activated-opacity: 0.05">
+        <Icon width="1.2" size="16" class="me-1">PlayCardStar</Icon>
+        <Icon class="text-muted" size="12" width="2">ChevronDown</Icon>
+
+        <b-tippy-sheety to="#⚓itemDetails" trigger="click">
+          <search-item-details :f="f" @show="visibleProps" />
+        </b-tippy-sheety>
+      </v-btn>
+
+      <small class="text-muted">
+        <template v-if="false">
+          <div
+            v-if="loading"
+            class="spinner-grow"
+            role="status"
+            style="width: 13px; height: 13px"></div>
+
+          <span
+            v-else
+            v-tippy="
+              'Time to search, filter and sort results ◈ When searching in all games, this includes the API calls as well'
+            "
+            style="cursor: help">
+            {{ dates.microTime(time) }}
+          </span>
+          <span class="mx-2">◈</span>
+          Data from
+          <a href="https://www.igdb.com" target="_blank">
+            <img
+              class="mx-2 text-muted"
+              width="25"
+              src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNCIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDM0IDE2IiBmaWxsPSJub25lIj4KICAgIDxwYXRoCiAgICAgICAgZD0iTTYuNzE2ODVlLTA1IDAuMDAwOTExNDY4QzExLjMzMzEgMC4wMDA2ODM4MjMgMjIuNjY2NSAwLjAwMjUwNDA5IDMzLjk5OTggMEMzNCA1LjMzMzI2IDM0LjAwMDIgMTAuNjY2NyAzMy45OTk1IDE2QzMxLjc5MzcgMTUuNjUyNCAyOS41Nzc5IDE1LjM2MTIgMjcuMzU0IDE1LjE0ODJDMTkuMzI5MSAxNC4zNjg1IDExLjIxMjIgMTQuNDk5MSAzLjIxNzc4IDE1LjUzNjdDMi4xNDI1NyAxNS42NzMxIDEuMDcxMDkgMTUuODM1OSA2LjcxNjg1ZS0wNSAxNS45OTkzQy0wLjAwMDE2NTUxIDEwLjY2NjUgMC4wMDAyOTk4NDcgNS4zMzM3MSA2LjcxNjg1ZS0wNSAwLjAwMDkxMTQ2OFpNMS4wMDA4MiAwLjk4MDIzOEMxLjAwMTI4IDUuNjA1NzUgMS4wMDA4MiAxMC4yMzE1IDEuMDAwODIgMTQuODU3QzExLjU4NDcgMTMuMjcyMSAyMi40MTU0IDEzLjI3MDggMzIuOTk5IDE0Ljg1NzVDMzIuOTk5NyAxMC4yMzE1IDMyLjk5OTIgNS42MDU1MiAzMi45OTkyIDAuOTc5NTU1QzIyLjMzMyAwLjk4MTE0OSAxMS42NjY4IDAuOTgwMDEgMS4wMDA4MiAwLjk4MDIzOFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNOC4zMTkyNiA0LjYxOEM5LjAxMjg3IDMuOTU3MzcgOS45ODU5NCAzLjYwNTQ0IDEwLjk0OTcgMy42MjAyM0MxMS42MDc3IDMuNjE3OTYgMTIuMjc5NCAzLjcxODggMTIuODcxMiA0LjAxMjY5QzEzLjE3NjIgNC4xNjE1NyAxMy40NTQ5IDQuMzU2ODkgMTMuNzE1MSA0LjU3MTU2QzEzLjM4NzcgNC45NTgzMyAxMy4wNTc1IDUuMzQyNTkgMTIuNzMzOSA1LjczMjA5QzEyLjUzOTEgNS41ODkzNiAxMi4zNDk3IDUuNDM3MDYgMTIuMTM0MyA1LjMyNDE1QzExLjcwMTcgNS4wODUzNSAxMS4xOTIxIDUuMDAyNzIgMTAuNzAwNSA1LjAzNzc4QzEwLjA5ODggNS4wODgwOCA5LjU0ODI3IDUuNDQyOTggOS4yMjIyOCA1LjkzNDQ3QzguODAyMDcgNi41NTE4NCA4LjczNjY4IDcuMzY0MyA4Ljk5MTIzIDguMDU1NjZDOS4xNDUyNyA4LjQ3NTY2IDkuNDM5MzcgOC44NDgzMiA5LjgyNjc4IDkuMDg2MjFDMTAuMjEyMSA5LjMyODQyIDEwLjY4IDkuNDI1NjIgMTEuMTM0MiA5LjM5ODk5QzExLjYgOS4zODE0NiAxMi4wNzQyIDkuMjU3MTcgMTIuNDUzNSA4Ljk4NDY4QzEyLjQ0OTggOC42NTY4NyAxMi40NTM1IDguMzI4ODMgMTIuNDUxNiA4LjAwMTAyQzExLjkyOTcgOC4wMDIzOSAxMS40MDc2IDguMDAwNTcgMTAuODg1NyA4LjAwMTk0QzEwLjg4NDUgNy41NjIxMyAxMC44ODg1IDcuMTIyMzIgMTAuODgzOCA2LjY4MjczQzExLjkxMDQgNi42NzYzNiAxMi45MzcyIDYuNjg1MDEgMTMuOTYzOCA2LjY3ODQxQzEzLjk3MDEgNy42ODI1NSAxMy45NjMxIDguNjg2OTIgMTMuOTY3MyA5LjY5MTA2QzEzLjI2MDcgMTAuMjg3OSAxMi4zNjg4IDEwLjY3OTUgMTEuNDM3NCAxMC43Njg1QzEwLjUyODEgMTAuODY2MiA5LjU2OTQ0IDEwLjcwMjUgOC43OTQzOSAxMC4yMTE5QzguMTczMzcgOS44MjQ2OCA3LjY5MzU5IDkuMjMwNzYgNy40NDI1MyA4LjU1NDJDNy4xOTQ3MiA3Ljg4ODU3IDcuMTQ1ODYgNy4xNTUxIDcuMjg1IDYuNDYxMjRDNy40Mjk5NiA1Ljc2MzczIDcuNzkyNDcgNS4xMDk3MSA4LjMxOTI2IDQuNjE4WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+CiAgICA8cGF0aAogICAgICAgIGQ9Ik0zLjc4NzYxIDMuNzM5NTJDNC4zMDgxMSAzLjc0MDY2IDQuODI4NjEgMy43Mzg2MSA1LjM0OTEyIDMuNzQwNjZDNS4zNDc5NSA2LjA1MDc5IDUuMzQ5MTIgOC4zNjExNiA1LjM0ODY1IDEwLjY3MTVDNC44MjgzOCAxMC42NzEzIDQuMzA4MTEgMTAuNjcwNiAzLjc4Nzg0IDEwLjY3MThDMy43ODc2MSA4LjM2MTE2IDMuNzg4MDggNi4wNTAzNCAzLjc4NzYxIDMuNzM5NTJaIgogICAgICAgIGZpbGw9IndoaXRlIgogICAgLz4KICAgIDxwYXRoCiAgICAgICAgZD0iTTE1Ljg2NDMgMy43Mzk3NUMxNi44MTY1IDMuNzM5OTcgMTcuNzY4NiAzLjczOTc1IDE4LjcyMDcgMy43Mzk5N0MxOS41ODYzIDMuNzQ5MzEgMjAuNDYyOCA0LjAxMjAxIDIxLjE0MDEgNC41NDkwMkMyMS43MzIzIDUuMDEyMjggMjIuMTUyMiA1LjY3ODYgMjIuMzEyMyA2LjQwMzY0QzIyLjUwNjEgNy4yNzkxNiAyMi4zNzk4IDguMjMzOTEgMjEuODk5MyA5LjAwNDAzQzIxLjUxOCA5LjYyNDgxIDIwLjkxOSAxMC4xMDgxIDIwLjIzNDUgMTAuMzc5MkMxOS43NTQ5IDEwLjU2OTggMTkuMjM3NyAxMC42Njk5IDE4LjcyIDEwLjY3MTNDMTcuNzY4MyAxMC42NzEzIDE2LjgxNjUgMTAuNjcwOCAxNS44NjQ2IDEwLjY3MTVDMTUuODY0NiA4LjM2MDkzIDE1Ljg2NSA2LjA1MDM0IDE1Ljg2NDMgMy43Mzk3NVpNMTcuNDMwMyA1LjExNjU0QzE3LjQyNzkgNi41MDkyNyAxNy40MzA1IDcuOTAyIDE3LjQyODkgOS4yOTQ5NkMxNy43Mjc2IDkuMjk0NSAxOC4wMjY2IDkuMjk0NzMgMTguMzI1NCA5LjI5NDczQzE4LjU2NiA5LjI5MjkxIDE4LjgwODYgOS4zMDU4OCAxOS4wNDY5IDkuMjYyNjNDMTkuNTEzOSA5LjE5MTYxIDE5Ljk2MzkgOC45NzE5MyAyMC4yNzI3IDguNjE3NDlDMjAuNTQyNiA4LjMxMzgxIDIwLjY5OTQgNy45MjQzMSAyMC43NDY2IDcuNTI3MDdDMjAuNzkwNiA3LjEyMzY4IDIwLjc1NTcgNi43MDU3MyAyMC41OTU4IDYuMzI4NzVDMjAuNDMxMyA1LjkyODA5IDIwLjEyMzcgNS41ODUyNiAxOS43MzUyIDUuMzc5N0MxOS4zODQzIDUuMTg4NDggMTguOTc5IDUuMTE2MzEgMTguNTgwNiA1LjExNjA5QzE4LjE5NzIgNS4xMTcgMTcuODEzNyA1LjExNjA4IDE3LjQzMDMgNS4xMTY1NFoiCiAgICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogICAgPHBhdGgKICAgICAgICBkPSJNMjQuMTgzOCAzLjc0NDA3QzI1LjE0NTkgMy43MzQwNiAyNi4xMDg5IDMuNzQyNzEgMjcuMDcxMyAzLjczOTc1QzI3LjMzNTYgMy43NDMzOSAyNy42MDA2IDMuNzI5MDUgMjcuODY0IDMuNzU1NjhDMjguMzMxOSAzLjc5ODI1IDI4LjgwNjEgMy45MzE4OCAyOS4xODA1IDQuMjE5MzlDMjkuNTA2IDQuNDY1MDIgMjkuNzM0NSA0LjgzMTc2IDI5Ljc5NzYgNS4yMzAzNkMyOS44NDMyIDUuNjA3MzQgMjkuODIyIDYuMDA4OTEgMjkuNjMyNCA2LjM0ODc4QzI5LjQ3MTEgNi42NTM2IDI5LjE5MzMgNi44Nzk4OCAyOC44OTQ2IDcuMDQ5N0MyOS4yOTI3IDcuMTk2MyAyOS42ODY0IDcuNDEyNTYgMjkuOTM0MiA3Ljc2MTMxQzMwLjE2NTIgOC4wODM0MyAzMC4yMzI3IDguNDkwNDYgMzAuMjEwMSA4Ljg3NjU1QzMwLjIwMDggOS4yNjkwMSAzMC4wNTQgOS42NjI2IDI5Ljc3OTIgOS45NTE5NEMyOS41MDE2IDEwLjI0ODYgMjkuMTIgMTAuNDMwOSAyOC43Mjg0IDEwLjUzNjhDMjguNDAxMSAxMC42MjMgMjguMDYyNSAxMC42Njc0IDI3LjcyMzcgMTAuNjcwNkMyNi41NDQ1IDEwLjY3MTUgMjUuMzY1MyAxMC42NzE4IDI0LjE4NjEgMTAuNjcwNkMyNC4xODQyIDguMzYxNjEgMjQuMTg4NiA2LjA1Mjg0IDI0LjE4MzggMy43NDQwN1pNMjUuNzA3OCA1LjA4MDM1QzI1LjcwOTQgNS41Njc1IDI1LjcwNjQgNi4wNTQ4OSAyNS43MDkyIDYuNTQyMjhDMjYuMjI1NyA2LjUzOTA5IDI2Ljc0MjMgNi41NDI5NiAyNy4yNTg4IDYuNTQwMjNDMjcuNDkzMSA2LjUyNzk0IDI3LjczNTggNi40OTUzOCAyNy45NDI5IDYuMzc5NzRDMjguMTA2NSA2LjI4OTE0IDI4LjIzMDcgNi4xMjY4MyAyOC4yNTUyIDUuOTQyNDRDMjguMjg5NiA1LjczNDYgMjguMjUzMSA1LjUwMTI2IDI4LjA5NzkgNS4zNDU3OEMyNy45MTEzIDUuMTU3NzQgMjcuNjMzIDUuMDk3NjUgMjcuMzc0OSA1LjA4MjYyQzI2LjgxOTMgNS4wNzgwNyAyNi4yNjM0IDUuMDgyNjIgMjUuNzA3OCA1LjA4MDM1Wk0yNS43MDc2IDcuODE1MjdDMjUuNzA4MyA4LjMyMTMyIDI1LjcwOSA4LjgyNzgzIDI1LjcwNzEgOS4zMzQxMUMyNi4yMDExIDkuMzM4NjcgMjYuNjk1MyA5LjMzNDU3IDI3LjE4OTUgOS4zMzU5M0MyNy40MzYxIDkuMzMyOTcgMjcuNjg1MyA5LjM0OTM2IDI3LjkyOTYgOS4zMDYzNEMyOC4xNDM3IDkuMjcyNjUgMjguMzY0NSA5LjE5Mzg4IDI4LjUwOSA5LjAyODYxQzI4LjY1NDcgOC44NjMxMSAyOC42ODUyIDguNjI3NzMgMjguNjQ4NiA4LjQxODk4QzI4LjYxOTUgOC4yNDE4NyAyOC41MDU4IDguMDgyNzUgMjguMzQ4NSA3Ljk5MTQ2QzI4LjEzNTEgNy44NjQ0NCAyNy44Nzk2IDcuODI0MzcgMjcuNjMzNCA3LjgxNjE4QzI2Ljk5MTUgNy44MTQzNiAyNi4zNDk1IDcuODE2MTggMjUuNzA3NiA3LjgxNTI3WiIKICAgICAgICBmaWxsPSJ3aGl0ZSIKICAgIC8+Cjwvc3ZnPgo="
+              alt="" />
+          </a>
+
+          <a href="https://store.steampowered.com" target="_blank">
+            <img
+              src="https://store.akamai.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016"
+              width="55"
+              class="ms-1"
+              style="margin-right: -5px"
+              alt="Link to the Steam Homepage" />
+          </a>
+
+          <!-- <span
         class="form-help cursor-help mx-2"
         v-tippy="{
           content: 'Automatic updates are disabled for GOG libraries',
@@ -453,60 +732,60 @@ Selected
         }">
         ?
       </span> -->
-      </template>
-    </small>
-  </div>
+        </template>
+      </small>
+    </div>
 
-  <!--
+    <!--
     *+---------------------------------
     *| Third line
     *| Selected filters
     *+--------------------------------- -->
-  <div
-    v-if="Object.keys(_filters).length"
-    class="filters-bar mt-2 mb-4 col-12 d-flex align-items-center">
-    <template v-for="(param, key) in _filters" :key="key">
-      <div class="btn-group btn-group-sm me-3">
-        <div class="btn d-flex align-items-center disabled border-end-0">
-          <template v-if="options[key]">
-            <div style="width: 30px">
-              <Icon size="14" weight="1.5">{{ options[key].icon }}</Icon>
-            </div>
-            <span>{{ options[key].label }}</span>
-          </template>
-        </div>
-        <div
-          class="btn d-flex align-items-center disabled border-end-0 border-start-0 cursor-pointer"
-          nopev-tippy="{ content: 'Filter by ' + key }">
-          is
-          <b-tippy-sheety ref="filters">
-            <div class="b-menu dropdown-menu show">
-              <span class="dropdown-header">
-                <span class="text-muted">Choose a filter</span>
-              </span>
-            </div>
-          </b-tippy-sheety>
-        </div>
-        <div class="btn d-flex align-items-center">
-          <template v-if="param.length == 1">
-            {{ filterLabel(key) }}
-          </template>
+    <div
+      v-if="Object.keys(_filters).length"
+      class="filters-bar mt-2 mb-4 col-12 d-flex align-items-center">
+      <template v-for="(param, key) in _filters" :key="key">
+        <div class="btn-group btn-group-sm me-3">
+          <div class="btn d-flex align-items-center disabled border-end-0">
+            <template v-if="options[key]">
+              <div style="width: 30px">
+                <Icon size="14" weight="1.5">{{ options[key].icon }}</Icon>
+              </div>
+              <span>{{ options[key].label }}</span>
+            </template>
+          </div>
+          <div
+            class="btn d-flex align-items-center disabled border-end-0 border-start-0 cursor-pointer"
+            nopev-tippy="{ content: 'Filter by ' + key }">
+            is
+            <b-tippy-sheety ref="filters">
+              <div class="b-menu dropdown-menu show">
+                <span class="dropdown-header">
+                  <span class="text-muted">Choose a filter</span>
+                </span>
+              </div>
+            </b-tippy-sheety>
+          </div>
+          <div class="btn d-flex align-items-center">
+            <template v-if="param.length == 1">
+              {{ filterLabel(key) }}
+            </template>
 
-          <template v-else>
-            <span class="badge bg-purple-lt">
-              {{ param.length }} {{ options[key].labels }}
-            </span>
-          </template>
+            <template v-else>
+              <span class="badge bg-purple-lt">
+                {{ param.length }} {{ options[key].labels }}
+              </span>
+            </template>
+          </div>
+          <div
+            v-tippy="{ content: 'Clear filter', placement: 'bottom' }"
+            class="btn d-flex align-items-center"
+            @click="removeFilter(key)">
+            <Icon size="16" style="transform: translateY(1px)">SquareRoundedX</Icon>
+          </div>
         </div>
-        <div
-          v-tippy="{ content: 'Clear filter', placement: 'bottom' }"
-          class="btn d-flex align-items-center"
-          @click="removeFilter(key)">
-          <Icon size="16" style="transform: translateY(1px)">SquareRoundedX</Icon>
-        </div>
-      </div>
-    </template>
-    <!-- <button
+      </template>
+      <!-- <button
           v-tippy="'Filter by game state'"
           :class="'btn py-2 ps-3 ' + (f.state ? 'pe-2' : 'pe-3')"
           style="transform: scale(0.9) translateX(-5px)">
@@ -515,7 +794,7 @@ Selected
           <BState v-if="f.state" :state="f.state" :label="true" :pulse="false"></BState>
         </button> -->
 
-    <!-- <b-btn variant="ghost" color="secondary">
+      <!-- <b-btn variant="ghost" color="secondary">
           Reset
           <svg
             style="margin-right: 0; margin-left: 5px"
@@ -534,9 +813,10 @@ Selected
             <path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"></path>
           </svg>
         </b-btn> -->
-  </div>
+    </div>
 
-  <div v-else class="my-2 py-1"></div>
+    <div v-else class="my-2 py-1"></div>
+  </div>
 
   <div class="col-12 d-none">
     <div class="row gap-2 mb-4 align-items-center">
@@ -937,6 +1217,7 @@ Selected
       </div>
     </div>
   </div>
+  <!-- <code>{{ loading }}</code> -->
 </template>
 
 <script>
@@ -945,7 +1226,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Tue 04 March 2025 - 15:18:34
+ * Modified: Wed 02 April 2025 - 22:10:14
  **/
 
 export default {
@@ -957,6 +1238,8 @@ export default {
     //   default: () => ({}),
     // },
   },
+
+  emits: ['search'],
 
   data() {
     return {
@@ -1217,6 +1500,10 @@ export default {
         genres: 'Genres',
       }
     },
+
+    showTags() {
+      return this.f?.show?.tags
+    },
   },
 
   // watch: {
@@ -1230,6 +1517,62 @@ export default {
   // },
 
   methods: {
+    handleKeydown(e) {
+      let action = false
+      if (!e.target.classList.contains('v-field__input')) return
+
+      if (e.key == 'ArrowUp') {
+        action = true
+        this.$refs.filtersMenuKbd.move('up')
+      }
+
+      if (e.key == 'ArrowDown') {
+        action = true
+        this.$refs.filtersMenuKbd.move('down')
+      }
+
+      if (e.key == 'ArrowRight' || e.key == 'Tab') {
+        action = true
+        this.$refs.filtersMenuKbd.writePath()
+      }
+
+      if (e.key == 'Enter') {
+        action = true
+
+        if (this.f.string == '') {
+          this.$refs.filtersMenuKbd.writePath()
+        } else {
+          this.$refs.filtersMenuKbd.addFilter()
+        }
+
+        // this.$refs.searchBox.blur()
+        // this.$refs.filtersTippy.hide()
+      }
+
+      if (e.key == 'Escape') {
+        this.$refs.filtersTippy.hide()
+        // action = true
+        // e.target.blur()
+      }
+
+      if (!action) return
+
+      e.preventDefault()
+      e.stopPropagation()
+      return false
+    },
+
+    handleNewFilter() {
+      this.$nextTick(() => {
+        this.$refs.searchBox.blur()
+        this.$refs.filtersTippy.hide()
+      })
+
+      if (this.f.filters.length > 3) {
+        this.searchStore.f.show.tags = 'row'
+      }
+    },
+
     filterLabel(key) {
       let data = this['_' + this.options[key].data]
       if (!data) return
@@ -1271,15 +1614,11 @@ export default {
     // Created on Sun Mar 17 2024
     //+-------------------------------------------------
     sortBy(sort) {
-      if (sort.toggle && this.f.sortBy == sort.by) {
-        this.f.sortDir = this.f.sortDir == 'asc' ? 'desc' : 'asc'
-      } else {
-        this.f.sortBy = sort.by
-        this.f.sortDir = sort.dir
-      }
-
+      this.f.sortBy = sort.by
+      this.f.sortDir = sort.dir
+      this.f.sortAsc = sort.asc
+      this.$emit('search')
       // this.$refs.tippySort.hide()
-      // this.notify()
     },
 
     //+-------------------------------------------------

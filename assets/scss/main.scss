@@ -2,14 +2,12 @@
 
 //+-------------------------------------------------
 // Libraries and overrides
-//
 //+-------------------------------------------------
 
 @use '../../node_modules/@tabler/core/dist/css/tabler.css';
 // @use '../../node_modules/@tabler/core/dist/css/tabler-flags.css';
 // @use '../../node_modules/@tabler/core/dist/css/tabler-payments.css';
-@use '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
-@use '../../node_modules/@tabler/core/dist/css/demo.css';
+// @use '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
 
 @use 'extend';
 @use 'overrides/tabler-overrides';
@@ -34,6 +32,7 @@
 @use 'partials/nav';
 @use 'partials/home';
 @use 'partials/search';
+@use 'partials/filters';
 @use 'partials/palette';
 
 @use 'partials/base/_menus';

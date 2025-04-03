@@ -1,3 +1,11 @@
+/**
+ * @file:    \assets\scss\partials\nav.scss
+ * @desc:    ...
+ * ----------------------------------------------
+ * Created Date: 14th March 2024
+ * Modified: Wed 26 March 2025 - 17:26:12
+ **/
+
 [data-bs-theme='dark'] {
   header.navbar {
     --tblr-navbar-border-color: rgb(56 57 76 / 25%);
@@ -28,14 +36,15 @@ aside [class^='container'] {
 }
 
 aside.navbar.navbar-vertical {
-  top: 8px;
-  left: 8px;
-  bottom: 8px;
-  border-radius: 4px;
-  outline: 1px solid #3e505e;
+  // top: 6px;
+  // left: 6px;
+  // bottom: 8px;
+  // border-radius: 4px;
+  // outline: 1px solid #3e505e;
   padding: 0;
   overflow-y: auto;
-  filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+  // filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+  // background: linear-gradient(to top, #1e1f2a40 10%, #1b171e 100%);
 }
 
 aside .dropdown-menu {
@@ -60,6 +69,13 @@ aside .dropdown-menu {
     background-color: rgb(152 135 227 / 8%); // var(--tblr-dropdown-link-active-bg);
     color: var(--tblr-dropdown-link-color);
   }
+}
+
+header.navbar {
+  padding: 0;
+  min-height: 3.3rem;
+  background-color: rgba(43, 45, 57, 0.25);
+  background-color: transparent;
 }
 
 // #sidebar-menu li {

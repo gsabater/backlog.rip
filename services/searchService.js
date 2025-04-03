@@ -3,8 +3,10 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Fri 07 February 2025 - 20:02:12
+ * Modified: Wed 02 April 2025 - 17:34:38
  */
+
+import filterService from './filterService'
 
 export default {
   //+-------------------------------------------------
@@ -30,23 +32,8 @@ export default {
 
       // if (app.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') debugger
 
-      // ✨ Filter: Backlog state
-      // Match with app.state
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.states?.length) {
-        const { states } = filters
-
-        // Special case: check if -1 is in the states array
-        const withNoState = states.includes(-1)
-
-        if (!states.includes(app.state) && !(withNoState && !app.state)) {
-          filtered.push(app.uuid)
-          continue
-        }
-      }
-
       // ✨ App is...
-      // Filter apps based on filters.is
+      // Filter apps based on their source
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.is) {
         if (filters.is == 'favorites' && !app.is?.fav) {
@@ -60,6 +47,34 @@ export default {
         }
 
         if (filters.is == 'hidden' && !app.is?.hidden) {
+          filtered.push(app.uuid)
+          continue
+        }
+      }
+
+      // Apply the filters array
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (filters.filters?.length) {
+        let isValid = this.applyFilters(app, filters)
+        if (isValid) {
+          console.log('✅ Filter passed', app.name, app.score)
+        } else {
+          // console.warn('🛑 Skipping because filter', app.name, app.score)
+          filtered.push(app.uuid)
+          continue
+        }
+      }
+
+      // ✨ Filter: Backlog state
+      // Match with app.state
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (filters?.states?.length) {
+        const { states } = filters
+
+        // Special case: check if -1 is in the states array
+        const withNoState = states.includes(-1)
+
+        if (!states.includes(app.state) && !(withNoState && !app.state)) {
           filtered.push(app.uuid)
           continue
         }
@@ -273,6 +288,27 @@ export default {
       results: items.length,
       filtered: filtered.length,
     }
+  },
+
+  //+-------------------------------------------------
+  // applyFilters()
+  // Applies the filters array
+  // -----
+  // Created on Sat Mar 29 2025
+  //+-------------------------------------------------
+  applyFilters(app, f) {
+    let isValid = true
+
+    for (const filter of f.filters) {
+      let valid = filterService.filterBy(app, filter)
+      // console.warn('Filter for ', app.name, filter, valid)
+      if (!valid) {
+        isValid = false
+        break
+      }
+    }
+
+    return isValid
   },
 
   //+-------------------------------------------------

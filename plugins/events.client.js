@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd February 2024
- * Modified: Tue 25 February 2025 - 17:35:26
+ * Modified: Thu 27 March 2025 - 11:42:53
  */
 
 import { useMagicKeys, whenever } from '@vueuse/core'
@@ -80,21 +80,21 @@ function registerMagicKeys() {
   // ESC to close the palette
   // Arrows to navigate the palette
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  whenever(keys['control+K'], () => {
-    $tree.palette.show()
-  })
+  // whenever(keys['control+K'], () => {
+  //   $tree.palette.show()
+  // })
 
-  whenever(keys['control+P'], () => {
-    $tree.palette.show()
-  })
+  // whenever(keys['control+P'], () => {
+  //   $tree.palette.show()
+  // })
 
-  whenever(keys['Escape'], () => {
-    $tree.palette.hide()
-  })
+  // whenever(keys['Escape'], () => {
+  //   $tree.palette.hide()
+  // })
 
-  whenever(keys['backspace'], () => {
-    $tree.palette.back()
-  })
+  // whenever(keys['backspace'], () => {
+  //   $tree.palette.back()
+  // })
 
   // whenever(keys['control+K'], () => {
   //   console.log('Control + K pressed')

@@ -1,0 +1,58 @@
+/**
+ * @file:    \assets\scss\partials\filters.scss
+ * @desc:    ...
+ * ----------------------------------------------
+ * Created Date: 26th March 2025
+ * Modified: Wed 02 April 2025 - 22:16:35
+ **/
+
+.filter-tag {
+  cursor: default;
+  outline: 1px solid #38394c;
+  background: #0000002e;
+  font-size: 0.8rem;
+
+  border-radius: 2px;
+  margin-right: 5px;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  // padding: 2px 0px;
+
+  &.is-chip {
+    display: inline-flex;
+    border-radius: 3px;
+    background: transparent;
+    margin-right: 10px;
+  }
+
+  & div.tag-section {
+    padding: 0px 3px 0px;
+    color: rgb(173, 173, 173);
+    line-height: 25px;
+    transform: translateY(-1px);
+  }
+
+  & div.filter-value {
+    color: white;
+    background-color: rgba(100, 45, 121, 0.1);
+    // padding: 0 2px;
+
+    & input {
+      text-align: center;
+      padding: 0 2px;
+      width: 21px;
+      min-width: 21px;
+    }
+  }
+
+  & div.tag-section:first-child {
+    padding-left: 10px;
+  }
+
+  & .tag-action:hover {
+    cursor: pointer !important;
+    background-color: rgba(100, 45, 121, 0.14);
+  }
+}

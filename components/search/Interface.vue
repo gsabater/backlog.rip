@@ -23,7 +23,7 @@
     >
 
     <div class="row">
-      <search-filters ref="filters"></search-filters>
+      <search-filters ref="filters" @search="search('filters')"></search-filters>
 
       <div class="col-12">
         <search-results ref="results" />
@@ -88,11 +88,12 @@
             <div
               class="col-6"
               style="display: flex; flex-direction: column; align-items: center">
-              <b-game
+              <img src="/img/transhumans/reflecting.png" max-width="80%" />
+              <!-- <b-game
                 :data="{ uuid: 'placeholder' }"
                 tracking
                 disabled
-                style="max-width: 250px"></b-game>
+                style="max-width: 250px"></b-game> -->
             </div>
             <div
               class="col-4"
@@ -195,7 +196,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon 10 March 2025 - 15:47:59
+ * Modified: Tue 01 April 2025 - 19:00:28
  **/
 
 export default {
@@ -276,13 +277,11 @@ export default {
   },
 
   methods: {
-    // search(by) {
-    //   this.$nextTick(() => {
-    //     this.searchStore.loading = true
-    //     this.searchStore.setTime('start')
-    //     this.$refs.results.search(by)
-    //   })
-    // },
+    search(by) {
+      this.$nextTick(() => {
+        this.$refs.results.search(by)
+      })
+    },
 
     //+-------------------------------------------------
     // onUpdateFilters()

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Tue 25 March 2025 - 15:27:56
+ * Modified: Wed 26 March 2025 - 17:44:02
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -880,11 +880,11 @@ export const useCloudStore = defineStore('cloud', {
 
   getters: {
     jwt() {
-      return $user.jwt
+      return $user?.jwt ?? null
     },
 
     sub() {
-      return $user.cloud.sub
+      return $user?.cloud?.sub ?? null
     },
 
     //+-------------------------------------------------

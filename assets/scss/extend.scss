@@ -21,7 +21,8 @@
     display: none;
   }
 
-  &:hover {
+  &:hover,
+  &.active {
     & .show-hover {
       display: block;
     }

@@ -44,9 +44,9 @@ npm run dev
 | **Vue.js**  | Frontend framework |
 | **Nuxt.js** | SSR & Static Site Generator |
 | **Dexie.js** | IndexedDB wrapper for game storage |
-| **Axios** | HTTP client |
 | **Tabler** | UI Kit and Icons |
 | **Vuetify** | UI components & Material Design |
+| **Axios** | HTTP client |
 | **Mitt.js** | Event handling |
 | **Pinia** | State management |
 

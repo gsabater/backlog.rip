@@ -2,7 +2,13 @@
   <div
     v-if="isKeyboard || !ui.showFilterValues"
     class="b-menu dropdown-menu show"
-    style="letter-spacing: normal; overflow: visible; position: relative; z-index: 23333">
+    style="
+      min-width: 300px;
+      letter-spacing: normal;
+      overflow: visible;
+      position: relative;
+      z-index: 23333;
+    ">
     <!--
       *+---------------------------------
       *| Keyboard layout
@@ -12,10 +18,11 @@
       <span class="dropdown-header">Search options</span>
 
       <div
-        v-if="offerToSearch"
+        v-if="offerToSearch || offerToClean"
         class="dropdown-item control-hover"
         :class="{ active: cursor == -1 }">
-        Raw search "{{ f.string }}"
+        <template v-if="offerToSearch">Raw search "{{ f.box }}"</template>
+        <template v-if="offerToClean">Clear search "{{ f.string }}"</template>
 
         <small
           v-if="isKeyboard"
@@ -27,7 +34,7 @@
       </div>
 
       <div v-if="suggestions.length" class="dropdown-divider"></div>
-      <template v-for="(option, i) in suggestions">
+      <template v-for="(option, i) in suggestions" :key="option.path + i">
         <div
           class="dropdown-item control-hover"
           :class="{ active: cursor == i }"
@@ -57,7 +64,7 @@
       <span class="dropdown-header">Search filters</span>
       <label
         v-for="(option, i) in menuOptions"
-        :key="i"
+        :key="option.filter + i"
         class="dropdown-item ps-1"
         :class="{
           'active': f.sortBy == 'oc',
@@ -106,7 +113,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Wed 02 April 2025 - 15:52:14
+ * Modified: Thu 03 April 2025 - 19:22:13
  **/
 
 import filterService from '../../services/filterService'
@@ -154,8 +161,12 @@ export default {
       return filterService.mods
     },
 
+    offerToClean() {
+      return this.f.box.length == 0 && this.f.string.length > 0
+    },
+
     offerToSearch() {
-      return !this.suggestions.length || this.f.string.length
+      return this.f.box.length > 0
     },
 
     //+-------------------------------------------------
@@ -170,7 +181,7 @@ export default {
 
       return this.allOptions.filter((option) => {
         const { path, base, filter, mod } = option
-        const { string } = this.f
+        const string = this.f.box
 
         // If the filter is empty,
         // Return only the base options
@@ -191,10 +202,11 @@ export default {
     // Created on Tue Apr 01 2025
     //+-------------------------------------------------
     suggestedValue() {
-      const { string } = this.f
-      // Check if it has two "."
-      if (string.split('.').length > 2) {
-        const lastPart = string.split('.').pop()
+      const string = this.f.box
+      const parts = string.split('.')
+
+      if (parts.length > 2) {
+        const lastPart = parts.pop()
         if (lastPart.length > 0) {
           return lastPart
         }
@@ -324,12 +336,18 @@ export default {
       if (dir == 'down') this.cursor++
       if (this.cursor > max) this.cursor = max
 
-      if (this.offerToSearch && this.cursor < -1) this.cursor = -1
-      if (!this.offerToSearch && this.cursor < 0) this.cursor = 0
+      // if (this.offerToSearch && this.cursor < -1) this.cursor = -1
+      if (!this.offerToSearch && !this.offerToClean && this.cursor < 0) this.cursor = 0
+      if (!this.suggestions.length) this.cursor = -1
     },
 
     writePath() {
-      this.f.string = this.suggestions[this.cursor].path
+      if (this.offerToClean && this.cursor == -1) {
+        this.resetSearchString()
+        return
+      }
+
+      this.f.box = this.suggestions[this.cursor].path
     },
 
     //+-------------------------------------------------
@@ -340,18 +358,27 @@ export default {
     //+-------------------------------------------------
     addFilter() {
       let selected = this.suggestions[this.cursor] ?? null
-      if (!selected) return
 
+      // If there is no selected filter, we just run the search
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (!selected) {
+        this.f.string = this.f.box
+        this.$mitt.emit('search:run')
+        return
+      }
+
+      // Create a new filter
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let toAdd = {
         filter: selected.filter,
         mod: selected.mod,
         value: this.suggestedValue,
       }
 
-      this.f.string = ''
+      this.f.box = ''
       this.f.filters.push(toAdd)
-      console.warn('Adding filter', toAdd)
       this.$emit('selected', selected)
+
       // if (typeof this.$parent.hide == 'function') this.$parent.hide()
     },
 
@@ -359,8 +386,16 @@ export default {
       this.filterSelected = null
       this.ui.showFilterValues = false
     },
+
+    resetSearchString() {
+      this.f.box = ''
+      this.f.string = ''
+      this.$mitt.emit('search:run')
+    },
   },
 
-  mounted() {},
+  mounted() {
+    this.move()
+  },
 }
 </script>

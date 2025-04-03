@@ -37,28 +37,11 @@
       class="dropdown-item small text-muted"
       @click="ui.expanded = true">
       Show more of your library
-      <Icon class="ms-auto">ChevronDown</Icon>
+      <Icon size="16" class="ms-auto">ChevronDown</Icon>
     </div>
 
     <template v-if="isExpanded">
-      <span class="dropdown-header">This is your complete library</span>
-
-      <!-- <component
-      :is="componentIs"
-      v-for="(state, i) in pinnedStates"
-      :key="'state' + i"
-      :to="'/library/' + state.slug"
-      class="dropdown-item ps-3">
-      <span
-        class="status-dot ms-0 me-4"
-        :style="{ 'background-color': state.color || '' }"
-        style="transform: translateX(1px)"></span>
-
-      <span class="nav-link-title">{{ state.name }}</span>
-      <small class="ms-auto text-secondary me-1">
-        {{ format.num(stateStore.count(state.id)) }}
-      </small>
-    </component> -->
+      <!-- <span class="dropdown-header small">This is your complete library</span> -->
 
       <div class="dropdown-item">
         <div style="width: 30px">
@@ -152,21 +135,13 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th January 2025
- * Modified: Mon 13 January 2025 - 17:05:30
+ * Modified: Thu 03 April 2025 - 19:24:42
  **/
 
 export default {
   name: 'SourceMenu',
 
   props: {
-    // Selected source at filters
-    // Used for active and expanded ui
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    source: {
-      type: String,
-      default: 'all',
-    },
-
     // Defines if the component is used as a filter dropdown
     // or a navigation dropdown with links
     // options: filter, nav
@@ -184,14 +159,14 @@ export default {
       default: false,
     },
 
-    // Option to display states in the dropdown
-    // Can be false, or a truthy value with a string
-    // options: false, 'pinned', 'menu'
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    withStates: {
-      type: [Boolean, String],
-      default: false, //
-    },
+    // // Option to display states in the dropdown
+    // // Can be false, or a truthy value with a string
+    // // options: false, 'pinned', 'menu'
+    // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // withStates: {
+    //   type: [Boolean, String],
+    //   default: false, //
+    // },
   },
 
   emits: ['change'],
@@ -206,6 +181,7 @@ export default {
 
   computed: {
     ...mapStores(useStateStore),
+    ...mapState(useSearchStore, ['f']),
     ...mapState(useStateStore, ['states', 'pinnedStates', 'unPinnedStates']),
 
     componentIs() {
@@ -214,16 +190,38 @@ export default {
 
     isExpanded() {
       if (this.ui.expanded) return true
-      if (this.source !== 'all' && this.source !== 'library') return true
+      if (this.f.source !== 'all' && this.f.source !== 'library') return true
 
       return false
     },
   },
 
   methods: {
+    //+-------------------------------------------------
+    // changeSource()
+    // Updates the source
+    // -----
+    // Created on Mon Sep 23 2024
+    // Created on Thu Apr 03 2025 - Moved logic to the menu
+    //+-------------------------------------------------
     select(source) {
-      this.$emit('change', source)
       if (typeof this.$parent.hide == 'function') this.$parent.hide()
+
+      // this.$emit('change', source)
+      this.f.source = source
+
+      // WIP: do that with filters array
+      if (source.includes('state:')) {
+        const state = parseInt(source.split(':')[1])
+        this.f.states = [state]
+      }
+
+      if (source == 'all') {
+        this.f.sortBy = 'score'
+        this.f.sortDir = 'desc'
+      }
+
+      this.$mitt.emit('search:run')
     },
   },
 

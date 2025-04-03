@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Wed 02 April 2025 - 17:40:51
+ * Modified: Thu 03 April 2025 - 17:24:45
  */
 
 import searchService from '../services/searchService'
@@ -34,6 +34,7 @@ export const useSearchStore = defineStore('search', {
     // Base filters template
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     base: {
+      box: '',
       string: '',
       source: 'all',
 
@@ -41,13 +42,7 @@ export const useSearchStore = defineStore('search', {
       sortDir: 'desc',
 
       filters: [],
-      states: [],
-      genres: [],
       released: null,
-
-      mods: {
-        // states: 'any(of) // all(of) // not(of)'
-      },
 
       show: {
         page: 1,
@@ -112,7 +107,6 @@ export const useSearchStore = defineStore('search', {
         ...filters,
       }
 
-      // this.f.source = this.getSource()
       prepared = await this.mergeFilters(prepared)
 
       this.f = prepared
@@ -157,7 +151,8 @@ export const useSearchStore = defineStore('search', {
         if (!slugged && $state.states.length) {
           const state = $state.states.find((g) => g.slug == slug)
           if (state) {
-            filters.states = [state.id]
+            // filters.states = [state.id]
+            // TODO: Add new filter
             slugged = true
           }
         }
@@ -173,21 +168,29 @@ export const useSearchStore = defineStore('search', {
           // else genres = $repos.genres
 
           const genre = genres.find((g) => g.slug == slug)
-          if (genre) filters.genres = [genre.id]
+          // TODO: add new filter
+          // if (genre) filters.genres = [genre.id]
         }
       }
 
       // Handle is modifier
       // "is" is a special flag to identify easily source
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters.source.includes('library') && filters.states.length == 1) {
-        filters.is = 'state:' + filters.states[0]
-        filters.source = filters.is
-      }
+      // TODO: do that searching into the filters array
+      // if (filters.source.includes('library') && filters.states.length == 1) {
+      //   filters.is = 'state:' + filters.states[0]
+      //   filters.source = filters.is
+      // }
 
       return filters
     },
 
+    //+-------------------------------------------------
+    // addFilter()
+    // Adds a new filter to the array
+    // -----
+    // Created on Thu Apr 03 2025
+    //+-------------------------------------------------
     addFilter(filter) {
       this.f.filters.push(filter)
       // this.run()
@@ -195,12 +198,24 @@ export const useSearchStore = defineStore('search', {
       return this.f.filters.length - 1
     },
 
+    //+-------------------------------------------------
+    // setFilter()
+    // updates the filter values
+    // -----
+    // Created on Thu Apr 03 2025
+    //+-------------------------------------------------
     setFilter(index, mod, value) {
       this.f.filters[index].mod = mod
       this.f.filters[index].value = value
       // this.run()
     },
 
+    //+-------------------------------------------------
+    // clearFilter()
+    // Removes a filter
+    // -----
+    // Created on Thu Apr 03 2025
+    //+-------------------------------------------------
     clearFilter(index) {
       this.f.filters.splice(index, 1)
       // this.run()

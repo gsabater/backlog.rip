@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th March 2025
- * Modified: Wed 02 April 2025 - 22:16:35
+ * Modified: Thu 03 April 2025 - 18:50:22
  **/
 
 .filter-tag {
@@ -25,6 +25,10 @@
     border-radius: 3px;
     background: transparent;
     margin-right: 10px;
+
+    & .tag-section {
+      line-height: 30px;
+    }
   }
 
   & div.tag-section {

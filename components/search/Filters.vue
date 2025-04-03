@@ -41,7 +41,7 @@ Selected
   >
 
   <div class="col-12 row align-items-center mt-2 mb-3">
-    <div v-if="$app.wip" class="col-auto">
+    <div v-if="$app.wip" class="col-auto d-none d-md-block">
       <v-btn id="⚓f">
         F
         <b-tippy-sheety ref="source" to="#⚓f" trigger="click">
@@ -51,54 +51,35 @@ Selected
         </b-tippy-sheety>
       </v-btn>
     </div>
-    <div class="col-auto d-flex align-items-center">
+
+    <!--
+      *+---------------------------------
+      *| Source selector
+      *+--------------------------------- -->
+    <div class="col-6 col-md-auto d-flex align-items-center">
       <v-btn id="⚓source" variant="tonal" color="rgb(110 116 180)">
-        <Icon v-if="f.source == 'all'" size="16" class="me-1">Cards</Icon>
-        <Icon v-if="f.source == 'library'" size="16" class="me-1">LayoutDashboard</Icon>
-        <Icon v-if="f.source == 'library:favorites'" size="16" class="me-1">Heart</Icon>
-
-        <Icon v-if="f.source == 'library:pinned'" size="16" class="me-1">Bookmark</Icon>
-
-        <Icon v-if="f.source == 'library:hidden'" size="16" class="me-1">Cancel</Icon>
+        <Icon v-if="f.source == 'all'" size="14" class="me-1">Cards</Icon>
+        <Icon v-if="f.source == 'library'" size="14" class="me-1">LayoutDashboard</Icon>
+        <Icon v-if="f.source == 'library:favorites'" size="14" class="me-1">Heart</Icon>
+        <Icon v-if="f.source == 'library:pinned'" size="14" class="me-1">Bookmark</Icon>
+        <Icon v-if="f.source == 'library:hidden'" size="14" class="me-1">Cancel</Icon>
 
         <span
           v-if="sourceState"
-          class="status-dot ms-1 me-4"
+          class="status-dot ms-1"
+          style="margin-right: 0.75rem; transform: translateY(1px)"
           :style="{ 'background-color': sourceState.color || '' }"></span>
 
         {{ sourceLabel }}
 
-        <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">
           Selector
         </Icon>
 
         <b-tippy-sheety ref="source" to="#⚓source" trigger="click">
-          <search-source-menu :source="f.source" @change="changeSource" />
+          <search-source-menu ref="sourceMenu" />
         </b-tippy-sheety>
       </v-btn>
-
-      <!-- <div class="btn-group btn-group-sm filters__source">
-      <div
-        class="btn d-flex align-items-center border-end-0"
-        :class="{ active: f.source == 'all' }"
-        @click="browse('all')"
-        nstyle="
-
-        ">
-        <Icon v-if="f.source == 'all'" size="14" class="text-muted me-1">Cards</Icon>
-        <small>All games</small>
-      </div>
-
-      <div
-        class="btn d-flex align-items-center"
-        @click="browse('library')"
-        :class="{ active: f.source == 'library' }">
-        <Icon v-if="f.source == 'library'" size="14" class="text-muted me-1">
-          LayoutDashboard
-        </Icon>
-        <small>Library</small>
-      </div>
-    </div> -->
 
       <!-- <div class="text-muted mx-3"><Icon size="14">Spaces</Icon></div>
 
@@ -119,7 +100,7 @@ Selected
     </v-btn> -->
     </div>
 
-    <div v-if="false" class="col-auto">
+    <div v-if="false" class="col-6 col-md-auto">
       <!-- <v-btn><Icon>Clock</Icon></v-btn> -->
       <v-btn-group
         variant="tonal"
@@ -140,12 +121,16 @@ Selected
       </v-btn-group>
     </div>
 
-    <div class="col-auto d-flex align-items-center">
+    <!--
+      *+---------------------------------
+      *| Filter selector
+      *+--------------------------------- -->
+    <div class="col-6 col-md-auto d-flex align-items-center">
       <v-btn id="⚓filtersMenu" variant="tonal" color="rgb(110 116 180)">
         <Icon size="15" class="me-1">Filter</Icon>
         Filter
 
-        <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">
           Selector
         </Icon>
 
@@ -155,11 +140,16 @@ Selected
       </v-btn>
     </div>
 
-    <div class="col">
+    <!--
+      *+---------------------------------
+      *| Search box
+      *+--------------------------------- -->
+    <div class="col-12 col-md">
       <v-text-field
         id="⚓searchBox"
         ref="searchBox"
-        v-model="f.string"
+        v-model="f.box"
+        :loading="loading"
         clearable
         density="comfortable"
         @keydown="handleKeydown"
@@ -215,7 +205,7 @@ Selected
           </strong>
         </small>
 
-        <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">
           Selector
         </Icon>
 
@@ -359,39 +349,6 @@ Selected
   *| Select souce and apply filters
   *+--------------------------------- -->
     <div class="col-6 d-flex align-items-center">
-      <div id="⚓source" class="btn btn-sm me-2" style="background: transparent">
-        <Icon v-if="f.source == 'all'" size="12" class="text-muted me-1">Cards</Icon>
-        <Icon v-if="f.source == 'library'" size="12" class="text-muted me-1">
-          LayoutDashboard
-        </Icon>
-        <Icon v-if="f.source == 'library:favorites'" size="12" class="text-muted me-1">
-          Heart
-        </Icon>
-
-        <Icon v-if="f.source == 'library:pinned'" size="12" class="text-muted me-1">
-          Bookmark
-        </Icon>
-
-        <Icon v-if="f.source == 'library:hidden'" size="12" class="text-muted me-1">
-          Cancel
-        </Icon>
-
-        <span
-          v-if="sourceState"
-          class="status-dot ms-1 me-4"
-          :style="{ 'background-color': sourceState.color || '' }"></span>
-
-        <small>{{ sourceLabel }}</small>
-
-        <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
-          Selector
-        </Icon>
-
-        <b-tippy-sheety ref="source" to="#⚓source" trigger="click">
-          <search-source-menu :source="f.source" @change="changeSource" />
-        </b-tippy-sheety>
-      </div>
-
       <!-- <div class="btn-group btn-group-sm filters__source">
       <div
         class="btn d-flex align-items-center border-end-0"
@@ -429,7 +386,7 @@ Selected
         color="blue-grey-lighten-1"> -->
         Filters
 
-        <Icon class="text-muted" size="16" style="transform: translate(5px, 1px)">
+        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">
           Selector
         </Icon>
 
@@ -1226,7 +1183,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Wed 02 April 2025 - 22:10:14
+ * Modified: Thu 03 April 2025 - 19:23:36
  **/
 
 export default {
@@ -1365,7 +1322,8 @@ export default {
     //+-------------------------------------------------
     sourceState() {
       if (!this.f?.source) return null
-      if (this.f.states.length !== 1) return null
+      // TODO: do that searching into filters
+      // if (this.f.states.length !== 1) return null
       if (this.f.source.includes('state:')) {
         const id = this.f.source.split(':')[1]
         return this._states.find((s) => s.id == id)
@@ -1517,6 +1475,12 @@ export default {
   // },
 
   methods: {
+    //+-------------------------------------------------
+    // handleKeydown()
+    // Handles keyboard navigation on the search field
+    // -----
+    // Created on Thu Apr 03 2025
+    //+-------------------------------------------------
     handleKeydown(e) {
       let action = false
       if (!e.target.classList.contains('v-field__input')) return
@@ -1539,11 +1503,8 @@ export default {
       if (e.key == 'Enter') {
         action = true
 
-        if (this.f.string == '') {
-          this.$refs.filtersMenuKbd.writePath()
-        } else {
-          this.$refs.filtersMenuKbd.addFilter()
-        }
+        if (this.f.box == '') this.$refs.filtersMenuKbd.writePath()
+        else this.$refs.filtersMenuKbd.addFilter()
 
         // this.$refs.searchBox.blur()
         // this.$refs.filtersTippy.hide()
@@ -1562,6 +1523,12 @@ export default {
       return false
     },
 
+    //+-------------------------------------------------
+    // handleNewFilter()
+    // A new filter has been added
+    // -----
+    // Created on Thu Apr 03 2025
+    //+-------------------------------------------------
     handleNewFilter() {
       this.$nextTick(() => {
         this.$refs.searchBox.blur()
@@ -1585,29 +1552,6 @@ export default {
     },
 
     //+-------------------------------------------------
-    // changeSource()
-    // Updates the source
-    // -----
-    // Created on Mon Sep 23 2024
-    //+-------------------------------------------------
-    changeSource(source) {
-      this.f.source = source
-      this.f.states = []
-
-      if (source.includes('state:')) {
-        const state = parseInt(source.split(':')[1])
-        this.f.states = [state]
-      }
-
-      if (source == 'all') {
-        this.f.sortBy = 'score'
-        this.f.sortDir = 'desc'
-      }
-
-      // this.notify()
-    },
-
-    //+-------------------------------------------------
     // sortBy()
     // Applies sortBy to the filters
     // -----
@@ -1617,6 +1561,7 @@ export default {
       this.f.sortBy = sort.by
       this.f.sortDir = sort.dir
       this.f.sortAsc = sort.asc
+
       this.$emit('search')
       // this.$refs.tippySort.hide()
     },

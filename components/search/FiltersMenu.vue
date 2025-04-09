@@ -53,6 +53,24 @@
           </kbd>
         </div>
       </template>
+
+      <div
+        v-if="showSuggestedKbdMenu"
+        class="small px-3"
+        style="
+          margin: 8px;
+          border: 1px dashed #ccc;
+          opacity: 0.9;
+          border-radius: 3px;
+          pointer-events: none;
+        ">
+        <search-filter-menu ref="kbdMenu" :filter="suggestedFilter" :headless="true" />
+      </div>
+
+      <div class="dropdown-item disabled text-muted">
+        <Icon class="me-2" size="14">ArrowDown</Icon>
+        <span class="me-4">Move with your arrows</span>
+      </div>
     </template>
 
     <!--
@@ -66,13 +84,11 @@
         v-for="(option, i) in menuOptions"
         :key="option.filter + i"
         class="dropdown-item ps-1"
-        :class="{
-          'active': f.sortBy == 'oc',
-          'disabled cursor-not-allowed': f.source == 'all',
-        }"
         @click="showFilterValues(option)">
         <div class="d-flex justify-center" style="width: 30px">
-          <Icon size="16" class="me-1">{{ filterConf[option.filter].icon }}</Icon>
+          <Icon size="16" width="1.5" class="text-muted">
+            {{ filterConf[option.filter].icon }}
+          </Icon>
           <!-- <b-logo name="opencritic" size="14" class="me-1" style="opacity: 0.6" /> -->
         </div>
         <div>
@@ -96,6 +112,15 @@
           </Icon>
         </tippy>
       </label>
+
+      <div v-if="ui.showAdvancedFilters">... more filters</div>
+      <div
+        v-else
+        class="dropdown-item small text-muted"
+        @click="ui.showAdvancedFilters = true">
+        Show more advanced filters
+        <Icon size="16" class="ms-auto">ChevronDown</Icon>
+      </div>
     </template>
   </div>
 
@@ -113,7 +138,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Thu 03 April 2025 - 19:22:13
+ * Modified: Wed 09 April 2025 - 13:55:48
  **/
 
 import filterService from '../../services/filterService'
@@ -140,6 +165,7 @@ export default {
 
       ui: {
         showFilterValues: false,
+        showAdvancedFilters: false,
       },
     }
   },
@@ -153,12 +179,65 @@ export default {
       return this.mode == 'keyboard'
     },
 
+    filterDef() {
+      return filterService.definitions
+    },
+
     filterConf() {
-      return filterService.config
+      return filterService.configurations
     },
 
     filterMods() {
       return filterService.mods
+    },
+
+    filterParts() {
+      const string = this.f.box
+      const parts = string.split('.')
+
+      if (parts.length == 0)
+        return {
+          mod: null,
+          value: null,
+          filter: null,
+        }
+
+      let filter = null
+      let mod = null
+      let value = null
+
+      if (parts.length > 1) {
+        filter = parts[0]
+      }
+
+      if (parts.length > 2) {
+        mod = parts[1]
+        value = parts[2]
+
+        let definition = this.filterDef[filter]
+
+        // Cleanup, split and normalize the array
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (definition?.type == 'array') {
+          value = parts[2].split(',')
+
+          value = value.filter(Boolean).map((v) => v.trim())
+          const allNumeric = value.every((v) => !isNaN(v))
+
+          if (allNumeric) {
+            value = value.map((v) => Number(v))
+          }
+        }
+
+        // Clean and parse numbers
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (definition?.type == 'number') {
+          value = Number(value)
+        }
+      }
+
+      console.warn('🧩', parts, parts.length, filter, mod, value)
+      return { filter, mod, value }
     },
 
     offerToClean() {
@@ -195,6 +274,13 @@ export default {
       })
     },
 
+    suggestedFilter() {
+      const { filter, mod } = this.filterParts
+      if (!filter) return null
+
+      return filter
+    },
+
     //+-------------------------------------------------
     // suggestedValue()
     // The value is the remaining text after the second "."
@@ -225,13 +311,13 @@ export default {
     allOptions() {
       let groups = []
       let options = []
-      let filters = filterService.filters
+      let definitions = this.filterDef
 
-      for (const key in filters) {
-        const option = filters[key]
+      for (const key in definitions) {
+        const option = definitions[key]
 
         // base options
-        // Those are just little helpers for the base filters
+        // Those are just little helpers for the base definition
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         options.push({
           base: true,
@@ -276,13 +362,13 @@ export default {
     //+-------------------------------------------------
     menuOptions() {
       let options = []
-      let filters = filterService.filters
+      let definitions = this.filterDef
 
-      for (const key in filters) {
-        const option = filters[key]
+      for (const key in definitions) {
+        const option = definitions[key]
 
         // base options
-        // Those are just little helpers for the base filters
+        // Those are just little helpers for the base definition
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         options.push({
           path: key,
@@ -292,6 +378,13 @@ export default {
       }
 
       return options
+    },
+
+    showSuggestedKbdMenu() {
+      if (!this.suggestedFilter) return false
+      let definition = this.filterDef[this.suggestedFilter]
+      if (definition?.type == 'array') return true
+      return false
     },
   },
 
@@ -367,13 +460,11 @@ export default {
         return
       }
 
+      const { filter, mod, value } = this.filterParts
+
       // Create a new filter
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let toAdd = {
-        filter: selected.filter,
-        mod: selected.mod,
-        value: this.suggestedValue,
-      }
+      let toAdd = { filter, mod, value }
 
       this.f.box = ''
       this.f.filters.push(toAdd)

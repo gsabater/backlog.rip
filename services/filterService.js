@@ -3,38 +3,60 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Wed 02 April 2025 - 17:10:35
+ * Modified: Tue 08 April 2025 - 13:18:43
  */
 
 export default {
-  // Filters array
-  // Used to generate options
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  filters: {
+  definitions: {
     score: {
       min: 0,
       max: 100,
       type: 'number',
-      multiple: false,
       mods: ['gt', 'lt', /* 'gte', 'lte', */ 'is', 'not'],
     },
-    // state: { group: 'score', mods: ['is', 'not'] },
+
+    state: { type: 'array', mods: ['in', 'not', 'all'] },
     // genre: { group: 'score', mods: ['in', 'all'] },
     // language: { mods: [] },
   },
 
-  config: {
+  configurations: {
     score: {
       label: 'Score',
+      plural: 'scores',
+
       icon: 'Star',
       desc: 'Filter results by their median score. To filter by Steam, Metacritic or Opencritic score, use their respective filters',
     },
-    state: { label: 'State', icon: '', desc: 'Lorem' },
+
+    state: {
+      label: 'State',
+      plural: 'states',
+
+      icon: 'Background',
+      desc: 'Filter games by their state',
+
+      data: 'states',
+      opSort: 'order',
+      opValue: 'id',
+      opLabel: 'name',
+    },
+
     genre: { label: 'Genre', icon: '', desc: 'Lorem' },
   },
 
   // 'is', 'gt', 'lt', 'gte', 'lte', 'not'
   mods: {
+    in: {
+      short: 'in',
+      desc: 'is any of...',
+    },
+
+    all: {
+      short: 'all',
+      desc: 'match all options',
+    },
+
     is: {
       short: 'is',
       desc: 'is equal to...',
@@ -44,18 +66,22 @@ export default {
       short: '>',
       desc: 'is greater than...',
     },
+
     lt: {
       short: '<',
       desc: 'is lower than...',
     },
+
     gte: {
       short: '>=',
       desc: 'is greater or equal to...',
     },
+
     lte: {
       short: '<=',
       desc: 'is lower or equal to...',
     },
+
     not: {
       short: 'is not',
       desc: 'is not ...',
@@ -70,7 +96,9 @@ export default {
   //+-------------------------------------------------
   filterBy(app, filter) {
     const type = filter.filter
+
     if (type == 'score') return this.filterByScore(app, filter)
+    if (type == 'state') return this.filterByState(app, filter)
   },
 
   //+-------------------------------------------------
@@ -83,6 +111,18 @@ export default {
     const { mod, value } = filter
 
     return this.numericFilter(app.score, mod, value)
+  },
+
+  //+-------------------------------------------------
+  // function()
+  //
+  // -----
+  // Created on Mon Apr 07 2025
+  //+-------------------------------------------------
+  filterByState(app, filter) {
+    const { mod, value } = filter
+
+    return this.arrayFilter(app.state, mod, value)
   },
 
   //+-------------------------------------------------
@@ -121,6 +161,33 @@ export default {
   },
 
   //+-------------------------------------------------
+  // arrayFilter()
+  // Compares array values with provided input value
+  // -----
+  // Created on Mon Apr 07 2025
+  //+-------------------------------------------------
+  arrayFilter(input, mod, value) {
+    if (!input) input = null
+
+    // Handle special case for -1 (no state)
+    const hasNoState = value.includes(-1)
+
+    if (mod == 'in') {
+      return hasNoState ? !input || value.includes(input) : value.includes(input)
+    }
+
+    if (mod == 'not') {
+      return hasNoState ? input && !value.includes(input) : !value.includes(input)
+    }
+
+    if (mod == 'all') {
+      return value.every((v) => (v === -1 ? !input : input.includes(v)))
+    }
+
+    return null
+  },
+
+  //+-------------------------------------------------
   // setRoute
   // Adds filters to the route as query params
   // -----
@@ -131,20 +198,29 @@ export default {
 
     const queryParams = filters
       .map((f) => {
-        if (f.mod) {
-          return `${encodeURIComponent(f.filter)}.${encodeURIComponent(f.mod)}.${encodeURIComponent(f.value)}`
+        let value = f.value
+
+        if (Array.isArray(value)) {
+          // Join array with '+' and encode each item individually
+          value = value.map(encodeURIComponent).join('+')
         } else {
-          return `${encodeURIComponent(f.filter)}=${encodeURIComponent(f.value)}`
+          value = encodeURIComponent(value)
+        }
+
+        if (f.mod) {
+          return `${encodeURIComponent(f.filter)}.${encodeURIComponent(f.mod)}.${value}`
+        } else {
+          return `${encodeURIComponent(f.filter)}=${f.value}`
         }
       })
       .join('&')
 
-    console.warn('☁️ setRoute', queryParams)
     // Update URL without adding to history
     const newUrl = queryParams
       ? `${window.location.pathname}?${queryParams}`
       : window.location.pathname
 
+    console.warn('☁️ setRoute', queryParams)
     window.history.replaceState({}, '', newUrl)
   },
 }

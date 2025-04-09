@@ -1,7 +1,21 @@
 <template>
   <div class="filter-tag" @click.stop.prevent="prevent" @mousedown.stop @focus.stop>
+    <!-- <pre class="d-block">
+      {{ hook }} --
+      {{ current }}
+      {{ currentConf }}
+    </pre> -->
+
     <div class="tag-section filter-name">
-      {{ filterName }}
+      <Icon
+        v-if="!isKeyboard"
+        size="12"
+        width="1.3"
+        class="text-muted"
+        style="transform: translateY(-1px); margin-right: 2px">
+        {{ currentConf.icon }}
+      </Icon>
+      {{ currentConf.label }}
     </div>
     <!-- <div>
       {{ index }}
@@ -13,7 +27,9 @@
     </div> -->
 
     <div class="tag-section tag-action filter-mod">
-      {{ filterMod }}
+      <span class="text-nowrap">
+        {{ filterMod }}
+      </span>
       <b-tippy-sheety :autoclose="120" trigger="click">
         <search-filter-mod-menu
           mod="gt"
@@ -21,33 +37,40 @@
       </b-tippy-sheety>
     </div>
     <div class="tag-section tag-action filter-value">
+      <div v-if="isArray" class="text-nowrap px-1">
+        <!-- <span class="badge" style="background-color: blue"></span>
+        <span class="badge" style="background-color: blue"></span>
+        <span class="badge" style="background-color: blue"></span> -->
+        {{ filterValue.length }} {{ currentConf.plural }}
+      </div>
       <input
-        v-if="searchStore && searchStore.f.filters[index]"
+        v-else
         placeholder="..."
         v-model="searchStore.f.filters[index].value"
         ref="inputField"
         @mousedown.stop
         @input="runSearch"
         @keydown="handleKeydown"
-        :style="`width: ${5 + filterValue.length * 8}px`" />
+        :style="`width: ${5 + filterValue.length * 9}px`" />
+
       <!-- n@click.stop.prevent="showTippy"
         n@focus.stop="showTippy"  -->
 
       <b-tippy-sheety
-        v-if="!isKeyboard"
+        v-if="!isKeyboard || isArray"
         ref="optionsTippy"
         :autoclose="120"
-        trigger="focusin"
+        :trigger="isArray ? 'click' : 'focusin'"
         placement="bottom">
         <search-filter-menu
           ref="filterMenu"
           :index="index"
-          :filter="current.filter"
+          :filter="hook.filter"
           :searchable="false" />
       </b-tippy-sheety>
     </div>
-    <div class="tag-section tag-action filter-clear" @click="clear">
-      <Icon size="14">X</Icon>
+    <div class="tag-section tag-action filter-clear px-1" @click="clear">
+      <Icon size="15" width="2">X</Icon>
     </div>
   </div>
 </template>
@@ -58,7 +81,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Wed 02 April 2025 - 22:18:39
+ * Modified: Wed 09 April 2025 - 13:17:01
  **/
 
 import filterService from '../../services/filterService'
@@ -75,14 +98,14 @@ export default {
       default: 0,
     },
 
-    // The current filter
-    // Should be used only for easy access
-    // and should not be modified
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    current: {
-      type: Object,
-      default: () => ({}),
-    },
+    // // The active filter object
+    // // Should be used only for easy access
+    // // and should not be modified.
+    // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // filter: {
+    //   type: Object,
+    //   default: () => ({}),
+    // },
 
     // Mode
     // Used to display elements
@@ -115,27 +138,25 @@ export default {
       return this.mode == 'keyboard'
     },
 
+    isArray() {
+      return this.current.type == 'array'
+    },
+
     hook() {
       return this.searchStore.f?.filters[this.index]
     },
 
-    filterName() {
-      return filterService.config[this.current?.filter]?.name ?? this.current.filter
+    current() {
+      return filterService.definitions[this.hook.filter]
+    },
+
+    currentConf() {
+      return filterService.configurations[this.hook.filter]
     },
 
     filterMod() {
-      let mod = this.current.mod
+      let mod = this.hook.mod
       return filterService.mods[mod]?.short ?? mod
-      let modNames = {
-        gt: '>',
-        is: 'is',
-        isNot: 'is not',
-        has: 'has',
-        hasNot: 'has not',
-        contains: 'contains',
-        containsNot: 'does not contain',
-      }
-      return modNames[mod] ?? mod
     },
 
     // filterType() {
@@ -158,16 +179,6 @@ export default {
     inputMode() {
       return 'value'
     },
-
-    // filter() {
-    //   let hook = this.available[this.index]
-    //   return this.f[this.index]
-    // },
-
-    // hook() {
-    //   let current = this.f.filters[this.index]
-    //   return this.available[current.filter]
-    // },
 
     options() {
       let data = this.hook.data
@@ -268,7 +279,7 @@ export default {
   },
 
   mounted() {
-    this.showTippy()
+    // this.showTippy()
     this.runSearch()
     // this.$nextTick(() => {
     //   this.$refs.inputField.focus()

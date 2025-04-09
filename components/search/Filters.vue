@@ -1183,7 +1183,7 @@ Selected
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Thu 03 April 2025 - 19:23:36
+ * Modified: Tue 08 April 2025 - 13:25:36
  **/
 
 export default {
@@ -1503,8 +1503,12 @@ export default {
       if (e.key == 'Enter') {
         action = true
 
-        if (this.f.box == '') this.$refs.filtersMenuKbd.writePath()
+        let suggestedValue = this.$refs.filtersMenuKbd.suggestedValue
+        if (!suggestedValue) this.$refs.filtersMenuKbd.writePath()
         else this.$refs.filtersMenuKbd.addFilter()
+
+        // if (this.f.box == '') this.$refs.filtersMenuKbd.writePath()
+        // else this.$refs.filtersMenuKbd.addFilter()
 
         // this.$refs.searchBox.blur()
         // this.$refs.filtersTippy.hide()

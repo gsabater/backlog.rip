@@ -1,19 +1,45 @@
 <template>
   <div
-    class="b-menu dropdown-menu show b-filter-menu"
-    style="min-width: 300px; letter-spacing: normal; overflow: visible">
+    :class="headless ? '' : 'b-menu dropdown-menu show b-filter-menu'"
+    :style="headless ? '' : 'min-width: 300px; letter-spacing: normal; overflow: visible'"
+    v-bind="$attrs">
     <!-- <pre class="d-block">
       {{ index }} --
       {{ item }} --
-      {{ hook }} --
+      {{ filter }} --
+      hook: {{ hook }} --
     </pre> -->
-    <div class="dropdown-header">
-      <span class="text-muted">Filter by {{ currentConf.label }}</span>
+
+    <!--
+      *+---------------------------------
+      *| Quick filter search
+      *+--------------------------------- -->
+    <template v-if="!headless && isSearchEnabled">
+      <div class="dropdown-item">
+        <input
+          ref="findOption"
+          v-model="ui.findOption"
+          type="text"
+          class="form-control form-control-flush"
+          placeholder="Search..." />
+      </div>
+      <div class="dropdown-divider"></div>
+    </template>
+
+    <div v-else class="dropdown-header">
+      <!-- <span v-if="headless" class="text-muted">
+        Available values for {{ currentConf.label }}
+      </span> -->
+      <span v-if="!headless" class="text-muted">Filter by {{ currentConf.label }}</span>
     </div>
 
-    <div class="dropdown-item active">
+    <!--
+      *+---------------------------------
+      *| Mods selector
+      *+--------------------------------- -->
+    <!-- <div class="dropdown-item active" @click="ui.showMods = true">
       <div>
-        {{ currentConf.label }} {{ filterMods[item.mod].short }}
+        {{ currentConf.label }} {{ filterMods[item.mod].short }}...
         <small class="d-block text-muted">
           {{ filterMods[item.mod].desc }}
         </small>
@@ -21,12 +47,8 @@
       <div class="ms-auto">
         <Icon>ChevronDown</Icon>
       </div>
-    </div>
+    </div> -->
 
-    <!--
-      *+---------------------------------
-      *| Mods selector
-      *+--------------------------------- -->
     <template v-if="ui.showMods"></template>
 
     <!--
@@ -41,26 +63,6 @@
           <!-- <span class="subheading font-weight-light me-1">value</span> -->
         </v-col>
       </v-row>
-
-      <!-- <v-slider v-model="value" :step="1" max="218" min="40" track-color="grey">
-        <template v-slot:prepend>
-          <v-btn
-            :color="color"
-            icon="mdi-minus"
-            size="small"
-            variant="text"
-            @click="decrement"></v-btn>
-        </template>
-
-        <template v-slot:append>
-          <v-btn
-            :color="color"
-            icon="mdi-plus"
-            size="small"
-            variant="text"
-            @click="increment"></v-btn>
-        </template>
-      </v-slider> -->
 
       <v-slider
         v-model="item.value"
@@ -82,105 +84,70 @@
             @update:model-value="onValueChanged"></v-text-field>
         </template>
       </v-slider>
-
-      <!-- <div class="p-2">
-        <v-slider
-          label="score"
-          v-model="value"
-          :max="100"
-          :min="0"
-          :step="1"
-          class="align-center"
-          hide-details
-          thumb-label
-          @change="onValueChanged"></v-slider>
-      </div> -->
     </template>
 
-    <!-- <template v-if="ui.step == 'pick'">
-      <span class="dropdown-header">
-        <span class="text-muted">Choose a filter</span>
-      </span>
+    <!--
+      *+---------------------------------
+      *| Filter type: array
+      *| Range values
+      *+--------------------------------- -->
+    <template v-else-if="current && current.type == 'array'">
       <div
         v-for="(param, key) in options"
         :key="key"
-        class="dropdown-item"
-        @click="pick(param)">
-        <div style="width: 30px">
-          <Icon>{{ param.icon }}</Icon>
-        </div>
-        <span>{{ param.label }}</span>
-      </div>
-    </template> -->
-
-    <!-- <template v-if="ui.step == 'picked'"> -->
-    <template v-if="conf.search && searchable">
-      <div class="dropdown-item">
-        <input
-          id="⚓findOption"
-          ref="findOption"
-          v-model="ui.findOption"
-          type="text"
-          class="form-control form-control-flush"
-          placeholder="Filter..." />
-      </div>
-      <div class="dropdown-divider"></div>
-    </template>
-    <!-- <span v-else class="dropdown-header">
-      <span class="text-muted">Filter by {{ conf.label }}</span>
-    </span> -->
-
-    <template v-if="current && current.type == 'array'">
-      <div
-        v-for="(param, key) in options"
-        :key="key"
-        class="dropdown-item"
+        class="dropdown-item px-2"
         :class="{
-          'active': cursor == key,
-          'selected': filter[param[conf.opValue]],
-          'px-2': conf.multiple !== false,
-        }">
+          selected: isSelected(param),
+        }"
+        @click.stop="select(param)">
         <div
-          v-if="conf.multiple !== false"
+          nv-if="option.multiple !== false"
           class="selection"
-          style="margin-right: 0.55rem"
-          @click="select(param, 'soft')">
+          style="margin-right: 0.55rem">
+          <small v-if="headless" style="color: white">
+            {{ param[currentConf.opValue] }}
+          </small>
           <input
+            v-else
             type="checkbox"
             class="form-check-input"
             style="transform: scale(0.8)"
-            :checked="filter[param[conf.opValue]]" />
+            :checked="isSelected(param)" />
         </div>
 
-        <div
-          class="content d-flex align-items-center w-100"
-          @click="select(param, 'hard')">
-          <template v-if="conf.by == 'state'">
+        <div class="content d-flex align-items-center w-100">
+          <!--
+            *+---------------------------------
+            *| Array filter: state
+            *+--------------------------------- -->
+          <template v-if="filter == 'state'">
             <!-- <Icon
-                          v-if="param.key == 'favorites'"
-                          size="14"
-                          style="color: red; fill: pink">
-                          Heart
-                        </Icon> -->
+                              v-if="param.key == 'favorites'"
+                              size="14"
+                              style="color: red; fill: pink">
+                              Heart
+                            </Icon> -->
             <!-- v-else -->
 
             <!-- <Icon style="color: var(--tblr-primary)">SquareCheck</Icon>
-                      <Icon style="color: #666">Square</Icon> -->
+                          <Icon style="color: #666">Square</Icon> -->
+
+            <template v-if="param.id == -1">
+              <Icon size="12" class="me-1">CircleOff</Icon>
+            </template>
 
             <span
+              v-else
               class="badge me-2"
               :style="{ 'background-color': param.color || '' }"></span>
 
             <span class="me-4">
+              <!-- {{ param[currentConf.opValue] }} -->
               {{ param.name }}
             </span>
 
-            <!-- <tippy
-                        class="text-muted ms-auto ms-2 cursor-help"
-                        :content="param.description">
-                        <Icon size="16" stroke="1">HelpCircleFilled</Icon>
-                      </tippy> -->
             <tippy
+              v-if="!headless"
               :allow-h-t-m-l="true"
               class="text-muted ms-auto cursor-help"
               :content="param.description">
@@ -188,7 +155,7 @@
             </tippy>
           </template>
 
-          <template v-else-if="conf.by == 'genre'">
+          <template v-else-if="filter == 'genre'">
             <span class="avatar avatar-xs me-2">
               {{ param.name[0] }}
             </span>
@@ -199,16 +166,16 @@
           </template>
 
           <template v-else>
-            <Icon class="me-2" size="16">{{ param.icon ?? conf.icon }}</Icon>
+            <Icon class="me-2" size="16">{{ param.icon ?? currentConf.icon }}</Icon>
             <span class="me-4">
-              {{ param.name }}
+              {{ param[currentConf.opLabel] }}
             </span>
           </template>
         </div>
       </div>
     </template>
 
-    <template v-if="$app.dev && conf.by == 'released'">
+    <template v-if="$app.dev && current.type == 'released'">
       <div class="hr-text mt-2 mb-3">Or pick</div>
       <div style="transform: scale(0.9)">
         <!-- <div>
@@ -255,19 +222,21 @@
     </template>
     <!-- </template> -->
 
-    <div class="dropdown-divider"></div>
+    <template v-if="!headless">
+      <div class="dropdown-divider"></div>
 
-    <div
-      v-if="current.multiple"
-      class="dropdown-item text-muted disabled"
-      style="font-size: 0.75em">
-      Hold CTRL to select multiple
-    </div>
+      <div
+        v-if="current.multiple"
+        class="dropdown-item text-muted disabled"
+        style="font-size: 0.75em">
+        Hold CTRL to select multiple
+      </div>
 
-    <div class="dropdown-item small" @click="$emit('reset')">
-      <Icon class="me-2" size="16">ArrowLeft</Icon>
-      <span class="me-4">Go back</span>
-    </div>
+      <div class="dropdown-item small" @click="$emit('reset')">
+        <Icon class="me-2" size="16">ArrowLeft</Icon>
+        <span class="me-4">Go back</span>
+      </div>
+    </template>
 
     <!--
                 <div class="dropdown-item">Features</div>
@@ -290,7 +259,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Thu 03 April 2025 - 16:30:04
+ * Modified: Wed 09 April 2025 - 13:24:21
  **/
 
 import filterService from '../../services/filterService'
@@ -308,7 +277,7 @@ export default {
     },
 
     // Index of the filter
-    // used in this._index
+    // used by this._index
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     index: {
       type: Number,
@@ -321,6 +290,11 @@ export default {
     searchable: {
       type: Boolean,
       default: true,
+    },
+
+    headless: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -335,34 +309,7 @@ export default {
         filter: null,
         mod: null,
         value: null,
-      },
-
-      conf: {
-        dummy: 'dummy',
-      },
-
-      config: {
-        state: {
-          data: 'states',
-
-          search: true,
-          multiple: true,
-
-          opSort: 'name',
-          opLabel: 'name',
-          opValue: 'id',
-        },
-
-        genre: {
-          data: 'genres',
-
-          search: true,
-          multiple: true,
-
-          opSort: 'name',
-          opLabel: 'name',
-          opValue: 'id',
-        },
+        // selected: [], // for selecting arrays
       },
 
       ui: {
@@ -372,17 +319,33 @@ export default {
   },
 
   computed: {
-    ...mapStores(useSearchStore),
-    ...mapState(useStateStore, {
-      states: 'states',
-    }),
-
+    ...mapStores(useSearchStore, useStateStore),
     ...mapState(useRepositoryStore, {
-      genres: 'genres',
+      _genres: 'genres',
     }),
 
     _index() {
       return this.index ?? this.created
+    },
+
+    _states() {
+      let options = JSON.parse(JSON.stringify(this.stateStore.states))
+
+      options.unshift({
+        id: -1,
+        color: '#000000',
+        name: 'No state',
+        description: 'Display games without a state',
+      })
+
+      return options
+    },
+
+    isSearchEnabled() {
+      if (this.current?.search === false) return false
+      if (this.current?.type !== 'array') return false
+
+      return true
     },
 
     hook() {
@@ -390,15 +353,66 @@ export default {
     },
 
     current() {
-      return filterService.filters[this.filter]
+      return filterService.definitions[this.filter]
     },
 
     currentConf() {
-      return filterService.config[this.filter]
+      return filterService.configurations[this.filter]
     },
 
     filterMods() {
       return filterService.mods
+    },
+
+    // //+-------------------------------------------------
+    // // filterValue()
+    // // -----
+    // // Created on Mon Apr 07 2025
+    // //+-------------------------------------------------
+    // filterValue: {
+    //   get() {
+    //     return this.current.type === 'array' ? this.item.selected : this.item.value
+    //   },
+    //   set(val) {
+    //     if (this.current.type === 'array') {
+    //       this.item.selected = val
+    //     } else {
+    //       this.item.value = val
+    //     }
+    //   },
+    // },
+
+    //+-------------------------------------------------
+    // options()
+    // returns an array of options based on this.filter
+    // And current.data
+    // -----
+    // Created on Fri Apr 04 2025
+    //+-------------------------------------------------
+    options() {
+      const options = []
+      let { data, opLabel, opValue, opSort } = this.currentConf
+
+      this['_' + data].forEach((option) => {
+        let title = option[opLabel]
+        title = title?.toLowerCase() || ''
+        if (title.includes(this.ui.findOption.toLowerCase())) {
+          options.push(option)
+        }
+      })
+
+      // if the option[opsort] is a number, sort it as a number
+      if (this.currentConf.type == 'number') {
+        options.sort((a, b) => a[opSort] - b[opSort])
+      }
+
+      // if the option[opsort] is a string, sort it as a string
+      else if (this.currentConf.type == 'string') {
+        options.sort((a, b) => a[opSort].localeCompare(b[opSort]))
+      }
+
+      // console.warn(this.filter, this.currentConf, options)
+      return options
     },
   },
 
@@ -414,8 +428,40 @@ export default {
       if (!this.offerToSearch && this.cursor < 0) this.cursor = 0
     },
 
-    select(param, type) {
-      this.searchStore.setFilter(1, 2, 3)
+    //+-------------------------------------------------
+    // select()
+    // Selects an option (in arrays)
+    // -----
+    // Created on Fri Apr 04 2025
+    //+-------------------------------------------------
+    select(param) {
+      const { opValue } = this.currentConf
+      const value = param[opValue]
+
+      if (this.item.value.includes(value)) {
+        this.item.value.splice(this.item.value.indexOf(value), 1)
+      } else {
+        this.item.value.push(value)
+      }
+
+      this.onValueChanged()
+
+      // if (this.item.selected[value]) {
+      //   this.item.selected[value] = false
+      //   // this.item.value = null
+      // } else {
+      //   this.item.selected[value] = true
+      //   // this.item.value = value
+      // }
+    },
+
+    isSelected(param) {
+      const { opValue } = this.currentConf
+      const value = param[opValue]
+
+      // console.warn('isSelected', value, this.item.value, this.item.value.includes(value))
+
+      return this.item.value.includes(value)
     },
 
     onValueChanged() {
@@ -423,7 +469,7 @@ export default {
       else this.setFilter()
     },
 
-    addFilter(value) {
+    addFilter() {
       this.created = this.searchStore.addFilter({
         filter: this.item.filter,
         mod: this.item.mod,
@@ -447,11 +493,17 @@ export default {
   },
 
   created() {
+    // Opening the menu for a specific filter
     if (this.current) {
       this.item.filter = this.filter
       this.item.mod = this.current.mods[0]
+
+      if (!this.item.value && this.current.type == 'array') {
+        this.item.value = []
+      }
     }
 
+    // Opening the filter for an already set filter
     if (this.hook) {
       this.item.mod = this.hook.mod
       this.item.value = this.hook.value

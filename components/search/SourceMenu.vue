@@ -8,7 +8,7 @@
   </template> -->
     <component :is="componentIs" class="dropdown-item" @click="select('all')">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-        <Icon size="17" width="1.5" class="text-muted">Cards</Icon>
+        <Icon size="16" width="1.5" class="text-muted">Cards</Icon>
       </span>
       <span class="nav-link-title">All games</span>
       <small class="ms-auto text-secondary me-1">
@@ -22,7 +22,7 @@
       class="dropdown-item"
       @click="select('library')">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-        <Icon size="17" width="1.5" class="text-muted">LayoutDashboard</Icon>
+        <Icon size="16" width="1.5" class="text-muted">LayoutDashboard</Icon>
       </span>
       <span class="nav-link-title">Your library</span>
       <small class="ms-auto text-secondary me-1">
@@ -31,14 +31,6 @@
     </component>
 
     <div class="dropdown-divider"></div>
-
-    <div
-      v-if="!isExpanded"
-      class="dropdown-item small text-muted"
-      @click="ui.expanded = true">
-      Show more of your library
-      <Icon size="16" class="ms-auto">ChevronDown</Icon>
-    </div>
 
     <template v-if="isExpanded">
       <!-- <span class="dropdown-header small">This is your complete library</span> -->
@@ -88,7 +80,7 @@
         class="dropdown-item"
         @click="select('library:favorites')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
+          <Icon size="16" width="1.5" class="text-muted">Heart</Icon>
         </span>
         <span class="nav-link-title">Favorites</span>
         <small class="ms-auto text-secondary me-1">
@@ -103,7 +95,7 @@
         class="dropdown-item"
         @click="select('library:pinned')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="17" width="1.5" class="text-muted">Bookmark</Icon>
+          <Icon size="16" width="1.5" class="text-muted">Bookmark</Icon>
         </span>
         <span class="nav-link-title">Pinned games</span>
         <small class="ms-auto text-secondary me-1">
@@ -118,7 +110,7 @@
         class="dropdown-item"
         @click="select('library:hidden')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
+          <Icon size="16" width="1.5" class="text-muted">Cancel</Icon>
         </span>
         <span class="nav-link-title">Hidden games</span>
         <small class="ms-auto text-secondary me-1">
@@ -126,6 +118,11 @@
         </small>
       </component>
     </template>
+
+    <div v-else class="dropdown-item small text-muted" @click="ui.expanded = true">
+      Show more of your library
+      <Icon size="16" class="ms-auto">ChevronDown</Icon>
+    </div>
   </div>
 </template>
 
@@ -135,7 +132,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th January 2025
- * Modified: Thu 03 April 2025 - 19:24:42
+ * Modified: Thu 03 April 2025 - 23:11:06
  **/
 
 export default {

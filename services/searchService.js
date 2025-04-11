@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Wed 02 April 2025 - 17:34:38
+ * Modified: Fri 11 April 2025 - 12:28:31
  */
 
 import filterService from './filterService'
@@ -56,29 +56,29 @@ export default {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters.filters?.length) {
         let isValid = this.applyFilters(app, filters)
-        if (isValid) {
-          console.log('✅ Filter passed', app.name, app.score)
-        } else {
+        if (!isValid) {
           // console.warn('🛑 Skipping because filter', app.name, app.score)
           filtered.push(app.uuid)
           continue
+        } else {
+          console.log('✅ Filter passed', app.name, app.score)
         }
       }
 
       // ✨ Filter: Backlog state
       // Match with app.state
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.states?.length) {
-        const { states } = filters
+      // if (filters?.states?.length) {
+      //   const { states } = filters
 
-        // Special case: check if -1 is in the states array
-        const withNoState = states.includes(-1)
+      //   // Special case: check if -1 is in the states array
+      //   const withNoState = states.includes(-1)
 
-        if (!states.includes(app.state) && !(withNoState && !app.state)) {
-          filtered.push(app.uuid)
-          continue
-        }
-      }
+      //   if (!states.includes(app.state) && !(withNoState && !app.state)) {
+      //     filtered.push(app.uuid)
+      //     continue
+      //   }
+      // }
 
       // ✨ Filter: Hidden games
       // Remove any games hidden
@@ -138,14 +138,14 @@ export default {
       // ✨ Filter: Language
       // Include only apps with selected language
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.languages?.length) {
-        if (!app.languages?.some((item) => filters?.languages.includes(item))) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has not language', filters.language, app.languages)
+      // if (filters?.languages?.length) {
+      //   if (!app.languages?.some((item) => filters?.languages.includes(item))) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has not language', filters.language, app.languages)
 
-          continue
-        }
-      }
+      //     continue
+      //   }
+      // }
 
       // ✨ Date in library
       // Include apps that are in lib

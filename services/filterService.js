@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Tue 08 April 2025 - 13:18:43
+ * Modified: Fri 11 April 2025 - 12:49:24
  */
 
 export default {
@@ -15,7 +15,8 @@ export default {
       mods: ['gt', 'lt', /* 'gte', 'lte', */ 'is', 'not'],
     },
 
-    state: { type: 'array', mods: ['in', 'not', 'all'] },
+    state: { type: 'array', mods: ['in', 'not' /* , 'all' */] },
+    language: { type: 'array', mods: ['in', /* 'not', */ 'all'] },
     // genre: { group: 'score', mods: ['in', 'all'] },
     // language: { mods: [] },
   },
@@ -42,6 +43,19 @@ export default {
       opLabel: 'name',
     },
 
+    language: {
+      label: 'Language',
+      plural: 'languages',
+
+      icon: 'Language',
+      desc: 'Filter games by their language',
+
+      data: 'languages',
+      opSort: null,
+      opValue: 'key',
+      opLabel: 'label',
+    },
+
     genre: { label: 'Genre', icon: '', desc: 'Lorem' },
   },
 
@@ -49,12 +63,12 @@ export default {
   mods: {
     in: {
       short: 'in',
-      desc: 'is any of...',
+      desc: 'one of the following...',
     },
 
     all: {
       short: 'all',
-      desc: 'match all options',
+      desc: 'includes all of the following...',
     },
 
     is: {
@@ -69,22 +83,22 @@ export default {
 
     lt: {
       short: '<',
-      desc: 'is lower than...',
+      desc: 'is less than...',
     },
 
     gte: {
       short: '>=',
-      desc: 'is greater or equal to...',
+      desc: 'is greater than or equal to...',
     },
 
     lte: {
       short: '<=',
-      desc: 'is lower or equal to...',
+      desc: 'is less than or equal to...',
     },
 
     not: {
       short: 'is not',
-      desc: 'is not ...',
+      desc: 'is not equal to...',
     },
   },
 
@@ -95,34 +109,29 @@ export default {
   // Created on Sat Mar 29 2025
   //+-------------------------------------------------
   filterBy(app, filter) {
-    const type = filter.filter
+    const by = filter.filter
 
-    if (type == 'score') return this.filterByScore(app, filter)
-    if (type == 'state') return this.filterByState(app, filter)
+    if (by == 'score') return this.filterByScore(app, filter)
+    if (by == 'state') return this.filterByState(app, filter)
+    if (by == 'language') return this.filterByLanguage(app, filter)
   },
 
-  //+-------------------------------------------------
-  // function()
-  //
-  // -----
-  // Created on Sat Mar 29 2025
-  //+-------------------------------------------------
   filterByScore(app, filter) {
     const { mod, value } = filter
 
     return this.numericFilter(app.score, mod, value)
   },
 
-  //+-------------------------------------------------
-  // function()
-  //
-  // -----
-  // Created on Mon Apr 07 2025
-  //+-------------------------------------------------
   filterByState(app, filter) {
     const { mod, value } = filter
 
-    return this.arrayFilter(app.state, mod, value)
+    return this.valueFilter(app.state, mod, value)
+  },
+
+  filterByLanguage(app, filter) {
+    const { mod, value } = filter
+
+    return this.arrayFilter(app.languages, mod, value)
   },
 
   //+-------------------------------------------------
@@ -161,12 +170,12 @@ export default {
   },
 
   //+-------------------------------------------------
-  // arrayFilter()
+  // valueFilter()
   // Compares array values with provided input value
   // -----
   // Created on Mon Apr 07 2025
   //+-------------------------------------------------
-  arrayFilter(input, mod, value) {
+  valueFilter(input, mod, value) {
     if (!input) input = null
 
     // Handle special case for -1 (no state)
@@ -181,7 +190,44 @@ export default {
     }
 
     if (mod == 'all') {
-      return value.every((v) => (v === -1 ? !input : input.includes(v)))
+      return value.every((v) => {
+        if (v == -1) return !input
+        return input == v
+      })
+    }
+
+    return null
+  },
+
+  //+-------------------------------------------------
+  // arrayFilter()
+  // Compares two arrays
+  // -----
+  // Created on Fri Apr 11 2025
+  //+-------------------------------------------------
+  arrayFilter(inputArray, mod, value) {
+    if (!Array.isArray(inputArray)) return false
+
+    // At least one element from input exists in value
+    if (mod == 'in') {
+      return inputArray.some((i) => value.includes(i))
+    }
+
+    // No element from input exists in value
+    if (mod == 'not') {
+      return inputArray.every((i) => !value.includes(i))
+    }
+
+    // All elements in value must be present in input
+    if (mod == 'all') {
+      return value.every((v) => inputArray.includes(v))
+    }
+
+    // Input and value must match exactly (no extras, no missing)
+    if (mod == 'is') {
+      return (
+        inputArray.every((i) => value.includes(i)) && inputArray.length === value.length
+      )
     }
 
     return null

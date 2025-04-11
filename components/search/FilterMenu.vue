@@ -1,13 +1,16 @@
 <template>
   <div
+    ref="menu"
     :class="headless ? '' : 'b-menu dropdown-menu show b-filter-menu'"
     :style="headless ? '' : 'min-width: 300px; letter-spacing: normal; overflow: visible'"
     v-bind="$attrs">
+    <!-- {{ index }} --
+    current: {{ current }} --
+    {{ filter }} --
+    hook: {{ hook }} --
+    -->
     <!-- <pre class="d-block">
-      {{ index }} --
       {{ item }} --
-      {{ filter }} --
-      hook: {{ hook }} --
     </pre> -->
 
     <!--
@@ -15,29 +18,30 @@
       *| Quick filter search
       *+--------------------------------- -->
     <template v-if="!headless && isSearchEnabled">
-      <div class="dropdown-item">
+      <div class="dropdown-item" :class="{ disabled: ui.showMods }">
         <input
           ref="findOption"
           v-model="ui.findOption"
           type="text"
           class="form-control form-control-flush"
+          :class="{ disabled: ui.showMods }"
           placeholder="Search..." />
       </div>
       <div class="dropdown-divider"></div>
     </template>
 
     <div v-else class="dropdown-header">
-      <!-- <span v-if="headless" class="text-muted">
-        Available values for {{ currentConf.label }}
-      </span> -->
-      <span v-if="!headless" class="text-muted">Filter by {{ currentConf.label }}</span>
+      <span class="text-muted">Filter by {{ currentConf.label }}</span>
     </div>
 
     <!--
       *+---------------------------------
-      *| Mods selector
+      *| Mod selector
       *+--------------------------------- -->
-    <!-- <div class="dropdown-item active" @click="ui.showMods = true">
+    <div
+      v-if="!headless && !ui.showMods"
+      class="dropdown-item active"
+      @click="ui.showMods = true">
       <div>
         {{ currentConf.label }} {{ filterMods[item.mod].short }}...
         <small class="d-block text-muted">
@@ -47,9 +51,30 @@
       <div class="ms-auto">
         <Icon>ChevronDown</Icon>
       </div>
-    </div> -->
+    </div>
 
-    <template v-if="ui.showMods"></template>
+    <template v-if="ui.showMods">
+      <div
+        v-for="(mod, key) in current.mods"
+        :key="key"
+        class="dropdown-item px-2"
+        :class="{
+          active: item.mod == mod,
+        }"
+        @click="selectMod(mod)">
+        <div class="d-flex justify-center" style="width: 30px">
+          <Icon v-if="item.mod == mod" size="16" width="2" class="me-1 text-green">
+            Checks
+          </Icon>
+        </div>
+        <div>
+          {{ currentConf.label }} {{ filterMods[mod].short }}...
+          <small class="d-block text-muted">
+            {{ filterMods[mod].desc }}
+          </small>
+        </div>
+      </div>
+    </template>
 
     <!--
       *+---------------------------------
@@ -93,84 +118,93 @@
       *+--------------------------------- -->
     <template v-else-if="current && current.type == 'array'">
       <div
-        v-for="(param, key) in options"
-        :key="key"
-        class="dropdown-item px-2"
-        :class="{
-          selected: isSelected(param),
-        }"
-        @click.stop="select(param)">
+        style="
+          padding: 3px;
+          overflow-y: auto;
+          max-height: 250px;
+          overscroll-behavior: contain;
+        "
+        nostyle="`max-height: ${ui.maxHeight}px;`">
         <div
-          nv-if="option.multiple !== false"
-          class="selection"
-          style="margin-right: 0.55rem">
-          <small v-if="headless" style="color: white">
-            {{ param[currentConf.opValue] }}
-          </small>
-          <input
-            v-else
-            type="checkbox"
-            class="form-check-input"
-            style="transform: scale(0.8)"
-            :checked="isSelected(param)" />
-        </div>
+          v-for="(param, key) in options"
+          :key="key"
+          class="dropdown-item px-2"
+          :class="{
+            selected: isSelected(param),
+          }"
+          @click.stop="select(param)">
+          <div
+            nv-if="option.multiple !== false"
+            class="selection"
+            style="margin-right: 0.55rem">
+            <small v-if="headless" style="color: white">
+              {{ param[currentConf.opValue] }}
+            </small>
+            <input
+              v-else
+              type="checkbox"
+              class="form-check-input"
+              style="transform: scale(0.8)"
+              :checked="isSelected(param)" />
+          </div>
 
-        <div class="content d-flex align-items-center w-100">
-          <!--
-            *+---------------------------------
-            *| Array filter: state
-            *+--------------------------------- -->
-          <template v-if="filter == 'state'">
-            <!-- <Icon
-                              v-if="param.key == 'favorites'"
-                              size="14"
-                              style="color: red; fill: pink">
-                              Heart
-                            </Icon> -->
-            <!-- v-else -->
+          <div class="content d-flex align-items-center w-100">
+            <!--
+              *+---------------------------------
+              *| Array filter: state
+              *+--------------------------------- -->
+            <template v-if="filter == 'state'">
+              <!-- <Icon
+                                v-if="param.key == 'favorites'"
+                                size="14"
+                                style="color: red; fill: pink">
+                                Heart
+                              </Icon> -->
+              <!-- v-else -->
 
-            <!-- <Icon style="color: var(--tblr-primary)">SquareCheck</Icon>
-                          <Icon style="color: #666">Square</Icon> -->
+              <!-- <Icon style="color: var(--tblr-primary)">SquareCheck</Icon>
+                            <Icon style="color: #666">Square</Icon> -->
 
-            <template v-if="param.id == -1">
-              <Icon size="12" class="me-1">CircleOff</Icon>
+              <template v-if="param.id == -1">
+                <Icon size="12" class="me-1">CircleOff</Icon>
+              </template>
+
+              <span
+                v-else
+                class="badge me-2"
+                :style="{ 'background-color': param.color || '' }"></span>
+
+              <span class="me-4">
+                <!-- {{ param[currentConf.opValue] }} -->
+                {{ param.name }}
+              </span>
+
+              <tippy
+                v-if="!headless"
+                :allow-h-t-m-l="true"
+                class="text-muted ms-auto cursor-help"
+                :content="param.description">
+                <span class="form-help">?</span>
+              </tippy>
             </template>
 
-            <span
-              v-else
-              class="badge me-2"
-              :style="{ 'background-color': param.color || '' }"></span>
+            <template v-else-if="filter == 'genre'">
+              <span class="avatar avatar-xs me-2">
+                {{ param.name[0] }}
+              </span>
 
-            <span class="me-4">
-              <!-- {{ param[currentConf.opValue] }} -->
-              {{ param.name }}
-            </span>
+              <span class="me-4">
+                {{ param.name }}
+              </span>
+            </template>
 
-            <tippy
-              v-if="!headless"
-              :allow-h-t-m-l="true"
-              class="text-muted ms-auto cursor-help"
-              :content="param.description">
-              <span class="form-help">?</span>
-            </tippy>
-          </template>
-
-          <template v-else-if="filter == 'genre'">
-            <span class="avatar avatar-xs me-2">
-              {{ param.name[0] }}
-            </span>
-
-            <span class="me-4">
-              {{ param.name }}
-            </span>
-          </template>
-
-          <template v-else>
-            <Icon class="me-2" size="16">{{ param.icon ?? currentConf.icon }}</Icon>
-            <span class="me-4">
-              {{ param[currentConf.opLabel] }}
-            </span>
-          </template>
+            <template v-else>
+              <Icon class="me-2" size="16">{{ param.icon ?? currentConf.icon }}</Icon>
+              <span class="me-4">
+                {{ param[currentConf.opLabel] }}
+              </span>
+            </template>
+          </div>
         </div>
       </div>
     </template>
@@ -259,7 +293,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Wed 09 April 2025 - 13:24:21
+ * Modified: Fri 11 April 2025 - 11:50:21
  **/
 
 import filterService from '../../services/filterService'
@@ -314,6 +348,7 @@ export default {
 
       ui: {
         findOption: '',
+        maxHeight: 0,
       },
     }
   },
@@ -341,7 +376,12 @@ export default {
       return options
     },
 
+    _languages() {
+      return enums.LANGUAGES
+    },
+
     isSearchEnabled() {
+      // if (this.ui.showMods) return false
       if (this.current?.search === false) return false
       if (this.current?.type !== 'array') return false
 
@@ -429,6 +469,19 @@ export default {
     },
 
     //+-------------------------------------------------
+    // isSelected()
+    //
+    // -----
+    // Created on Thu Apr 10 2025
+    //+-------------------------------------------------
+    isSelected(param) {
+      const { opValue } = this.currentConf
+      const value = param[opValue]
+
+      return this.item.value.includes(value)
+    },
+
+    //+-------------------------------------------------
     // select()
     // Selects an option (in arrays)
     // -----
@@ -445,23 +498,19 @@ export default {
       }
 
       this.onValueChanged()
-
-      // if (this.item.selected[value]) {
-      //   this.item.selected[value] = false
-      //   // this.item.value = null
-      // } else {
-      //   this.item.selected[value] = true
-      //   // this.item.value = value
-      // }
     },
 
-    isSelected(param) {
-      const { opValue } = this.currentConf
-      const value = param[opValue]
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Thu Apr 10 2025
+    //+-------------------------------------------------
+    selectMod(mod) {
+      this.item.mod = mod
+      if (this._index !== null) this.setFilter()
 
-      // console.warn('isSelected', value, this.item.value, this.item.value.includes(value))
-
-      return this.item.value.includes(value)
+      this.ui.showMods = false
     },
 
     onValueChanged() {
@@ -490,6 +539,13 @@ export default {
         this.$mitt.emit('search:run')
       })
     },
+
+    // calcHeight() {
+    //   this.$nextTick(() => {
+    //     let dimensions = this.$refs.menu?.getBoundingClientRect()
+    //     this.ui.maxHeight = dimensions.height
+    //   })
+    // },
   },
 
   created() {
@@ -508,6 +564,8 @@ export default {
       this.item.mod = this.hook.mod
       this.item.value = this.hook.value
     }
+
+    // this.calcHeight()
   },
 }
 </script>

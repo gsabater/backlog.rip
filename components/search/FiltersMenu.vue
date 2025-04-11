@@ -58,11 +58,11 @@
         v-if="showSuggestedKbdMenu"
         class="small px-3"
         style="
+          max-height: 150px;
           margin: 8px;
           border: 1px dashed #ccc;
           opacity: 0.9;
           border-radius: 3px;
-          pointer-events: none;
         ">
         <search-filter-menu ref="kbdMenu" :filter="suggestedFilter" :headless="true" />
       </div>
@@ -138,7 +138,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Wed 09 April 2025 - 13:55:48
+ * Modified: Fri 11 April 2025 - 12:50:33
  **/
 
 import filterService from '../../services/filterService'

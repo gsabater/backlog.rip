@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Wed 19 March 2025 - 15:31:41
+ * Modified: Fri 11 April 2025 - 13:41:00
  */
 
 import importer from '~/utils/importer'
@@ -87,7 +87,7 @@ async function autoSync() {
     log('✨ importer', 'No games to import or update')
 
     $nuxt.$auth.me.steam_updated_at = dates.now()
-    $nuxt.$auth.updateAccount('steam_updated_at')
+    $nuxt.$auth.updateMe('steam_updated_at')
 
     $nuxt.$app.updating = false
     return

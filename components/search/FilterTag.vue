@@ -6,7 +6,7 @@
       {{ currentConf }}
     </pre> -->
 
-    <div class="tag-section filter-name">
+    <div class="tag-section filter-name text-nowrap">
       <Icon
         v-if="!isKeyboard"
         size="12"
@@ -43,6 +43,18 @@
         <span class="badge" style="background-color: blue"></span> -->
         {{ filterValue.length }} {{ currentConf.plural }}
       </div>
+
+      <div v-else-if="isDate" class="text-nowrap px-1">
+        <!-- <span class="badge" style="background-color: blue"></span>
+        <span class="badge" style="background-color: blue"></span>
+        <span class="badge" style="background-color: blue"></span> -->
+        {{ dateValue }}
+      </div>
+
+      <div v-else-if="isHLTB" class="text-nowrap px-1">
+        {{ dates.minToHours(filterValue) }}
+      </div>
+
       <input
         v-else
         placeholder="..."
@@ -60,7 +72,7 @@
         v-if="!isKeyboard || isArray"
         ref="optionsTippy"
         :autoclose="120"
-        :trigger="isArray ? 'click' : 'focusin'"
+        :trigger="isInput ? 'focusin' : 'click'"
         placement="bottom">
         <search-filter-menu
           ref="filterMenu"
@@ -81,7 +93,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Wed 09 April 2025 - 13:17:01
+ * Modified: Wed 16 April 2025 - 17:58:58
  **/
 
 import filterService from '../../services/filterService'
@@ -138,8 +150,20 @@ export default {
       return this.mode == 'keyboard'
     },
 
+    isInput() {
+      return this.hook.filter == 'score'
+    },
+
     isArray() {
       return this.current.type == 'array'
+    },
+
+    isDate() {
+      return this.current.type == 'date'
+    },
+
+    isHLTB() {
+      return this.hook.filter == 'hltb'
     },
 
     hook() {
@@ -166,6 +190,11 @@ export default {
 
     filterValue() {
       return this.hook?.value ?? ''
+    },
+
+    dateValue() {
+      let date = this.filterValue
+      return this.$moment(date).format('ll')
     },
 
     //+-------------------------------------------------

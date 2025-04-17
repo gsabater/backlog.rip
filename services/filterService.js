@@ -3,8 +3,10 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Fri 11 April 2025 - 12:49:24
+ * Modified: Wed 16 April 2025 - 18:01:40
  */
+
+let $nuxt = null
 
 export default {
   definitions: {
@@ -17,8 +19,10 @@ export default {
 
     state: { type: 'array', mods: ['in', 'not' /* , 'all' */] },
     language: { type: 'array', mods: ['in', /* 'not', */ 'all'] },
+    released: { type: 'date', mods: ['after', 'before', 'is'] },
+
+    hltb: { type: 'number', mods: ['lt', 'gt'] },
     // genre: { group: 'score', mods: ['in', 'all'] },
-    // language: { mods: [] },
   },
 
   configurations: {
@@ -43,6 +47,18 @@ export default {
       opLabel: 'name',
     },
 
+    hltb: {
+      label: 'Time to beat',
+      plural: 'times to beat',
+
+      icon: 'Clock',
+      desc: 'Filter games by their time to beat',
+      data: null,
+      opSort: null,
+      opValue: null,
+      opLabel: null,
+    },
+
     language: {
       label: 'Language',
       plural: 'languages',
@@ -54,6 +70,18 @@ export default {
       opSort: null,
       opValue: 'key',
       opLabel: 'label',
+    },
+
+    released: {
+      label: 'Release date',
+
+      icon: 'Calendar',
+      desc: 'Filter games by their release date',
+
+      data: null,
+      opSort: null,
+      opValue: null,
+      opLabel: null,
     },
 
     genre: { label: 'Genre', icon: '', desc: 'Lorem' },
@@ -71,6 +99,16 @@ export default {
       desc: 'includes all of the following...',
     },
 
+    before: {
+      short: 'before',
+      desc: 'is before...',
+    },
+
+    after: {
+      short: 'after',
+      desc: 'is after...',
+    },
+
     is: {
       short: 'is',
       desc: 'is equal to...',
@@ -83,7 +121,7 @@ export default {
 
     lt: {
       short: '<',
-      desc: 'is less than...',
+      desc: 'is lower than...',
     },
 
     gte: {
@@ -111,26 +149,39 @@ export default {
   filterBy(app, filter) {
     const by = filter.filter
 
-    if (by == 'score') return this.filterByScore(app, filter)
+    if (by == 'hltb') return this.filterByHLTB(app, filter)
     if (by == 'state') return this.filterByState(app, filter)
+    if (by == 'score') return this.filterByScore(app, filter)
+    if (by == 'released') return this.filterByReleased(app, filter)
     if (by == 'language') return this.filterByLanguage(app, filter)
   },
 
   filterByScore(app, filter) {
     const { mod, value } = filter
-
     return this.numericFilter(app.score, mod, value)
   },
 
   filterByState(app, filter) {
     const { mod, value } = filter
-
     return this.valueFilter(app.state, mod, value)
+  },
+
+  filterByHLTB(app, filter) {
+    const { mod, value } = filter
+
+    let main = app.hltb?.main
+    if (!main) return false
+
+    return this.numericFilter(main, mod, value)
+  },
+
+  filterByReleased(app, filter) {
+    const { mod, value } = filter
+    return this.dateFilter(app.dates.released, mod, value)
   },
 
   filterByLanguage(app, filter) {
     const { mod, value } = filter
-
     return this.arrayFilter(app.languages, mod, value)
   },
 
@@ -142,6 +193,7 @@ export default {
   //+-------------------------------------------------
   numericFilter(input, mod, value) {
     value = parseInt(value)
+
     if (mod == 'is') {
       return input == value
     }
@@ -228,6 +280,31 @@ export default {
       return (
         inputArray.every((i) => value.includes(i)) && inputArray.length === value.length
       )
+    }
+
+    return null
+  },
+
+  //+-------------------------------------------------
+  // dateFilter()
+  //
+  // -----
+  // Created on Tue Apr 15 2025
+  //+-------------------------------------------------
+  dateFilter(input, mod, value) {
+    if (!input) return false
+    $nuxt ??= useNuxtApp()
+
+    const appDate = $nuxt.$dayjs.unix(input)
+    const valueDate = $nuxt.$dayjs(value, 'YYYY-MM-DD')
+
+    if (mod == 'after') {
+      return appDate.isSameOrAfter(valueDate, 'day')
+      // return input > value
+    }
+
+    if (mod == 'before') {
+      return appDate.isSameOrBefore(valueDate, 'day')
     }
 
     return null

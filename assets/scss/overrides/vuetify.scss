@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 20th June 2024
- * Modified: Thu 30 January 2025 - 19:46:53
+ * Modified: Wed 16 April 2025 - 17:41:55
  **/
 
 //+-------------------------------------------------
@@ -112,6 +112,16 @@
       }
     }
   }
+}
+
+.v-number-input input {
+  height: 100%;
+  font-size: 1rem !important;
+}
+
+.v-number-input .v-field {
+  border-radius: 2px;
+  overflow: hidden;
 }
 
 //+-------------------------------------------------

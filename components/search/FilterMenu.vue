@@ -30,9 +30,9 @@
       <div class="dropdown-divider"></div>
     </template>
 
-    <div v-else class="dropdown-header">
+    <!-- <div v-else class="dropdown-header">
       <span class="text-muted">Filter by {{ currentConf.label }}</span>
-    </div>
+    </div> -->
 
     <!--
       *+---------------------------------
@@ -84,19 +84,45 @@
     <template v-else-if="current && current.type == 'number'">
       <v-row class="my-4 px-2" justify="space-between">
         <v-col class="text-center">
-          <span class="text-h2 font-weight-light">{{ item.value || '0' }}</span>
-          <!-- <span class="subheading font-weight-light me-1">value</span> -->
+          <template v-if="isHLTB">
+            <span class="text-h2 font-weight-light">
+              {{ dates.minToHours(item.value) }}
+            </span>
+            <!-- <span class="subheading font-weight-light me-1">value</span> -->
+          </template>
+          <template v-else>
+            <span class="text-h2 font-weight-light">{{ item.value || '0' }}</span>
+          </template>
         </v-col>
       </v-row>
 
+      <template v-if="isHLTB">
+        <v-number-input
+          style="transform: scale(0.9)"
+          v-model="item.value"
+          :min="0"
+          :step="30"
+          controlVariant="split"
+          density="default"
+          size="small"
+          flat
+          glow
+          inset
+          variant="solo-filled"
+          @update:model-value="onValueChanged" />
+      </template>
+
       <v-slider
+        v-else
         v-model="item.value"
         :max="100"
         :step="1"
         class="ma-4"
         hide-details
+        :show-ticks="isHLTB"
+        :thumb-label="isHLTB"
         @end="onValueChanged">
-        <template v-slot:append>
+        <template v-slot:append v-if="!isHLTB">
           <v-text-field
             class="p-0"
             v-model="item.value"
@@ -209,18 +235,35 @@
       </div>
     </template>
 
-    <template v-if="$app.dev && current.type == 'released'">
-      <div class="hr-text mt-2 mb-3">Or pick</div>
-      <div style="transform: scale(0.9)">
+    <!--
+      *+---------------------------------
+      *| Filter type: date
+      *+--------------------------------- -->
+    <template v-else-if="current && current.type == 'date'">
+      <!-- <div class="hr-text mt-2 mb-3">Or pick</div> -->
+      <div style="transform: scale(0.95)">
+        <v-date-picker
+          v-model="item.value"
+          landscape
+          divided
+          rounded="6"
+          show-adjacent-months
+          elevation="2"
+          nhide-header
+          nview-mode="year"
+          bg-color="rgb(30 31 41)"
+          @update:model-value="onValueChanged">
+          <template v-slot:title></template>
+        </v-date-picker>
         <!-- <div>
                       <input type="month" value="2018-05" />
                     </div> -->
-        <pre>
+        <!-- <pre>
                       {{ released }}
                     </pre
-        >
-        <div class="input-group mb-1">
-          <select v-model="released.month" class="form-control">
+        > -->
+        <!-- <div class="input-group mb-1">
+          <select class="form-control">
             <option selected="selected" disabled="disabled">Month</option>
             <option value="01">January</option>
             <option value="02">February</option>
@@ -235,11 +278,7 @@
             <option value="11">November</option>
             <option value="12">December</option>
           </select>
-          <select
-            v-model="released.year"
-            placeholder="asdasd"
-            class="form-control"
-            style="max-width: 43%">
+          <select placeholder="asdasd" class="form-control" style="max-width: 43%">
             <option selected="selected" disabled="disabled">Year</option>
             <option
               v-for="year in Array.from(
@@ -250,7 +289,7 @@
               {{ year }}
             </option>
           </select>
-        </div>
+        </div> -->
       </div>
       <!-- </div> -->
     </template>
@@ -293,9 +332,10 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Fri 11 April 2025 - 11:50:21
+ * Modified: Wed 16 April 2025 - 18:00:52
  **/
 
+import { min } from 'rxjs'
 import filterService from '../../services/filterService'
 
 export default {
@@ -388,6 +428,10 @@ export default {
       return true
     },
 
+    isHLTB() {
+      return this.filter == 'hltb'
+    },
+
     hook() {
       return this.searchStore.f?.filters[this._index]
     },
@@ -454,6 +498,33 @@ export default {
       // console.warn(this.filter, this.currentConf, options)
       return options
     },
+
+    sliderValue() {
+      if (!this.isHLTB) return 100
+      const value = this.item.value
+
+      return 6000
+
+      const buckets = [900, 1800, 3000, 6000, 12000, 30000] // in minutes
+      const threshold = 60
+
+      // Find the smallest bucket where value is below (bucket - threshold)
+      for (let i = 0; i < buckets.length; i++) {
+        if (value < buckets[i] - threshold) {
+          return buckets[i]
+        }
+      }
+
+      // If value is very high, return the largest bucket
+      return buckets[buckets.length - 1]
+    },
+
+    sliderStep() {
+      if (!this.isHLTB) return 1
+
+      if (this.item.value < 100) return 30
+      else return 60
+    },
   },
 
   methods: {
@@ -519,10 +590,16 @@ export default {
     },
 
     addFilter() {
+      let value = this.item.value
+
+      if (this.current.type == 'date') {
+        value = this.$moment(this.item.value).format('YYYY-MM-DD')
+      }
+
       this.created = this.searchStore.addFilter({
         filter: this.item.filter,
         mod: this.item.mod,
-        value: this.item.value,
+        value: value,
       })
 
       // Handle filter position
@@ -534,10 +611,22 @@ export default {
     },
 
     setFilter() {
+      let value = this.item.value
+
+      if (this.current.type == 'date') {
+        value = this.$moment(this.item.value).format('YYYY-MM-DD')
+      }
+
       this.$nextTick(() => {
-        this.searchStore.setFilter(this._index, this.item.mod, this.item.value)
+        this.searchStore.setFilter(this._index, this.item.mod, value)
         this.$mitt.emit('search:run')
       })
+    },
+
+    setDefaultValues() {
+      if (this.isHLTB) {
+        this.item.value = 0
+      }
     },
 
     // calcHeight() {
@@ -565,7 +654,17 @@ export default {
       this.item.value = this.hook.value
     }
 
+    if (this.current && !this.hook) {
+      this.setDefaultValues()
+    }
+
     // this.calcHeight()
   },
 }
 </script>
+
+<style>
+.v-date-picker .v-picker-title {
+  display: none;
+}
+</style>

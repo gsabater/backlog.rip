@@ -1,38 +1,21 @@
 <template>
-  <div class="b-menu dropdown-menu show" style="min-width: 280px; letter-spacing: normal">
-    <pre class="d-block">
-      {{ mods }}
-    </pre>
-
-    <span class="dropdown-header">
-      <span class="text-muted">General sorting</span>
-    </span>
-
-    <!--
-      *+---------------------------------
-      *| Median score
-      *+--------------------------------- -->
+  <div class="b-menu dropdown-menu show" style="min-width: 200px; letter-spacing: normal">
     <label
-      class="dropdown-item ps-1"
-      :class="{ active: f.sortBy == 'score' }"
-      @click="sortBy('score', 'desc', true)">
+      v-for="option in mods"
+      class="dropdown-item px-2"
+      :class="{ active: option == mod }"
+      @click="selectMod(mod)">
       <div class="d-flex justify-center" style="width: 30px">
-        <Icon size="16" class="me-1">Star</Icon>
+        <Icon v-if="option == mod" size="16" width="2" class="me-1 text-green">
+          Checks
+        </Icon>
       </div>
       <div>
-        Median score
-        <div v-if="f.sortBy == 'score'" class="text-muted" style="font-size: 0.75rem">
-          {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
-          <Icon size="14" width="2" class="mx-1">Repeat</Icon>
-        </div>
+        {{ filterMods[option].label }} {{ filterMods[option].short }}...
+        <small class="d-block text-muted">
+          {{ filterMods[option].desc }}
+        </small>
       </div>
-      <tippy
-        class="text-muted ms-auto cursor-help ps-4"
-        :content="'Sorting by median will rank games based on their middle review score when arranged in order. This method avoids being skewed by extreme values, making it a fairer representation of overall sentiment.'">
-        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-          HelpSmall
-        </Icon>
-      </tippy>
     </label>
   </div>
 </template>
@@ -43,8 +26,10 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Fri 28 March 2025 - 15:34:13
+ * Modified: Tue 15 April 2025 - 17:19:26
  **/
+
+import filterService from '../../services/filterService'
 
 export default {
   name: 'SortMenu',
@@ -54,7 +39,7 @@ export default {
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     mod: {
       type: String,
-      default: 'score',
+      default: '123',
     },
 
     // The mods array
@@ -77,32 +62,18 @@ export default {
     }
   },
 
-  methods: {
-    //+-------------------------------------------------
-    // sortBy()
-    // Notifies the parent to apply the new sorting
-    // -----
-    // Created on Tue Oct 22 2024
-    //+-------------------------------------------------
-    sortBy(by, dir = 'desc', toggle = false) {
-      if (by == 'rand') {
-        this.ui.dice = Math.floor(Math.random() * 6) + 1
-      }
-
-      if (by == 'rand' || by == 'user') {
-        dir = null
-      }
-
-      this.$emit('sort', {
-        by,
-        dir,
-        toggle,
-      })
-
-      // this.$refs.tippySort.hide()
+  computed: {
+    filterMods() {
+      return filterService.mods
     },
   },
 
-  mounted() {},
+  methods: {
+    selectMod(by) {
+      this.$emit('sort', {
+        by,
+      })
+    },
+  },
 }
 </script>

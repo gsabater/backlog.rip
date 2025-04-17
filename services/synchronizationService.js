@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 19th March 2025
- * Modified: Tue 25 March 2025 - 17:43:19
+ * Modified: Thu 17 April 2025 - 12:09:40
  */
 
 import dataService from './dataService'
@@ -49,7 +49,7 @@ export default {
 
     // Sync the achievements
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    await this.syncAchievements()
+    // await this.syncAchievements()
   },
 
   //+-------------------------------------------------

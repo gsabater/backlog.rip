@@ -86,7 +86,7 @@
         <v-col class="text-center">
           <template v-if="isHLTB">
             <span class="text-h2 font-weight-light">
-              {{ dates.minToHours(item.value) }}
+              {{ dates.minToHours(item.value) || '&nbsp;' }}
             </span>
             <!-- <span class="subheading font-weight-light me-1">value</span> -->
           </template>
@@ -96,21 +96,20 @@
         </v-col>
       </v-row>
 
-      <template v-if="isHLTB">
+      <div v-if="isHLTB" class="px-3">
         <v-number-input
-          style="transform: scale(0.9)"
+          label="minutes"
           v-model="item.value"
           :min="0"
           :step="30"
-          controlVariant="split"
-          density="default"
-          size="small"
-          flat
+          controlVariant="stacked"
           glow
           inset
           variant="solo-filled"
+          style="outline: 1px solid #23252e; border-radius: 3px"
+          hide-details
           @update:model-value="onValueChanged" />
-      </template>
+      </div>
 
       <v-slider
         v-else
@@ -241,19 +240,25 @@
       *+--------------------------------- -->
     <template v-else-if="current && current.type == 'date'">
       <!-- <div class="hr-text mt-2 mb-3">Or pick</div> -->
-      <div style="transform: scale(0.95)">
+      <div
+        style="
+          zoom: 0.8;
+          display: flex;
+          flex-wrap: nowrap;
+          justify-content: center;
+          align-items: center;
+          padding: 10px;
+        ">
         <v-date-picker
           v-model="item.value"
-          landscape
-          divided
-          rounded="6"
+          nlandscape
+          ndivided
           show-adjacent-months
           elevation="2"
-          nhide-header
-          nview-mode="year"
+          hide-header
           bg-color="rgb(30 31 41)"
           @update:model-value="onValueChanged">
-          <template v-slot:title></template>
+          <!-- <template v-slot:title></template> -->
         </v-date-picker>
         <!-- <div>
                       <input type="month" value="2018-05" />
@@ -332,10 +337,9 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Wed 16 April 2025 - 18:00:52
+ * Modified: Thu 24 April 2025 - 16:44:54
  **/
 
-import { min } from 'rxjs'
 import filterService from '../../services/filterService'
 
 export default {

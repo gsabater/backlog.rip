@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Wed 16 April 2025 - 18:01:40
+ * Modified: Thu 24 April 2025 - 15:33:49
  */
 
 let $nuxt = null
@@ -21,7 +21,7 @@ export default {
     language: { type: 'array', mods: ['in', /* 'not', */ 'all'] },
     released: { type: 'date', mods: ['after', 'before', 'is'] },
 
-    hltb: { type: 'number', mods: ['lt', 'gt'] },
+    hltb: { type: 'number', mods: ['lte', 'gte'] },
     // genre: { group: 'score', mods: ['in', 'all'] },
   },
 
@@ -48,11 +48,11 @@ export default {
     },
 
     hltb: {
-      label: 'Time to beat',
+      label: 'Time to beat (HLTB)',
       plural: 'times to beat',
 
       icon: 'Clock',
-      desc: 'Filter games by their time to beat',
+      desc: 'How long to beat is a metric that measures how much time is needed to complete a game. Data provided from howlongtobeat.com',
       data: null,
       opSort: null,
       opValue: null,
@@ -125,12 +125,12 @@ export default {
     },
 
     gte: {
-      short: '>=',
+      short: '≥',
       desc: 'is greater than or equal to...',
     },
 
     lte: {
-      short: '<=',
+      short: '≤',
       desc: 'is less than or equal to...',
     },
 
@@ -168,11 +168,10 @@ export default {
 
   filterByHLTB(app, filter) {
     const { mod, value } = filter
-
     let main = app.hltb?.main
     if (!main) return false
 
-    return this.numericFilter(main, mod, value)
+    return this.numericFilter(main, mod, value * 60)
   },
 
   filterByReleased(app, filter) {

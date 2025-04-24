@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 20th June 2024
- * Modified: Wed 16 April 2025 - 17:41:55
+ * Modified: Thu 24 April 2025 - 15:42:18
  **/
 
 //+-------------------------------------------------
@@ -114,9 +114,33 @@
   }
 }
 
-.v-number-input input {
-  height: 100%;
-  font-size: 1rem !important;
+.v-number-input {
+  & .v-field .v-label {
+    text-align: center;
+    width: 100%;
+    margin-top: 21px;
+    opacity: 0.6;
+  }
+
+  & .v-field__input {
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: 600;
+    transform: translateY(-7px);
+  }
+
+  & input {
+    height: 100%;
+    font-size: 1rem !important;
+  }
+
+  & hr {
+    margin: unset;
+  }
+
+  & .v-btn__underlay {
+    background-color: transparent !important;
+  }
 }
 
 .v-number-input .v-field {
@@ -134,4 +158,13 @@
 
 .theme--light.v-list-item:hover::before {
   opacity: 0.64;
+}
+
+//+-------------------------------------------------
+// v-date-picker
+//+-------------------------------------------------
+.v-picker.v-sheet.v-date-picker.v-picker--landscape {
+  grid-template-areas: 'header body';
+  grid-template-columns: 224px 328px;
+  width: unset;
 }

@@ -80,46 +80,50 @@
       *+--------------------------------- -->
     <template v-else-if="!ui.showFilterValues">
       <span class="dropdown-header">Search filters</span>
-      <label
-        v-for="(option, i) in menuOptions"
-        :key="option.filter + i"
-        class="dropdown-item ps-1"
-        @click="showFilterValues(option)">
-        <div class="d-flex justify-center" style="width: 30px">
-          <Icon size="16" width="1.5" class="text-muted">
-            {{ filterConf[option.filter].icon }}
-          </Icon>
-          <!-- <b-logo name="opencritic" size="14" class="me-1" style="opacity: 0.6" /> -->
-        </div>
-        <div>
-          {{ filterConf[option.filter].label }}
-          <small v-if="f.source == 'all'" class="d-block text-muted">
-            Not available yet on
-            <strong>all games</strong>
-          </small>
+      <template v-for="(option, i) in menuOptions" :key="option.filter + i">
+        <label
+          v-if="showAdvancedOption(option)"
+          class="dropdown-item ps-1"
+          @click="showFilterValues(option)">
+          <div class="d-flex justify-center" style="width: 30px">
+            <Icon
+              v-if="filterConf[option.filter].icon"
+              size="16"
+              width="1.5"
+              class="text-muted">
+              {{ filterConf[option.filter].icon }}
+            </Icon>
 
-          <div v-else-if="f.sortBy == 'oc'" class="text-muted" style="font-size: 0.75rem">
-            {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
-            <Icon size="14" width="2" class="mx-1">Repeat</Icon>
+            <b-logo
+              v-if="filterConf[option.filter].logo"
+              :name="filterConf[option.filter].logo"
+              size="14"
+              style="opacity: 0.6" />
           </div>
-        </div>
-        <tippy
-          v-if="filterConf[option.filter].desc"
-          class="text-muted ms-auto cursor-help ps-4"
-          :content="filterConf[option.filter].desc">
-          <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-            HelpSmall
-          </Icon>
-        </tippy>
-      </label>
+          <div>
+            {{ filterConf[option.filter].label }}
 
-      <div v-if="ui.showAdvancedFilters">... more filters</div>
+            <small v-if="filterDef[option.filter].advanced" class="text-muted">
+              <Icon size="14" style="transform: translateY(-1px)">Sparkles</Icon>
+            </small>
+          </div>
+          <tippy
+            v-if="filterConf[option.filter].desc"
+            class="text-muted ms-auto cursor-help ps-4"
+            :content="filterConf[option.filter].desc">
+            <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
+              HelpSmall
+            </Icon>
+          </tippy>
+        </label>
+      </template>
+
       <div
-        v-else
+        v-if="!ui.showAdvancedFilters"
         class="dropdown-item small text-muted"
         @click="ui.showAdvancedFilters = true">
-        Show more advanced filters
-        <Icon size="16" class="ms-auto">ChevronDown</Icon>
+        <Icon size="14" class="me-2">Sparkles</Icon>
+        Show advanced filters
       </div>
     </template>
   </div>
@@ -138,7 +142,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Fri 11 April 2025 - 12:50:33
+ * Modified: Mon 28 April 2025 - 17:48:37
  **/
 
 import filterService from '../../services/filterService'
@@ -413,6 +417,11 @@ export default {
     showFilterValues(option) {
       this.filterSelected = option
       this.ui.showFilterValues = true
+    },
+
+    showAdvancedOption(option) {
+      if (this.ui.showAdvancedFilters) return true
+      return !this.filterDef[option.filter].advanced
     },
 
     //+-------------------------------------------------

@@ -4,10 +4,10 @@
 // Libraries and overrides
 //+-------------------------------------------------
 
-@use '../../node_modules/@tabler/core/dist/css/tabler.css';
-// @use '../../node_modules/@tabler/core/dist/css/tabler-flags.css';
-// @use '../../node_modules/@tabler/core/dist/css/tabler-payments.css';
-// @use '../../node_modules/@tabler/core/dist/css/tabler-vendors.css';
+@use '../../node_modules/@tabler/core/dist/css/tabler.min.css';
+@use '../../node_modules/@tabler/core/dist/css/tabler-themes.css';
+@use '../../node_modules/@tabler/core/dist/css/tabler-socials.min.css';
+@use '../../node_modules/@tabler/core/dist/css/tabler-vendors.min.css';
 
 @use 'extend';
 @use 'overrides/tabler-overrides';
@@ -18,6 +18,7 @@
 //+-------------------------------------------------
 
 @use 'base';
+@use 'layout';
 @use 'colors';
 @use 'borders';
 @use 'effects';

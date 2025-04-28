@@ -7,14 +7,22 @@
     </pre> -->
 
     <div class="tag-section filter-name text-nowrap">
-      <Icon
-        v-if="!isKeyboard"
-        size="12"
-        width="1.3"
-        class="text-muted"
-        style="transform: translateY(-1px); margin-right: 2px">
-        {{ currentConf.icon }}
-      </Icon>
+      <template v-if="!isKeyboard">
+        <Icon
+          v-if="currentConf.icon"
+          size="12"
+          width="1.3"
+          class="text-muted"
+          style="transform: translateY(-1px); margin-right: 2px">
+          {{ currentConf.icon }}
+        </Icon>
+
+        <b-logo
+          v-if="currentConf.logo"
+          :name="currentConf.logo"
+          size="12"
+          style="opacity: 0.6; transform: translateY(-1px); margin-right: 2px" />
+      </template>
       {{ currentConf.label }}
     </div>
     <!-- <div>
@@ -93,7 +101,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Wed 16 April 2025 - 17:58:58
+ * Modified: Mon 28 April 2025 - 17:40:47
  **/
 
 import filterService from '../../services/filterService'

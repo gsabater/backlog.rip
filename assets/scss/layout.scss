@@ -1,0 +1,8 @@
+body {
+  background:
+    url('https://backlog.rip/img/noise.png'),
+    radial-gradient(circle, var(--tblr-body-bg) 0%, var(--tblr-bg-surface) 100%);
+  background-size:
+    150px,
+    100% 100vh;
+}

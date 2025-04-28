@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Thu 24 April 2025 - 15:33:49
+ * Modified: Mon 28 April 2025 - 17:41:19
  */
 
 let $nuxt = null
@@ -14,14 +14,17 @@ export default {
       min: 0,
       max: 100,
       type: 'number',
-      mods: ['gt', 'lt', /* 'gte', 'lte', */ 'is', 'not'],
+      mods: ['gte', 'lte', /* 'gte', 'lte', */ 'is', 'not'],
     },
+
+    metacritic: { advanced: true, type: 'number', mods: ['gte', 'lte'] },
 
     state: { type: 'array', mods: ['in', 'not' /* , 'all' */] },
     language: { type: 'array', mods: ['in', /* 'not', */ 'all'] },
     released: { type: 'date', mods: ['after', 'before', 'is'] },
 
     hltb: { type: 'number', mods: ['lte', 'gte'] },
+
     // genre: { group: 'score', mods: ['in', 'all'] },
   },
 
@@ -32,6 +35,14 @@ export default {
 
       icon: 'Star',
       desc: 'Filter results by their median score. To filter by Steam, Metacritic or Opencritic score, use their respective filters',
+    },
+
+    metacritic: {
+      label: 'Metacritic score',
+      plural: 'metacritic score',
+
+      logo: 'metacritic',
+      desc: 'Filter results by their Metacritic score. To filter by Steam or Opencritic score, use their respective filters',
     },
 
     state: {
@@ -154,11 +165,21 @@ export default {
     if (by == 'score') return this.filterByScore(app, filter)
     if (by == 'released') return this.filterByReleased(app, filter)
     if (by == 'language') return this.filterByLanguage(app, filter)
+    if (by == 'metacritic') return this.filterByMetascore(app, filter)
   },
 
   filterByScore(app, filter) {
     const { mod, value } = filter
     return this.numericFilter(app.score, mod, value)
+  },
+
+  filterByMetascore(app, filter) {
+    const { mod, value } = filter
+
+    let { metascore } = app.scores
+    if (!metascore) return false
+
+    return this.numericFilter(metascore, mod, value)
   },
 
   filterByState(app, filter) {

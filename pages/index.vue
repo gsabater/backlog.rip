@@ -187,7 +187,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Thu 30 January 2025 - 16:49:08
+ * Modified: Fri 25 April 2025 - 13:33:08
  **/
 
 export default {
@@ -316,12 +316,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
   height: 100vh; */
-  background-color: var(--color-bg);
-  background: url(https://backlog.rip/img/noise.png),
-    radial-gradient(circle, var(--color-bg) 0%, var(--color-bg-alt) 100%);
-  background-size:
-    150px,
-    100% 100vh;
+
+  /* background-color: var(--color-bg); */
 }
 
 .unbutton {

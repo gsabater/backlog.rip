@@ -6,7 +6,7 @@
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Tue 25 March 2025 - 17:48:20
+ * Modified: Mon 28 April 2025 - 17:12:24
  */
 
 import { defineNuxtConfig } from 'nuxt/config';
@@ -47,7 +47,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/content',
     '@nuxt/devtools',
-    '@nuxtjs/seo',
+    // '@nuxtjs/seo',
     '@pinia/nuxt',
     '@vueuse/nuxt',
 
@@ -101,9 +101,13 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: {
+        'data-bs-theme': 'dark',
+        'data-tabler': 'backlog',
+      },
+
       bodyAttrs: {
         'class': 'antialiased',
-        'data-bs-theme': 'dark',
       },
     },
   },
@@ -126,25 +130,23 @@ export default defineNuxtConfig({
   },
 
 
-  sitemap: {
-    enabled: false
-    // // exclude all app sources
-    // excludeAppSources: true,
-    // cacheMaxAgeSeconds: 3600 * 24,
+  // sitemap: {
+  //   enabled: false
+  //   // // exclude all app sources
+  //   // excludeAppSources: true,
+  //   // cacheMaxAgeSeconds: 3600 * 24,
 
-    // // Build time sitemap
-    // urls: async () => {
-    //   const urls = await fetch('https://api.backlog.rip/sitemap.xml')
-    //   return urls
-    // }
+  //   // // Build time sitemap
+  //   // urls: async () => {
+  //   //   const urls = await fetch('https://api.backlog.rip/sitemap.xml')
+  //   //   return urls
+  //   // }
 
-    // // Runtime sitemap
-    // // sources: [
-    // //   'https://api.backlog.rip/sitemap.xml',
-    // // ],
-  },
-
-  ogImage: { enabled: false },
+  //   // // Runtime sitemap
+  //   // // sources: [
+  //   // //   'https://api.backlog.rip/sitemap.xml',
+  //   // // ],
+  // },
 
   // robots: {
   //   enabled: false
@@ -154,9 +156,9 @@ export default defineNuxtConfig({
   //   enabled: false
   // },
 
-  schemaOrg: {
-    enabled: true,
-  },
+  // schemaOrg: {
+  //   enabled: true,
+  // },
 
   // linkChecker: {
   //   enabled: false

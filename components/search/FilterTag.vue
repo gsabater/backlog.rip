@@ -21,6 +21,7 @@
           v-if="currentConf.logo"
           :name="currentConf.logo"
           size="12"
+          color="#fff"
           style="opacity: 0.6; transform: translateY(-1px); margin-right: 2px" />
       </template>
       {{ currentConf.label }}
@@ -101,7 +102,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Mon 28 April 2025 - 17:40:47
+ * Modified: Tue 29 April 2025 - 16:48:48
  **/
 
 import filterService from '../../services/filterService'

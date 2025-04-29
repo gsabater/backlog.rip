@@ -98,6 +98,7 @@
               v-if="filterConf[option.filter].logo"
               :name="filterConf[option.filter].logo"
               size="14"
+              color="#fff"
               style="opacity: 0.6" />
           </div>
           <div>
@@ -142,7 +143,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Mon 28 April 2025 - 17:48:37
+ * Modified: Tue 29 April 2025 - 16:37:51
  **/
 
 import filterService from '../../services/filterService'

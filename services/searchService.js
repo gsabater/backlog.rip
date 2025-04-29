@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Fri 11 April 2025 - 12:28:31
+ * Modified: Tue 29 April 2025 - 17:04:16
  */
 
 import filterService from './filterService'
@@ -126,14 +126,14 @@ export default {
       // ✨ Filter: Genres
       // Include only apps with genres
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.genres?.length) {
-        if (!app.genres?.some((item) => filters?.genres.includes(item))) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
+      // if (filters?.genres?.length) {
+      //   if (!app.genres?.some((item) => filters?.genres.includes(item))) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
 
-          continue
-        }
-      }
+      //     continue
+      //   }
+      // }
 
       // ✨ Filter: Language
       // Include only apps with selected language
@@ -189,33 +189,33 @@ export default {
       // Include only apps with HLTB time
       // Sort by HLTB.main
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.sortBy == 'hltb') {
-        if (!app.hltb?.main) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
+      // if (filters?.sortBy == 'hltb') {
+      //   if (!app.hltb?.main) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
 
-          continue
-        }
-      }
+      //     continue
+      //   }
+      // }
 
       // ✨ Sort By: Scores
       // Include only apps with data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (
-        ['score', 'metascore', 'oc', 'steamscore', 'steamdb'].includes(filters?.sortBy)
-      ) {
-        if (filters.sortBy == 'score' && filters.sortDir == 'asc' && !app.score) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has no score', filters.sortBy, app.score)
-          continue
-        }
+      // if (
+      //   ['score', 'metascore', 'oc', 'steamscore', 'steamdb'].includes(filters?.sortBy)
+      // ) {
+      //   if (filters.sortBy == 'score' && filters.sortDir == 'asc' && !app.score) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has no score', filters.sortBy, app.score)
+      //     continue
+      //   }
 
-        if (filters.sortBy !== 'score' && !app.scores[filters.sortBy]) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has no metascore', filters.sortBy, app.metascore)
-          continue
-        }
-      }
+      //   if (filters.sortBy !== 'score' && !app.scores[filters.sortBy]) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has no metascore', filters.sortBy, app.metascore)
+      //     continue
+      //   }
+      // }
 
       // Finally,
       // Modify and add the app to items

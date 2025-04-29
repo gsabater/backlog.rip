@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Thu 03 April 2025 - 17:24:45
+ * Modified: Tue 29 April 2025 - 16:34:07
  */
 
 import searchService from '../services/searchService'
@@ -36,13 +36,13 @@ export const useSearchStore = defineStore('search', {
     base: {
       box: '',
       string: '',
-      source: 'all',
 
+      source: 'all',
       sortBy: 'score',
       sortDir: 'desc',
 
       filters: [],
-      released: null,
+      // released: null,
 
       show: {
         page: 1,
@@ -85,63 +85,96 @@ export const useSearchStore = defineStore('search', {
     // Created on Mon Jan 06 2025
     //+-------------------------------------------------
     getSearch(hash) {
+      console.warn('deleteme ...')
       if (!hash) hash = this.latest
       return hashed[hash] ?? null
     },
 
     //+-------------------------------------------------
     // prepare()
-    // Prepares a new instance of filters and results
+    // Prepares a new search instance.
+    // This is run when the search is mounted, and merges filters with props and URL filters
+    // -----
+    // In the future, this.f should be placed
+    // in an keyed object for each search instance
     // -----
     // Created on Tue Nov 14 2023
-    // Updated on Sun Jan 28 2024 - Added slug param
     // Updated on Sun Jul 14 2024 - Use slug for special filters
     // Updated on Thu Sep 19 2024 - In library, sort by playtime
     // Updated on Fri Oct 25 2024 - Dynamically attempt to find the genre
-    // Created on Tue Jan 14 2025 - Moved to searchStore
+    // Updated on Tue Jan 14 2025 - Moved to searchStore
+    // Updated on Tue Apr 29 2025 - Better merge of route filters
     //+-------------------------------------------------
     async prepare(filters) {
-      let base = JSON.parse(JSON.stringify(this.base))
-      let prepared = {
-        ...base,
-        ...filters,
+      let f = {}
+      let merged = {}
+
+      filters = filters || {}
+      const base = JSON.parse(JSON.stringify(this.base))
+      f = { ...base, ...filters }
+
+      const route = await this.routeParams(f)
+
+      merged = {
+        ...f,
+        ...route.base,
+        filters: route.filters,
       }
 
-      prepared = await this.mergeFilters(prepared)
-
-      this.f = prepared
+      this.f = merged
     },
 
     //+-------------------------------------------------
-    // mergeFilters()
-    //
+    // routeParams()
+    // Extract filters from the route.
     // -----
     // Created on Tue Jan 14 2025
     //+-------------------------------------------------
-    async mergeFilters(filters) {
-      let $route = useRoute()
+    async routeParams(base) {
+      const $route = useRoute()
 
-      let slug = null
-      let slugged = false
-
-      //Handle base sort options for library
+      // Default values for library viewing
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if ($route.path.includes('library')) {
-        filters.source = 'library'
-        filters.sortBy = 'playtime'
-        filters.sortDir = 'desc'
+        base.source = 'library'
+        base.sortBy = 'playtime'
+        base.sortDir = 'desc'
       }
 
-      // Handle slug for special library filters
+      // Handle the query params
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      slug = $route.params?.slug || null
+      let query = $route.fullPath.split('?')[1] || null
+      let filters = this.handleQueryFilters(query)
+      if (filters.length) base.show.tags = 'bar'
 
+      // Handle the slug param
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      let slug = $route.params?.slug || null
+      let pep = await this.handleRouteSlug(slug)
+
+      // Handle is modifier
+      // "is" is a special flag to identify easily source
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // TODO: do that searching into the filters array
+      // if (filters.source.includes('library') && filters.states.length == 1) {
+      //   filters.is = 'state:' + filters.states[0]
+      //   filters.source = filters.is
+      // }
+
+      return {
+        base: base,
+        filters: filters,
+      }
+    },
+
+    async handleRouteSlug() {
+      return 123
       if (slug && typeof slug == 'object') slug = slug[0]
 
       if (slug) {
         if (['pinned', 'hidden', 'favorites'].includes(slug)) {
-          filters.source = 'library:' + slug
-          filters.is = slug
+          base.source = 'library:' + slug
+          base.is = slug
           slugged = true
         }
 
@@ -172,17 +205,32 @@ export const useSearchStore = defineStore('search', {
           // if (genre) filters.genres = [genre.id]
         }
       }
+    },
 
-      // Handle is modifier
-      // "is" is a special flag to identify easily source
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // TODO: do that searching into the filters array
-      // if (filters.source.includes('library') && filters.states.length == 1) {
-      //   filters.is = 'state:' + filters.states[0]
-      //   filters.source = filters.is
-      // }
+    //+-------------------------------------------------
+    // handleQueryFilters()
+    // Extract filters from a query string
+    // Query string is something like this:
+    // .../library?score.gte.85
+    // .../library?score.gte.90&state.in.2+5&released.after.2000-01-01
+    // -----
+    // Created on Tue Apr 29 2025
+    //+-------------------------------------------------
+    handleQueryFilters(query) {
+      if (!query) return []
 
-      return filters
+      let params = query.split('&')
+
+      return params.map((key) => {
+        const [filter, mod, rawValue] = key.split('.')
+
+        // prettier-ignore
+        const value = rawValue.includes('+')
+          ? rawValue.split('+').map((v) => (isNaN(v) ? v : Number(v)))
+          : (isNaN(rawValue) ? rawValue : Number(rawValue))
+
+        return { filter, mod, value }
+      })
     },
 
     //+-------------------------------------------------
@@ -193,7 +241,6 @@ export const useSearchStore = defineStore('search', {
     //+-------------------------------------------------
     addFilter(filter) {
       this.f.filters.push(filter)
-      // this.run()
 
       return this.f.filters.length - 1
     },
@@ -207,7 +254,6 @@ export const useSearchStore = defineStore('search', {
     setFilter(index, mod, value) {
       this.f.filters[index].mod = mod
       this.f.filters[index].value = value
-      // this.run()
     },
 
     //+-------------------------------------------------
@@ -218,8 +264,6 @@ export const useSearchStore = defineStore('search', {
     //+-------------------------------------------------
     clearFilter(index) {
       this.f.filters.splice(index, 1)
-      // this.run()
-      // this.$emit('search:filters', this.f)
     },
 
     // handleRouteChanges(filters) {
@@ -233,12 +277,14 @@ export const useSearchStore = defineStore('search', {
     // },
 
     //+-------------------------------------------------
-    // handleRouteFilters
+    // setRouteFilters
     // Append the current filters to the URL with params
     // -----
     // Created on Wed Feb 05 2025
     //+-------------------------------------------------
-    handleRouteFilters(filters, hash) {
+    setRouteFilters(filters, hash) {
+      console.warn('creo que no se usa')
+      console.warn('🔸🔸🔸🔸deleteme ...')
       if (!$nuxt.$app.wip) return
 
       // TODO: this should be this.inRoute or ENUM
@@ -293,6 +339,7 @@ export const useSearchStore = defineStore('search', {
     // Updated on Mon Jan 13 2025 - Handle source:params
     //+-------------------------------------------------
     getSource(filters) {
+      console.warn('deleteme ...')
       // Source is an array of fixed items
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (Array.isArray(filters.source)) {
@@ -349,7 +396,7 @@ export const useSearchStore = defineStore('search', {
     run(f) {
       this.loading = true
       console.warn('🚀 run')
-      // let filters = this.loadFilters(f)
+
       let filters = f || this.f
       let source = this.getSource(filters)
       let hash = searchService.makeHash(source, filters)
@@ -395,7 +442,7 @@ export const useSearchStore = defineStore('search', {
 
       filterService.setRoute(filters)
       // this.handleRouteChanges(filters)
-      // this.handleRouteFilters(filters, hash)
+      // this.setRouteFilters(filters, hash)
 
       return {
         hash,
@@ -413,6 +460,7 @@ export const useSearchStore = defineStore('search', {
     // Created on Sun Mar 30 2025 - Disable hashes
     //+-------------------------------------------------
     filter(hash, source, filters) {
+      console.warn('deleteme ...')
       if (!hash) return searchService.filter(source.apps, filters)
 
       this.latest = hash
@@ -435,6 +483,7 @@ export const useSearchStore = defineStore('search', {
     // Created on Sun Jan 05 2025
     //+-------------------------------------------------
     async searchAPI(source, filters) {
+      console.warn('deleteme ...')
       if (source.type !== 'all') return
 
       this.stats.api_start = performance.now()
@@ -454,6 +503,7 @@ export const useSearchStore = defineStore('search', {
     // Created on Tue Jan 14 2025
     //+-------------------------------------------------
     async callAPI(filters) {
+      console.warn('deleteme ...')
       let hasher = searchService.makeApiHash(filters)
       if (!hasher) {
         log('search', '🛑 Skipping search on API')
@@ -488,6 +538,7 @@ export const useSearchStore = defineStore('search', {
     // Created on Fri Jan 17 2025
     //+-------------------------------------------------
     resetHashed() {
+      console.warn('deleteme ...')
       if (Object.keys(hashed).length === 0) return
 
       Object.keys(hashed).forEach((key) => {
@@ -498,6 +549,7 @@ export const useSearchStore = defineStore('search', {
     },
 
     setTime(time) {
+      console.warn('deleteme ...')
       this.stats[time] = performance.now()
 
       if (time !== 'start') return

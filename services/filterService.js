@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Mon 28 April 2025 - 17:41:19
+ * Modified: Tue 29 April 2025 - 16:39:00
  */
 
 let $nuxt = null
@@ -18,6 +18,9 @@ export default {
     },
 
     metacritic: { advanced: true, type: 'number', mods: ['gte', 'lte'] },
+    opencritic: { advanced: true, type: 'number', mods: ['gte', 'lte'] },
+    // steamscore: { advanced: true, type: 'number', mods: ['gte', 'lte'] },
+    steamdb: { advanced: true, type: 'number', mods: ['gte', 'lte'] },
 
     state: { type: 'array', mods: ['in', 'not' /* , 'all' */] },
     language: { type: 'array', mods: ['in', /* 'not', */ 'all'] },
@@ -43,6 +46,29 @@ export default {
 
       logo: 'metacritic',
       desc: 'Filter results by their Metacritic score. To filter by Steam or Opencritic score, use their respective filters',
+    },
+
+    opencritic: {
+      label: 'Opencritic score',
+      plural: 'opencritic score',
+
+      logo: 'opencritic',
+      desc: 'Filter results by their Opencritic score. To filter by Steam or Metacritic score, use their respective filters',
+    },
+
+    steamscore: {
+      label: 'Steam score',
+      plural: 'steam score',
+
+      logo: 'steam',
+      desc: 'Filter results by their Steam score. To filter by Metacritic or Opencritic score, use their respective filters',
+    },
+
+    steamdb: {
+      label: 'SteamDB score',
+      plural: 'steamdb score',
+      desc: 'Filter results by their SteamDB score. To filter by Metacritic or Opencritic score, use their respective filters',
+      logo: 'steamdb',
     },
 
     state: {
@@ -165,21 +191,22 @@ export default {
     if (by == 'score') return this.filterByScore(app, filter)
     if (by == 'released') return this.filterByReleased(app, filter)
     if (by == 'language') return this.filterByLanguage(app, filter)
-    if (by == 'metacritic') return this.filterByMetascore(app, filter)
+    if (by == 'metacritic') return this.filterByScore(app, filter, 'metacritic')
+    if (by == 'opencritic') return this.filterByScore(app, filter, 'opencritic')
+    if (by == 'steamdb') return this.filterByScore(app, filter, 'steamdb')
   },
 
-  filterByScore(app, filter) {
+  filterByScore(app, filter, type) {
     const { mod, value } = filter
+    let score = null
+
+    if (!type) score = app.score
+    else if (type == 'steamdb') score = app.scores?.steamdb
+    else if (type == 'metacritic') score = app.scores?.metascore
+    else if (type == 'opencritic') score = app.scores?.oc
+
+    if (!score) return false
     return this.numericFilter(app.score, mod, value)
-  },
-
-  filterByMetascore(app, filter) {
-    const { mod, value } = filter
-
-    let { metascore } = app.scores
-    if (!metascore) return false
-
-    return this.numericFilter(metascore, mod, value)
   },
 
   filterByState(app, filter) {

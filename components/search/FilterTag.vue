@@ -35,7 +35,7 @@
       <code>{{ index }} - {{ cursor }}</code>
     </div> -->
 
-    <div class="tag-section tag-action filter-mod">
+    <div class="tag-section tag-action filter-mod" v-if="current.mods.length">
       <span class="text-nowrap">
         {{ filterMod }}
       </span>
@@ -46,7 +46,11 @@
       </b-tippy-sheety>
     </div>
     <div class="tag-section tag-action filter-value">
-      <div v-if="isArray" class="text-nowrap px-1">
+      <div v-if="isSearchString" class="text-nowrap px-1">
+        {{ filterValue }}
+      </div>
+
+      <div v-else-if="isArray" class="text-nowrap px-1">
         <!-- <span class="badge" style="background-color: blue"></span>
         <span class="badge" style="background-color: blue"></span>
         <span class="badge" style="background-color: blue"></span> -->
@@ -60,7 +64,7 @@
         {{ dateValue }}
       </div>
 
-      <div v-else-if="isHLTB" class="text-nowrap px-1">
+      <div v-else-if="isTime" class="text-nowrap px-1">
         {{ dates.minToHours(filterValue) }}
       </div>
 
@@ -102,7 +106,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Tue 29 April 2025 - 16:48:48
+ * Modified: Tue 13 May 2025 - 12:52:39
  **/
 
 import filterService from '../../services/filterService'
@@ -113,6 +117,7 @@ export default {
   props: {
     // The index of the filter
     // Used to access this.f.filters[index]
+    // a value of -1 means the search string
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     index: {
       type: Number,
@@ -171,11 +176,22 @@ export default {
       return this.current.type == 'date'
     },
 
-    isHLTB() {
-      return this.hook.filter == 'hltb'
+    isTime() {
+      return this.current.type == 'time'
+    },
+
+    isSearchString() {
+      return this.index == -1
     },
 
     hook() {
+      if (this.index == -1)
+        return {
+          filter: 'string',
+          mod: 'is',
+          value: this.f.string,
+        }
+
       return this.searchStore.f?.filters[this.index]
     },
 

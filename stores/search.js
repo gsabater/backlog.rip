@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Tue 29 April 2025 - 16:34:07
+ * Modified: Tue 13 May 2025 - 17:48:38
  */
 
 import searchService from '../services/searchService'
@@ -17,7 +17,7 @@ let $repos = null
 // Hashed
 // Stores instances for each search executed
 //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-let hashed = {}
+// let hashed = {}
 
 export const useSearchStore = defineStore('search', {
   state: () => ({
@@ -86,8 +86,8 @@ export const useSearchStore = defineStore('search', {
     //+-------------------------------------------------
     getSearch(hash) {
       console.warn('deleteme ...')
-      if (!hash) hash = this.latest
-      return hashed[hash] ?? null
+      // if (!hash) hash = this.latest
+      // return hashed[hash] ?? null
     },
 
     //+-------------------------------------------------
@@ -141,7 +141,16 @@ export const useSearchStore = defineStore('search', {
         base.sortDir = 'desc'
       }
 
+      // Handle query base filters
+      // Those are search, sort and show
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      base.string = $route.query.search || base.string
+      base.sortBy = $route.query.sortBy || base.sortBy
+      base.sortDir = $route.query.sortDir || base.sortDir
+      base.box = base.string
+
       // Handle the query params
+      // Those are the params after the "?"
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let query = $route.fullPath.split('?')[1] || null
       let filters = this.handleQueryFilters(query)
@@ -213,21 +222,55 @@ export const useSearchStore = defineStore('search', {
     // Query string is something like this:
     // .../library?score.gte.85
     // .../library?score.gte.90&state.in.2+5&released.after.2000-01-01
+    // .../library?score.gte.90&state.in.2+5&search=elden
     // -----
     // Created on Tue Apr 29 2025
+    // Updated on Tue May 13 2025 - Added string support
     //+-------------------------------------------------
     handleQueryFilters(query) {
       if (!query) return []
 
       let params = query.split('&')
+      const arrays = Object.keys(filterService.definitions).filter(
+        (key) => filterService.definitions[key].type === 'array'
+      )
 
-      return params.map((key) => {
+      const filters = params.filter((key) => {
+        // Filter out empty values
+        if (!key) return false
+
+        // Filter out non-filter keys
+        if (!key.includes('.')) return false
+
+        // Filter out non-existing filters
+        const [filter, mod, rawValue] = key.split('.')
+        if (!filterService.definitions[filter]) return false
+
+        // Filter out non-existing modifiers
+        // if (!filterService.definitions[filter].modifiers[mod]) return false
+
+        return true
+      })
+
+      return filters.map((key) => {
+        if (key.includes('=')) {
+          const [key, value] = key.split('=')
+          return { filter: 'string', mod: 'contains', value }
+        }
+
         const [filter, mod, rawValue] = key.split('.')
 
         // prettier-ignore
-        const value = rawValue.includes('+')
+        let value = rawValue.includes('+')
           ? rawValue.split('+').map((v) => (isNaN(v) ? v : Number(v)))
           : (isNaN(rawValue) ? rawValue : Number(rawValue))
+
+        // Turn values into supposed to be arrays
+        if (arrays.includes(filter)) {
+          if (!Array.isArray(value)) {
+            value = [value]
+          }
+        }
 
         return { filter, mod, value }
       })
@@ -263,7 +306,10 @@ export const useSearchStore = defineStore('search', {
     // Created on Thu Apr 03 2025
     //+-------------------------------------------------
     clearFilter(index) {
-      this.f.filters.splice(index, 1)
+      if (index == -1) {
+        this.f.box = ''
+        this.f.string = ''
+      } else this.f.filters.splice(index, 1)
     },
 
     // handleRouteChanges(filters) {
@@ -339,7 +385,6 @@ export const useSearchStore = defineStore('search', {
     // Updated on Mon Jan 13 2025 - Handle source:params
     //+-------------------------------------------------
     getSource(filters) {
-      console.warn('deleteme ...')
       // Source is an array of fixed items
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (Array.isArray(filters.source)) {
@@ -379,11 +424,6 @@ export const useSearchStore = defineStore('search', {
         return { type: 'favorites', apps: $data.library() }
       }
 
-      // if (!filters.is) apps = $data.library('object')
-      // if (filters.is == 'pinned') apps = $data.pinned('object')
-      // if (filters.is == 'hidden') apps = $data.hidden('object')
-      // if (filters.is == 'favorites') apps = $data.library('object')
-
       return { type, apps }
     },
 
@@ -395,41 +435,37 @@ export const useSearchStore = defineStore('search', {
     //+-------------------------------------------------
     run(f) {
       this.loading = true
-      console.warn('🚀 run')
 
       let filters = f || this.f
       let source = this.getSource(filters)
-      let hash = searchService.makeHash(source, filters)
 
+      // let hash = searchService.makeHash(source, filters)
+      // if (hash) {
+      //   log('search', `Searching ${source.type}`, hash)
+      //   // log('search', '·· ⇢ filters', JSON.stringify(filters))
+      // }
+
+      // Initialize the search
+      // And preload some data when needed
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       filters.is = source.type
-
-      let filtered = null
-      let paginated = null
-
-      if (hash) {
-        log('search', `Searching ${source.type}`, hash)
-        // log('search', '·· ⇢ filters', JSON.stringify(filters))
-      }
-
-      this.stats.start = performance.now()
-      if (source.type == 'all') this.stats.apps = $nuxt.$app.count.api
-      else this.stats.apps = Object.keys(source.apps).length
+      this.prepareSearch(filters, source)
 
       if (source.type == 'all' && !$repos.loaded.includes('popular')) {
         $repos.topGames('popular')
       }
 
+      // Filter, paginate and search the API
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      let hash = filterService.makeHash(filters)
+      let filtered = searchService.filter(source.apps, filters)
+      let paginated = searchService.paginate(filtered.items, filters.show)
+
       this.searchAPI(source, filters)
-      filtered = this.filter(hash, source, filters)
-      paginated = searchService.paginate(filtered.items, filters.show)
+      this.endSearch(filters, source, paginated, filtered)
 
-      this.stats.end = performance.now()
-      this.stats.time = this.stats.end - this.stats.start
-      this.stats.results = filtered.results
-      this.stats.filtered = filtered.filtered || 0
-
-      this.stats.showing = searchService.calcShowing(filters, filtered.results)
-      this.stats.nextPage = searchService.calcNextPage(filters, filtered.results)
+      // this.handleRouteChanges(filters)
+      // this.setRouteFilters(filters, hash)
 
       this.loading = false
 
@@ -440,14 +476,39 @@ export const useSearchStore = defineStore('search', {
         stats: this.stats,
       })
 
-      filterService.setRoute(filters)
-      // this.handleRouteChanges(filters)
-      // this.setRouteFilters(filters, hash)
-
       return {
         hash,
         items: paginated,
       }
+    },
+
+    //+-------------------------------------------------
+    // prepareSearch()
+    // Sets initial stats values
+    // -----
+    // Created on Tue May 13 2025
+    //+-------------------------------------------------
+    prepareSearch(filters, source) {
+      this.stats.start = performance.now()
+      if (source.type == 'all') this.stats.apps = $nuxt.$app.count.api
+      else this.stats.apps = Object.keys(source.apps).length
+    },
+
+    //+-------------------------------------------------
+    // endSearch()
+    // Sets stats at the end of the search
+    // -----
+    // Created on Tue May 13 2025
+    //+-------------------------------------------------
+    endSearch(filters, source, paginated, filtered) {
+      this.stats.end = performance.now()
+      this.stats.time = this.stats.end - this.stats.start
+
+      this.stats.results = filtered.results
+      this.stats.filtered = filtered.filtered || 0
+
+      this.stats.showing = searchService.calcShowing(filters, filtered.results)
+      this.stats.nextPage = searchService.calcNextPage(filters, filtered.results)
     },
 
     //+-------------------------------------------------
@@ -486,7 +547,6 @@ export const useSearchStore = defineStore('search', {
       console.warn('deleteme ...')
       if (source.type !== 'all') return
 
-      this.stats.api_start = performance.now()
       await this.callAPI({ ...filters })
       // if (!api) return
 
@@ -503,7 +563,7 @@ export const useSearchStore = defineStore('search', {
     // Created on Tue Jan 14 2025
     //+-------------------------------------------------
     async callAPI(filters) {
-      console.warn('deleteme ...')
+      console.warn('delete or change me ...')
       let hasher = searchService.makeApiHash(filters)
       if (!hasher) {
         log('search', '🛑 Skipping search on API')
@@ -511,12 +571,12 @@ export const useSearchStore = defineStore('search', {
       }
 
       let { hash, slug, json } = hasher
+      this.stats.api_start = performance.now()
 
       if (hashed[hash]) {
         log('search', '🛑 Skipping search, already done')
         return false
       }
-
       hashed[hash] = true
       log('search', `· ⇢ Searching API`, hash)
       log('search', '·· ⇢ API Filters', JSON.stringify(filters))
@@ -537,16 +597,16 @@ export const useSearchStore = defineStore('search', {
     // -----
     // Created on Fri Jan 17 2025
     //+-------------------------------------------------
-    resetHashed() {
-      console.warn('deleteme ...')
-      if (Object.keys(hashed).length === 0) return
+    // resetHashed() {
+    //   console.warn('deleteme ...')
+    //   if (Object.keys(hashed).length === 0) return
 
-      Object.keys(hashed).forEach((key) => {
-        if (!key.includes('API:')) delete hashed[key]
-      })
+    //   Object.keys(hashed).forEach((key) => {
+    //     if (!key.includes('API:')) delete hashed[key]
+    //   })
 
-      this.latest = null
-    },
+    //   this.latest = null
+    // },
 
     setTime(time) {
       console.warn('deleteme ...')
@@ -570,7 +630,7 @@ export const useSearchStore = defineStore('search', {
       $state ??= useStateStore()
       $repos ??= useRepositoryStore()
 
-      if (window) window.$search = { x: this, h: hashed }
+      if (window) window.$search = { x: this }
     },
   },
 

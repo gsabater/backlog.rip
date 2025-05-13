@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Tue 29 April 2025 - 17:04:16
+ * Modified: Sun 11 May 2025 - 13:37:48
  */
 
 import filterService from './filterService'
@@ -16,6 +16,7 @@ export default {
   // Created on Tue Jan 09 2024
   // Updated on Wed Jul 24 2024 - Added fav
   // Updated on Fri Feb 07 2025 - Added languages
+  // Updated on Sun May 11 2025 - Moved filter logic to filterService
   //+-------------------------------------------------
   filter(source, filters) {
     let items = []
@@ -150,40 +151,40 @@ export default {
       // ✨ Date in library
       // Include apps that are in lib
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters.sortBy == 'date.lib') {
-        if (!app.is?.lib) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
+      // if (filters.sortBy == 'date.lib') {
+      //   if (!app.is?.lib) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
 
-          continue
-        }
-      }
+      //     continue
+      //   }
+      // }
 
       // ✨ Sort By: Release date
       // Include only apps with release date
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.released > 0 || filters?.sortBy == 'date.released') {
-        if (!app.dates?.released) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
+      // if (filters?.released > 0 || filters?.sortBy == 'date.released') {
+      //   if (!app.dates?.released) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
 
-          continue
-        }
+      //     continue
+      //   }
 
-        if (app.dates.released > now) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because released in the future', filters.released, app.released_at
+      //   if (app.dates.released > now) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because released in the future', filters.released, app.released_at
 
-          continue
-        }
+      //     continue
+      //   }
 
-        if (app.dates.released < filters.released) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because released before', filters.released, app.released_at)
+      //   if (app.dates.released < filters.released) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because released before', filters.released, app.released_at)
 
-          continue
-        }
-      }
+      //     continue
+      //   }
+      // }
 
       // ✨ Sort By: HLTB
       // Include only apps with HLTB time

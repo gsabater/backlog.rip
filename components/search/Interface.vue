@@ -26,7 +26,7 @@
       <search-filters ref="filters" @search="search('filters')"></search-filters>
 
       <div class="col-12">
-        <search-results ref="results" />
+        <search-results ref="results" :layout="f.show?.layout" />
 
         <!--
         *+---------------------------------
@@ -196,7 +196,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 01 April 2025 - 19:00:28
+ * Modified: Wed 30 April 2025 - 17:20:52
  **/
 
 export default {

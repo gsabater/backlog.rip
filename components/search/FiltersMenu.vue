@@ -2,13 +2,7 @@
   <div
     v-if="isKeyboard || !ui.showFilterValues"
     class="b-menu dropdown-menu show"
-    style="
-      min-width: 300px;
-      letter-spacing: normal;
-      overflow: visible;
-      position: relative;
-      z-index: 23333;
-    ">
+    style="min-width: 300px; letter-spacing: normal">
     <!--
       *+---------------------------------
       *| Keyboard layout
@@ -67,7 +61,7 @@
         <search-filter-menu ref="kbdMenu" :filter="suggestedFilter" :headless="true" />
       </div>
 
-      <div class="dropdown-item disabled text-muted">
+      <div v-if="suggestions.length" class="dropdown-item disabled text-muted">
         <Icon class="me-2" size="14">ArrowDown</Icon>
         <span class="me-4">Move with your arrows</span>
       </div>
@@ -143,7 +137,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Tue 29 April 2025 - 16:37:51
+ * Modified: Tue 13 May 2025 - 11:49:36
  **/
 
 import filterService from '../../services/filterService'
@@ -241,7 +235,7 @@ export default {
         }
       }
 
-      console.warn('🧩', parts, parts.length, filter, mod, value)
+      // console.warn('🧩', parts, parts.length, filter, mod, value)
       return { filter, mod, value }
     },
 
@@ -321,6 +315,8 @@ export default {
       for (const key in definitions) {
         const option = definitions[key]
 
+        if (option.hidden) continue
+
         // base options
         // Those are just little helpers for the base definition
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -371,6 +367,8 @@ export default {
 
       for (const key in definitions) {
         const option = definitions[key]
+
+        if (option.hidden) continue
 
         // base options
         // Those are just little helpers for the base definition
@@ -445,6 +443,11 @@ export default {
     },
 
     writePath() {
+      if (this.f.box.length && this.cursor == -1) {
+        this.addFilter()
+        return
+      }
+
       if (this.offerToClean && this.cursor == -1) {
         this.resetSearchString()
         return

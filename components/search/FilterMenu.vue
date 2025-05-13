@@ -4,15 +4,6 @@
     :class="headless ? '' : 'b-menu dropdown-menu show b-filter-menu'"
     :style="headless ? '' : 'min-width: 300px; letter-spacing: normal; overflow: visible'"
     v-bind="$attrs">
-    <!-- {{ index }} --
-    current: {{ current }} --
-    {{ filter }} --
-    hook: {{ hook }} --
-    -->
-    <!-- <pre class="d-block">
-      {{ item }} --
-    </pre> -->
-
     <!--
       *+---------------------------------
       *| Quick filter search
@@ -83,20 +74,60 @@
       *+--------------------------------- -->
     <template v-else-if="current && current.type == 'number'">
       <v-row class="my-4 px-2" justify="space-between">
-        <v-col class="text-center">
-          <template v-if="isHLTB">
-            <span class="text-h2 font-weight-light">
-              {{ dates.minToHours(item.value) || '&nbsp;' }}
-            </span>
-            <!-- <span class="subheading font-weight-light me-1">value</span> -->
-          </template>
-          <template v-else>
-            <span class="text-h2 font-weight-light">{{ item.value || '0' }}</span>
-          </template>
+        <v-col class="text-center py-1">
+          <span class="text-h2 font-weight-light">
+            {{ item.value || '0' }}
+          </span>
+          <div
+            class="font-weight-light text-muted d-inline-block ps-1"
+            style="font-size: 1.9rem">
+            {{ currentConf.menuAppend }}
+          </div>
+        </v-col>
+        <v-col cols="12" class="text-muted text-center py-1">
+          <small>
+            {{ currentConf.menuSubtitle }}
+          </small>
         </v-col>
       </v-row>
 
-      <div v-if="isHLTB" class="px-3">
+      <v-slider
+        v-model="item.value"
+        :max="100"
+        :step="1"
+        class="ma-4"
+        hide-details
+        @end="onValueChanged">
+        <template v-slot:append>
+          <v-text-field
+            class="p-0"
+            v-model="item.value"
+            density="compact"
+            style="width: 70px"
+            type="number"
+            min="0"
+            max="100"
+            hide-details
+            @update:model-value="onValueChanged"></v-text-field>
+        </template>
+      </v-slider>
+    </template>
+
+    <!--
+      *+---------------------------------
+      *| Filter type: time
+      *| Range values
+      *+--------------------------------- -->
+    <template v-else-if="current && current.type == 'time'">
+      <v-row class="my-4 px-2" justify="space-between">
+        <v-col class="text-center">
+          <span class="text-h2 font-weight-light">
+            {{ dates.minToHours(item.value) || '◌' }}
+          </span>
+        </v-col>
+      </v-row>
+
+      <div class="px-3">
         <v-number-input
           label="minutes"
           v-model="item.value"
@@ -110,30 +141,6 @@
           hide-details
           @update:model-value="onValueChanged" />
       </div>
-
-      <v-slider
-        v-else
-        v-model="item.value"
-        :max="100"
-        :step="1"
-        class="ma-4"
-        hide-details
-        :show-ticks="isHLTB"
-        :thumb-label="isHLTB"
-        @end="onValueChanged">
-        <template v-slot:append v-if="!isHLTB">
-          <v-text-field
-            class="p-0"
-            v-model="item.value"
-            density="compact"
-            style="width: 70px"
-            type="number"
-            min="0"
-            max="100"
-            hide-details
-            @update:model-value="onValueChanged"></v-text-field>
-        </template>
-      </v-slider>
     </template>
 
     <!--
@@ -337,7 +344,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Thu 24 April 2025 - 16:44:54
+ * Modified: Thu 08 May 2025 - 16:00:35
  **/
 
 import filterService from '../../services/filterService'
@@ -432,8 +439,12 @@ export default {
       return true
     },
 
-    isHLTB() {
-      return this.filter == 'hltb'
+    isArray() {
+      return this.current.type == 'array'
+    },
+
+    isTime() {
+      return this.current.type == 'time'
     },
 
     hook() {
@@ -627,10 +638,17 @@ export default {
       })
     },
 
-    setDefaultValues() {
-      if (this.isHLTB) {
-        this.item.value = 0
-      }
+    //+-------------------------------------------------
+    // setDefaultValue()
+    // Sets a default value for specific filter types
+    // -----
+    // Created on Fri May 02 2025
+    //+-------------------------------------------------
+    setDefaultValue() {
+      if (this.item.value) return
+
+      if (this.isTime) this.item.value = 0
+      if (this.isArray) this.item.value = []
     },
 
     // calcHeight() {
@@ -647,9 +665,9 @@ export default {
       this.item.filter = this.filter
       this.item.mod = this.current.mods[0]
 
-      if (!this.item.value && this.current.type == 'array') {
-        this.item.value = []
-      }
+      // if (!this.item.value && this.current.type == 'array') {
+      //   this.item.value = []
+      // }
     }
 
     // Opening the filter for an already set filter
@@ -658,11 +676,7 @@ export default {
       this.item.value = this.hook.value
     }
 
-    if (this.current && !this.hook) {
-      this.setDefaultValues()
-    }
-
-    // this.calcHeight()
+    this.setDefaultValue()
   },
 }
 </script>

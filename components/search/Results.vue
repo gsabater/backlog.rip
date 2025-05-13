@@ -27,9 +27,9 @@
         </div>
       </div> -->
 
-    <!--#
+    <!--
       *+---------------------------------
-      *| List grid
+      *| List layout
       *| scaffolding to use with b-game type list
       *+--------------------------------- -->
     <template v-if="layout == 'list'">
@@ -160,7 +160,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon 31 March 2025 - 22:04:57
+ * Modified: Tue 13 May 2025 - 17:46:46
  **/
 
 import { useThrottleFn } from '@vueuse/core'

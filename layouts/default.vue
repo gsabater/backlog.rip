@@ -1014,7 +1014,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed 26 March 2025 - 17:41:43
+ * Modified: Wed 28 May 2025 - 18:13:36
  **/
 
 export default {
@@ -1058,6 +1058,11 @@ export default {
     changeTheme(theme) {
       this.ui.theme = theme
       if (document?.body) document.body.setAttribute('data-bs-theme', theme)
+      if (document?.documentElement) {
+        document.documentElement.setAttribute('data-bs-theme', theme)
+        document.documentElement.setAttribute('data-bs-theme-base', 'zinc')
+        document.documentElement.setAttribute('data-bs-theme-primary', 'orange')
+      }
     },
 
     showMobileMenu() {

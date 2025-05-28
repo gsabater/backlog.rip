@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Sun 11 May 2025 - 13:37:48
+ * Modified: Fri 23 May 2025 - 14:08:36
  */
 
 import filterService from './filterService'
@@ -61,8 +61,6 @@ export default {
           // console.warn('🛑 Skipping because filter', app.name, app.score)
           filtered.push(app.uuid)
           continue
-        } else {
-          console.log('✅ Filter passed', app.name, app.score)
         }
       }
 
@@ -262,6 +260,10 @@ export default {
         toSort.push({ uuid: app.uuid, val: app.playtime?.steam || 0 })
       }
 
+      if (filters?.sortBy == 'achievements') {
+        toSort.push({ uuid: app.uuid, val: app._?.astats?.percentage || 0 })
+      }
+
       if (filters?.sortBy == 'hltb') {
         toSort.push({ uuid: app.uuid, val: app.hltb?.main || 0 })
       }
@@ -349,6 +351,7 @@ export default {
         'steamscore',
         'steamdb',
         'playtime',
+        'achievements',
         'date.lib',
         'date.released',
       ].includes(sortBy)
@@ -386,67 +389,67 @@ export default {
     return items.slice(0, end)
   },
 
-  //+-------------------------------------------------
-  // makeHash()
-  // Generates an unique hash to identify a search instance
-  // -----
-  // Created on Sun Jan 05 2025
-  //+-------------------------------------------------
-  makeHash(source, filters) {
-    if (source.type == 'array') return null
+  // //+-------------------------------------------------
+  // // makeHash()
+  // // Generates an unique hash to identify a search instance
+  // // -----
+  // // Created on Sun Jan 05 2025
+  // //+-------------------------------------------------
+  // makeHash(source, filters) {
+  //   if (source.type == 'array') return null
 
-    let f = {
-      string: filters.string,
-      sortBy: filters.sortBy,
-      sortDir: filters.sortDir,
-      // released: filters.released,
-      genres: filters.genres,
-      states: filters.states,
-      languages: filters.languages,
-    }
+  //   let f = {
+  //     string: filters.string,
+  //     sortBy: filters.sortBy,
+  //     sortDir: filters.sortDir,
+  //     // released: filters.released,
+  //     genres: filters.genres,
+  //     states: filters.states,
+  //     languages: filters.languages,
+  //   }
 
-    let json = JSON.stringify(f)
-    let base = btoa(json)
-    let hash = source.type + '#' + Object.keys(source.apps).length + ':' + base
+  //   let json = JSON.stringify(f)
+  //   let base = btoa(json)
+  //   let hash = source.type + '#' + Object.keys(source.apps).length + ':' + base
 
-    return hash
-  },
+  //   return hash
+  // },
 
-  //+-------------------------------------------------
-  // searchHash()
-  // Sanitizes and creates a hash for the search to API
-  // -----
-  // Created on Wed May 01 2024
-  // Created on Tue Jan 14 2025 - Moved to searchService
-  //+-------------------------------------------------
-  makeApiHash(f = {}) {
-    f.string = f.string?.trim()
+  // //+-------------------------------------------------
+  // // searchHash()
+  // // Sanitizes and creates a hash for the search to API
+  // // -----
+  // // Created on Wed May 01 2024
+  // // Created on Tue Jan 14 2025 - Moved to searchService
+  // //+-------------------------------------------------
+  // makeApiHash(f = {}) {
+  //   f.string = f.string?.trim()
 
-    let emptyString = !f.string || f.string?.length < 3
-    let dirty = ['genres', 'anotherArrayProperty'].some(
-      (prop) => Array.isArray(f[prop]) && f[prop].length > 0
-    )
+  //   let emptyString = !f.string || f.string?.length < 3
+  //   let dirty = ['genres', 'anotherArrayProperty'].some(
+  //     (prop) => Array.isArray(f[prop]) && f[prop].length > 0
+  //   )
 
-    if (f.sortBy == 'rand') return null
-    if (f.sortBy == 'score' && f.sortDir == 'desc' && emptyString && !dirty) return null
-    if (f.sortBy == 'playtime' && emptyString) return null
+  //   if (f.sortBy == 'rand') return null
+  //   if (f.sortBy == 'score' && f.sortDir == 'desc' && emptyString && !dirty) return null
+  //   if (f.sortBy == 'playtime' && emptyString) return null
 
-    delete f.is
-    delete f.mods
-    delete f.show
-    delete f.source
-    delete f.states
+  //   delete f.is
+  //   delete f.mods
+  //   delete f.show
+  //   delete f.source
+  //   delete f.states
 
-    if (emptyString) delete f.string
-    if (!f.released) delete f.released
-    if (f.genres?.length == 0) delete f.genres
+  //   if (emptyString) delete f.string
+  //   if (!f.released) delete f.released
+  //   if (f.genres?.length == 0) delete f.genres
 
-    const json = JSON.stringify(f)
-    const slug = btoa(json)
-    const hash = 'API' + ':' + slug
+  //   const json = JSON.stringify(f)
+  //   const slug = btoa(json)
+  //   const hash = 'API' + ':' + slug
 
-    return { hash, slug, json }
-  },
+  //   return { hash, slug, json }
+  // },
 
   //+-------------------------------------------------
   // cleanAppName()

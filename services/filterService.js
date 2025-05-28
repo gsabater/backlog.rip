@@ -3,12 +3,16 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Tue 13 May 2025 - 17:42:20
+ * Modified: Mon 26 May 2025 - 12:09:22
  */
 
 let $nuxt = null
 
 export default {
+  //+-------------------------------------------------
+  // Filter definitions
+  // Defines the details of the filter (min, max, etc)
+  //+-------------------------------------------------
   definitions: {
     string: { hidden: true, mods: [] },
 
@@ -19,61 +23,69 @@ export default {
       mods: ['gte', 'lte', /* 'gte', 'lte', */ 'is', 'not'],
     },
 
-    metacritic: { advanced: true, type: 'number', mods: ['gte', 'lte'] },
-    opencritic: { advanced: true, type: 'number', mods: ['gte', 'lte'] },
-    // steamscore: { advanced: true, type: 'number', mods: ['gte', 'lte'] },
-    steamdb: { advanced: true, type: 'number', mods: ['gte', 'lte'] },
+    metacritic: { type: 'number', mods: ['gte', 'lte'] },
+    opencritic: { type: 'number', mods: ['gte', 'lte'] },
+    // steamscore: {  type: 'number', mods: ['gte', 'lte'] },
+    steamdb: { type: 'number', mods: ['gte', 'lte'] },
 
     state: { type: 'array', mods: ['in', 'not' /* , 'all' */] },
+    genre: { type: 'array', mods: ['in', 'all'] },
     language: { type: 'array', mods: ['in', /* 'not', */ 'all'] },
     released: { type: 'date', mods: ['after', 'before', 'is'] },
 
     hltb: { type: 'time', mods: ['lte', 'gte'] },
     playtime: { type: 'time', mods: ['gte', 'lte'] },
-    library: { advanced: true, type: 'date', mods: ['after', 'before', 'is'] },
+    library: { type: 'date', mods: ['after', 'before', 'is'] },
     achievements: { type: 'number', mods: ['gte', 'lte'] },
-
-    // genre: { group: 'score', mods: ['in', 'all'] },
   },
 
+  //+-------------------------------------------------
+  // Filter configurations
+  // Defines how the filter is used and shown
+  //+-------------------------------------------------
   configurations: {
     string: {
       label: 'Name',
     },
 
     score: {
-      label: 'Score',
-      plural: 'scores',
+      api: true,
 
+      label: 'Score',
       icon: 'Star',
       desc: 'Filter results by their median score. To filter by Steam, Metacritic or Opencritic score, use their respective filters',
     },
 
     metacritic: {
-      label: 'Metacritic score',
-      plural: 'metacritic score',
+      api: true,
+      advanced: true,
 
+      label: 'Metacritic score',
       logo: 'metacritic',
       desc: 'Filter results by their Metacritic score. To filter by Steam or Opencritic score, use their respective filters',
     },
 
     opencritic: {
-      label: 'Opencritic score',
-      plural: 'opencritic score',
+      api: true,
+      advanced: true,
 
+      label: 'Opencritic score',
       logo: 'opencritic',
       desc: 'Filter results by their Opencritic score. To filter by Steam or Metacritic score, use their respective filters',
     },
 
     steamscore: {
-      label: 'Steam score',
-      plural: 'steam score',
+      api: true,
+      advanced: true,
 
+      label: 'Steam score',
       logo: 'steam',
       desc: 'Filter results by their Steam score. To filter by Metacritic or Opencritic score, use their respective filters',
     },
 
     steamdb: {
+      advanced: true,
+
       label: 'SteamDB score',
       plural: 'steamdb score',
       desc: 'Filter results by their SteamDB score. To filter by Metacritic or Opencritic score, use their respective filters',
@@ -94,31 +106,35 @@ export default {
     },
 
     hltb: {
-      label: 'Time to beat (HLTB)',
-      plural: 'times to beat',
+      api: true,
 
+      label: 'Time to beat (HLTB)',
       icon: 'Clock',
       desc: 'How long to beat is a metric that measures how much time is needed to complete a game. Data provided from howlongtobeat.com',
-      data: null,
-      opSort: null,
-      opValue: null,
-      opLabel: null,
     },
 
     playtime: {
       label: 'My playtime',
-      plural: 'playtime',
-
       icon: 'Clock',
       desc: 'Filter games by their playtime',
+    },
 
-      data: null,
-      opSort: null,
-      opValue: null,
-      opLabel: null,
+    genre: {
+      api: true,
+      label: 'Genre',
+      plural: 'genres',
+
+      icon: 'Graph',
+      desc: 'Filter games by their genre',
+
+      data: 'genres',
+      opSort: 'order',
+      opValue: 'id',
+      opLabel: 'name',
     },
 
     language: {
+      api: true,
       label: 'Language',
       plural: 'languages',
 
@@ -132,27 +148,20 @@ export default {
     },
 
     released: {
+      api: true,
       label: 'Release date',
 
       icon: 'Calendar',
       desc: 'Filter games by their release date',
-
-      data: null,
-      opSort: null,
-      opValue: null,
-      opLabel: null,
     },
 
     library: {
+      advanced: true,
+
       label: 'Added to library',
       plural: '',
       icon: 'Calendar',
       desc: 'Filter games by their library date',
-
-      data: null,
-      opSort: null,
-      opValue: null,
-      opLabel: null,
     },
 
     achievements: {
@@ -163,11 +172,12 @@ export default {
       menuAppend: '%',
       menuSubtitle: 'Completion percentage',
     },
-
-    genre: { label: 'Genre', icon: '', desc: 'Lorem' },
   },
 
-  // 'is', 'gt', 'lt', 'gte', 'lte', 'not'
+  //+-------------------------------------------------
+  // Filter modifiers
+  // Declare some helper content
+  //+-------------------------------------------------
   mods: {
     in: {
       short: 'in',
@@ -231,14 +241,19 @@ export default {
 
     if (by == 'hltb') return this.filterByHLTB(app, filter)
     if (by == 'state') return this.filterByState(app, filter)
-    if (by == 'score') return this.filterByScore(app, filter)
+
     if (by == 'library') return this.filterByDate(app, filter, 'owned')
     if (by == 'released') return this.filterByDate(app, filter, 'released')
     if (by == 'playtime') return this.filterByTime(app, filter, 'playtime')
-    if (by == 'language') return this.filterByLanguage(app, filter)
+
+    if (by == 'genre') return this.filterByArray(app, filter, 'genre')
+    if (by == 'language') return this.filterByArray(app, filter, 'language')
+
+    if (by == 'score') return this.filterByScore(app, filter)
     if (by == 'metacritic') return this.filterByScore(app, filter, 'metacritic')
     if (by == 'opencritic') return this.filterByScore(app, filter, 'opencritic')
     if (by == 'steamdb') return this.filterByScore(app, filter, 'steamdb')
+
     if (by == 'achievements') return this.filterByNumber(app, filter, 'achievements')
   },
 
@@ -291,6 +306,18 @@ export default {
     return this.numericFilter(number, mod, value)
   },
 
+  filterByArray(app, filter, type) {
+    const { mod, value } = filter
+    if (!value || !value.length) return true
+    let array = null
+
+    if (type == 'genre') array = app.genres
+    else if (type == 'language') array = app.languages
+
+    if (!array || !array.length) return false
+    return this.arrayFilter(array, mod, value)
+  },
+
   filterByHLTB(app, filter) {
     const { mod, value } = filter
     let main = app.hltb?.main
@@ -298,11 +325,6 @@ export default {
 
     // HLTB value is in seconds, so the value must be multiplied by 60
     return this.numericFilter(main, mod, value * 60)
-  },
-
-  filterByLanguage(app, filter) {
-    const { mod, value } = filter
-    return this.arrayFilter(app.languages, mod, value)
   },
 
   //+-------------------------------------------------
@@ -438,88 +460,130 @@ export default {
   // Created on Tue May 13 2025
   //+-------------------------------------------------
   makeHash(schema) {
-    const queryParts = []
+    // debugger
 
-    // Deep clone to avoid mutating original
     const cleanSchema = JSON.parse(JSON.stringify(schema))
-    const { filters, string, sortBy, sortDir } = cleanSchema
-    const searchString = string.trim()
+    let { filters, string, sortBy, sortDir } = cleanSchema
+    string = string.trim()
 
-    // Process the filters array
+    const isDirty = filters.length || string.length > 2
+
+    // Edge cases to stop unnecessary processing
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (Array.isArray(filters)) {
-      queryParts.push(
-        ...filters.map(({ filter, mod, value }) => {
-          const encodedValue = Array.isArray(value)
-            ? value.map(encodeURIComponent).join('+')
-            : encodeURIComponent(value)
+    let hashAPI = true
+    let hashRoute = true
 
-          return `${encodeURIComponent(filter)}.${encodeURIComponent(mod)}.${encodedValue}`
-        })
-      )
+    if (schema.is == 'array') {
+      hashAPI = false
+      hashRoute = false
     }
 
-    // Process the search string
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (searchString && searchString.length > 2) {
-      queryParts.push(`search=${encodeURIComponent(searchString)}`)
+    if (schema.is == 'library') {
+      hashAPI = false
     }
 
-    // Process the sorting options
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (sortBy && sortBy !== 'playtime' && sortBy !== 'rand') {
-      queryParts.push(`sortBy=${encodeURIComponent(sortBy)}`)
-      queryParts.push(`sortDir=${encodeURIComponent(sortDir)}`)
+    if (schema.is == 'all') {
+      if (!isDirty && sortBy == 'score' && sortDir == 'desc') {
+        hashAPI = false
+        hashRoute = false
+      }
     }
 
     // Make hashes for the API and the route
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    const API = this.makeApiHash(queryParts)
 
-    const queryParams = queryParts.join('&')
-    this.setRouteFilters(queryParams)
+    const queryParts = this.mapFilters(filters, string, sortBy, sortDir)
+    if (hashAPI) hashAPI = this.makeApiHash(queryParts?.api)
+    if (hashRoute) this.setRouteFilters(queryParts?.route)
 
-    // console.warn('☁️ makeHash', { queryParts, queryParams, API })
+    console.warn('Hash generated', {
+      queryParts,
+      hashAPI,
+      route: queryParts.route.join('&'),
+    })
 
-    return {
-      route: queryParams,
-      API: API,
+    return { api: hashAPI }
+  },
+
+  //+-------------------------------------------------
+  // mapFilters()
+  //
+  // -----
+  // Created on Fri May 23 2025
+  //+-------------------------------------------------
+  mapFilters(filters, string, sortBy, sortDir) {
+    let parts = {
+      api: [],
+      route: [],
     }
+
+    if (Array.isArray(filters)) {
+      filters.map(({ filter, mod, value }) => {
+        const encodedValue = Array.isArray(value)
+          ? value.map(encodeURIComponent).join('+')
+          : encodeURIComponent(value)
+
+        let hash = `${filter}.${mod}.${encodedValue}`
+        parts.route.push(hash)
+
+        if (this.configurations[filter].api) {
+          parts.api.push(hash)
+        }
+      })
+    }
+
+    // Process the search string
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if (string && string.length > 2) {
+      const searchStr = `search=${encodeURIComponent(string)}`
+      parts.api.push(searchStr)
+      parts.route.push(searchStr)
+    }
+
+    // Process the sorting options
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if (sortBy) {
+      const sortByStr = `sortBy=${encodeURIComponent(sortBy)}`
+      const sortDirStr = `sortDir=${encodeURIComponent(sortDir)}`
+
+      parts.api.push(sortByStr, sortDirStr)
+      parts.route.push(sortByStr, sortDirStr)
+    }
+
+    return parts
   },
 
   //+-------------------------------------------------
   // makeApiHash()
-  // Makes a btoa hash from a json string
-  // -----
-  // TODO: maybe clear offset == symbols in the btoa
+  // Makes a btoa hash from the api query parts
   // -----
   // Created on Tue May 13 2025
   //+-------------------------------------------------
   makeApiHash(queryParts) {
+    if (!queryParts.length) return
+    if (!queryParts === null) return
+
     const json = JSON.stringify(queryParts)
-    const slug = btoa(json)
+    const hash = btoa(json)
 
-    // const queryParams = queryParts.join('&')
-    // const API = `?${queryParams}`
-
-    console.warn('☁️ makeApiHash', { slug, json })
-    return slug
+    return hash
   },
 
   //+-------------------------------------------------
   // setRouteFilters
   // Append the filters to the route as query params
+  // Replace the URL without adding the page to history
+  // -----
+  // TODO: Maybe add a check to see if the URL is the same to avoid unnecessary updates
   // -----
   // Created on Tue Apr 01 2025
   //+-------------------------------------------------
   setRouteFilters(queryParams) {
-    // Update URL without adding to history
-    const newUrl =
-      queryParams && queryParams.length
-        ? `${window.location.pathname}?${queryParams}`
-        : window.location.pathname
+    if (!Array.isArray(queryParams) || !queryParams.length) return
 
-    console.warn('☁️ setRoute', queryParams)
+    const query = queryParams.join('&')
+    const newUrl = `${window.location.pathname}?${query}`
+
     window.history.replaceState({}, '', newUrl)
   },
 }

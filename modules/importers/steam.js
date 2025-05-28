@@ -3,7 +3,7 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon 24 March 2025 - 15:25:18
+ * Modified: Thu 01 May 2025 - 11:06:39
  */
 
 import axios from 'axios'
@@ -128,10 +128,16 @@ export default {
   // A queue is created and notified using $sync
   // -----
   // Created on Wed Mar 19 2025
+  // Updated on Thu May 01 2025 - Added a check for the webhook status
   //+-------------------------------------------------
   async requestAchievements(appIDs) {
     let url = 'https://api.backlog.rip/fetch/achievements'
     let xhr = await $axios.post(url, { apps: appIDs })
+
+    // Something went wrong when queuing the order
+    if (xhr.status !== 200 || xhr.data.webhook >= 300) {
+      return false
+    }
 
     return xhr.status == 200
   },

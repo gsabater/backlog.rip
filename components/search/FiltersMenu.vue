@@ -98,7 +98,7 @@
           <div>
             {{ filterConf[option.filter].label }}
 
-            <small v-if="filterDef[option.filter].advanced" class="text-muted">
+            <small v-if="filterConf[option.filter].advanced" class="text-muted">
               <Icon size="14" style="transform: translateY(-1px)">Sparkles</Icon>
             </small>
           </div>
@@ -114,9 +114,9 @@
       </template>
 
       <div
-        v-if="!ui.showAdvancedFilters"
+        v-if="!ui.showAdvanced"
         class="dropdown-item small text-muted"
-        @click="ui.showAdvancedFilters = true">
+        @click="ui.showAdvanced = true">
         <Icon size="14" class="me-2">Sparkles</Icon>
         Show advanced filters
       </div>
@@ -137,7 +137,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Tue 13 May 2025 - 11:49:36
+ * Modified: Fri 23 May 2025 - 12:55:27
  **/
 
 import filterService from '../../services/filterService'
@@ -164,7 +164,7 @@ export default {
 
       ui: {
         showFilterValues: false,
-        showAdvancedFilters: false,
+        showAdvanced: false,
       },
     }
   },
@@ -419,8 +419,8 @@ export default {
     },
 
     showAdvancedOption(option) {
-      if (this.ui.showAdvancedFilters) return true
-      return !this.filterDef[option.filter].advanced
+      if (this.ui.showAdvanced) return true
+      return !this.filterConf[option.filter].advanced
     },
 
     //+-------------------------------------------------
@@ -469,7 +469,7 @@ export default {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (!selected) {
         this.f.string = this.f.box
-        this.$mitt.emit('search:run')
+        this.$mitt.emit('search:run', 3)
         return
       }
 
@@ -494,7 +494,7 @@ export default {
     resetSearchString() {
       this.f.box = ''
       this.f.string = ''
-      this.$mitt.emit('search:run')
+      this.$mitt.emit('search:run', 4)
     },
   },
 

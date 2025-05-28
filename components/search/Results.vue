@@ -160,7 +160,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 13 May 2025 - 17:46:46
+ * Modified: Thu 22 May 2025 - 15:16:28
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -219,6 +219,7 @@ export default {
       async (trigger = null) => {
         if (!$app.ready) return
         if (props.disabled) return
+
         // if (Object.keys(props.filters).length === 0) return
 
         // console.groupCollapsed('🔸 Search at ..' + $route.path + ' (' + trigger + ')')
@@ -232,6 +233,15 @@ export default {
 
         const search = $search.run()
         items.value = search.items
+
+        log('🧭 search:end', {
+          trigger: trigger,
+          source: $search.f.is,
+          apps: search.items.length,
+
+          stats: $search.stats,
+          filters: $search.f,
+        })
 
         emit('search:end')
         // console.groupEnd()
@@ -253,7 +263,7 @@ export default {
     //   { deep: true }
     // )
 
-    return { search, items, loading: $search.loading }
+    return { search, items }
   },
 
   data() {
@@ -262,7 +272,7 @@ export default {
 
   computed: {
     ...mapStores(useDataStore, useSearchStore),
-    // ...mapState(useSearchStore, ['f','loading']),
+    ...mapState(useSearchStore, ['f', 'loading']),
 
     //+-------------------------------------------------
     // visibleProps()

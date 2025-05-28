@@ -177,6 +177,7 @@
             <Icon size="10" class="text-muted ms-1" style="transform: translateY(-1px)">
               ClockRecord
             </Icon>
+
             {{ dates.microTime(time) }}
           </span>
         </div>
@@ -292,7 +293,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Tue 13 May 2025 - 11:59:54
+ * Modified: Wed 21 May 2025 - 12:11:44
  **/
 
 export default {
@@ -383,6 +384,7 @@ export default {
         'hltb': 'How long to beat',
         'date.lib': 'Date added to your library',
         'date.released': 'Release date',
+        'achievements': 'Achievements',
       }
     },
 

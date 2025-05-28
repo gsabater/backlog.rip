@@ -350,6 +350,40 @@
         </div>
       </div>
     </label>
+
+    <label
+      class="dropdown-item ps-1"
+      :class="{ active: f.sortBy == 'achievements' }"
+      @click="sortBy('achievements', 'desc', true)">
+      <div class="d-flex justify-center" style="width: 30px">
+        <Icon size="16" class="me-1">Trophy</Icon>
+      </div>
+      <div>
+        Achievements
+        <div
+          v-if="f.sortBy == 'achievements'"
+          class="text-muted"
+          style="font-size: 0.75rem">
+          {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
+          <Icon size="14" width="2" class="mx-1">Repeat</Icon>
+        </div>
+      </div>
+      <tippy
+        class="text-muted ms-auto cursor-help ps-4"
+        :content="'Games will be sorted by the number of achievements you have unlocked. This metric is only available for games that support Steam achievements.'">
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
+          HelpSmall
+        </Icon>
+      </tippy>
+    </label>
+
+    <div
+      v-if="!ui.showAdvanced"
+      class="dropdown-item small text-muted"
+      @click="ui.showAdvanced = true">
+      <Icon size="14" class="me-2">Sparkles</Icon>
+      Show advanced filters
+    </div>
   </div>
 </template>
 
@@ -359,7 +393,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st October 2024
- * Modified: Tue 01 April 2025 - 19:11:48
+ * Modified: Tue 13 May 2025 - 17:56:25
  **/
 
 export default {
@@ -378,6 +412,7 @@ export default {
     return {
       ui: {
         dice: 4,
+        showAdvanced: false,
       },
     }
   },

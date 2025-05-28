@@ -54,7 +54,7 @@
         <!-- <span class="badge" style="background-color: blue"></span>
         <span class="badge" style="background-color: blue"></span>
         <span class="badge" style="background-color: blue"></span> -->
-        {{ filterValue.length }} {{ currentConf.plural }}
+        {{ filterValue.length }} {{ currentConf.plural ?? currentConf.label }}
       </div>
 
       <div v-else-if="isDate" class="text-nowrap px-1">
@@ -106,7 +106,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Tue 13 May 2025 - 12:52:39
+ * Modified: Fri 23 May 2025 - 12:51:30
  **/
 
 import filterService from '../../services/filterService'
@@ -289,7 +289,7 @@ export default {
         return
       }
 
-      this.$mitt.emit('search:run')
+      this.$mitt.emit('search:run', 5)
     },
 
     showTippy() {
@@ -328,7 +328,7 @@ export default {
     //+-------------------------------------------------
     clear() {
       this.searchStore.clearFilter(this.index)
-      this.$mitt.emit('search:run')
+      this.$mitt.emit('search:run', 6)
     },
   },
 

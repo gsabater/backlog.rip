@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Wed 22 January 2025 - 17:07:44
+ * Modified: Thu 15 May 2025 - 16:15:02
  */
 
 let $nuxt = null
@@ -90,6 +90,7 @@ export const useRepositoryStore = defineStore('repository', {
     //+-------------------------------------------------
     // searchGames()
     // Calls the api to search a game by name
+    // Legacy, used by the palette
     // -----
     // Created on Thu Jun 27 2024
     //+-------------------------------------------------

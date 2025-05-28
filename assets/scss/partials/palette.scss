@@ -254,10 +254,10 @@
   box-shadow: var(--command-shadow);
 }
 
-[data-bs-theme='dark'] .backlog [command-dialog-wrapper] {
-  // background: linear-gradient(136.61deg, #27282b 13.72%, #2d2e31 74.3%);
-  background: linear-gradient(136.61deg, #24262b 13.72%, #20222b 74.3%);
-}
+// [data-bs-theme='dark'] .backlog [command-dialog-wrapper] {
+//   // background: linear-gradient(136.61deg, #27282b 13.72%, #2d2e31 74.3%);
+//   background: linear-gradient(136.61deg, #24262b 13.72%, #20222b 74.3%);
+// }
 
 .backlog [command-dialog-footer] ul,
 .backlog [command-dialog-footer] ul li {

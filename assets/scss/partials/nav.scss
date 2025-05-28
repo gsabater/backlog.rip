@@ -3,24 +3,24 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 14th March 2024
- * Modified: Wed 26 March 2025 - 17:26:12
+ * Modified: Fri 02 May 2025 - 11:48:54
  **/
 
-[data-bs-theme='dark'] {
-  header.navbar {
-    --tblr-navbar-border-color: rgb(56 57 76 / 25%);
-    --tblr-navbar-color: var(--tblr-body-color);
-    background-color: rgb(33 26 40 / 50%);
-  }
+// [data-bs-theme='dark'] {
+//   header.navbar {
+//     --tblr-navbar-border-color: rgb(56 57 76 / 25%);
+//     --tblr-navbar-color: var(--tblr-body-color);
+//     background-color: rgb(33 26 40 / 50%);
+//   }
 
-  aside {
-    --tblr-navbar-border-color: rgb(56 57 76 / 25%);
-    --tblr-dropdown-divider-bg: rgb(56 57 76 / 25%);
+//   aside {
+//     --tblr-navbar-border-color: rgb(56 57 76 / 25%);
+//     --tblr-dropdown-divider-bg: rgb(56 57 76 / 25%);
 
-    background-color: rgb(43 45 57 / 25%);
-    // border-right: 1px solid var(--tblr-navbar-border-color);
-  }
-}
+//     background-color: rgb(43 45 57 / 25%);
+//     // border-right: 1px solid var(--tblr-navbar-border-color);
+//   }
+// }
 
 header {
   z-index: 999;
@@ -90,3 +90,12 @@ header.navbar {
 //   z-index: -1;
 //   border-radius: 2px;
 // }
+
+// Navbar top bar quick fix
+// This is a dirty fix to close the navbar line under the sidebar
+@media (min-width: 992px) {
+  .navbar-expand-lg.navbar-vertical ~ .navbar,
+  .navbar-expand-lg.navbar-vertical ~ .page-wrapper {
+    margin-left: calc(15rem - 5px);
+  }
+}

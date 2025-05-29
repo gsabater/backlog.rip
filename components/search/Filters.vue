@@ -149,7 +149,15 @@
     *| Tags, display options...
     *+--------------------------------- -->
   <div class="col-12 row align-items-center mb-5">
-    <div class="col">
+    <div
+      class="col"
+      style="
+        gap: 7px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+      ">
       <template v-if="f.string">
         <search-filter-tag :index="-1" class="is-chip" />
       </template>
@@ -293,7 +301,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Wed 21 May 2025 - 12:11:44
+ * Modified: Thu 29 May 2025 - 15:44:30
  **/
 
 export default {

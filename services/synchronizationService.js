@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 19th March 2025
- * Modified: Tue 25 March 2025 - 17:43:19
+ * Modified: Thu 29 May 2025 - 16:25:40
  */
 
 import dataService from './dataService'
@@ -50,6 +50,8 @@ export default {
     // Sync the achievements
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     await this.syncAchievements()
+
+    this.endSynchronization()
   },
 
   //+-------------------------------------------------
@@ -116,6 +118,7 @@ export default {
   // Created on Wed Mar 19 2025
   //+-------------------------------------------------
   async syncAchievements() {
+    return true
     $nuxt.$app.background.running = 'achievements'
 
     // Check the status of other previous achievement requests

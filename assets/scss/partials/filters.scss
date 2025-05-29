@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th March 2025
- * Modified: Tue 08 April 2025 - 13:04:24
+ * Modified: Thu 29 May 2025 - 12:53:12
  **/
 
 .filter-tag {
@@ -19,6 +19,16 @@
   align-items: center;
   flex-direction: row;
   // padding: 2px 0px;
+
+  &.invalid {
+    & .filter-name,
+    & .filter-mod {
+      opacity: 0.5;
+      background: rgba(255, 0, 0, 0.048);
+      text-decoration: line-through;
+    }
+    outline: 1px solid #ff000027;
+  }
 
   &.is-chip {
     display: inline-flex;

@@ -1,5 +1,10 @@
 <template>
-  <div class="filter-tag" @click.stop.prevent="prevent" @mousedown.stop @focus.stop>
+  <div
+    class="filter-tag"
+    @click.stop.prevent="prevent"
+    @mousedown.stop
+    @focus.stop
+    :class="{ invalid: !hook.valid }">
     <!-- <pre class="d-block">
       {{ hook }} --
       {{ current }}
@@ -106,7 +111,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Fri 23 May 2025 - 12:51:30
+ * Modified: Thu 29 May 2025 - 14:20:00
  **/
 
 import filterService from '../../services/filterService'

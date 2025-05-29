@@ -160,7 +160,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 22 May 2025 - 15:16:28
+ * Modified: Thu 29 May 2025 - 15:37:31
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -234,7 +234,7 @@ export default {
         const search = $search.run()
         items.value = search.items
 
-        log('🧭 search:end', {
+        log(`🧭 search:end (${$search.stats.time.toFixed(3)}ms)`, {
           trigger: trigger,
           source: $search.f.is,
           apps: search.items.length,
@@ -246,7 +246,7 @@ export default {
         emit('search:end')
         // console.groupEnd()
       },
-      1000,
+      1500,
       true
     )
 

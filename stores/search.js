@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Fri 23 May 2025 - 14:10:15
+ * Modified: Thu 29 May 2025 - 15:14:44
  */
 
 import apiService from '../services/apiService'
@@ -284,6 +284,7 @@ export const useSearchStore = defineStore('search', {
     // Created on Thu Apr 03 2025
     //+-------------------------------------------------
     addFilter(filter) {
+      filter.valid = filterService.validate(filter)
       this.f.filters.push(filter)
 
       return this.f.filters.length - 1
@@ -298,6 +299,7 @@ export const useSearchStore = defineStore('search', {
     setFilter(index, mod, value) {
       this.f.filters[index].mod = mod
       this.f.filters[index].value = value
+      this.f.filters[index].valid = filterService.validate(this.f.filters[index])
     },
 
     //+-------------------------------------------------

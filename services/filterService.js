@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Mon 26 May 2025 - 12:09:22
+ * Modified: Thu 29 May 2025 - 15:37:41
  */
 
 let $nuxt = null
@@ -231,6 +231,45 @@ export default {
   },
 
   //+-------------------------------------------------
+  // validate()
+  // Returns if a filter is valid
+  // -----
+  // Created on Thu May 29 2025
+  //+-------------------------------------------------
+  validate(filter) {
+    let valid = true
+    const { filter: by, mod, value } = filter
+
+    // Check if the filter is valid
+    if (!this.definitions[by]) {
+      console.warn(`Invalid filter type: ${by}`)
+      valid = false
+    }
+
+    // Check if the modifier is valid for the filter
+    if (!this.definitions[by].mods.includes(mod)) {
+      console.warn(`Invalid modifier "${mod}" for filter "${by}"`)
+      valid = false
+    }
+
+    // Check if the value is valid for the filter type
+    if (this.definitions[by].type === 'number' && isNaN(value)) {
+      console.warn(`Invalid value for filter "${by}": ${value}`)
+      valid = false
+    }
+
+    if (
+      this.definitions[by].type === 'array' &&
+      (!Array.isArray(value) || !value.length)
+    ) {
+      console.warn(`Invalid value for filter "${by}": ${value}. Expected an array.`)
+      valid = false
+    }
+
+    return valid
+  },
+
+  //+-------------------------------------------------
   // filterBy()
   // Applies a filter by type and modifier
   // -----
@@ -272,7 +311,7 @@ export default {
 
   filterByState(app, filter) {
     const { mod, value } = filter
-    return this.valueFilter(app.state, mod, value)
+    return this.valueInArrayFilter(app.state, mod, value)
   },
 
   filterByDate(app, filter, type) {
@@ -364,13 +403,14 @@ export default {
   },
 
   //+-------------------------------------------------
-  // valueFilter()
+  // valueInArrayFilter()
   // Compares array values with provided input value
   // -----
   // Created on Mon Apr 07 2025
   //+-------------------------------------------------
-  valueFilter(input, mod, value) {
-    if (!input) input = null
+  valueInArrayFilter(input, mod, value) {
+    // if (!input) input = null
+    if (!Array.isArray(input)) return false
 
     // Handle special case for -1 (no state)
     const hasNoState = value.includes(-1)
@@ -492,33 +532,40 @@ export default {
     // Make hashes for the API and the route
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    const queryParts = this.mapFilters(filters, string, sortBy, sortDir)
-    if (hashAPI) hashAPI = this.makeApiHash(queryParts?.api)
-    if (hashRoute) this.setRouteFilters(queryParts?.route)
+    const filterParts = this.makeFilterParts(filters, string, sortBy, sortDir)
 
-    console.warn('Hash generated', {
-      queryParts,
-      hashAPI,
-      route: queryParts.route.join('&'),
-    })
+    if (hashAPI) hashAPI = this.makeApiHash(filterParts?.api)
+    if (hashRoute) this.setRouteFilters(filterParts?.route)
+
+    // console.warn('Hash generated', {
+    //   filterParts,
+    //   hashAPI,
+    //   route: filterParts.route.join('&'),
+    // })
 
     return { api: hashAPI }
   },
 
   //+-------------------------------------------------
-  // mapFilters()
-  //
+  // makeFilterParts()
+  // Generates an array of filter parts
+  // Those parts are then used to make API hash and route query params
   // -----
   // Created on Fri May 23 2025
   //+-------------------------------------------------
-  mapFilters(filters, string, sortBy, sortDir) {
+  makeFilterParts(filters, string, sortBy, sortDir) {
     let parts = {
       api: [],
       route: [],
     }
 
     if (Array.isArray(filters)) {
-      filters.map(({ filter, mod, value }) => {
+      filters.forEach(({ filter, mod, value }) => {
+        // Skip invalid filters
+        if (!this.validate({ filter, mod, value })) {
+          return
+        }
+
         const encodedValue = Array.isArray(value)
           ? value.map(encodeURIComponent).join('+')
           : encodeURIComponent(value)
@@ -559,11 +606,11 @@ export default {
   // -----
   // Created on Tue May 13 2025
   //+-------------------------------------------------
-  makeApiHash(queryParts) {
-    if (!queryParts.length) return
-    if (!queryParts === null) return
+  makeApiHash(filterParts) {
+    if (!filterParts.length) return
+    if (!filterParts === null) return
 
-    const json = JSON.stringify(queryParts)
+    const json = JSON.stringify(filterParts)
     const hash = btoa(json)
 
     return hash

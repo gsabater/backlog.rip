@@ -3,7 +3,7 @@
  * @desc:    Handle operations related to data with their index
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Mon 24 March 2025 - 19:23:04
+ * Modified: Thu 29 May 2025 - 15:38:42
  */
 
 import gameService from '../services/gameService'
@@ -115,12 +115,12 @@ export const useDataStore = defineStore('data', {
     async process(apps, intent, emit = true) {
       const items = Array.isArray(apps) ? apps : [apps]
 
-      console.warn(
-        '🔸 Process',
-        intent,
-        items.length,
-        items[Math.floor(Math.random() * items.length)]
-      )
+      // console.warn(
+      //   '🔸 Process',
+      //   intent,
+      //   items.length,
+      //   items[Math.floor(Math.random() * items.length)]
+      // )
 
       for (const item of items) {
         if (!item?.uuid || item === true || (Array.isArray(item) && item.length === 0)) {

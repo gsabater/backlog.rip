@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Tue 25 March 2025 - 16:50:58
+ * Modified: Thu 29 May 2025 - 15:20:48
  */
 
 import synchronizationService from '../services/synchronizationService'
@@ -228,7 +228,7 @@ export default defineNuxtPlugin(() => {
     const blacklist = ['app:start', 'user:ready', 'data:ready']
     if (blacklist.includes(e)) return
     // log('✨ ' + e, payload)
-    console.info(`🔸 "${e}"`, payload ?? null)
+    // console.info(`🔸 "${e}"`, payload ?? null)
   })
 
   return {

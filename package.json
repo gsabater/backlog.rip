@@ -27,9 +27,9 @@
     "@eslint/js": "^9.27.0",
     "@nuxt/devtools": "^2.4.1",
     "@nuxt/eslint-config": "^1.4.1",
-    "@vueuse/core": "^13.2.0",
-    "@vueuse/nuxt": "^13.2.0",
-    "@vueuse/rxjs": "^13.2.0",
+    "@vueuse/core": "^13.3.0",
+    "@vueuse/nuxt": "^13.3.0",
+    "@vueuse/rxjs": "^13.3.0",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
@@ -40,7 +40,7 @@
     "sass": "^1.89.0",
     "sass-loader": "^16.0.5",
     "vite-plugin-vuetify": "^2.1.1",
-    "vuetify": "^3.8.6",
+    "vuetify": "^3.8.7",
     "vuetify-nuxt-module": "^0.18.6"
   },
   "dependencies": {

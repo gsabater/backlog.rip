@@ -137,7 +137,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Fri 23 May 2025 - 12:55:27
+ * Modified: Tue 03 June 2025 - 17:03:45
  **/
 
 import filterService from '../../services/filterService'
@@ -170,7 +170,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useStateStore),
+    ...mapStores(useStateStore, useSearchStore),
     ...mapState(useStateStore, ['states', 'pinnedStates', 'unPinnedStates']),
     ...mapState(useSearchStore, ['f']),
 
@@ -477,10 +477,10 @@ export default {
 
       // Create a new filter
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let toAdd = { filter, mod, value }
-
       this.f.box = ''
-      this.f.filters.push(toAdd)
+      // this.f.filters.push(toAdd)
+      this.searchStore.addFilter({ filter, mod, value })
+
       this.$emit('selected', selected)
 
       // if (typeof this.$parent.hide == 'function') this.$parent.hide()

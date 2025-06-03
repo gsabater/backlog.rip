@@ -4,7 +4,7 @@
       v-for="option in mods"
       class="dropdown-item px-2"
       :class="{ active: option == mod }"
-      @click="selectMod(mod)">
+      @click="setMod(option)">
       <div class="d-flex justify-center" style="width: 30px">
         <Icon v-if="option == mod" size="16" width="2" class="me-1 text-green">
           Checks
@@ -26,7 +26,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Tue 15 April 2025 - 17:19:26
+ * Modified: Tue 03 June 2025 - 17:03:31
  **/
 
 import filterService from '../../services/filterService'
@@ -35,44 +35,50 @@ export default {
   name: 'SortMenu',
 
   props: {
-    // The current modifier
+    // The index of the filter
+    // Used to access this.f.filters[index]
+    // a value of -1 means the search string
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    mod: {
-      type: String,
-      default: '123',
-    },
-
-    // The mods array
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    mods: {
-      type: Array,
-      default: () => [],
+    index: {
+      type: Number,
+      default: 0,
     },
   },
 
-  emits: ['sort'],
-
   data() {
     return {
-      f: {},
-
-      ui: {
-        dice: 4,
-      },
+      ui: {},
     }
   },
 
   computed: {
+    ...mapStores(useSearchStore),
+
+    hook() {
+      return this.searchStore.f?.filters[this.index]
+    },
+
+    current() {
+      return filterService.definitions[this.hook.filter]
+    },
+
+    mod() {
+      return this.hook.mod
+    },
+
+    mods() {
+      return this.current.mods || []
+    },
+
     filterMods() {
       return filterService.mods
     },
   },
 
   methods: {
-    selectMod(by) {
-      this.$emit('sort', {
-        by,
-      })
+    setMod(by) {
+      this.searchStore.setFilter(this.index, by, null)
+      this.$mitt.emit('search:run')
     },
   },
 }

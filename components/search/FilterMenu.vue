@@ -4,10 +4,6 @@
     :class="headless ? '' : 'b-menu dropdown-menu show b-filter-menu'"
     :style="headless ? '' : 'min-width: 300px; letter-spacing: normal; overflow: visible'"
     v-bind="$attrs">
-    <!-- <div v-else class="dropdown-header">
-      <span class="text-muted">Filter by {{ currentConf.label }}</span>
-    </div> -->
-
     <!--
       *+---------------------------------
       *| Mod selector
@@ -50,291 +46,243 @@
       </div>
     </template>
 
-    <!--
+    <template v-else>
+      <!--
       *+---------------------------------
       *| Quick filter search
       *+--------------------------------- -->
-    <template v-if="!headless && isSearchEnabled">
-      <div class="dropdown-item" :class="{ disabled: ui.showMods }">
-        <input
-          ref="findOption"
-          v-model="ui.findOption"
-          type="text"
-          class="form-control form-control-flush"
-          :class="{ disabled: ui.showMods }"
-          placeholder="Search..." />
-      </div>
-      <div class="dropdown-divider"></div>
-    </template>
+      <template v-if="!headless && isSearchEnabled">
+        <div class="dropdown-item" :class="{ disabled: ui.showMods }">
+          <input
+            ref="findOption"
+            v-model="ui.findOption"
+            type="text"
+            class="form-control form-control-flush"
+            :class="{ disabled: ui.showMods }"
+            placeholder="Search..." />
+        </div>
+        <div class="dropdown-divider"></div>
+      </template>
 
-    <!--
+      <!--
       *+---------------------------------
       *| Filter type: number
       *| Range values
       *+--------------------------------- -->
-    <template v-if="current && current.type == 'number'">
-      <v-row class="my-4 px-2" justify="space-between">
-        <v-col class="text-center py-1">
-          <span class="text-h2 font-weight-light">
-            {{ item.value || '0' }}
-          </span>
-          <div
-            class="font-weight-light text-muted d-inline-block ps-1"
-            style="font-size: 1.9rem">
-            {{ currentConf.menuAppend }}
-          </div>
-        </v-col>
-        <v-col cols="12" class="text-muted text-center py-1">
-          <small>
-            {{ currentConf.menuSubtitle }}
-          </small>
-        </v-col>
-      </v-row>
+      <template v-if="current && current.type == 'number'">
+        <v-row class="my-4 px-2" justify="space-between">
+          <v-col class="text-center py-1">
+            <span class="text-h2 font-weight-light">
+              {{ item.value || '0' }}
+            </span>
+            <div
+              class="font-weight-light text-muted d-inline-block ps-1"
+              style="font-size: 1.9rem">
+              {{ currentConf.menuAppend }}
+            </div>
+          </v-col>
+          <v-col cols="12" class="text-muted text-center py-1">
+            <small>
+              {{ currentConf.menuSubtitle }}
+            </small>
+          </v-col>
+        </v-row>
 
-      <v-slider
-        v-model="item.value"
-        :max="100"
-        :step="1"
-        class="ma-4"
-        hide-details
-        @end="onValueChanged">
-        <template v-slot:append>
-          <v-text-field
-            class="p-0"
-            v-model="item.value"
-            density="compact"
-            style="width: 70px"
-            type="number"
-            min="0"
-            max="100"
-            hide-details
-            @update:model-value="onValueChanged"></v-text-field>
-        </template>
-      </v-slider>
-    </template>
+        <v-slider
+          v-model="item.value"
+          :max="100"
+          :step="1"
+          class="ma-4"
+          hide-details
+          @end="onValueChanged">
+          <template v-slot:append>
+            <v-text-field
+              class="p-0"
+              v-model="item.value"
+              density="compact"
+              style="width: 70px"
+              type="number"
+              min="0"
+              max="100"
+              hide-details
+              @update:model-value="onValueChanged"></v-text-field>
+          </template>
+        </v-slider>
+      </template>
 
-    <!--
+      <!--
       *+---------------------------------
       *| Filter type: time
       *| Range values
       *+--------------------------------- -->
-    <template v-else-if="current && current.type == 'time'">
-      <v-row class="my-4 px-2" justify="space-between">
-        <v-col class="text-center">
-          <span class="text-h2 font-weight-light">
-            {{ dates.minToHours(item.value) || '◌' }}
-          </span>
-        </v-col>
-      </v-row>
+      <template v-else-if="current && current.type == 'time'">
+        <v-row class="my-4 px-2" justify="space-between">
+          <v-col class="text-center">
+            <span class="text-h2 font-weight-light">
+              {{ dates.minToHours(item.value) || '◌' }}
+            </span>
+          </v-col>
+        </v-row>
 
-      <div class="px-3">
-        <v-number-input
-          label="minutes"
-          v-model="item.value"
-          :min="0"
-          :step="30"
-          controlVariant="stacked"
-          glow
-          inset
-          variant="solo-filled"
-          style="outline: 1px solid #23252e; border-radius: 3px"
-          hide-details
-          @update:model-value="onValueChanged" />
-      </div>
-    </template>
+        <div class="px-3">
+          <v-number-input
+            label="minutes"
+            v-model="item.value"
+            :min="0"
+            :step="30"
+            controlVariant="stacked"
+            glow
+            inset
+            variant="solo-filled"
+            style="outline: 1px solid #23252e; border-radius: 3px"
+            hide-details
+            @update:model-value="onValueChanged" />
+        </div>
+      </template>
 
-    <!--
+      <!--
       *+---------------------------------
       *| Filter type: array
       *| Range values
       *+--------------------------------- -->
-    <template v-else-if="current && current.type == 'array'">
-      <div
-        style="
-          padding: 3px;
-          overflow-y: auto;
-          max-height: 250px;
-          overscroll-behavior: contain;
-        "
-        nostyle="`max-height: ${ui.maxHeight}px;`">
+      <template v-else-if="current && current.type == 'array'">
         <div
-          v-for="(param, key) in options"
-          :key="key"
-          class="dropdown-item px-2"
-          :class="{
-            selected: isSelected(param),
-          }"
-          @click.stop="select(param)">
+          style="
+            padding: 3px;
+            overflow-y: auto;
+            max-height: 250px;
+            overscroll-behavior: contain;
+          "
+          nostyle="`max-height: ${ui.maxHeight}px;`">
           <div
-            nv-if="option.multiple !== false"
-            class="selection"
-            style="margin-right: 0.55rem">
-            <small v-if="headless" style="color: white">
-              {{ param[currentConf.opValue] }}
-            </small>
-            <input
-              v-else
-              type="checkbox"
-              class="form-check-input"
-              style="transform: scale(0.8)"
-              :checked="isSelected(param)" />
-          </div>
+            v-for="(param, key) in options"
+            :key="key"
+            class="dropdown-item px-2"
+            :class="{
+              selected: isSelected(param),
+            }"
+            @click.stop="select(param)">
+            <div
+              nv-if="option.multiple !== false"
+              class="selection"
+              style="margin-right: 0.55rem">
+              <small v-if="headless" style="color: white">
+                {{ param[currentConf.opValue] }}
+              </small>
+              <input
+                v-else
+                type="checkbox"
+                class="form-check-input"
+                style="transform: scale(0.8)"
+                :checked="isSelected(param)" />
+            </div>
 
-          <div class="content d-flex align-items-center w-100">
-            <!--
+            <div class="content d-flex align-items-center w-100">
+              <!--
               *+---------------------------------
               *| Array filter: state
               *+--------------------------------- -->
-            <template v-if="filter == 'state'">
-              <!-- <Icon
+              <template v-if="filter == 'state'">
+                <!-- <Icon
                                 v-if="param.key == 'favorites'"
                                 size="14"
                                 style="color: red; fill: pink">
                                 Heart
                               </Icon> -->
-              <!-- v-else -->
+                <!-- v-else -->
 
-              <!-- <Icon style="color: var(--tblr-primary)">SquareCheck</Icon>
+                <!-- <Icon style="color: var(--tblr-primary)">SquareCheck</Icon>
                             <Icon style="color: #666">Square</Icon> -->
 
-              <template v-if="param.id == -1">
-                <Icon size="12" class="me-1">CircleOff</Icon>
+                <template v-if="param.id == -1">
+                  <Icon size="12" class="me-1">CircleOff</Icon>
+                </template>
+
+                <span
+                  v-else
+                  class="badge me-2"
+                  :style="{ 'background-color': param.color || '' }"></span>
+
+                <span class="me-4">
+                  <!-- {{ param[currentConf.opValue] }} -->
+                  {{ param.name }}
+                </span>
+
+                <tippy
+                  v-if="!headless"
+                  :allow-h-t-m-l="true"
+                  class="text-muted ms-auto cursor-help"
+                  :content="param.description">
+                  <span class="form-help">?</span>
+                </tippy>
               </template>
 
-              <span
-                v-else
-                class="badge me-2"
-                :style="{ 'background-color': param.color || '' }"></span>
+              <template v-else-if="filter == 'genre'">
+                <span class="avatar avatar-xs me-2">
+                  {{ param.name[0] }}
+                </span>
 
-              <span class="me-4">
-                <!-- {{ param[currentConf.opValue] }} -->
-                {{ param.name }}
-              </span>
+                <span class="me-4">
+                  {{ param.name }}
+                </span>
+              </template>
 
-              <tippy
-                v-if="!headless"
-                :allow-h-t-m-l="true"
-                class="text-muted ms-auto cursor-help"
-                :content="param.description">
-                <span class="form-help">?</span>
-              </tippy>
-            </template>
-
-            <template v-else-if="filter == 'genre'">
-              <span class="avatar avatar-xs me-2">
-                {{ param.name[0] }}
-              </span>
-
-              <span class="me-4">
-                {{ param.name }}
-              </span>
-            </template>
-
-            <template v-else>
-              <Icon class="me-2" size="16">{{ param.icon ?? currentConf.icon }}</Icon>
-              <span class="me-4">
-                {{ param[currentConf.opLabel] }}
-              </span>
-            </template>
+              <template v-else>
+                <Icon class="me-2" size="16">{{ param.icon ?? currentConf.icon }}</Icon>
+                <span class="me-4">
+                  {{ param[currentConf.opLabel] }}
+                </span>
+              </template>
+            </div>
           </div>
         </div>
-      </div>
-    </template>
+      </template>
 
-    <!--
+      <!--
       *+---------------------------------
       *| Filter type: date
       *+--------------------------------- -->
-    <template v-else-if="current && current.type == 'date'">
-      <!-- <div class="hr-text mt-2 mb-3">Or pick</div> -->
-      <div
-        style="
-          zoom: 0.8;
-          display: flex;
-          flex-wrap: nowrap;
-          justify-content: center;
-          align-items: center;
-          padding: 10px;
-        ">
-        <v-date-picker
-          v-model="item.value"
-          nlandscape
-          ndivided
-          show-adjacent-months
-          elevation="2"
-          hide-header
-          bg-color="rgb(30 31 41)"
-          @update:model-value="onValueChanged">
-          <!-- <template v-slot:title></template> -->
-        </v-date-picker>
-        <!-- <div>
-                      <input type="month" value="2018-05" />
-                    </div> -->
-        <!-- <pre>
-                      {{ released }}
-                    </pre
-        > -->
-        <!-- <div class="input-group mb-1">
-          <select class="form-control">
-            <option selected="selected" disabled="disabled">Month</option>
-            <option value="01">January</option>
-            <option value="02">February</option>
-            <option value="03">March</option>
-            <option value="04">April</option>
-            <option value="05">May</option>
-            <option value="06">June</option>
-            <option value="07">July</option>
-            <option value="08">August</option>
-            <option value="09">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-          </select>
-          <select placeholder="asdasd" class="form-control" style="max-width: 43%">
-            <option selected="selected" disabled="disabled">Year</option>
-            <option
-              v-for="year in Array.from(
-                { length: $moment().year() - 1994 },
-                (_, i) => $moment().year() - i
-              )"
-              :value="year">
-              {{ year }}
-            </option>
-          </select>
-        </div> -->
-      </div>
-      <!-- </div> -->
+      <template v-else-if="current && current.type == 'date'">
+        <!-- <div class="hr-text mt-2 mb-3">Or pick</div> -->
+        <div
+          style="
+            zoom: 0.8;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+          ">
+          <v-date-picker
+            v-model="item.value"
+            nlandscape
+            ndivided
+            show-adjacent-months
+            elevation="2"
+            hide-header
+            bg-color="rgb(30 31 41)"
+            @update:model-value="onValueChanged">
+            <!-- <template v-slot:title></template> -->
+          </v-date-picker>
+        </div>
+      </template>
+
+      <template v-if="!headless">
+        <div class="dropdown-divider"></div>
+
+        <div
+          v-if="current.multiple"
+          class="dropdown-item text-muted disabled"
+          style="font-size: 0.75em">
+          Hold CTRL to select multiple
+        </div>
+
+        <div class="dropdown-item small" @click="$emit('reset')">
+          <Icon class="me-2" size="16">ArrowLeft</Icon>
+          <span class="me-4">Go back</span>
+        </div>
+      </template>
     </template>
-    <!-- </template> -->
-
-    <template v-if="!headless">
-      <div class="dropdown-divider"></div>
-
-      <div
-        v-if="current.multiple"
-        class="dropdown-item text-muted disabled"
-        style="font-size: 0.75em">
-        Hold CTRL to select multiple
-      </div>
-
-      <div class="dropdown-item small" @click="$emit('reset')">
-        <Icon class="me-2" size="16">ArrowLeft</Icon>
-        <span class="me-4">Go back</span>
-      </div>
-    </template>
-
-    <!--
-                <div class="dropdown-item">Features</div>
-                <div class="dropdown-item">Languages</div>
-                <div class="dropdown-item">Platform</div>
-                <div class="dropdown-item">Type</div>
-                <div class="dropdown-divider"></div>
-                <div class="dropdown-item">
-                  <div style="width: 30px">
-                    <Icon style="color: red; fill: pink">Heart</Icon>
-                  </div>
-                  <span>Opción</span>
-                </div> -->
   </div>
 </template>
 
@@ -344,7 +292,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Tue 03 June 2025 - 11:26:21
+ * Modified: Tue 03 June 2025 - 17:03:11
  **/
 
 import filterService from '../../services/filterService'
@@ -394,7 +342,6 @@ export default {
         filter: null,
         mod: null,
         value: null,
-        // selected: [], // for selecting arrays
       },
 
       ui: {
@@ -433,6 +380,7 @@ export default {
 
     isSearchEnabled() {
       // if (this.ui.showMods) return false
+      if (this.ui.showMods) return false
       if (this.current?.search === false) return false
       if (this.current?.type !== 'array') return false
 
@@ -462,24 +410,6 @@ export default {
     filterMods() {
       return filterService.mods
     },
-
-    // //+-------------------------------------------------
-    // // filterValue()
-    // // -----
-    // // Created on Mon Apr 07 2025
-    // //+-------------------------------------------------
-    // filterValue: {
-    //   get() {
-    //     return this.current.type === 'array' ? this.item.selected : this.item.value
-    //   },
-    //   set(val) {
-    //     if (this.current.type === 'array') {
-    //       this.item.selected = val
-    //     } else {
-    //       this.item.value = val
-    //     }
-    //   },
-    // },
 
     //+-------------------------------------------------
     // options()
@@ -519,19 +449,6 @@ export default {
       const value = this.item.value
 
       return 6000
-
-      const buckets = [900, 1800, 3000, 6000, 12000, 30000] // in minutes
-      const threshold = 60
-
-      // Find the smallest bucket where value is below (bucket - threshold)
-      for (let i = 0; i < buckets.length; i++) {
-        if (value < buckets[i] - threshold) {
-          return buckets[i]
-        }
-      }
-
-      // If value is very high, return the largest bucket
-      return buckets[buckets.length - 1]
     },
 
     sliderStep() {

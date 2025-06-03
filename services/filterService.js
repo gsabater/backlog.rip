@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Mon 02 June 2025 - 17:53:28
+ * Modified: Tue 03 June 2025 - 13:55:26
  */
 
 let $nuxt = null
@@ -37,6 +37,12 @@ export default {
     playtime: { type: 'time', mods: ['gte', 'lte'] },
     library: { type: 'date', mods: ['after', 'before', 'is'] },
     achievements: { type: 'number', mods: ['gte', 'lte'] },
+
+    /*
+      <div class="dropdown-item">Features</div>
+      <div class="dropdown-item">Platform</div>
+      <div class="dropdown-item">Type</div>
+    */
   },
 
   //+-------------------------------------------------

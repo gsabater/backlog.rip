@@ -45,9 +45,7 @@
         {{ filterMod }}
       </span>
       <b-tippy-sheety :autoclose="120" trigger="click">
-        <search-filter-mod-menu
-          mod="gt"
-          :mods="['is', 'gt', 'lt', 'gte', 'lte', 'not']" />
+        <search-filter-mod-menu :index="index" />
       </b-tippy-sheety>
     </div>
     <div class="tag-section tag-action filter-value">
@@ -111,7 +109,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Thu 29 May 2025 - 14:20:00
+ * Modified: Tue 03 June 2025 - 13:51:21
  **/
 
 import filterService from '../../services/filterService'

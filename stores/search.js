@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Tue 03 June 2025 - 11:27:48
+ * Modified: Tue 03 June 2025 - 16:53:54
  */
 
 import apiService from '../services/apiService'
@@ -412,7 +412,8 @@ export const useSearchStore = defineStore('search', {
     //+-------------------------------------------------
     setFilter(index, mod, value) {
       this.f.filters[index].mod = mod
-      this.f.filters[index].value = value
+      if (value) this.f.filters[index].value = value
+
       this.f.filters[index].valid = filterService.validate(this.f.filters[index])
     },
 

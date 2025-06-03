@@ -187,7 +187,7 @@
       </div>
     </NuxtLink>
 
-    <NuxtLink to="/import" class="dropdown-item mt-1">
+    <NuxtLink to="/import" class="dropdown-item">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
         <Icon size="16">Refresh</Icon>
       </span>
@@ -205,17 +205,16 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th March 2025
- * Modified: Wed 26 March 2025 - 16:24:55
+ * Modified: Thu 29 May 2025 - 17:26:09
  **/
 
 export default {
   name: 'SidebarNav',
-  props: {
-    pinnedStates: {
-      type: Array,
-      default: () => [],
-    },
+
+  computed: {
+    ...mapState(useStateStore, ['states', 'pinnedStates', 'unPinnedStates']),
   },
+
   methods: {
     goTo(path) {
       this.$router.push(path)

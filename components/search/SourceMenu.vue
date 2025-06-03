@@ -6,7 +6,7 @@
 
     <!-- <template v-if="withAll">
   </template> -->
-    <component :is="componentIs" class="dropdown-item" @click="select('all')">
+    <component :is="componentIs" class="dropdown-item" @click="changeSource('all')">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
         <Icon size="16" width="1.5" class="text-muted">Cards</Icon>
       </span>
@@ -20,7 +20,7 @@
       :is="componentIs"
       to="/library"
       class="dropdown-item"
-      @click="select('library')">
+      @click="changeSource('library')">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
         <Icon size="16" width="1.5" class="text-muted">LayoutDashboard</Icon>
       </span>
@@ -53,7 +53,7 @@
             :key="'state' + i"
             :to="'/library/' + state.slug"
             class="dropdown-item px-2"
-            @click="select('state:' + state.id)">
+            @click="changeSource('state:' + state.id)">
             <div class="content d-flex align-items-center w-100 px-1">
               <span
                 class="status-dot ms-1 me-4"
@@ -78,7 +78,7 @@
         nv-if="$auth.config.favorites"
         to="/library/favorites"
         class="dropdown-item"
-        @click="select('library:favorites')">
+        @click="changeSource('library:favorites')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
           <Icon size="16" width="1.5" class="text-muted">Heart</Icon>
         </span>
@@ -93,7 +93,7 @@
         v-if="$auth.config.pinned"
         to="/library/pinned"
         class="dropdown-item"
-        @click="select('library:pinned')">
+        @click="changeSource('library:pinned')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
           <Icon size="16" width="1.5" class="text-muted">Bookmark</Icon>
         </span>
@@ -108,7 +108,7 @@
         v-if="$auth.config.hidden"
         to="/library/hidden"
         class="dropdown-item"
-        @click="select('library:hidden')">
+        @click="changeSource('library:hidden')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
           <Icon size="16" width="1.5" class="text-muted">Cancel</Icon>
         </span>
@@ -132,7 +132,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th January 2025
- * Modified: Thu 03 April 2025 - 23:11:06
+ * Modified: Tue 03 June 2025 - 11:23:51
  **/
 
 export default {
@@ -177,7 +177,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useStateStore),
+    ...mapStores(useStateStore, useSearchStore),
     ...mapState(useSearchStore, ['f']),
     ...mapState(useStateStore, ['states', 'pinnedStates', 'unPinnedStates']),
 
@@ -188,6 +188,7 @@ export default {
     isExpanded() {
       if (this.ui.expanded) return true
       if (this.f.source !== 'all' && this.f.source !== 'library') return true
+      if (this.searchStore.hasFilter('state') !== false) return true
 
       return false
     },
@@ -201,24 +202,38 @@ export default {
     // Created on Mon Sep 23 2024
     // Created on Thu Apr 03 2025 - Moved logic to the menu
     //+-------------------------------------------------
-    select(source) {
+    changeSource(source) {
       if (typeof this.$parent.hide == 'function') this.$parent.hide()
 
       // this.$emit('change', source)
       this.f.source = source
 
-      // WIP: do that with filters array
+      // Add source to filters
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (source.includes('state:')) {
         const state = parseInt(source.split(':')[1])
-        this.f.states = [state]
+        let hook = this.searchStore.hasFilter('state')
+
+        if (hook !== false) {
+          this.searchStore.setFilter(hook, 'in', [state])
+        } else {
+          this.searchStore.addFilter({
+            filter: 'state',
+            mod: 'in',
+            value: [state],
+            source: 'sourceMenu',
+          })
+        }
+
+        this.f.show.tags = 'row'
       }
 
-      if (source == 'all') {
-        this.f.sortBy = 'score'
-        this.f.sortDir = 'desc'
-      }
+      // if (source == 'all') {
+      //   this.f.sortBy = 'score'
+      //   this.f.sortDir = 'desc'
+      // }
 
-      this.$mitt.emit('search:run')
+      // this.$mitt.emit('search:run')
     },
   },
 

@@ -4,23 +4,6 @@
     :class="headless ? '' : 'b-menu dropdown-menu show b-filter-menu'"
     :style="headless ? '' : 'min-width: 300px; letter-spacing: normal; overflow: visible'"
     v-bind="$attrs">
-    <!--
-      *+---------------------------------
-      *| Quick filter search
-      *+--------------------------------- -->
-    <template v-if="!headless && isSearchEnabled">
-      <div class="dropdown-item" :class="{ disabled: ui.showMods }">
-        <input
-          ref="findOption"
-          v-model="ui.findOption"
-          type="text"
-          class="form-control form-control-flush"
-          :class="{ disabled: ui.showMods }"
-          placeholder="Search..." />
-      </div>
-      <div class="dropdown-divider"></div>
-    </template>
-
     <!-- <div v-else class="dropdown-header">
       <span class="text-muted">Filter by {{ currentConf.label }}</span>
     </div> -->
@@ -69,10 +52,27 @@
 
     <!--
       *+---------------------------------
+      *| Quick filter search
+      *+--------------------------------- -->
+    <template v-if="!headless && isSearchEnabled">
+      <div class="dropdown-item" :class="{ disabled: ui.showMods }">
+        <input
+          ref="findOption"
+          v-model="ui.findOption"
+          type="text"
+          class="form-control form-control-flush"
+          :class="{ disabled: ui.showMods }"
+          placeholder="Search..." />
+      </div>
+      <div class="dropdown-divider"></div>
+    </template>
+
+    <!--
+      *+---------------------------------
       *| Filter type: number
       *| Range values
       *+--------------------------------- -->
-    <template v-else-if="current && current.type == 'number'">
+    <template v-if="current && current.type == 'number'">
       <v-row class="my-4 px-2" justify="space-between">
         <v-col class="text-center py-1">
           <span class="text-h2 font-weight-light">
@@ -344,7 +344,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Thu 08 May 2025 - 16:00:35
+ * Modified: Tue 03 June 2025 - 11:26:21
  **/
 
 import filterService from '../../services/filterService'

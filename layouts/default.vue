@@ -1014,7 +1014,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Wed 28 May 2025 - 18:13:36
+ * Modified: Thu 29 May 2025 - 17:26:27
  **/
 
 export default {
@@ -1035,17 +1035,17 @@ export default {
     ...mapStores(useStateStore, useCloudStore),
     ...mapState(useStateStore, ['states']),
 
-    //+-------------------------------------------------
-    // function()
-    // TODO: use the method in the store
-    // -----
-    // Created on Wed Apr 03 2024
-    //+-------------------------------------------------
-    pinnedStates() {
-      if (!this.$app.ready) return []
-      const pinned = this.$auth?.menu?.states || []
-      return this.states.filter((state) => pinned.includes(state.id))
-    },
+    // //+-------------------------------------------------
+    // // function()
+    // // TODO: use the method in the store
+    // // -----
+    // // Created on Wed Apr 03 2024
+    // //+-------------------------------------------------
+    // pinnedStates() {
+    //   if (!this.$app.ready) return []
+    //   const pinned = this.$auth?.menu?.states || []
+    //   return this.states.filter((state) => pinned.includes(state.id))
+    // },
   },
 
   methods: {

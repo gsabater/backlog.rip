@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Thu 29 May 2025 - 15:14:44
+ * Modified: Tue 03 June 2025 - 11:27:48
  */
 
 import apiService from '../services/apiService'
@@ -19,6 +19,7 @@ let $repos = null
 // Stores instances for each search executed
 //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // let hashed = {}
+let latest = null
 
 export const useSearchStore = defineStore('search', {
   state: () => ({
@@ -80,13 +81,17 @@ export const useSearchStore = defineStore('search', {
 
   actions: {
     //+-------------------------------------------------
-    // getSearch()
-    // Returns the search object for a given hash
+    // getSearchResults()
+    // Returns the array of results for the hashed search
+    // -----
+    // TODO: this should be refactored when the hash of searches is implemented
     // -----
     // Created on Mon Jan 06 2025
     //+-------------------------------------------------
-    getSearch(hash) {
-      console.warn('deleteme ...')
+    getSearchResults(hash) {
+      // Temporaly return latest
+      return latest
+
       // if (!hash) hash = this.latest
       // return hashed[hash] ?? null
     },
@@ -106,61 +111,127 @@ export const useSearchStore = defineStore('search', {
     // Updated on Tue Jan 14 2025 - Moved to searchStore
     // Updated on Tue Apr 29 2025 - Better merge of route filters
     //+-------------------------------------------------
-    async prepare(filters) {
+    async prepare(config = {}) {
       let f = {}
-      let merged = {}
-
-      filters = filters || {}
       const base = JSON.parse(JSON.stringify(this.base))
-      f = { ...base, ...filters }
 
-      const route = await this.routeParams(f)
+      // Merge the given filters and the template
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      f = this.mergeBaseFilters(f, base || {})
+      f = this.mergeBaseFilters(f, config || {})
 
-      merged = {
-        ...f,
-        ...route.base,
-        filters: route.filters,
+      // Route base params
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      const route = this.getRouteParams()
+      f = this.mergeBaseFilters(f, route)
+
+      // Route filters
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      const filters = await this.getRouteFilters()
+      if (filters.length) {
+        f.filters = filters
+        f.show.tags = 'bar'
       }
 
-      this.f = merged
+      this.f = f
+    },
+
+    mergeBaseFilters(base, changes = {}) {
+      base.string = changes.string || base.string || ''
+      base.filters = changes.filters || base.filters || []
+
+      base.source = changes.source || base.source
+      base.sortBy = changes.sortBy || base.sortBy
+      base.sortDir = changes.sortDir || base.sortDir
+
+      base.box = base.string
+      base.show = changes.show || base.show || {}
+
+      return base
     },
 
     //+-------------------------------------------------
-    // routeParams()
-    // Extract filters from the route.
+    // getRouteParams()
+    // Extract filters from the route and the query string
+    // only return base filters (string, source, sortBy, sortDir)
     // -----
     // Created on Tue Jan 14 2025
+    // Created on Sun Jun 01 2025 - Small improvements
     //+-------------------------------------------------
-    async routeParams(base) {
+    getRouteParams() {
       const $route = useRoute()
+
+      let filters = {}
 
       // Default values for library viewing
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if ($route.path.includes('library')) {
-        base.source = 'library'
-        base.sortBy = 'playtime'
-        base.sortDir = 'desc'
+        filters.source = 'library'
+        filters.sortBy = 'playtime'
+      }
+
+      // Default values for all games
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if ($route.path.includes('/games/')) {
+        filters.sortBy = 'score'
+        filters.sortDir = 'desc'
+      }
+
+      // Dynamically detect some source options from the slug
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      const library = ['pinned', 'hidden', 'favorites']
+      let slug = Array.isArray($route.params?.slug)
+        ? $route.params.slug[0]
+        : $route.params?.slug
+
+      if (library.includes(slug)) {
+        filters.source = 'library:' + slug
       }
 
       // Handle query base filters
       // Those are search, sort and show
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      base.string = $route.query.search || base.string
-      base.sortBy = $route.query.sortBy || base.sortBy
-      base.sortDir = $route.query.sortDir || base.sortDir
-      base.box = base.string
+      filters.string = $route.query.search || filters.string
+      filters.sortBy = $route.query.sortBy || filters.sortBy
+      filters.sortDir = $route.query.sortDir || filters.sortDir
+      filters.box = filters.string
 
-      // Handle the query params
-      // Those are the params after the "?"
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      let query = $route.fullPath.split('?')[1] || null
-      let filters = this.handleQueryFilters(query)
-      if (filters.length) base.show.tags = 'bar'
+      return filters
+    },
 
-      // Handle the slug param
+    //+-------------------------------------------------
+    // getRouteFilters()
+    // Extracts filters from the query string
+    // -----
+    // Created on Sun Jun 01 2025
+    //+-------------------------------------------------
+    async getRouteFilters() {
+      const $route = useRoute()
+      let filters = []
+
+      // query are params after the "?"
+      // Slug is the last part of the path
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       let slug = $route.params?.slug || null
-      let pep = await this.handleRouteSlug(slug)
+      let query = $route.fullPath.split('?')[1] || null
+
+      // Part of the route is the slug
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      let slugged = await this.handleSlugFilter(slug)
+      if (slugged && slugged.length) {
+        filters = [...filters, ...slugged]
+      }
+
+      // Route query filters
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      let queried = this.handleRouteFilters(query)
+      filters = [...filters, ...queried]
+
+      // let { routeBase, getRouteFilters } = await this.handleRoute(slug, query)
+
+      // debugger
+      // base = { ...base, ...routeBase }
+      // if (filters.length) base.show.tags = 'bar'
 
       // Handle is modifier
       // "is" is a special flag to identify easily source
@@ -171,54 +242,85 @@ export const useSearchStore = defineStore('search', {
       //   filters.source = filters.is
       // }
 
-      return {
-        base: base,
-        filters: filters,
-      }
-    },
-
-    async handleRouteSlug() {
-      return 123
-      if (slug && typeof slug == 'object') slug = slug[0]
-
-      if (slug) {
-        if (['pinned', 'hidden', 'favorites'].includes(slug)) {
-          base.source = 'library:' + slug
-          base.is = slug
-          slugged = true
-        }
-
-        // Dynamically add state as a filter
-        // When the slug is set and found in the states array
-        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (!slugged && $state.states.length) {
-          const state = $state.states.find((g) => g.slug == slug)
-          if (state) {
-            // filters.states = [state.id]
-            // TODO: Add new filter
-            slugged = true
-          }
-        }
-
-        // Dynamically add genre as a filter
-        // When the slug is set and found in the genres array
-        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (!slugged) {
-          let genres = null
-
-          genres = await $repos.getGenres()
-          // if (!$repos.genres.length) genres = await $repos.getGenres()
-          // else genres = $repos.genres
-
-          const genre = genres.find((g) => g.slug == slug)
-          // TODO: add new filter
-          // if (genre) filters.genres = [genre.id]
-        }
-      }
+      return filters
     },
 
     //+-------------------------------------------------
-    // handleQueryFilters()
+    // handleRoute()
+    // -----
+    // Created on Sat May 31 2025
+    //+-------------------------------------------------
+    // async handleRoute(slug, query) {
+    //   let filters = this.handleRouteFilters(query)
+    //   let slugged = await this.handleSlugFilter(slug)
+
+    //   filters = filters || []
+    //   filters = [...filters, ...slugged.routeFilters]
+
+    //   return {
+    //     routeBase: slugged,
+    //     routeFilters: filters,
+    //   }
+    // },
+
+    //+-------------------------------------------------
+    // handleSlugFilter()
+    // Assign genres, source and states to the filters
+    // Dynamically detected from the slug
+    // -----
+    // Created on Sat May 31 2025
+    //+-------------------------------------------------
+    async handleSlugFilter(slug) {
+      if (!slug) return
+      if (Array.isArray(slug) && slug.length > 0) slug = slug[0]
+
+      let filters = []
+      let slugged = false
+
+      // Dynamically add state as a filter
+      // When the slug is set and found in the states array
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      $state ??= useStateStore()
+      if (!slugged && $state.states.length) {
+        const state = $state.states.find((g) => g.slug == slug)
+        if (state) {
+          slugged = true
+          // Todo : validate? filterService.validate(f)
+          filters.push({
+            filter: 'state',
+            mod: 'in',
+            value: state ? [state.id] : [],
+
+            valid: true,
+            source: 'slug',
+          })
+        }
+      }
+
+      // Dynamically add genre as a filter
+      // When the slug is set and found in the genres array
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (!slugged) {
+        let genres = await $repos.getGenres()
+
+        const genre = genres.find((g) => g.slug == slug)
+        if (genre?.id) {
+          filters.push({
+            filter: 'genre',
+            mod: 'in',
+            value: genre ? [genre.id] : [],
+
+            valid: true,
+            source: 'slug',
+          })
+        }
+      }
+
+      return filters
+    },
+
+    //+-------------------------------------------------
+    // handleRouteFilters()
     // Extract filters from a query string
     // Query string is something like this:
     // .../library?score.gte.85
@@ -228,7 +330,7 @@ export const useSearchStore = defineStore('search', {
     // Created on Tue Apr 29 2025
     // Updated on Tue May 13 2025 - Added string support
     //+-------------------------------------------------
-    handleQueryFilters(query) {
+    handleRouteFilters(query) {
       if (!query) return []
 
       let params = query.split('&')
@@ -273,8 +375,20 @@ export const useSearchStore = defineStore('search', {
           }
         }
 
-        return { filter, mod, value }
+        return { filter, mod, value, valid: true }
       })
+    },
+
+    //+-------------------------------------------------
+    // hasFilter()
+    // Check if the type is in the filters and returns the index
+    // -----
+    // Created on Mon Jun 02 2025
+    //+-------------------------------------------------
+    hasFilter(type) {
+      if (!this.f || !this.f.filters || this.f.filters.length == 0) return false
+
+      return this.f.filters.findIndex((f) => f.filter == type)
     },
 
     //+-------------------------------------------------
@@ -417,10 +531,8 @@ export const useSearchStore = defineStore('search', {
         return { type: 'pinned', apps: $data.list() }
       }
 
-      // TODO: this could be a pre-filter in $data
-      // that can potentially be better than filtering in the service the whole lib
       if (filters.source.includes(':hidden')) {
-        return { type: 'hidden', apps: $data.library() }
+        return { type: 'hidden', apps: $data.list() }
       }
 
       if (filters.source.includes(':favorites')) {
@@ -458,6 +570,7 @@ export const useSearchStore = defineStore('search', {
       let filtered = searchService.filter(source.apps, filters)
       let paginated = searchService.paginate(filtered.items, filters.show)
       let hash = filterService.makeHash(filters)
+      latest = filtered.items
 
       // Search for the API
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -516,22 +629,22 @@ export const useSearchStore = defineStore('search', {
     // Created on Sun Jan 05 2025
     // Created on Sun Mar 30 2025 - Disable hashes
     //+-------------------------------------------------
-    filter(hash, source, filters) {
-      console.warn('deleteme ...')
-      if (!hash) return searchService.filter(source.apps, filters)
+    // filter(hash, source, filters) {
+    //   console.warn('deleteme ...')
+    //   if (!hash) return searchService.filter(source.apps, filters)
 
-      this.latest = hash
-      if (hashed[hash]) {
-        // log('search', `· ⇢  Hash used`, hash)
-        // return hashed[hash]
-      }
+    //   this.latest = hash
+    //   if (hashed[hash]) {
+    //     // log('search', `· ⇢  Hash used`, hash)
+    //     // return hashed[hash]
+    //   }
 
-      let filtered = searchService.filter(source.apps, filters)
-      hashed[hash] = filtered
-      // log('search', `· ⇢  Hash cached ✅`, hash)
+    //   let filtered = searchService.filter(source.apps, filters)
+    //   hashed[hash] = filtered
+    //   // log('search', `· ⇢  Hash cached ✅`, hash)
 
-      return filtered
-    },
+    //   return filtered
+    // },
 
     //+-------------------------------------------------
     // resetHashed()

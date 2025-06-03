@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 14th March 2024
- * Modified: Fri 02 May 2025 - 11:48:54
+ * Modified: Thu 29 May 2025 - 17:23:06
  **/
 
 // [data-bs-theme='dark'] {
@@ -57,6 +57,7 @@ aside .dropdown-menu {
   }
 
   & .dropdown-item {
+    gap: 0;
     border-radius: 3px;
     padding: 0.45rem var(--tblr-dropdown-item-padding-x);
   }

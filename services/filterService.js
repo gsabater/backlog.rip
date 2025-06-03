@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Thu 29 May 2025 - 15:37:41
+ * Modified: Mon 02 June 2025 - 17:53:28
  */
 
 let $nuxt = null
@@ -165,6 +165,7 @@ export default {
     },
 
     achievements: {
+      advanced: true,
       label: 'Achievements',
       icon: 'Trophy',
       desc: 'Filter games by their achievements completion',
@@ -409,8 +410,8 @@ export default {
   // Created on Mon Apr 07 2025
   //+-------------------------------------------------
   valueInArrayFilter(input, mod, value) {
-    // if (!input) input = null
-    if (!Array.isArray(input)) return false
+    if (!input) input = null
+    // if (!Array.isArray(input)) return false
 
     // Handle special case for -1 (no state)
     const hasNoState = value.includes(-1)

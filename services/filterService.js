@@ -3,10 +3,12 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Tue 03 June 2025 - 13:55:26
+ * Modified: Wed 04 June 2025 - 16:52:23
  */
 
 let $nuxt = null
+let $repos = null
+let $state = null
 
 export default {
   //+-------------------------------------------------
@@ -274,6 +276,60 @@ export default {
     }
 
     return valid
+  },
+
+  //+-------------------------------------------------
+  // getFilterLabel()
+  // Returns the label for the filter + value
+  // -----
+  // Created on Wed Jun 04 2025
+  //+-------------------------------------------------
+  getFilterLabel(filter) {
+    const { filter: by, mod, value } = filter
+    const first = value[0]
+
+    if (by == 'state') {
+      $state ??= useStateStore()
+      let item = $state.get(first) || {}
+
+      if (first == -1) {
+        item.color = null
+        item.name = 'No state'
+      }
+
+      return {
+        label: item.name,
+        color: item.color,
+        // icon
+      }
+    }
+
+    if (by == 'genre') {
+      $repos ??= useRepositoryStore()
+      let genres = $repos.keyedGenres
+      let item = genres[first]
+      if (!item) return null
+
+      return {
+        label: item.name,
+        // color: item.color,
+        // icon
+      }
+    }
+
+    if (by == 'language') {
+      let languages = enums.LANGUAGES
+      let item = languages.find((l) => l.key === first)
+      if (!item) return null
+      return {
+        label: item.label,
+        // color: item.color,
+        // icon
+      }
+    }
+
+    console.warn(`No label for filter "${by}" with value "${value}"`)
+    return null
   },
 
   //+-------------------------------------------------

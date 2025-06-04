@@ -54,10 +54,16 @@
       </div>
 
       <div v-else-if="isArray" class="text-nowrap px-1">
-        <!-- <span class="badge" style="background-color: blue"></span>
-        <span class="badge" style="background-color: blue"></span>
-        <span class="badge" style="background-color: blue"></span> -->
-        {{ filterValue.length }} {{ currentConf.plural ?? currentConf.label }}
+        <template v-if="filterValue.length == 1 && firstArrayLabel">
+          <!-- <span class="badge" style="background-color: blue"></span> -->
+          {{ firstArrayLabel }}
+        </template>
+        <span v-else>
+          <!-- <span class="badge" style="background-color: blue"></span>
+          <span class="badge" style="background-color: blue"></span>
+          <span class="badge" style="background-color: blue"></span> -->
+          {{ filterValue.length }} {{ currentConf.plural ?? currentConf.label }}
+        </span>
       </div>
 
       <div v-else-if="isDate" class="text-nowrap px-1">
@@ -71,7 +77,11 @@
         {{ dates.minToHours(filterValue) }}
       </div>
 
-      <input
+      <div v-else class="text-nowrap px-1">
+        {{ filterValue }}
+      </div>
+
+      <!-- <input
         v-else
         placeholder="..."
         v-model="searchStore.f.filters[index].value"
@@ -79,7 +89,7 @@
         @mousedown.stop
         @input="runSearch"
         @keydown="handleKeydown"
-        :style="`width: ${5 + filterValue.length * 9}px`" />
+        :style="`width: ${5 + filterValue.length * 9}px`" /> -->
 
       <!-- n@click.stop.prevent="showTippy"
         n@focus.stop="showTippy"  -->
@@ -88,7 +98,7 @@
         v-if="!isKeyboard || isArray"
         ref="optionsTippy"
         :autoclose="120"
-        :trigger="isInput ? 'focusin' : 'click'"
+        trigger="click"
         placement="bottom">
         <search-filter-menu
           ref="filterMenu"
@@ -109,7 +119,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Tue 03 June 2025 - 13:51:21
+ * Modified: Wed 04 June 2025 - 16:43:34
  **/
 
 import filterService from '../../services/filterService'
@@ -193,6 +203,7 @@ export default {
           filter: 'string',
           mod: 'is',
           value: this.f.string,
+          valid: true,
         }
 
       return this.searchStore.f?.filters[this.index]
@@ -240,6 +251,17 @@ export default {
     options() {
       let data = this.hook.data
       return this[data] ?? ['pikachu']
+    },
+
+    //+-------------------------------------------------
+    // firstArrayLabel()
+    // Returns the first value of the array by value
+    // -----
+    // Created on Wed Jun 04 2025
+    //+-------------------------------------------------
+    firstArrayLabel() {
+      let first = filterService.getFilterLabel(this.hook)
+      return first?.label
     },
   },
 

@@ -292,7 +292,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Tue 03 June 2025 - 17:03:11
+ * Modified: Wed 04 June 2025 - 13:48:09
  **/
 
 import filterService from '../../services/filterService'
@@ -388,11 +388,11 @@ export default {
     },
 
     isArray() {
-      return this.current.type == 'array'
+      return this.current?.type == 'array'
     },
 
     isTime() {
-      return this.current.type == 'time'
+      return this.current?.type == 'time'
     },
 
     hook() {
@@ -404,7 +404,7 @@ export default {
     },
 
     currentConf() {
-      return filterService.configurations[this.filter]
+      return filterService.configurations[this.filter] || {}
     },
 
     filterMods() {

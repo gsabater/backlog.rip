@@ -28,6 +28,8 @@ trigger.config.ts
 .assets/P22 Mackinac.zip
 .assets/exports/*
 .assets/Mackinac/*
+.assets/Transhumans/*
+
 .dev/*
 .bruno/*
 pages/dev/*

@@ -3,8 +3,10 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Fri 07 February 2025 - 20:02:12
+ * Modified: Fri 23 May 2025 - 14:08:36
  */
+
+import filterService from './filterService'
 
 export default {
   //+-------------------------------------------------
@@ -14,6 +16,7 @@ export default {
   // Created on Tue Jan 09 2024
   // Updated on Wed Jul 24 2024 - Added fav
   // Updated on Fri Feb 07 2025 - Added languages
+  // Updated on Sun May 11 2025 - Moved filter logic to filterService
   //+-------------------------------------------------
   filter(source, filters) {
     let items = []
@@ -30,23 +33,8 @@ export default {
 
       // if (app.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48') debugger
 
-      // ✨ Filter: Backlog state
-      // Match with app.state
-      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.states?.length) {
-        const { states } = filters
-
-        // Special case: check if -1 is in the states array
-        const withNoState = states.includes(-1)
-
-        if (!states.includes(app.state) && !(withNoState && !app.state)) {
-          filtered.push(app.uuid)
-          continue
-        }
-      }
-
       // ✨ App is...
-      // Filter apps based on filters.is
+      // Filter apps based on their source
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.is) {
         if (filters.is == 'favorites' && !app.is?.fav) {
@@ -64,6 +52,32 @@ export default {
           continue
         }
       }
+
+      // Apply the filters array
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (filters.filters?.length) {
+        let isValid = this.applyFilters(app, filters)
+        if (!isValid) {
+          // console.warn('🛑 Skipping because filter', app.name, app.score)
+          filtered.push(app.uuid)
+          continue
+        }
+      }
+
+      // ✨ Filter: Backlog state
+      // Match with app.state
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // if (filters?.states?.length) {
+      //   const { states } = filters
+
+      //   // Special case: check if -1 is in the states array
+      //   const withNoState = states.includes(-1)
+
+      //   if (!states.includes(app.state) && !(withNoState && !app.state)) {
+      //     filtered.push(app.uuid)
+      //     continue
+      //   }
+      // }
 
       // ✨ Filter: Hidden games
       // Remove any games hidden
@@ -111,96 +125,96 @@ export default {
       // ✨ Filter: Genres
       // Include only apps with genres
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.genres?.length) {
-        if (!app.genres?.some((item) => filters?.genres.includes(item))) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
+      // if (filters?.genres?.length) {
+      //   if (!app.genres?.some((item) => filters?.genres.includes(item))) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
 
-          continue
-        }
-      }
+      //     continue
+      //   }
+      // }
 
       // ✨ Filter: Language
       // Include only apps with selected language
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.languages?.length) {
-        if (!app.languages?.some((item) => filters?.languages.includes(item))) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has not language', filters.language, app.languages)
+      // if (filters?.languages?.length) {
+      //   if (!app.languages?.some((item) => filters?.languages.includes(item))) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has not language', filters.language, app.languages)
 
-          continue
-        }
-      }
+      //     continue
+      //   }
+      // }
 
       // ✨ Date in library
       // Include apps that are in lib
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters.sortBy == 'date.lib') {
-        if (!app.is?.lib) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
+      // if (filters.sortBy == 'date.lib') {
+      //   if (!app.is?.lib) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
 
-          continue
-        }
-      }
+      //     continue
+      //   }
+      // }
 
       // ✨ Sort By: Release date
       // Include only apps with release date
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.released > 0 || filters?.sortBy == 'date.released') {
-        if (!app.dates?.released) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
+      // if (filters?.released > 0 || filters?.sortBy == 'date.released') {
+      //   if (!app.dates?.released) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has no release date', filters.genres, app.genres)
 
-          continue
-        }
+      //     continue
+      //   }
 
-        if (app.dates.released > now) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because released in the future', filters.released, app.released_at
+      //   if (app.dates.released > now) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because released in the future', filters.released, app.released_at
 
-          continue
-        }
+      //     continue
+      //   }
 
-        if (app.dates.released < filters.released) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because released before', filters.released, app.released_at)
+      //   if (app.dates.released < filters.released) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because released before', filters.released, app.released_at)
 
-          continue
-        }
-      }
+      //     continue
+      //   }
+      // }
 
       // ✨ Sort By: HLTB
       // Include only apps with HLTB time
       // Sort by HLTB.main
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.sortBy == 'hltb') {
-        if (!app.hltb?.main) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
+      // if (filters?.sortBy == 'hltb') {
+      //   if (!app.hltb?.main) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has not genre', filters.genres, app.genres)
 
-          continue
-        }
-      }
+      //     continue
+      //   }
+      // }
 
       // ✨ Sort By: Scores
       // Include only apps with data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (
-        ['score', 'metascore', 'oc', 'steamscore', 'steamdb'].includes(filters?.sortBy)
-      ) {
-        if (filters.sortBy == 'score' && filters.sortDir == 'asc' && !app.score) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has no score', filters.sortBy, app.score)
-          continue
-        }
+      // if (
+      //   ['score', 'metascore', 'oc', 'steamscore', 'steamdb'].includes(filters?.sortBy)
+      // ) {
+      //   if (filters.sortBy == 'score' && filters.sortDir == 'asc' && !app.score) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has no score', filters.sortBy, app.score)
+      //     continue
+      //   }
 
-        if (filters.sortBy !== 'score' && !app.scores[filters.sortBy]) {
-          filtered.push(app.uuid)
-          // console.warn('🛑 Skipping because has no metascore', filters.sortBy, app.metascore)
-          continue
-        }
-      }
+      //   if (filters.sortBy !== 'score' && !app.scores[filters.sortBy]) {
+      //     filtered.push(app.uuid)
+      //     // console.warn('🛑 Skipping because has no metascore', filters.sortBy, app.metascore)
+      //     continue
+      //   }
+      // }
 
       // Finally,
       // Modify and add the app to items
@@ -246,6 +260,10 @@ export default {
         toSort.push({ uuid: app.uuid, val: app.playtime?.steam || 0 })
       }
 
+      if (filters?.sortBy == 'achievements') {
+        toSort.push({ uuid: app.uuid, val: app._?.astats?.percentage || 0 })
+      }
+
       if (filters?.sortBy == 'hltb') {
         toSort.push({ uuid: app.uuid, val: app.hltb?.main || 0 })
       }
@@ -273,6 +291,27 @@ export default {
       results: items.length,
       filtered: filtered.length,
     }
+  },
+
+  //+-------------------------------------------------
+  // applyFilters()
+  // Applies the filters array
+  // -----
+  // Created on Sat Mar 29 2025
+  //+-------------------------------------------------
+  applyFilters(app, f) {
+    let isValid = true
+
+    for (const filter of f.filters) {
+      let valid = filterService.filterBy(app, filter)
+      // console.warn('Filter for ', app.name, filter, valid)
+      if (!valid) {
+        isValid = false
+        break
+      }
+    }
+
+    return isValid
   },
 
   //+-------------------------------------------------
@@ -312,6 +351,7 @@ export default {
         'steamscore',
         'steamdb',
         'playtime',
+        'achievements',
         'date.lib',
         'date.released',
       ].includes(sortBy)
@@ -349,67 +389,67 @@ export default {
     return items.slice(0, end)
   },
 
-  //+-------------------------------------------------
-  // makeHash()
-  // Generates an unique hash to identify a search instance
-  // -----
-  // Created on Sun Jan 05 2025
-  //+-------------------------------------------------
-  makeHash(source, filters) {
-    if (source.type == 'array') return null
+  // //+-------------------------------------------------
+  // // makeHash()
+  // // Generates an unique hash to identify a search instance
+  // // -----
+  // // Created on Sun Jan 05 2025
+  // //+-------------------------------------------------
+  // makeHash(source, filters) {
+  //   if (source.type == 'array') return null
 
-    let f = {
-      string: filters.string,
-      sortBy: filters.sortBy,
-      sortDir: filters.sortDir,
-      // released: filters.released,
-      genres: filters.genres,
-      states: filters.states,
-      languages: filters.languages,
-    }
+  //   let f = {
+  //     string: filters.string,
+  //     sortBy: filters.sortBy,
+  //     sortDir: filters.sortDir,
+  //     // released: filters.released,
+  //     genres: filters.genres,
+  //     states: filters.states,
+  //     languages: filters.languages,
+  //   }
 
-    let json = JSON.stringify(f)
-    let base = btoa(json)
-    let hash = source.type + '#' + Object.keys(source.apps).length + ':' + base
+  //   let json = JSON.stringify(f)
+  //   let base = btoa(json)
+  //   let hash = source.type + '#' + Object.keys(source.apps).length + ':' + base
 
-    return hash
-  },
+  //   return hash
+  // },
 
-  //+-------------------------------------------------
-  // searchHash()
-  // Sanitizes and creates a hash for the search to API
-  // -----
-  // Created on Wed May 01 2024
-  // Created on Tue Jan 14 2025 - Moved to searchService
-  //+-------------------------------------------------
-  makeApiHash(f = {}) {
-    f.string = f.string?.trim()
+  // //+-------------------------------------------------
+  // // searchHash()
+  // // Sanitizes and creates a hash for the search to API
+  // // -----
+  // // Created on Wed May 01 2024
+  // // Created on Tue Jan 14 2025 - Moved to searchService
+  // //+-------------------------------------------------
+  // makeApiHash(f = {}) {
+  //   f.string = f.string?.trim()
 
-    let emptyString = !f.string || f.string?.length < 3
-    let dirty = ['genres', 'anotherArrayProperty'].some(
-      (prop) => Array.isArray(f[prop]) && f[prop].length > 0
-    )
+  //   let emptyString = !f.string || f.string?.length < 3
+  //   let dirty = ['genres', 'anotherArrayProperty'].some(
+  //     (prop) => Array.isArray(f[prop]) && f[prop].length > 0
+  //   )
 
-    if (f.sortBy == 'rand') return null
-    if (f.sortBy == 'score' && f.sortDir == 'desc' && emptyString && !dirty) return null
-    if (f.sortBy == 'playtime' && emptyString) return null
+  //   if (f.sortBy == 'rand') return null
+  //   if (f.sortBy == 'score' && f.sortDir == 'desc' && emptyString && !dirty) return null
+  //   if (f.sortBy == 'playtime' && emptyString) return null
 
-    delete f.is
-    delete f.mods
-    delete f.show
-    delete f.source
-    delete f.states
+  //   delete f.is
+  //   delete f.mods
+  //   delete f.show
+  //   delete f.source
+  //   delete f.states
 
-    if (emptyString) delete f.string
-    if (!f.released) delete f.released
-    if (f.genres?.length == 0) delete f.genres
+  //   if (emptyString) delete f.string
+  //   if (!f.released) delete f.released
+  //   if (f.genres?.length == 0) delete f.genres
 
-    const json = JSON.stringify(f)
-    const slug = btoa(json)
-    const hash = 'API' + ':' + slug
+  //   const json = JSON.stringify(f)
+  //   const slug = btoa(json)
+  //   const hash = 'API' + ':' + slug
 
-    return { hash, slug, json }
-  },
+  //   return { hash, slug, json }
+  // },
 
   //+-------------------------------------------------
   // cleanAppName()

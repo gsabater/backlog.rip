@@ -6,7 +6,7 @@
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Sun 05 January 2025 - 17:05:30
+ * Modified: Mon 28 April 2025 - 17:57:47
  */
 
 import { defineNuxtConfig } from 'nuxt/config';
@@ -45,10 +45,9 @@ export default defineNuxtConfig({
   components: true,
 
   modules: [
-    // '@nuxt/image',
     '@nuxt/content',
     '@nuxt/devtools',
-    '@nuxtjs/seo',
+    // '@nuxtjs/seo',
     '@pinia/nuxt',
     '@vueuse/nuxt',
 
@@ -102,9 +101,15 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: {
+        'data-tabler': 'backlog',
+
+        'data-bs-theme': 'dark',
+        'data-bs-theme-base': 'zinc', // slate, gray, zinc, neutral, stone
+      },
+
       bodyAttrs: {
         'class': 'antialiased',
-        'data-bs-theme': 'dark',
       },
     },
   },
@@ -127,25 +132,23 @@ export default defineNuxtConfig({
   },
 
 
-  sitemap: {
-    enabled: false
-    // // exclude all app sources
-    // excludeAppSources: true,
-    // cacheMaxAgeSeconds: 3600 * 24,
+  // sitemap: {
+  //   enabled: false
+  //   // // exclude all app sources
+  //   // excludeAppSources: true,
+  //   // cacheMaxAgeSeconds: 3600 * 24,
 
-    // // Build time sitemap
-    // urls: async () => {
-    //   const urls = await fetch('https://api.backlog.rip/sitemap.xml')
-    //   return urls
-    // }
+  //   // // Build time sitemap
+  //   // urls: async () => {
+  //   //   const urls = await fetch('https://api.backlog.rip/sitemap.xml')
+  //   //   return urls
+  //   // }
 
-    // // Runtime sitemap
-    // // sources: [
-    // //   'https://api.backlog.rip/sitemap.xml',
-    // // ],
-  },
-
-  ogImage: { enabled: false },
+  //   // // Runtime sitemap
+  //   // // sources: [
+  //   // //   'https://api.backlog.rip/sitemap.xml',
+  //   // // ],
+  // },
 
   // robots: {
   //   enabled: false
@@ -155,9 +158,9 @@ export default defineNuxtConfig({
   //   enabled: false
   // },
 
-  schemaOrg: {
-    enabled: true,
-  },
+  // schemaOrg: {
+  //   enabled: true,
+  // },
 
   // linkChecker: {
   //   enabled: false

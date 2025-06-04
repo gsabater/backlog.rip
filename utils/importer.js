@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Wed 19 March 2025 - 17:29:24
+ * Modified: Fri 11 April 2025 - 13:41:12
  */
 
 import axios from 'axios'
@@ -395,6 +395,6 @@ export default {
 
     x.log('7.2: Updating user data')
     $nuxt.$auth.me.steam_updated_at = dates.now()
-    $nuxt.$auth.updateAccount('steam_updated_at')
+    $nuxt.$auth.updateMe('steam_updated_at')
   },
 }

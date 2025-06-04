@@ -1,39 +1,39 @@
 ::root {
-  color-scheme: dark;
-  --tblr-scrollbar-color: #e9ecef;
+  // color-scheme: dark;
+  // --tblr-scrollbar-color: #e9ecef;
 
   //+-------------------------------------------------
   // Wowfactor
   //+-------------------------------------------------
-  --color-bg: #212325;
-  --color-bg-alt: #191a22;
-  --color-title: #191818;
+  // --color-bg: #212325;
+  // --color-bg-alt: #191a22;
+  // --color-title: #191818;
 }
 
-[data-bs-theme='dark'] {
-  // -- primary - alt rgb(100, 102, 216)
-  // -- Secondary: rgb(239, 151, 65) (orange)
+// [data-bs-theme='dark'] {
+//   // -- primary - alt rgb(100, 102, 216)
+//   // -- Secondary: rgb(239, 151, 65) (orange)
 
-  --tblr-primary: rgb(87, 90, 198); //  rgb(124, 58, 237);
-  --tblr-primary-rgb: 87, 90, 189; // 124, 58, 237;
+//   --tblr-primary: rgb(87, 90, 198); //  rgb(124, 58, 237);
+//   --tblr-primary-rgb: 87, 90, 189; // 124, 58, 237;
 
-  --tblr-body-bg: #191a22;
+//   --tblr-body-bg: #191a22;
 
-  --tblr-bg-surface: #2c2e3bef;
-  --tblr-bg-surface-tertiary: #202231ef;
+//   --tblr-bg-surface: #2c2e3bef;
+//   --tblr-bg-surface-tertiary: #202231ef;
 
-  --tblr-bg-forms: #1e1f2a; // #191a22;
+//   --tblr-bg-forms: #1e1f2a; // #191a22;
 
-  --tblr-card-border-color: #38394c;
-  --tblr-border-color: var(--tblr-card-border-color); // #2a2d39;
+//   --tblr-card-border-color: #38394c;
+//   --tblr-border-color: var(--tblr-card-border-color); // #2a2d39;
 
-  --tblr-status-color: #667382;
+//   --tblr-status-color: #667382;
 
-  --tblr-active-bg: rgb(13 6 24 / 17%);
-  --tblr-link-hover-color: var(--tblr-primary);
-  --tblr-code-bg: hsl(0, 0%, 13.6%);
+//   --tblr-active-bg: rgb(13 6 24 / 17%);
+//   --tblr-link-hover-color: var(--tblr-primary);
+//   --tblr-code-bg: hsl(0, 0%, 13.6%);
 
-  // .status {
-  //   --tblr-status-color: #dce1e7;
-  // }
-}
+//   // .status {
+//   //   --tblr-status-color: #dce1e7;
+//   // }
+// }

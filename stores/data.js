@@ -3,7 +3,7 @@
  * @desc:    Handle operations related to data with their index
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Mon 24 March 2025 - 19:23:04
+ * Modified: Thu 29 May 2025 - 16:04:20
  */
 
 import gameService from '../services/gameService'
@@ -115,12 +115,12 @@ export const useDataStore = defineStore('data', {
     async process(apps, intent, emit = true) {
       const items = Array.isArray(apps) ? apps : [apps]
 
-      console.warn(
-        '🔸 Process',
-        intent,
-        items.length,
-        items[Math.floor(Math.random() * items.length)]
-      )
+      // console.warn(
+      //   '🔸 Process',
+      //   intent,
+      //   items.length,
+      //   items[Math.floor(Math.random() * items.length)]
+      // )
 
       for (const item of items) {
         if (!item?.uuid || item === true || (Array.isArray(item) && item.length === 0)) {
@@ -862,6 +862,7 @@ export const useDataStore = defineStore('data', {
     // Empties the library, clearing Dexie DB and related indexes
     // -----
     // Created on Fri Sep 13 2024
+    // Created on Fri Apr 11 2025 - Improved reindexing
     //+-------------------------------------------------
     async emptyLibrary() {
       let library = this.library()
@@ -870,16 +871,22 @@ export const useDataStore = defineStore('data', {
         delete data[item.uuid]
 
         // Delete indexes
-        delete index.ed[index.ed.indexOf(item.uuid)]
-        delete index.igdb[item.id.igdb]
-        delete index.steam[item.id.steam]
+        // delete index.ed[index.ed.indexOf(item.uuid)]
+        // delete index.igdb[item.id.igdb]
+        // delete index.steam[item.id.steam]
       })
 
       // Clear Dexie DB
       await $nuxt.$db.games.clear()
 
       // Clear related indexes
+      index.ed = []
       index.lib = []
+      index.api = {}
+      index.igdb = {}
+      index.epic = {}
+      index.steam = {}
+
       index.fav = []
       index.pinned = []
       index.hidden = []

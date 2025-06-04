@@ -3,16 +3,16 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 20th June 2024
- * Modified: Thu 30 January 2025 - 19:46:53
+ * Modified: Fri 25 April 2025 - 13:40:19
  **/
 
 //+-------------------------------------------------
 // Vuetify colors
 //+-------------------------------------------------
-[data-bs-theme='dark'] {
-  --v-border-color: 207, 102, 121;
-  --v-theme-error: 1, 2, 3;
-}
+// [data-bs-theme='dark'] {
+// --v-border-color: 207, 102, 121;
+// --v-theme-error: 1, 2, 3;
+// }
 
 //+-------------------------------------------------
 // v-overlay
@@ -114,6 +114,40 @@
   }
 }
 
+.v-number-input {
+  & .v-field .v-label {
+    text-align: center;
+    width: 100%;
+    margin-top: 21px;
+    opacity: 0.6;
+  }
+
+  & .v-field__input {
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: 600;
+    transform: translateY(-7px);
+  }
+
+  & input {
+    height: 100%;
+    font-size: 1rem !important;
+  }
+
+  & hr {
+    margin: unset;
+  }
+
+  & .v-btn__underlay {
+    background-color: transparent !important;
+  }
+}
+
+.v-number-input .v-field {
+  border-radius: 2px;
+  overflow: hidden;
+}
+
 //+-------------------------------------------------
 // v-select
 //+-------------------------------------------------
@@ -124,4 +158,13 @@
 
 .theme--light.v-list-item:hover::before {
   opacity: 0.64;
+}
+
+//+-------------------------------------------------
+// v-date-picker
+//+-------------------------------------------------
+.v-picker.v-sheet.v-date-picker.v-picker--landscape {
+  grid-template-areas: 'header body';
+  grid-template-columns: 224px 328px;
+  width: unset;
 }

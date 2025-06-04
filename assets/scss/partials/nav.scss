@@ -1,18 +1,26 @@
-[data-bs-theme='dark'] {
-  header.navbar {
-    --tblr-navbar-border-color: rgb(56 57 76 / 25%);
-    --tblr-navbar-color: var(--tblr-body-color);
-    background-color: rgb(33 26 40 / 50%);
-  }
+/**
+ * @file:    \assets\scss\partials\nav.scss
+ * @desc:    ...
+ * ----------------------------------------------
+ * Created Date: 14th March 2024
+ * Modified: Thu 29 May 2025 - 17:23:06
+ **/
 
-  aside {
-    --tblr-navbar-border-color: rgb(56 57 76 / 25%);
-    --tblr-dropdown-divider-bg: rgb(56 57 76 / 25%);
+// [data-bs-theme='dark'] {
+//   header.navbar {
+//     --tblr-navbar-border-color: rgb(56 57 76 / 25%);
+//     --tblr-navbar-color: var(--tblr-body-color);
+//     background-color: rgb(33 26 40 / 50%);
+//   }
 
-    background-color: rgb(43 45 57 / 25%);
-    // border-right: 1px solid var(--tblr-navbar-border-color);
-  }
-}
+//   aside {
+//     --tblr-navbar-border-color: rgb(56 57 76 / 25%);
+//     --tblr-dropdown-divider-bg: rgb(56 57 76 / 25%);
+
+//     background-color: rgb(43 45 57 / 25%);
+//     // border-right: 1px solid var(--tblr-navbar-border-color);
+//   }
+// }
 
 header {
   z-index: 999;
@@ -28,14 +36,15 @@ aside [class^='container'] {
 }
 
 aside.navbar.navbar-vertical {
-  top: 8px;
-  left: 8px;
-  bottom: 8px;
-  border-radius: 4px;
-  outline: 1px solid #3e505e;
+  // top: 6px;
+  // left: 6px;
+  // bottom: 8px;
+  // border-radius: 4px;
+  // outline: 1px solid #3e505e;
   padding: 0;
   overflow-y: auto;
-  filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+  // filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+  // background: linear-gradient(to top, #1e1f2a40 10%, #1b171e 100%);
 }
 
 aside .dropdown-menu {
@@ -48,6 +57,7 @@ aside .dropdown-menu {
   }
 
   & .dropdown-item {
+    gap: 0;
     border-radius: 3px;
     padding: 0.45rem var(--tblr-dropdown-item-padding-x);
   }
@@ -62,6 +72,13 @@ aside .dropdown-menu {
   }
 }
 
+header.navbar {
+  padding: 0;
+  min-height: 3.3rem;
+  background-color: rgba(43, 45, 57, 0.25);
+  background-color: transparent;
+}
+
 // #sidebar-menu li {
 //   position: relative;
 // }
@@ -74,3 +91,12 @@ aside .dropdown-menu {
 //   z-index: -1;
 //   border-radius: 2px;
 // }
+
+// Navbar top bar quick fix
+// This is a dirty fix to close the navbar line under the sidebar
+@media (min-width: 992px) {
+  .navbar-expand-lg.navbar-vertical ~ .navbar,
+  .navbar-expand-lg.navbar-vertical ~ .page-wrapper {
+    margin-left: calc(15rem - 5px);
+  }
+}

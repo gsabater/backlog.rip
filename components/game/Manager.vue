@@ -431,9 +431,10 @@
               <div
                 class="d-flex"
                 style="flex-direction: column; text-align: center; align-items: center">
-                <h4>{{ app.name }}</h4>
                 <h5>{{ appUUID }}</h5>
-                <pre style="text-align: left; max-width: 100%">{{ app }}</pre>
+                <pre class="d-block" style="text-align: left; max-width: 100%">{{
+                  app
+                }}</pre>
               </div>
             </b-dropdown>
           </div>
@@ -553,7 +554,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Sat 01 March 2025 - 16:10:40
+ * Modified: Thu 01 May 2025 - 12:50:28
  **/
 
 export default {

@@ -27,9 +27,9 @@
         </div>
       </div> -->
 
-    <!--#
+    <!--
       *+---------------------------------
-      *| List grid
+      *| List layout
       *| scaffolding to use with b-game type list
       *+--------------------------------- -->
     <template v-if="layout == 'list'">
@@ -160,7 +160,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 04 March 2025 - 17:35:20
+ * Modified: Thu 29 May 2025 - 15:37:31
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -219,11 +219,12 @@ export default {
       async (trigger = null) => {
         if (!$app.ready) return
         if (props.disabled) return
+
         // if (Object.keys(props.filters).length === 0) return
 
-        console.groupCollapsed('🔸 Search at ..' + $route.path + ' (' + trigger + ')')
-        log('search', '⇢ search:start', trigger || 'direct')
-        emit('search:start', trigger)
+        // console.groupCollapsed('🔸 Search at ..' + $route.path + ' (' + trigger + ')')
+        // log('search', '⇢ search:start', trigger || 'direct')
+        // emit('search:start', trigger)
 
         // let filters = null
         // if (props.filters?.source) {
@@ -233,27 +234,36 @@ export default {
         const search = $search.run()
         items.value = search.items
 
+        log(`🧭 search:end (${$search.stats.time.toFixed(3)}ms)`, {
+          trigger: trigger,
+          source: $search.f.is,
+          apps: search.items.length,
+
+          stats: $search.stats,
+          filters: $search.f,
+        })
+
         emit('search:end')
-        console.groupEnd()
+        // console.groupEnd()
       },
-      1000,
+      1500,
       true
     )
 
     // Watcher
     // Trigger to fire a search
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    watch(
-      () => $search.f,
-      (value, old) => {
-        if (props.disabled) return
-        // console.warn('💢💢💢💥💥💥', value)
-        search('filters:updated')
-      },
-      { deep: true }
-    )
+    // watch(
+    //   () => $search.f,
+    //   (value, old) => {
+    //     // if (props.disabled) return
+    //     console.warn('💢💢💢💥💥💥', value)
+    //     // search('filters:updated')
+    //   },
+    //   { deep: true }
+    // )
 
-    return { search, items, loading: $search.loading }
+    return { search, items }
   },
 
   data() {
@@ -262,7 +272,7 @@ export default {
 
   computed: {
     ...mapStores(useDataStore, useSearchStore),
-    // ...mapState(useSearchStore, ['f','loading']),
+    ...mapState(useSearchStore, ['f', 'loading']),
 
     //+-------------------------------------------------
     // visibleProps()
@@ -304,11 +314,22 @@ export default {
       await this.searchStore.prepare(filters)
       this.$emit('search:ready')
 
+      // Initial search
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      this.search('init')
+
+      // @search:run
+      // Perform a search
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      this.$mitt.on('search:run', () => {
+        this.search('event:run')
+      })
+
       // @data:updated
       // Reset the search hashed cache
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       this.$mitt.on('data:updated', () => {
-        this.searchStore.resetHashed()
+        // this.searchStore.resetHashed()
         this.search('data:updated')
       })
     },
@@ -325,6 +346,7 @@ export default {
   },
 
   beforeUnmount() {
+    this.$mitt.off('search:run')
     this.$mitt.off('data:updated')
     // this.$mitt.off('data:deleted')
   },

@@ -350,6 +350,40 @@
         </div>
       </div>
     </label>
+
+    <label
+      class="dropdown-item ps-1"
+      :class="{ active: f.sortBy == 'achievements' }"
+      @click="sortBy('achievements', 'desc', true)">
+      <div class="d-flex justify-center" style="width: 30px">
+        <Icon size="16" class="me-1">Trophy</Icon>
+      </div>
+      <div>
+        Achievements
+        <div
+          v-if="f.sortBy == 'achievements'"
+          class="text-muted"
+          style="font-size: 0.75rem">
+          {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
+          <Icon size="14" width="2" class="mx-1">Repeat</Icon>
+        </div>
+      </div>
+      <tippy
+        class="text-muted ms-auto cursor-help ps-4"
+        :content="'Games will be sorted by the number of achievements you have unlocked. This metric is only available for games that support Steam achievements.'">
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
+          HelpSmall
+        </Icon>
+      </tippy>
+    </label>
+
+    <div
+      v-if="!ui.showAdvanced"
+      class="dropdown-item small text-muted"
+      @click="ui.showAdvanced = true">
+      <Icon size="14" class="me-2">Sparkles</Icon>
+      Show advanced filters
+    </div>
   </div>
 </template>
 
@@ -359,18 +393,13 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st October 2024
- * Modified: Tue 04 February 2025 - 17:15:36
+ * Modified: Tue 13 May 2025 - 17:56:25
  **/
 
 export default {
   name: 'SortMenu',
 
   props: {
-    f: {
-      type: Object,
-      default: () => ({}),
-    },
-
     withUser: {
       type: Boolean,
       default: false,
@@ -383,8 +412,13 @@ export default {
     return {
       ui: {
         dice: 4,
+        showAdvanced: false,
       },
     }
+  },
+
+  computed: {
+    ...mapState(useSearchStore, ['f']),
   },
 
   methods: {
@@ -393,23 +427,27 @@ export default {
     // Notifies the parent to apply the new sorting
     // -----
     // Created on Tue Oct 22 2024
+    // Created on Tue Apr 01 2025 - Handles toggle
     //+-------------------------------------------------
     sortBy(by, dir = 'desc', toggle = false) {
-      if (by == 'rand') {
+      // Handle random sorting
+      if (by === 'rand') {
         this.ui.dice = Math.floor(Math.random() * 6) + 1
-      }
-
-      if (by == 'rand' || by == 'user') {
         dir = null
       }
 
-      this.$emit('sort', {
-        by,
-        dir,
-        toggle,
-      })
+      // Handle user sorting
+      if (by === 'user') {
+        dir = null
+      }
 
-      // this.$refs.tippySort.hide()
+      // Toggle direction if the same sort field is selected
+      if (toggle && by === this.f.sortBy) {
+        dir = this.f.sortDir === 'asc' ? 'desc' : 'asc'
+      }
+
+      // Emit the sort event with the updated parameters
+      this.$emit('sort', { by, dir, toggle })
     },
   },
 

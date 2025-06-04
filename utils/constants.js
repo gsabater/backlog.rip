@@ -1,7 +1,16 @@
-// Constants for Nuxt 3 application
-// This file is automatically imported by Nuxt 3, so you can use these constants directly in your components
+/*
+ * @file:    \utils\constants.js
+ * @desc:    ...
+ *           CONST.api.baseUrl
+ * ----------------------------------------------
+ * Created Date: 16th September 2024
+ * Modified: Fri 28 March 2025 - 15:37:28
+ */
 
-export const constants = {
+export const CONST = {
+  // Filter text
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   // API endpoints
   api: {
     baseUrl: process.env.API_BASE_URL || 'https://api.example.com',

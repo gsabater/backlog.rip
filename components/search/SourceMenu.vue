@@ -6,9 +6,9 @@
 
     <!-- <template v-if="withAll">
   </template> -->
-    <component :is="componentIs" class="dropdown-item" @click="select('all')">
+    <component :is="componentIs" class="dropdown-item" @click="changeSource('all')">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-        <Icon size="17" width="1.5" class="text-muted">Cards</Icon>
+        <Icon size="16" width="1.5" class="text-muted">Cards</Icon>
       </span>
       <span class="nav-link-title">All games</span>
       <small class="ms-auto text-secondary me-1">
@@ -20,9 +20,9 @@
       :is="componentIs"
       to="/library"
       class="dropdown-item"
-      @click="select('library')">
+      @click="changeSource('library')">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-        <Icon size="17" width="1.5" class="text-muted">LayoutDashboard</Icon>
+        <Icon size="16" width="1.5" class="text-muted">LayoutDashboard</Icon>
       </span>
       <span class="nav-link-title">Your library</span>
       <small class="ms-auto text-secondary me-1">
@@ -32,33 +32,8 @@
 
     <div class="dropdown-divider"></div>
 
-    <div
-      v-if="!isExpanded"
-      class="dropdown-item small text-muted"
-      @click="ui.expanded = true">
-      Show more of your library
-      <Icon class="ms-auto">ChevronDown</Icon>
-    </div>
-
     <template v-if="isExpanded">
-      <span class="dropdown-header">This is your complete library</span>
-
-      <!-- <component
-      :is="componentIs"
-      v-for="(state, i) in pinnedStates"
-      :key="'state' + i"
-      :to="'/library/' + state.slug"
-      class="dropdown-item ps-3">
-      <span
-        class="status-dot ms-0 me-4"
-        :style="{ 'background-color': state.color || '' }"
-        style="transform: translateX(1px)"></span>
-
-      <span class="nav-link-title">{{ state.name }}</span>
-      <small class="ms-auto text-secondary me-1">
-        {{ format.num(stateStore.count(state.id)) }}
-      </small>
-    </component> -->
+      <!-- <span class="dropdown-header small">This is your complete library</span> -->
 
       <div class="dropdown-item">
         <div style="width: 30px">
@@ -78,7 +53,7 @@
             :key="'state' + i"
             :to="'/library/' + state.slug"
             class="dropdown-item px-2"
-            @click="select('state:' + state.id)">
+            @click="changeSource('state:' + state.id)">
             <div class="content d-flex align-items-center w-100 px-1">
               <span
                 class="status-dot ms-1 me-4"
@@ -103,9 +78,9 @@
         nv-if="$auth.config.favorites"
         to="/library/favorites"
         class="dropdown-item"
-        @click="select('library:favorites')">
+        @click="changeSource('library:favorites')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
+          <Icon size="16" width="1.5" class="text-muted">Heart</Icon>
         </span>
         <span class="nav-link-title">Favorites</span>
         <small class="ms-auto text-secondary me-1">
@@ -118,9 +93,9 @@
         v-if="$auth.config.pinned"
         to="/library/pinned"
         class="dropdown-item"
-        @click="select('library:pinned')">
+        @click="changeSource('library:pinned')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="17" width="1.5" class="text-muted">Bookmark</Icon>
+          <Icon size="16" width="1.5" class="text-muted">Bookmark</Icon>
         </span>
         <span class="nav-link-title">Pinned games</span>
         <small class="ms-auto text-secondary me-1">
@@ -133,9 +108,9 @@
         v-if="$auth.config.hidden"
         to="/library/hidden"
         class="dropdown-item"
-        @click="select('library:hidden')">
+        @click="changeSource('library:hidden')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
+          <Icon size="16" width="1.5" class="text-muted">Cancel</Icon>
         </span>
         <span class="nav-link-title">Hidden games</span>
         <small class="ms-auto text-secondary me-1">
@@ -143,6 +118,11 @@
         </small>
       </component>
     </template>
+
+    <div v-else class="dropdown-item small text-muted" @click="ui.expanded = true">
+      Show more of your library
+      <Icon size="16" class="ms-auto">ChevronDown</Icon>
+    </div>
   </div>
 </template>
 
@@ -152,21 +132,13 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th January 2025
- * Modified: Mon 13 January 2025 - 17:05:30
+ * Modified: Tue 03 June 2025 - 11:23:51
  **/
 
 export default {
   name: 'SourceMenu',
 
   props: {
-    // Selected source at filters
-    // Used for active and expanded ui
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    source: {
-      type: String,
-      default: 'all',
-    },
-
     // Defines if the component is used as a filter dropdown
     // or a navigation dropdown with links
     // options: filter, nav
@@ -184,14 +156,14 @@ export default {
       default: false,
     },
 
-    // Option to display states in the dropdown
-    // Can be false, or a truthy value with a string
-    // options: false, 'pinned', 'menu'
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    withStates: {
-      type: [Boolean, String],
-      default: false, //
-    },
+    // // Option to display states in the dropdown
+    // // Can be false, or a truthy value with a string
+    // // options: false, 'pinned', 'menu'
+    // //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // withStates: {
+    //   type: [Boolean, String],
+    //   default: false, //
+    // },
   },
 
   emits: ['change'],
@@ -205,7 +177,8 @@ export default {
   },
 
   computed: {
-    ...mapStores(useStateStore),
+    ...mapStores(useStateStore, useSearchStore),
+    ...mapState(useSearchStore, ['f']),
     ...mapState(useStateStore, ['states', 'pinnedStates', 'unPinnedStates']),
 
     componentIs() {
@@ -214,16 +187,53 @@ export default {
 
     isExpanded() {
       if (this.ui.expanded) return true
-      if (this.source !== 'all' && this.source !== 'library') return true
+      if (this.f.source !== 'all' && this.f.source !== 'library') return true
+      if (this.searchStore.hasFilter('state') !== false) return true
 
       return false
     },
   },
 
   methods: {
-    select(source) {
-      this.$emit('change', source)
+    //+-------------------------------------------------
+    // changeSource()
+    // Updates the source
+    // -----
+    // Created on Mon Sep 23 2024
+    // Created on Thu Apr 03 2025 - Moved logic to the menu
+    //+-------------------------------------------------
+    changeSource(source) {
       if (typeof this.$parent.hide == 'function') this.$parent.hide()
+
+      // this.$emit('change', source)
+      this.f.source = source
+
+      // Add source to filters
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (source.includes('state:')) {
+        const state = parseInt(source.split(':')[1])
+        let hook = this.searchStore.hasFilter('state')
+
+        if (hook !== false) {
+          this.searchStore.setFilter(hook, 'in', [state])
+        } else {
+          this.searchStore.addFilter({
+            filter: 'state',
+            mod: 'in',
+            value: [state],
+            source: 'sourceMenu',
+          })
+        }
+
+        this.f.show.tags = 'row'
+      }
+
+      // if (source == 'all') {
+      //   this.f.sortBy = 'score'
+      //   this.f.sortDir = 'desc'
+      // }
+
+      // this.$mitt.emit('search:run')
     },
   },
 

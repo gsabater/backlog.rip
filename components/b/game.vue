@@ -114,7 +114,7 @@
             {{ app.name }}
           </span>
 
-          <small v-if="visible.includes('score') && app.score" class="text-muted">
+          <small v-if="visible.includes('score') && app.score" class="text-muted me-2">
             <Icon
               note="Diamond?"
               size="13"
@@ -127,13 +127,14 @@
 
           <small
             v-if="visible.includes('metascore') && app.scores && app.scores.metascore"
-            class="text-muted">
+            class="text-muted me-2">
             <b-logo
               name="metacritic"
               size="12"
               style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
-
-            {{ app.scores.metascore ?? 'Unscored' }}
+            <span v-if="app.scores">
+              {{ app.scores.metascore ?? 'Unscored' }}
+            </span>
           </small>
 
           <small
@@ -229,20 +230,17 @@
             {{ app._.owned_at }}
           </small>
 
-          <small v-if="visible.includes('playtime')" class="d-block text-muted">
+          <small v-if="visible.includes('genres')" class="d-block text-muted">
             <Icon
               size="12"
               width="1.4"
               style="transform: translateY(-1px); margin-right: 3px">
-              ClockHour3
+              Graph
             </Icon>
 
             <span style="font-size: 0.775rem">
-              <template v-if="app._.playtime == 0">Not played</template>
-              <template v-else>
-                Played
-                {{ dates.minToHours(app._.playtime, 'Not played') }}
-                <!-- {{ dates.timeAgo(app.playtime.steam_last * 1000) }} -->
+              <template v-if="app.genres && app.genres.length">
+                {{ app.genres.map((g) => g).join(', ') }}
               </template>
             </span>
           </small>
@@ -260,7 +258,7 @@
           </small>
 
           <div
-            v-if="visible.includes('achievements') && app._.released"
+            v-if="visible.includes('achievements') && app._.astats"
             class="d-block text-muted"
             v-tippy="
               app._.astats.hidden
@@ -278,6 +276,9 @@
               app._.astats.percentage
             }}%)
             <small class="cursor-help" v-if="app._.astats.hidden > 0">˟</small>
+            <pre class="d-block">
+              {{ app._.astats }}
+            </pre>
           </div>
 
           <slot name="details:append"></slot>
@@ -293,7 +294,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Mon 10 March 2025 - 15:38:21
+ * Modified: Thu 29 May 2025 - 15:46:40
  **/
 
 export default {

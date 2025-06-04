@@ -464,7 +464,7 @@
                   block
                   variant="tonal"
                   style="outline: rgb(108 122 145 / 40%) solid 1px"
-                  @click="loadGame">
+                  @click="loadARandomGame">
                   <Icon size="15" class="me-2">Refresh</Icon>
                   Show another
                 </v-btn>
@@ -584,7 +584,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 2nd January 2025
- * Modified: Mon 10 March 2025 - 14:49:21
+ * Modified: Thu 29 May 2025 - 17:09:15
  **/
 
 export default {
@@ -652,7 +652,7 @@ export default {
     // Created on Thu Jan 02 2025
     //+-------------------------------------------------
     loadAndShow() {
-      this.loadGame()
+      this.loadARandomGame()
 
       this.shown = []
       this.ui.ping = 0
@@ -661,20 +661,20 @@ export default {
     },
 
     //+-------------------------------------------------
-    // loadGame()
+    // loadARandomGame()
     // Gets the list of games from the search and loads a game
     // -----
     // Created on Mon Jan 06 2025
     //+-------------------------------------------------
-    async loadGame() {
-      const search = this.searchStore.getSearch()
-      this.ui.option = Math.floor(Math.random() * search.items.length)
+    async loadARandomGame() {
+      const items = this.searchStore.getSearchResults()
+      this.ui.option = Math.floor(Math.random() * items.length)
 
-      let selected = search.items[this.ui.option]
+      let selected = items[this.ui.option]
 
       while (this.shown.includes(selected)) {
-        this.ui.option = Math.floor(Math.random() * search.items.length)
-        selected = search.items[this.ui.option]
+        this.ui.option = Math.floor(Math.random() * items.length)
+        selected = items[this.ui.option]
       }
 
       this.shown.push(selected)

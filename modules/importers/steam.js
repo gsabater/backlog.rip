@@ -3,7 +3,7 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 01 May 2025 - 11:06:39
+ * Modified: Sat 07 June 2025 - 18:49:48
  */
 
 import axios from 'axios'
@@ -100,7 +100,7 @@ export default {
     let url = 'https://api.backlog.rip/fetch/steam/userdata'
     let xhr = await $axios.get(url + '?steamid=' + $account.account)
 
-    if (xhr.data.status == 'success') {
+    if (xhr.data.status.includes('success')) {
       return xhr.data?.fetch?.data || {}
     }
   },
@@ -116,7 +116,7 @@ export default {
     let url = 'https://api.backlog.rip/fetch/steam/games'
     let xhr = await $axios.get(url + '?steamid=' + $account.account)
 
-    if (xhr.data.status == 'success') {
+    if (xhr.data.status.includes('success')) {
       return xhr.data?.fetch?.data?.games || []
     }
   },

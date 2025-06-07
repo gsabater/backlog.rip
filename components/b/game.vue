@@ -110,7 +110,7 @@
 
           <span
             v-if="visible.includes('name') || visible.includes('default')"
-            class="details__name font-serif d-block">
+            class="details__name font-serif d-block text-truncate">
             {{ app.name }}
           </span>
 
@@ -208,8 +208,19 @@
             {{ app.scores.steamscoreAlt }}
           </small>
 
+          <small v-if="visible.includes('playtime')" class="d-block text-muted">
+            <Icon
+              size="12"
+              width="1.4"
+              style="transform: translateY(-1px); margin-right: 3px">
+              ClockHour3
+            </Icon>
+            <template v-if="app._.playtime == 0">Not played</template>
+            <template v-else>Played {{ dates.minToHours(app._.playtime) }}</template>
+          </small>
+
           <small
-            v-if="visible.includes('date.released') && app._.released"
+            v-if="visible.includes('released') && app._.released"
             class="d-block text-muted">
             <Icon
               size="12"
@@ -276,9 +287,6 @@
               app._.astats.percentage
             }}%)
             <small class="cursor-help" v-if="app._.astats.hidden > 0">˟</small>
-            <pre class="d-block">
-              {{ app._.astats }}
-            </pre>
           </div>
 
           <slot name="details:append"></slot>
@@ -294,7 +302,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 29 May 2025 - 15:46:40
+ * Modified: Sat 07 June 2025 - 18:58:55
  **/
 
 export default {

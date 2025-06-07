@@ -165,6 +165,12 @@
           </div>
         </div>
 
+        <template v-if="$app.wip">
+          <hr />
+
+          <hr />
+        </template>
+
         <div
           v-if="f && f.show && f.show.perPage"
           class="d-flex mt-4"
@@ -196,7 +202,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue 03 June 2025 - 12:40:07
+ * Modified: Sat 07 June 2025 - 18:38:48
  **/
 
 export default {
@@ -304,7 +310,7 @@ export default {
 
     addPage() {
       this.f.show.page++
-      //   this.search('addPage')
+      this.$refs.results.search('addPage')
     },
 
     //+-------------------------------------------------

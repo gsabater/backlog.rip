@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Fri 11 April 2025 - 13:41:12
+ * Modified: Sat 07 June 2025 - 18:52:16
  */
 
 import axios from 'axios'
@@ -216,7 +216,7 @@ export default {
     }
 
     x.log('Check 4.5: scan post validation')
-    if (data.games.length === 0) {
+    if (!data.games?.length > 0) {
       x.code = 'library:empty'
       x.status = 'error'
       return false

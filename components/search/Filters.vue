@@ -214,7 +214,7 @@
       <v-btn class="me-2">Random</v-btn> -->
 
       <v-btn
-        v-tippy="'Get a random game from this list'"
+        v-tippy="'Display results as a list'"
         variant="tonal"
         size="small"
         class="mx-1 p-0"
@@ -225,7 +225,7 @@
       </v-btn>
 
       <v-btn
-        v-tippy="'Get a random game from this list'"
+        v-tippy="'Display results as a grid of covers'"
         variant="tonal"
         size="small"
         class="mx-1 p-0"
@@ -301,7 +301,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Thu 29 May 2025 - 15:44:30
+ * Modified: Sat 07 June 2025 - 18:40:02
  **/
 
 export default {

@@ -165,32 +165,7 @@
           </div>
         </div>
 
-        <template v-if="$app.wip">
-          <hr />
-
-          <hr />
-        </template>
-
-        <div
-          v-if="f && f.show && f.show.perPage"
-          class="d-flex mt-4"
-          style="flex-direction: column; align-items: center">
-          <div v-if="stats.nextPage > 0" class="btn w-75 mb-3" @click="addPage">
-            Show {{ stats.nextPage }} more games
-          </div>
-
-          <p class="text-muted text-center w-50">
-            <template v-if="stats.results > 0">
-              Showing
-              <strong>{{ stats.showing }}</strong>
-              games, from a total of {{ format.num(stats.results) }}
-            </template>
-            <br />
-            <small v-if="stats.filtered > 0">
-              {{ format.num(stats.filtered) }} results excluded based on your filters
-            </small>
-          </p>
-        </div>
+        <search-pagination ref="pagination" @page-changed="search('pagination')" />
       </div>
     </div>
   </client-only>
@@ -202,7 +177,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat 07 June 2025 - 18:38:48
+ * Modified: Tue Jun 17 2025
  **/
 
 export default {
@@ -263,8 +238,6 @@ export default {
 
   computed: {
     ...mapStores(useDataStore, useGameStore, useRepositoryStore, useSearchStore),
-    // ...mapState(useStateStore, ['states']),
-    // ...mapState(useRepositoryStore, ['genres']),
     ...mapState(useSearchStore, ['f', 'stats', 'loading']),
 
     //+-------------------------------------------------
@@ -287,30 +260,6 @@ export default {
       this.$nextTick(() => {
         this.$refs.results.search(by)
       })
-    },
-
-    //+-------------------------------------------------
-    // onUpdateFilters()
-    // Handles the filters being updated
-    // -----
-    // Created on Mon Apr 11 2024
-    //+-------------------------------------------------
-    // onUpdateFilters(filters) {
-    //   this.f = filters || this.f
-
-    //   if (this.f?.show?.page) this.f.show.page = 1
-
-    //   this.ui.dirty = true
-
-    //   this.search('interface')
-    //   // this.$nextTick(() => {
-    //   // this.ui.ping++
-    //   // })
-    // },
-
-    addPage() {
-      this.f.show.page++
-      this.$refs.results.search('addPage')
     },
 
     //+-------------------------------------------------
@@ -418,39 +367,15 @@ export default {
     // Created on Tue Jan 30 2024
     //+-------------------------------------------------
     async init() {
-      // console.warn('init', Math.floor(Date.now() / 1000))
       if (!this.$app.ready) return
 
       this.getData()
-
-      // this.mergeFilters()
-      // this.search('init')
-
       this.ui.ready = true
     },
   },
 
   mounted() {
-    // console.warn('mount', Math.floor(Date.now() / 1000))
     this.init()
-
-    // this.$mitt.on('data:updated', () => {
-    //   // this.ui.ping++
-    //   this.$forceUpdate()
-    // })
-
-    // this.$mitt.on('data:ready', () => {
-    //   log('✨ Search: event -> data:ready')
-    //   // this.control.event = 'data:ready'
-    //   if (this.ui.dirty) return
-
-    //   this.search('event')
-    // })
-  },
-
-  beforeUnmount() {
-    // this.$mitt.off('data:ready')
-    // this.$mitt.off('data:updated')
   },
 }
 </script>

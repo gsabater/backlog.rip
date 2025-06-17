@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Tue 03 June 2025 - 16:53:54
+ * Modified: Tue Jun 17 2025
  */
 
 import apiService from '../services/apiService'
@@ -18,7 +18,7 @@ let $repos = null
 // Hashed
 // Stores instances for each search executed
 //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// let hashed = {}
+let sessions = {}
 let latest = null
 
 export const useSearchStore = defineStore('search', {
@@ -31,6 +31,16 @@ export const useSearchStore = defineStore('search', {
     // Hash used to identify the last search
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     latest: null,
+
+    // config
+    // Base configuration template
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    config: {
+      init: false,
+      disabled: false,
+      setRouteFilters: false,
+      getRouteFilters: false,
+    },
 
     // base
     // Base filters template
@@ -49,6 +59,7 @@ export const useSearchStore = defineStore('search', {
       show: {
         page: 1,
         perPage: 42,
+        pagination: 'pages',
 
         tags: 'inline',
         layout: 'grid',
@@ -64,6 +75,7 @@ export const useSearchStore = defineStore('search', {
       results: 0, // amount of apps after filtering
       filtered: 0, // amount of apps filtered out
 
+      pages: 0, // Amount of pages. -> stats.results / show.perpage
       showing: 0, // Amount of items being shown, usually page * perpage
       nextPage: 0, // Amount of items added by the next page
 
@@ -146,6 +158,9 @@ export const useSearchStore = defineStore('search', {
 
       base.box = base.string
       base.show = changes.show || base.show || {}
+
+      base.show.perPage = $nuxt?.$auth?.config?.pagination?.perPage || 42
+      base.show.pagination = $nuxt?.$auth?.config?.pagination?.style || 'pages'
 
       return base
     },
@@ -615,6 +630,7 @@ export const useSearchStore = defineStore('search', {
       this.stats.results = filtered.results
       this.stats.filtered = filtered.filtered || 0
 
+      this.stats.pages = searchService.calcPages(filters, filtered.results)
       this.stats.showing = searchService.calcShowing(filters, filtered.results)
       this.stats.nextPage = searchService.calcNextPage(filters, filtered.results)
 

@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Mon Jun 16 2025
+ * Modified: Tue Jun 17 2025
  */
 
 // import { reactive } from 'vue'
@@ -26,7 +26,7 @@ let $search = null
 let $integration = null
 
 let app = {
-  v: '0.21.0 β', //β
+  v: '0.21.1 β', //β
   t: 1748963753259, // Date.now()
 
   // Global app state

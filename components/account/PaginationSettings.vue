@@ -1,6 +1,6 @@
 <template>
-  <v-dialog v-model="ui.show" max-width="650">
-    <v-card :loading="ui.loading">
+  <v-dialog v-model="ui.show" max-width="550">
+    <v-card v-if="$auth.config.pagination">
       <template v-slot:title>
         <Icon>Settings2</Icon>
         <span class="font-serif mx-2">Pagination Settings</span>
@@ -44,10 +44,18 @@
             </div>
           </div>
         </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green-darken-1" variant="text" @click="ui.show = false">
-            Confirm
+
+        <v-card-actions
+          v-if="!ui.loading"
+          style="padding: 16px 24px; background: #00000015">
+          <v-btn
+            block
+            :disabled="ui.loading"
+            color="primary"
+            variant="tonal"
+            style="text-transform: uppercase"
+            @click="ui.show = false">
+            Close
           </v-btn>
         </v-card-actions>
       </v-form>

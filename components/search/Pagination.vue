@@ -79,7 +79,7 @@
       <v-btn
         v-if="shouldShowLoadMore"
         variant="tonal"
-        class="btn w-75"
+        class="btn w-50"
         @click="addPage"
         color="rgb(110 116 180)"
         style="border: 1px solid rgb(110 116 180 / 40%)">
@@ -89,6 +89,7 @@
       </v-btn>
 
       <v-btn
+        v-if="stats.results > 0"
         v-tippy="'Change pagination settings'"
         icon
         variant="tonal"

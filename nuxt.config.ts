@@ -6,7 +6,7 @@
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Mon 28 April 2025 - 17:57:47
+ * Modified: 24th June 2025 - 05:39:39
  */
 
 import { defineNuxtConfig } from 'nuxt/config';
@@ -21,9 +21,20 @@ export default defineNuxtConfig({
   nitro: {
     // preset: 'static'
     // preset: 'cloudflare-pages',
+
     prerender: {
-      routes: ['/sitemap']
-    }
+      routes: ['/sitemap', '/changelog'],
+      crawlLinks: true,
+      // failOnError: false
+    },
+
+    logLevel: 'info'  // 'debug'
+  },
+
+  routeRules: {
+    '/sitemap': { prerender: true },
+    '/changelog': { prerender: true },
+    '/changelog/**': { prerender: true },
   },
 
   sourcemap: { server: false, client: true },
@@ -91,11 +102,12 @@ export default defineNuxtConfig({
   },
 
   content: {
-    markdown: {
-      remarkPlugins: [
-        // Make sure you have something like "remark-container" here
-        // and also define your container name if needed
-      ]
+    build: {
+      markdown: {
+        toc: {
+          depth: 3, // include h3 headings
+        }
+      }
     }
   },
 
@@ -130,41 +142,6 @@ export default defineNuxtConfig({
     description: 'Free and open source library manager for all your games.',
     defaultLocale: 'en', // not needed if you have @nuxtjs/i18n installed
   },
-
-
-  // sitemap: {
-  //   enabled: false
-  //   // // exclude all app sources
-  //   // excludeAppSources: true,
-  //   // cacheMaxAgeSeconds: 3600 * 24,
-
-  //   // // Build time sitemap
-  //   // urls: async () => {
-  //   //   const urls = await fetch('https://api.backlog.rip/sitemap.xml')
-  //   //   return urls
-  //   // }
-
-  //   // // Runtime sitemap
-  //   // // sources: [
-  //   // //   'https://api.backlog.rip/sitemap.xml',
-  //   // // ],
-  // },
-
-  // robots: {
-  //   enabled: false
-  // },
-
-  // seoExperiments: {
-  //   enabled: false
-  // },
-
-  // schemaOrg: {
-  //   enabled: true,
-  // },
-
-  // linkChecker: {
-  //   enabled: false
-  // },
 
   webpack: {
     // extractCSS: true,
@@ -210,7 +187,7 @@ export default defineNuxtConfig({
 
     vscode: {},
     timeline: {
-      enabled: false,
+      enabled: true,
     },
   },
 })

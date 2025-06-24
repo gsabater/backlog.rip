@@ -2,74 +2,21 @@
   <div
     v-if="f && f.show && f.show.perPage"
     class="col-12 d-flex justify-content-center flex-column align-items-center my-3">
-    <div class="d-flex align-items-center gap-2 my-2 w-100 justify-content-center">
+    <div class="d-flex align-items-center gap-2 my-3 w-100 justify-content-center">
       <!--
         *+---------------------------------
         *| Pagination style
         *| Navigate pages
         *+--------------------------------- -->
-      <nav v-if="shouldShowPagination && pages > 1">
-        <ul class="pagination justify-content-center mb-0">
-          <!-- Previous button -->
-          <li class="page-item" :class="{ disabled: currentPage <= 1 }">
-            <a class="page-link" href="#" @click.prevent="goToPage(currentPage - 1)">
-              <Icon size="14" width="1.5" style="transform: translateY(-2px)">
-                ChevronLeft
-              </Icon>
-            </a>
-          </li>
-
-          <!-- First page -->
-          <li
-            v-if="showFirstPage"
-            class="page-item"
-            :class="{ active: currentPage === 1 }">
-            <a class="page-link" href="#" @click.prevent="goToPage(1)">1</a>
-          </li>
-
-          <!-- First ellipsis -->
-          <li v-if="showFirstEllipsis" class="page-item disabled">
-            <span class="page-link">...</span>
-          </li>
-
-          <!-- Visible page numbers -->
-          <li
-            v-for="page in visiblePages"
-            :key="page"
-            class="page-item"
-            :class="{ active: currentPage === page }">
-            <a class="page-link" href="#" @click.prevent="goToPage(page)">{{ page }}</a>
-          </li>
-
-          <!-- Last ellipsis -->
-          <li v-if="showLastEllipsis" class="page-item disabled">
-            <span class="page-link">...</span>
-          </li>
-
-          <!-- Last page -->
-          <li
-            v-if="showLastPage"
-            class="page-item"
-            :class="{ active: currentPage === pages }">
-            <a class="page-link" href="#" @click.prevent="goToPage(pages)">
-              {{ pages }}
-            </a>
-          </li>
-
-          <!-- Next button -->
-          <li class="page-item" :class="{ disabled: currentPage >= pages }">
-            <a
-              class="page-link"
-              href="#"
-              @click.prevent="goToPage(currentPage + 1)"
-              :aria-disabled="currentPage >= pages">
-              <Icon size="14" width="1.5" style="transform: translateY(-2px)">
-                ChevronRight
-              </Icon>
-            </a>
-          </li>
-        </ul>
-      </nav>
+      <v-pagination
+        v-if="shouldShowPagination && pages > 1"
+        v-model="f.show.page"
+        :length="pages"
+        :total-visible="5"
+        size="small"
+        next-icon="mdi-menu-right"
+        prev-icon="mdi-menu-left"
+        @update:model-value="handlePageChange" />
 
       <!--
       *+---------------------------------
@@ -92,9 +39,8 @@
         v-if="stats.results > 0"
         v-tippy="'Change pagination settings'"
         icon
-        variant="tonal"
+        variant="text"
         size="small"
-        density="compact"
         color="blue-grey-lighten-1"
         @click="$refs.settings.show()">
         <Icon width="1.2" size="16" class="mx-1">Settings2</Icon>
@@ -149,7 +95,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 12th June 2025
- * Modified: Tue Jun 17 2025
+ * Modified: Fri Jun 20 2025
  **/
 
 export default {
@@ -193,58 +139,7 @@ export default {
       return this.config.style === 'loadMore' && this.stats.nextPage > 0
     },
 
-    // Calculate which page numbers should be visible
-    visiblePages() {
-      const pages = []
-      const maxVisible = this.maxVisiblePages
-      const current = this.currentPage
-      const total = this.stats.pages
-
-      if (total <= maxVisible) {
-        // Show all pages if total is less than max visible
-        for (let i = 1; i <= total; i++) {
-          pages.push(i)
-        }
-      } else {
-        // Calculate start and end of visible range
-        let start = Math.max(current - Math.floor(maxVisible / 2), 1)
-        let end = Math.min(start + maxVisible - 1, total)
-
-        // Adjust start if we're near the end
-        if (end - start + 1 < maxVisible) {
-          start = Math.max(end - maxVisible + 1, 1)
-        }
-
-        // Don't include first and last pages in visible range if they'll be shown separately
-        if (start > 1) start = Math.max(start, 2)
-        if (end < total) end = Math.min(end, total - 1)
-
-        for (let i = start; i <= end; i++) {
-          pages.push(i)
-        }
-      }
-
-      return pages
-    },
-
-    showFirstPage() {
-      return !this.visiblePages.includes(1) && this.pages > 1
-    },
-
-    showLastPage() {
-      return !this.visiblePages.includes(this.pages) && this.pages > 1
-    },
-
-    showFirstEllipsis() {
-      return this.showFirstPage && this.visiblePages[0] > 2
-    },
-
-    showLastEllipsis() {
-      return (
-        this.showLastPage &&
-        this.visiblePages[this.visiblePages.length - 1] < this.pages - 1
-      )
-    },
+    // No longer need these computed properties as Vuetify's v-pagination handles them internally
 
     //+-------------------------------------------------
     // currentPageText()
@@ -281,6 +176,23 @@ export default {
     },
 
     //+-------------------------------------------------
+    // handlePageChange()
+    // Called when the v-pagination component changes pages
+    // -----
+    // Created on Thu Jun 20 2025
+    //+-------------------------------------------------
+    handlePageChange(page) {
+      if (page < 1 || page > this.pages) {
+        return
+      }
+
+      this.$emit('page-changed', page)
+      this.$nextTick(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      })
+    },
+
+    //+-------------------------------------------------
     // goToPage()
     // Sets the current page to the specified page number
     // -----
@@ -295,10 +207,7 @@ export default {
       }
 
       this.f.show.page = page
-      this.$emit('page-changed', page)
-      this.$nextTick(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-      })
+      this.handlePageChange(page)
     },
 
     //+-------------------------------------------------

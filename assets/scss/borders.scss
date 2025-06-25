@@ -1,14 +1,24 @@
 // https://unused-css.com/tools/border-gradient-generator
-.border-rainbow{
+.border-rainbow {
   // background-color: #241d33;
   // background-color: #302244;
 
   // border: 5px solid transparent;
   // border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
   // border-image-slice: 1;
-  --border:4px;
+  --border: 4px;
   border: var(--border) solid transparent;
-  background: linear-gradient(#fff, #fff), linear-gradient( to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%) center center /calc(100% + (var(--border) * 2)) calc(100% + (var(--border) * 2));
+  background:
+    linear-gradient(#fff, #fff),
+    linear-gradient(
+        to bottom right,
+        #b827fc 0%,
+        #2c90fc 25%,
+        #b8fd33 50%,
+        #fec837 75%,
+        #fd1892 100%
+      )
+      center center / calc(100% + (var(--border) * 2)) calc(100% + (var(--border) * 2));
   background-clip: content-box, border-box;
   border-radius: 5px;
 }
@@ -38,7 +48,7 @@
 
   &::after {
     position: absolute;
-    content: "";
+    content: '';
     top: calc(-1 * var(--border-width));
     left: calc(-1 * var(--border-width));
     z-index: -1;
@@ -75,39 +85,97 @@
 // Created on Fri Jan 12 2024
 //+-------------------------------------------------
 .border-glow {
-	position: relative;
-	margin: 300px auto 0;
-	width: 500px;
-	height: 250px;
-	background: linear-gradient(0deg, #000, #272727);
+  position: relative;
+  margin: 300px auto 0;
+  width: 500px;
+  height: 250px;
+  background: linear-gradient(0deg, #000, #272727);
 }
 
-.border-glow:before, .border-glow:after {
-	content: '';
-	position: absolute;
-	left: -2px;
-	top: -2px;
-	background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00,#ffff00, #ff0000, #fb0094,
-		#0000ff, #00ff00,#ffff00, #ff0000);
-	background-size: 400%;
-	width: calc(100% + 4px);
-	height: calc(100% + 4px);
-	z-index: -1;
-	animation: steam 100s linear infinite;
+.border-glow:before,
+.border-glow:after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  background: linear-gradient(
+    45deg,
+    #fb0094,
+    #0000ff,
+    #00ff00,
+    #ffff00,
+    #ff0000,
+    #fb0094,
+    #0000ff,
+    #00ff00,
+    #ffff00,
+    #ff0000
+  );
+  background-size: 400%;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  z-index: -1;
+  animation: steam 100s linear infinite;
 }
 
 @keyframes steam {
-	0% {
-		background-position: 0 0;
-	}
-	50% {
-		background-position: 400% 0;
-	}
-	100% {
-		background-position: 0 0;
-	}
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
 }
 
 .border-glow:after {
-	filter: blur(50px);
+  filter: blur(50px);
+}
+
+.loading-text {
+  /* place-self: center; */
+  background: linear-gradient(90deg, #75748f, #aa6a32, #75748f) -100%/ 200%;
+  /* being excessively careful with compat,
+	 * though this has been supported unprefixed and
+	 * in the shorthand across major browsers for a while */
+  -webkit-background-clip: text;
+  background-clip: text;
+  /* use color, don't use -webkit-text-fill-color anymore,
+	 * was meant to solve a problem we haven't had in years */
+  color: transparent;
+
+  animation: shimmer 3s linear infinite;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes shimmer {
+  to {
+    background-position: 100%;
+  }
+}
+
+.fancy {
+  color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg width='2250' height='900' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg%3E%3Cpath fill='%2340C9A2' d='M0 0h2255v899H0z'/%3E%3Ccircle cx='366' cy='207' r='366' fill='%2300FDCF'/%3E%3Ccircle cx='1777.5' cy='318.5' r='477.5' fill='%2300FDCF'/%3E%3Ccircle cx='1215' cy='737' r='366' fill='%23008060'/%3E%3C/g%3E%3C/svg%3E%0A");
+  background-size: 150% auto;
+  background-position: 0% 50%;
+  animation: moveBackground 15s linear infinite;
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .fancy {
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
+
+@keyframes moveBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
 }

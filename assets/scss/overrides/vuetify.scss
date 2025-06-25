@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 20th June 2024
- * Modified: Tue Jun 17 2025
+ * Modified: Sat Jun 21 2025
  **/
 
 //+-------------------------------------------------
@@ -175,4 +175,15 @@
   grid-template-areas: 'header body';
   grid-template-columns: 224px 328px;
   width: unset;
+}
+
+//+-------------------------------------------------
+// v-pagination
+//+-------------------------------------------------
+.v-tab__slider {
+  display: none !important;
+}
+
+ul.v-pagination__list {
+  margin: 0;
 }

@@ -1,5 +1,8 @@
 .card {
   // --tblr-card-border-color: #38394c;
+
+  // Include by default the .shadow-sm class
+  box-shadow: var(--tblr-box-shadow-sm) !important;
 }
 
 /* .card {

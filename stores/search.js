@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: Tue Jun 17 2025
+ * Modified: 26th June 2025 - 02:09:29
  */
 
 import apiService from '../services/apiService'
@@ -56,6 +56,7 @@ export const useSearchStore = defineStore('search', {
       filters: [],
       // released: null,
 
+      trigger: null,
       show: {
         page: 1,
         perPage: 42,

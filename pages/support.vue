@@ -40,13 +40,18 @@
               <span class="d-block fancy">Backlog.rip Supporter</span>
             </h1>
 
-            <p class="lead my-5">
+            <p class="lead my-5 mb-3">
               <!-- <strong>Backlog.rip is free to use and always will be.</strong>
               <br /> -->
               Built and maintained by a solo developer, I rely on community support to
               keep creating and maintaining a clean, independent platform for tracking
-              your games. Without ads, trackers, or clutter. If you like it, consider
-              supporting on Patreon to help keep it running and improving.
+              video games. My desire is to build a robust platform without ads, trackers,
+              or clutter.
+            </p>
+
+            <p class="lead mb-4">
+              If you like it, consider supporting on Patreon or ko-fi to help keep it
+              running and improving.
 
               <!-- Backlog.rip is free, but we rely on community support to innovate
             and continue creating an independent gaming library manager. That's why we
@@ -57,9 +62,9 @@
             <div class="card shadow-sm">
               <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                  <div>
-                    <h4 class="mb-0">One time or Monthly contribution</h4>
-                    <p class="text-muted mb-0">Help keep the project alive</p>
+                  <div style="display: flex; justify-content: space-between; width: 100%">
+                    <p class="mb-0">One time / Monthly contribution</p>
+                    <p class="text-end text-muted mb-0">Help keep the project alive</p>
                   </div>
                   <div class="text-end">
                     <!-- <div class="h3 mb-0 text-primary fw-bold">$5</div> -->
@@ -73,8 +78,10 @@
                   color="rgb(110 116 180)"
                   href="https://patreon.com/backlogrip"
                   target="_blank">
-                  <v-icon start>mdi-heart</v-icon>
-                  Become a Supporter
+                  <Icon size="16" class="me-2" style="transform: translateY(-1px)">
+                    BrandPatreonFilled
+                  </Icon>
+                  Become a Supporter on Patreon
                 </v-btn>
 
                 <div class="text-center mt-3">
@@ -141,8 +148,8 @@
                     </h2>
                     <p class="text-secondary">
                       The website is free to use and always will be. You can manage your
-                      library, track your games, and sync across devices without paying a
-                      cent.
+                      library, track your games, and sync across devices without any
+                      payment.
                     </p>
                     <ul class="list-unstyled lh-lg">
                       <li class="d-flex align-items-center">
@@ -151,40 +158,47 @@
                       </li>
                       <li class="d-flex align-items-center">
                         <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        Progress tracking
+                        <span class="text-muted px-2">status, hours ...</span>
+                      </li>
+                      <li class="d-flex align-items-center">
+                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
                         Advanced search and filtering
                       </li>
                       <li class="d-flex align-items-center">
                         <Icon class="text-success me-2" size="14" width="2">Check</Icon>
-                        Custom lists, tags, and notes
+                        Custom states and lists
+                      </li>
+
+                      <li class="mt-3"><strong>Integrations</strong></li>
+                      <li class="d-flex align-items-center">
+                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        Synchronize with Steam
                       </li>
                       <li class="d-flex align-items-center">
                         <Icon class="text-success me-2" size="14" width="2">Check</Icon>
-                        Game progress tracking (status, hours, completion, etc.)
+                        <span class="line-through">Steam Achievements</span>
+                        <span class="text-muted px-2">under maintenance</span>
                       </li>
-                      <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
-                        Import/export from Steam, CSV, and other platforms
-                      </li>
-                      <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
-                        Automatic Steam sync and achievements
-                      </li>
+
+                      <li class="mt-3"><strong>Cloud usage</strong></li>
                       <li class="d-flex align-items-center">
                         <Icon class="text-success me-2" size="14" width="2">Check</Icon>
                         Cloud backups and multi-device sync
                       </li>
-                      <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
-                        Community features (reviews, comments, sharing)
-                      </li>
-                      <li class="d-flex align-items-center">
+
+                      <!-- <li class="d-flex align-items-center">
                         <Icon class="text-success me-2" size="14" width="2">Check</Icon>
                         Statistics and insights (charts, playtime, genres, etc.)
                       </li>
+                      -->
+
+                      <li class="mt-3"><strong>My philosophy</strong></li>
                       <li class="d-flex align-items-center">
                         <Icon class="text-success me-2" size="14" width="2">Check</Icon>
-                        No ads, no trackers, no cookies
+                        No ads, trackers or cookies
                       </li>
+
                       <li class="d-flex align-items-center">
                         <Icon class="text-success me-2" size="14" width="2">Check</Icon>
                         Open source and privacy-focused
@@ -195,7 +209,7 @@
               </div>
               <div class="col-sm-6 col-lg-4">
                 <div
-                  class="card pricing-card card-md border-primary"
+                  class="card pricing-card card-md border-primary h-100"
                   style="border: 1px solid; background: #322b3f57">
                   <div class="card-body">
                     <h2
@@ -301,7 +315,7 @@
                     </ul>
                     <div class="text-center mt-4">
                       <a
-                        href="https://ko-fi.com/backlogrip"
+                        href="https://buymeacoffee.com/steambacklog"
                         target="_blank"
                         class="btn btn-primary w-100">
                         Make a Donation
@@ -422,8 +436,8 @@
         <div class="col-lg-8">
           <v-expansion-panels variant="accordion" class="mb-4">
             <v-expansion-panel
-              v-for="faq in faqs"
-              :key="faq.id"
+              v-for="(faq, i) in faqs"
+              :key="`faq-${i}`"
               class="shadow-sm"
               style="
                 background: #2b2d38;
@@ -471,7 +485,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th June 2025
- * Modified: 24th June 2025 - 11:09:07
+ * Modified: 26th June 2025 - 06:13:51
  **/
 
 export default {
@@ -480,55 +494,52 @@ export default {
     return {
       faqs: [
         {
-          id: 1,
           question: 'Is Backlog.rip really free?',
           answer:
             'Yes! All core features are free: unlimited games, advanced search, custom lists, Steam sync, cloud backups, and more. No ads, no tracking, no paywalls.',
           icon: 'mdi-help-circle-outline',
         },
         {
-          id: 2,
           question: 'What do I get as a supporter?',
-          answer: [
-            'Priority email support',
-            'Early access to new features',
-            'Special supporter badge',
-            'Access to the supporter Discord channel',
-            'The satisfaction of supporting open-source gaming tools',
-          ],
+          answer:
+            'As a supporter, you get access to a dedicated Discord channel, increased cloud backup retention, and unlimited achievements synchronization. Plus, you help keep the project running!',
           icon: 'mdi-credit-card-outline',
-          isList: true,
         },
         {
-          id: 3,
           question: 'What features are included for free?',
           answer:
             'Everything you need: unlimited library, Steam sync, achievements, custom lists, stats, cloud sync, and more. See the full list above!',
           icon: 'mdi-star-outline',
         },
         {
-          id: 4,
           question: 'Can I import/export my data?',
           answer:
-            'Yes! You can import from Steam, CSV, and other platforms, and export your library at any time.',
+            'Yes! You can synchronize your library from Steam. Also, you can export your data at any time in JSON format. This JSON can be used to import your library into another instance of Backlog.rip or any compatible service.',
           icon: 'mdi-database-arrow-down-outline',
         },
         {
-          id: 5,
           question: 'How is my data stored and protected?',
           answer:
-            'Your data is securely stored in the cloud and can be synced across devices. You can export or delete your data at any time.',
+            'Your data is securely stored in your browser, and a backup is made in the cloud so it can be synced across devices. You can export or delete your data at any time.',
           icon: 'mdi-shield-lock-outline',
         },
         {
-          id: 6,
           question: 'Can I cancel my support anytime?',
           answer:
             'Absolutely! You can cancel recurring support at any time. No contracts or fees.',
           icon: 'mdi-cancel',
         },
         {
-          id: 7,
+          question: 'Can I support without a subscription?',
+          answer: 'Yes! You can make a one-time donation via ko-fi.',
+          icon: 'mdi-heart-outline',
+        },
+        {
+          question: 'How can I contact you?',
+          answer: 'You can reach me via the Discord server to chat directly.',
+          icon: 'mdi-chat-outline',
+        },
+        {
           question: 'Where does my support money go?',
           answer:
             '100% of contributions go to server costs, development, and keeping Backlog.rip independent and ad-free.',

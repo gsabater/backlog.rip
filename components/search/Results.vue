@@ -160,7 +160,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 29 May 2025 - 15:37:31
+ * Modified: 26th June 2025 - 06:16:53
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -231,11 +231,19 @@ export default {
         //   filters = JSON.parse(JSON.stringify(props.filters))
         // }
 
+        // Conserve the trigger
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        $search.f.trigger = trigger
+        if (trigger !== 'pagination') {
+          $search.f.show.page = 1
+        }
+
         const search = $search.run()
         items.value = search.items
 
         log(`🧭 search:end (${$search.stats.time.toFixed(3)}ms)`, {
-          trigger: trigger,
+          string: $search.f.string,
+          trigger: $search.f.trigger,
           source: $search.f.is,
           apps: search.items.length,
 
@@ -262,6 +270,17 @@ export default {
     //   },
     //   { deep: true }
     // )
+
+    // Watcher
+    // Trigger a search on text input change
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    watch(
+      () => $search.f.string,
+      (value, old) => {
+        // if (props.disabled) return
+        search('filters:updated')
+      }
+    )
 
     return { search, items }
   },

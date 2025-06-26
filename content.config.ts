@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th June 2025
- * Modified: 23rd June 2025 - 11:55:44
+ * Modified: 25th June 2025 - 05:30:07
  */
 
 
@@ -13,7 +13,11 @@ export default defineContentConfig({
   collections: {
     content: defineCollection({
       type: 'page',
-      source: '**/*.md'
+      source: '**/*.md',
+      schema: z.object({
+        title: z.string(),
+        date: z.date()
+      })
     }),
 
     changelog: defineCollection({

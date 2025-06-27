@@ -32,7 +32,7 @@
         <div
           class="dropdown-item control-hover"
           :class="{ active: cursor == i }"
-          @click="addFilter(option)">
+          @click="writePathOnClick(option)">
           <div>
             {{ option.path }}{{ suggestedValue }}
             <div
@@ -137,7 +137,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Tue 03 June 2025 - 17:03:45
+ * Modified: 26th June 2025 - 05:44:07
  **/
 
 import filterService from '../../services/filterService'
@@ -440,6 +440,10 @@ export default {
       // if (this.offerToSearch && this.cursor < -1) this.cursor = -1
       if (!this.offerToSearch && !this.offerToClean && this.cursor < 0) this.cursor = 0
       if (!this.suggestions.length) this.cursor = -1
+    },
+
+    writePathOnClick(option) {
+      this.f.box = option.path
     },
 
     writePath() {

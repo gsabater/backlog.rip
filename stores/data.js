@@ -3,7 +3,7 @@
  * @desc:    Handle operations related to data with their index
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: Thu 29 May 2025 - 16:04:20
+ * Modified: 27th June 2025 - 02:07:06
  */
 
 import gameService from '../services/gameService'
@@ -172,7 +172,7 @@ export const useDataStore = defineStore('data', {
           item.id.api = item.uuid
 
           if (intent.includes('list:')) {
-            this.toData(item)
+            if (!indexed) this.toData(item)
             continue
           }
 

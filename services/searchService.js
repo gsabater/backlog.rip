@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Fri 23 May 2025 - 14:08:36
+ * Modified: Tue Jun 17 2025
  */
 
 import filterService from './filterService'
@@ -373,20 +373,22 @@ export default {
 
   //+-------------------------------------------------
   // paginate()
-  //
+  // Handles pagination - supports both "load more" and "page-based" approaches
   // -----
   // Created on Mon Feb 12 2024
+  // Updated on Thu Jun 12 2025 - Added pageOnly parameter for proper pagination
   //+-------------------------------------------------
   paginate(items, options) {
     if (!options) return items
 
     if (!items || items.length == 0) return []
 
-    const { page, perPage } = options
+    const { page, perPage, pagination } = options
     const start = (page - 1) * perPage
     const end = start + perPage
 
-    return items.slice(0, end)
+    if (pagination == 'pages') return items.slice(start, end)
+    else return items.slice(0, end)
   },
 
   // //+-------------------------------------------------
@@ -491,6 +493,19 @@ export default {
     }
 
     return selected
+  },
+
+  //+-------------------------------------------------
+  // calcPages()
+  // Calcs the amount of pages
+  // -----
+  // Created on Mon Jun 16 2025
+  //+-------------------------------------------------
+  calcPages(filters, results) {
+    const { page, perPage } = filters.show
+    if (!results || !perPage) return 0
+
+    return Math.ceil(results / perPage)
   },
 
   //+-------------------------------------------------

@@ -273,6 +273,11 @@
                   Sitemap
                 </NuxtLink>
 
+                <NuxtLink to="/support" class="dropdown-item">
+                  <Icon size="18" class="me-2">ActivityHeartbeat</Icon>
+                  <span class="fancy">Support the project</span>
+                </NuxtLink>
+
                 <span class="dropdown-header" style="text-transform: none">
                   <span class="text-muted my-4">
                     Version
@@ -546,8 +551,7 @@
               class="avatar avatar-sm rounded-circle"
               :class="{
                 'gray-600': $cloud.is == 'local',
-                'bg-teal-lt': $cloud.is == 'connecting',
-                'bg-teal-lt': $cloud.is == 'syncing',
+                'bg-teal-lt': $cloud.is == 'syncing' || $cloud.is == 'connecting',
                 'bg-green-lt': $cloud.is == 'sync:done',
                 'bg-orange-lt': $cloud.is == 'conflict',
                 'bg-red-lt': $cloud.is == 'error',
@@ -1014,7 +1018,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: Thu 29 May 2025 - 17:26:27
+ * Modified: 24th June 2025 - 03:51:52
  **/
 
 export default {

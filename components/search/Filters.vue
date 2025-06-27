@@ -87,9 +87,7 @@
         @keydown="handleKeydown"
         style="position: relative; z-index: 10">
         <template v-slot:prepend-inner>
-          <Icon size="14" class="text-secondary me-2" style="nmin-width: 1em">
-            Search
-          </Icon>
+          <Icon size="14" class="text-secondary me-2">Search</Icon>
 
           <template v-if="showTags == 'inline'" v-for="(filter, i) in f.filters" :key="i">
             <search-filter-tag :index="i" :current="filter" mode="keyboard" />
@@ -215,33 +213,30 @@
 
       <v-btn
         v-tippy="'Display results as a list'"
-        variant="tonal"
-        size="small"
-        class="mx-1 p-0"
+        icon
+        variant="text"
+        size="x-small"
         color="blue-grey-lighten-1"
-        style="min-width: 1px; aspect-ratio: 1; --v-activated-opacity: 0.05"
         @click="f.show.layout = 'list'">
         <Icon width="1.2" size="16" class="mx-1">LayoutList</Icon>
       </v-btn>
 
       <v-btn
         v-tippy="'Display results as a grid of covers'"
-        variant="tonal"
-        size="small"
-        class="mx-1 p-0"
+        icon
+        variant="text"
+        size="x-small"
         color="blue-grey-lighten-1"
-        style="min-width: 1px; aspect-ratio: 1; --v-activated-opacity: 0.05"
         @click="f.show.layout = 'grid'">
         <Icon width="1.2" size="16" class="mx-1">LayoutGrid</Icon>
       </v-btn>
 
       <v-btn
         v-tippy="'Get a random game from this list'"
-        variant="tonal"
-        size="small"
-        class="mx-1 p-0"
+        icon
+        variant="text"
+        size="x-small"
         color="blue-grey-lighten-1"
-        style="min-width: 1px; aspect-ratio: 1; --v-activated-opacity: 0.05"
         @click="$mitt.emit('game:random', { filters: f })">
         <Icon width="1.2" size="16" class="mx-1">Dice5</Icon>
         <!-- <Icon class="text-muted" size="12" width="2">ChevronDown</Icon> -->
@@ -249,10 +244,10 @@
 
       <v-btn
         id="⚓itemDetails"
-        variant="tonal"
+        variant="text"
         size="small"
-        class="mx-1 p-0"
         color="blue-grey-lighten-1"
+        class="px-1 mx-0"
         style="--v-activated-opacity: 0.05">
         <Icon width="1.2" size="16" class="me-1">PlayCardStar</Icon>
         <Icon class="text-muted" size="12" width="2">ChevronDown</Icon>
@@ -301,7 +296,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Sat 07 June 2025 - 18:40:02
+ * Modified: Mon Jun 16 2025
  **/
 
 export default {

@@ -1,15 +1,14 @@
 /*
  * @file:    \nuxt.config.ts
  * @desc:    https://nuxt.com/docs/api/configuration/nuxt-config
- *           https://codybontecou.com/how-to-use-vuetify-with-nuxt-3.html
  *           https://nitro.unjs.io/deploy/providers/cloudflare
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Mon 28 April 2025 - 17:57:47
+ * Modified: 27th June 2025 - 01:04:56
  */
 
-import { defineNuxtConfig } from 'nuxt/config';
+import { defineNuxtConfig } from 'nuxt/config'
 
 // import vuetify from 'vite-plugin-vuetify'
 // import { transformAssetUrls } from 'vite-plugin-vuetify'
@@ -21,9 +20,21 @@ export default defineNuxtConfig({
   nitro: {
     // preset: 'static'
     // preset: 'cloudflare-pages',
+
     prerender: {
-      routes: ['/sitemap']
-    }
+      routes: ['/docs', '/sitemap', '/changelog', '/changelog/v0.20'],
+      crawlLinks: true,
+      // failOnError: false
+    },
+
+    logLevel: 'verbose', // 'info'  // 'debug'
+  },
+
+  routeRules: {
+    '/docs': { prerender: true },
+    '/sitemap': { prerender: true },
+    '/changelog': { prerender: true },
+    '/changelog/**': { prerender: true },
   },
 
   sourcemap: { server: false, client: true },
@@ -52,7 +63,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
 
     'vue-sonner/nuxt',
-    'vuetify-nuxt-module'
+    'vuetify-nuxt-module',
   ],
 
   // Auto import pinia stores
@@ -87,16 +98,17 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       built_at: process.env.BUILD_TIME || new Date().toISOString(),
-    }
+    },
   },
 
   content: {
-    markdown: {
-      remarkPlugins: [
-        // Make sure you have something like "remark-container" here
-        // and also define your container name if needed
-      ]
-    }
+    build: {
+      markdown: {
+        toc: {
+          depth: 3, // include h3 headings
+        },
+      },
+    },
   },
 
   app: {
@@ -109,7 +121,7 @@ export default defineNuxtConfig({
       },
 
       bodyAttrs: {
-        'class': 'antialiased',
+        class: 'antialiased',
       },
     },
   },
@@ -130,41 +142,6 @@ export default defineNuxtConfig({
     description: 'Free and open source library manager for all your games.',
     defaultLocale: 'en', // not needed if you have @nuxtjs/i18n installed
   },
-
-
-  // sitemap: {
-  //   enabled: false
-  //   // // exclude all app sources
-  //   // excludeAppSources: true,
-  //   // cacheMaxAgeSeconds: 3600 * 24,
-
-  //   // // Build time sitemap
-  //   // urls: async () => {
-  //   //   const urls = await fetch('https://api.backlog.rip/sitemap.xml')
-  //   //   return urls
-  //   // }
-
-  //   // // Runtime sitemap
-  //   // // sources: [
-  //   // //   'https://api.backlog.rip/sitemap.xml',
-  //   // // ],
-  // },
-
-  // robots: {
-  //   enabled: false
-  // },
-
-  // seoExperiments: {
-  //   enabled: false
-  // },
-
-  // schemaOrg: {
-  //   enabled: true,
-  // },
-
-  // linkChecker: {
-  //   enabled: false
-  // },
 
   webpack: {
     // extractCSS: true,
@@ -210,7 +187,7 @@ export default defineNuxtConfig({
 
     vscode: {},
     timeline: {
-      enabled: false,
+      enabled: true,
     },
   },
 })

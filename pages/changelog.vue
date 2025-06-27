@@ -1,22 +1,91 @@
 <template>
-  <div class="page-header d-print-none py-3">
-    <div class="container">
-      <div class="row g-2 align-items-center text-center mb-3">
-        <div class="col">
-          <h1 class="mb-1">Changelog</h1>
-          <div class="page-pretitle">
-            New updates and product improvements
-            <div class="pt-2">
+  <div class="page-body">
+    <div class="container-xl">
+      <!--
+        *+---------------------------------
+        *| Main Hero
+        *+--------------------------------- -->
+      <div class="row align-items-center min-vh-75 mb-5 pb-5">
+        <div class="col-5 offset-1 d-none d-md-block">
+          <div class="text-center">
+            <img
+              src="/img/transhumans/new-beginnings.png"
+              class="img-fluid"
+              style="
+                max-height: 400px;
+                object-fit: cover;
+                filter: drop-shadow(1px 1px 0px currentcolor);
+                color: #00fdcf;
+              " />
+
+            <small class="text-muted d-block mt-1">
+              Illustration from
+              <strong>Transhumans</strong>
+              by Pablo Stanley
+            </small>
+          </div>
+        </div>
+        <div class="col-12 col-md-5">
+          <div class="pe-4">
+            <h1
+              class="display-5 fw-bold mb-4 w-100"
+              style="filter: drop-shadow(2px 2px 0px #000)">
+              Backlog.rip
+              <span class="fancy">Changelog</span>
+            </h1>
+
+            <p class="lead mb-3">
+              Stay updated with the latest features, improvements, and bug fixes in our
+              product. Explore our changelog to see how we are evolving and enhancing your
+              experience.
+            </p>
+            <p class="lead mb-4">
+              <strong>Join our community on Discord</strong>
+              to discuss updates, share feedback, and connect with other users. We value
+              your input and are excited to hear from you!
+            </p>
+            <p class="text-muted" style="font-size: 0.75rem">
+              <NuxtLink to="/changelog" class="link-secondary link-underline-opacity-0">
+                Version
+                <!-- <Icon size="16" width="1.8" style="transform: translateY(-1px)">Beta</Icon> -->
+                {{ $app.v }}
+              </NuxtLink>
+
+              <span class="px-3">·</span>
               <a
+                href="https://github.com/gsabater/backlog.rip"
+                class="link-secondary link-underline-opacity-0"
+                target="_blank">
+                <b-logo
+                  name="github"
+                  size="13"
+                  class="me-1"
+                  color="#fff"
+                  style="opacity: 0.6; transform: translateY(-1px)"></b-logo>
+                Open source
+              </a>
+
+              <span class="px-3">·</span>
+              <NuxtLink to="/support" class="link-secondary link-underline-opacity-0">
+                Become a
+                <span class="fancy">Supporter</span>
+              </NuxtLink>
+              <span class="px-3">·</span>
+
+              Join us at
+
+              <a
+                v-tippy="'Join us at Discord'"
                 href="https://discord.gg/F2sPE5B"
-                class="link-purple link-underline-opacity-0"
+                class="link-secondary link-underline-opacity-0 ms-2 mx-1"
                 target="_blank">
                 <svg
                   class="me-1"
-                  width="14"
-                  height="14"
+                  width="16"
+                  height="16"
                   viewBox="0 -28.5 256 256"
                   version="1.1"
+                  style="transform: translateY(-1px)"
                   preserveAspectRatio="xMidYMid">
                   <g>
                     <path
@@ -25,91 +94,112 @@
                       fill-rule="nonzero"></path>
                   </g>
                 </svg>
-                Discord
               </a>
 
-              <span class="px-2"></span>
               <a
-                href="https://github.com/gsabater/backlog.rip"
-                class="link-purple link-underline-opacity-25"
+                v-tippy="'Support on Patreon'"
+                href="https://www.patreon.com/c/BacklogRIP"
+                class="link-secondary link-underline-opacity-0 mx-1"
                 target="_blank">
-                <Icon size="14" class="me-0" style="transform: translateY(-1px)">
-                  BrandGithub
+                <Icon size="16" style="transform: translateY(-1px)">
+                  BrandPatreonFilled
                 </Icon>
-                Github
               </a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!--
+        *+---------------------------------
+        *| Latest Release Section
+        *+--------------------------------- -->
+      <div class="row justify-content-center py-5">
+        <!-- <div class="col-8 text-center mb-4"> -->
+        <!-- Latest Release using the ChangelogEntry component -->
+
+        <DocsChangelogEntry v-if="latest" :post="latest" />
+        <!-- </div> -->
+      </div>
+
+      <pre class="d-block" v-if="false">
+        {{ latest ? latest : 'Loading latest release...' }}
+      </pre>
+
+      <!--
+        *+---------------------------------
+        *| Changelog History Section
+        *+--------------------------------- -->
+      <div class="row mt-5 pt-4">
+        <div class="col-12 text-center mb-5">
+          <h2 class="display-6 mb-1" style="text-shadow: 2px 2px 0px #000">
+            Previous Releases
+          </h2>
+
+          <p class="text-muted">A history of all our updates and improvements</p>
+        </div>
+
+        <div class="col-md-8 mx-auto">
+          <div class="card" v-if="changelog && changelog.length > 0">
+            <div class="list-group list-group-hoverable card-list-group">
+              <template v-for="(item, index) in changelog" :key="item.path">
+                <NuxtLink
+                  :to="`/docs/${item.path}`"
+                  class="list-group-item px-3 cursor-pointer text-decoration-none"
+                  style="padding-top: 0.8rem; padding-bottom: 0.8rem; color: inherit">
+                  <div class="row g-3 align-items-center">
+                    <div class="col-auto text-secondary">
+                      <!-- <Icon class="mx-2">ActivityHeartbeat</Icon> -->
+                      <span class="badge me-2">{{ item.version }}</span>
+                    </div>
+                    <div class="col">
+                      <span class="font-serif">
+                        {{ item.title }}
+                      </span>
+                      <div class="v-list-item-subtitle">
+                        <small class="text-muted">
+                          {{ $moment(item.date).format('LL') }}
+                          <!-- , {{ dates.timeAgo(item.date) }} -->
+                        </small>
+                      </div>
+                    </div>
+
+                    <div class="col-auto text-secondary d-flex">
+                      <v-btn
+                        @click.stop="goToList(item, 'edit')"
+                        icon
+                        variant="text"
+                        size="x-small">
+                        <Icon width="1.2" size="12" class="mx-1">CaretRightFilled</Icon>
+                      </v-btn>
+                    </div>
+                  </div>
+                </NuxtLink>
+              </template>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- <ul class="steps steps-vertical">
-        <li class="step-item">
-          <div>
-            <div class="h4 mb-2">State changed</div>
-            <span class="status" style="border-radius: 4px">Unknown</span>
-            has been added to
-          </div>
-          <small class="text-secondary d-inline-block border-top pt-2 mt-2">
-            Entry added 12 de enero de 2024 11:49:51
-          </small>
-        </li>
-      </ul> -->
-
-  <div id="changelog" class="page-body">
-    <div class="container">
-      <ContentQuery path="changelog" :sort="[{ date: -1 }]">
-        <template #default="{ data }">
-          <div v-for="item in data" :key="item._path" class="row mb-5">
-            <div class="col col-12 col-md-2 offset-md-1 p-2">
-              <h3 class="mb-1">{{ $moment(item.date).format('LL') }}</h3>
-              <code>version {{ item.version }}</code>
-            </div>
-            <div class="col col-12 col-md-7">
-              <div class="card">
-                <div
-                  class="card-header"
-                  style="padding-top: 0.75rem; padding-bottom: 0.75rem">
-                  <h3 class="card-title">{{ item.title }}</h3>
-                </div>
-                <div class="card-body">
-                  <ContentRenderer :value="item" />
-                </div>
-              </div>
-              <div class="hr-text my-4">❤️💜🧡</div>
-            </div>
-          </div>
-        </template>
-        <template #not-found>
-          <p>Not found</p>
-        </template>
-      </ContentQuery>
-    </div>
-  </div>
 </template>
 
-<script>
+<script setup>
 /**
  * @file:    \pages\changelog.vue
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th January 2024
- * Modified: Wed 11 September 2024 - 19:20:30
+ * Modified: 27th June 2025 - 01:31:24
  **/
 
-export default {
-  name: 'Changelog',
+const { data: changelog } = await useAsyncData('changelog', () => {
+  return queryCollection('changelog').order('date', 'DESC').all()
+})
 
-  data() {
-    return {}
-  },
+// console.log('Posts:', changelog.value.length, changelog.value)
 
-  computed: {
-    section() {
-      return this.$route.params.section
-    },
-  },
-}
+const latest = computed(() =>
+  changelog.value && changelog.value.length > 0 ? changelog.value[0] : null
+)
 </script>

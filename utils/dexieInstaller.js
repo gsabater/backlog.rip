@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th November 2023
- * Modified: Tue 25 March 2025 - 11:19:04
+ * Modified: Tue Jun 17 2025
  */
 
 export class DexieInstaller {
@@ -127,6 +127,11 @@ export class DexieInstaller {
 
       menu: {
         states: [1, 2, 3],
+      },
+
+      pagination: {
+        style: 'pages',
+        perPage: 42,
       },
 
       cron: {},

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: Thu 29 May 2025 - 15:20:48
+ * Modified: Tue Jun 17 2025
  */
 
 import synchronizationService from '../services/synchronizationService'
@@ -99,13 +99,14 @@ function handle(event, payload) {
     // User hooks
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     case 'user:ready':
-      // $guild ??= useGuildStore()
       $nuxt ??= useNuxtApp()
       $libs ??= useLibraryStore()
+      $guild ??= useGuildStore()
 
       $libs.init()
       $nuxt.$sync.connect()
       $nuxt.$app.has.push('user')
+      $guild.init('ping')
       break
 
     // Data hooks
@@ -216,7 +217,7 @@ function overview() {
     },
   }
 
-  log('Overview state', state)
+  log('🗞️ Overview state', state)
 }
 
 export default defineNuxtPlugin(() => {

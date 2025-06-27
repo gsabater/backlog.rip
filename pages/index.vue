@@ -15,8 +15,8 @@
             </span>
           </p>
 
-          <div class="my-3">
-            <div class="row g-3 justify-center">
+          <div class="my-2">
+            <div class="row justify-center my-5">
               <div class="col-auto">&nbsp;</div>
               <div class="col-auto">
                 <v-btn to="import" color="purple" variant="flat">
@@ -33,7 +33,7 @@
               </div>
             </div>
 
-            <p class="text-muted my-3" style="font-size: 0.75rem">
+            <p class="text-muted" style="font-size: 0.75rem">
               <NuxtLink to="/changelog" class="link-secondary link-underline-opacity-0">
                 Version
                 <!-- <Icon size="16" width="1.8" style="transform: translateY(-1px)">Beta</Icon> -->
@@ -54,6 +54,11 @@
                 Open source
               </a>
 
+              <span class="px-3">·</span>
+              <NuxtLink to="/support" class="link-secondary link-underline-opacity-0">
+                Become a
+                <span class="fancy">Supporter</span>
+              </NuxtLink>
               <span class="px-3">·</span>
 
               Join us at
@@ -187,7 +192,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Fri 25 April 2025 - 13:33:08
+ * Modified: Thu Jun 19 2025
  **/
 
 export default {

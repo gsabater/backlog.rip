@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 7th November 2024
- * Modified: Wed 30 April 2025 - 17:07:10
+ * Modified: Tue Jun 17 2025
  **/
 
 //+-------------------------------------------------
@@ -127,6 +127,26 @@ svg.tabler-icon {
   color: #000000;
   background: rgba(0, 0, 0, 0.2);
   opacity: 1 !important;
+}
+
+//+-------------------------------------------------
+// Pagination
+//+-------------------------------------------------
+.page-item.active .page-link {
+  color: white;
+  background-color: rgb(45 45 59);
+  border: 1px solid rgba(110, 116, 180, 0.4);
+  border: transparent;
+}
+
+.page-link:hover {
+  background: rgb(255 255 255 / 8%);
+  color: #fff;
+}
+
+.page-link:focus {
+  box-shadow: none;
+  background-color: unset;
 }
 
 //+-------------------------------------------------

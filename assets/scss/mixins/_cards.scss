@@ -1,3 +1,30 @@
 .card {
   // --tblr-card-border-color: #38394c;
+
+  // Include by default the .shadow-sm class
+  box-shadow: var(--tblr-box-shadow-sm) !important;
+}
+
+/* .card {
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+} */
+
+.card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--tblr-body-color);
+}
+
+/* .card-subtitle {
+  color: var(--tblr-text-muted);
+  font-size: 0.875rem;
+} */
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
 }

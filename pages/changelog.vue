@@ -140,11 +140,11 @@
         </div>
 
         <div class="col-md-8 mx-auto">
-          <div class="card" v-if="posts && posts.length > 0">
+          <div class="card" v-if="changelog && changelog.length > 0">
             <div class="list-group list-group-hoverable card-list-group">
-              <template v-for="(item, index) in posts" :key="item.path">
+              <template v-for="(item, index) in changelog" :key="item.path">
                 <NuxtLink
-                  :to="item.path"
+                  :to="`/docs/${item.path}`"
                   class="list-group-item px-3 cursor-pointer text-decoration-none"
                   style="padding-top: 0.8rem; padding-bottom: 0.8rem; color: inherit">
                   <div class="row g-3 align-items-center">
@@ -185,62 +185,21 @@
 </template>
 
 <script setup>
+/**
+ * @file:    \pages\changelog.vue
+ * @desc:    ...
+ * -------------------------------------------
+ * Created Date: 5th January 2024
+ * Modified: 27th June 2025 - 01:31:24
+ **/
+
 const { data: changelog } = await useAsyncData('changelog', () => {
   return queryCollection('changelog').order('date', 'DESC').all()
 })
 
-const posts = ref(changelog?.value || [])
-console.log('Posts:', posts.value.length)
+// console.log('Posts:', changelog.value.length, changelog.value)
+
 const latest = computed(() =>
-  posts.value && posts.value.length > 0 ? posts.value[0] : null
+  changelog.value && changelog.value.length > 0 ? changelog.value[0] : null
 )
 </script>
-<!-- <script>
-/**
- * @file:    \pages\changelog.vue
- * @desc:    Changelog page using Nuxt Content with component-based layout
- * -------------------------------------------
- * Created Date: 23rd June 2025
- * Updated Date: June 23, 2025
- **/
-
-export default {
-  name: 'Changelog',
-
-  setup() {
-    const { data: posts } = useAsyncData('changelog', () =>
-      queryContent('changelog').sort({ date: -1 }).find()
-    )
-
-    const latest = computed(() => posts.value?.[0])
-
-    return {
-      posts,
-      latest,
-    }
-  },
-
-  data() {
-    return {}
-  },
-
-  methods: {
-    async loadChangelog() {
-      let posts = await queryCollection('changelog').order('date', 'DESC').all()
-
-      this.posts = posts
-      this.latest = posts[0]
-
-      return { posts, latest: posts[0] }
-    },
-
-    init() {
-      this.loadChangelog()
-    },
-  },
-
-  // mounted() {
-  //   this.init()
-  // },
-}
-</script> -->

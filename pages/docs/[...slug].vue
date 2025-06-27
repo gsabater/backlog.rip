@@ -116,8 +116,9 @@
  * @desc:    Nuxt Content documentation page displaying user guides, changelog and developer docs
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: 26th June 2025 - 01:40:41
+ * Modified: 27th June 2025 - 11:02:59
  **/
+
 const route = useRoute()
 const path = route.path
 // console.log('Current route path:', path)
@@ -135,7 +136,8 @@ const { data: changelog } = await useAsyncData('changelog', () => {
   return queryCollection('changelog').order('date', 'DESC').all()
 })
 
-const posts = ref(changelog?.value || [])
+// console.log('Changelog data:', changelog.value, 'length:', changelog.value.length)
+// const posts = ref(changelog?.value || [])
 // console.log('Posts:', posts.value.length, posts.value)
 
 const { data: navigation } = await useAsyncData('navigation', () => {

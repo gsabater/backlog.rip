@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th June 2025
- * Modified: 25th June 2025 - 05:30:07
+ * Modified: 26th June 2025 - 06:33:53
  */
 
 
@@ -22,7 +22,7 @@ export default defineContentConfig({
 
     changelog: defineCollection({
       type: 'page',
-      source: 'changelog/*.md',
+      source: '*changelog/*.md',
       schema: z.object({
         title: z.string(),
         version: z.string(),

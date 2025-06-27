@@ -1,15 +1,14 @@
 /*
  * @file:    \nuxt.config.ts
  * @desc:    https://nuxt.com/docs/api/configuration/nuxt-config
- *           https://codybontecou.com/how-to-use-vuetify-with-nuxt-3.html
  *           https://nitro.unjs.io/deploy/providers/cloudflare
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: 25th June 2025 - 10:37:08
+ * Modified: 27th June 2025 - 01:04:56
  */
 
-import { defineNuxtConfig } from 'nuxt/config';
+import { defineNuxtConfig } from 'nuxt/config'
 
 // import vuetify from 'vite-plugin-vuetify'
 // import { transformAssetUrls } from 'vite-plugin-vuetify'
@@ -23,12 +22,12 @@ export default defineNuxtConfig({
     // preset: 'cloudflare-pages',
 
     prerender: {
-      routes: ['/docs', '/sitemap', '/changelog'],
+      routes: ['/docs', '/sitemap', '/changelog', '/changelog/v0.20'],
       crawlLinks: true,
       // failOnError: false
     },
 
-    logLevel: 'info'  // 'debug'
+    logLevel: 'verbose', // 'info'  // 'debug'
   },
 
   routeRules: {
@@ -64,7 +63,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
 
     'vue-sonner/nuxt',
-    'vuetify-nuxt-module'
+    'vuetify-nuxt-module',
   ],
 
   // Auto import pinia stores
@@ -99,7 +98,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       built_at: process.env.BUILD_TIME || new Date().toISOString(),
-    }
+    },
   },
 
   content: {
@@ -107,9 +106,9 @@ export default defineNuxtConfig({
       markdown: {
         toc: {
           depth: 3, // include h3 headings
-        }
-      }
-    }
+        },
+      },
+    },
   },
 
   app: {
@@ -122,7 +121,7 @@ export default defineNuxtConfig({
       },
 
       bodyAttrs: {
-        'class': 'antialiased',
+        class: 'antialiased',
       },
     },
   },

@@ -5,7 +5,7 @@
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: 27th June 2025 - 01:04:56
+ * Modified: 28th June 2025 - 04:24:31
  */
 
 import { defineNuxtConfig } from 'nuxt/config'
@@ -22,7 +22,7 @@ export default defineNuxtConfig({
     // preset: 'cloudflare-pages',
 
     prerender: {
-      routes: ['/docs', '/sitemap', '/changelog', '/changelog/v0.20'],
+      routes: ['/docs', '/sitemap', '/changelog'], //  '/changelog/v0.20'
       crawlLinks: true,
       // failOnError: false
     },

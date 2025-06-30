@@ -2,6 +2,9 @@
   <div
     v-if="isKeyboard || !ui.showFilterValues"
     class="b-menu dropdown-menu show"
+    :class="{
+      'd-none': isKeyboard && !suggestions.length,
+    }"
     style="min-width: 300px; letter-spacing: normal">
     <!--
       *+---------------------------------
@@ -9,9 +12,9 @@
       *| offer for raw search and suggestions
       *+--------------------------------- -->
     <template v-if="isKeyboard">
-      <span class="dropdown-header">Search options</span>
+      <span class="dropdown-header">Apply filters</span>
 
-      <div
+      <!-- <div
         v-if="offerToSearch || offerToClean"
         class="dropdown-item control-hover"
         :class="{ active: cursor == -1 }">
@@ -23,30 +26,38 @@
           class="text-muted ms-auto text-end show-hover"
           style="min-width: 40px">
           <kbd>Enter</kbd>
-          <!-- <code>Enter</code> -->
+          <code>Enter</code>
         </small>
-      </div>
+      </div> -->
 
-      <div v-if="suggestions.length" class="dropdown-divider"></div>
-      <template v-for="(option, i) in suggestions" :key="option.path + i">
-        <div
-          class="dropdown-item control-hover"
-          :class="{ active: cursor == i }"
-          @click="writePathOnClick(option)">
-          <div>
-            {{ option.path }}{{ suggestedValue }}
-            <div
-              v-if="!option.base"
-              class="text-muted show-hover"
-              style="font-size: 0.75rem">
-              {{ filterMods[option.mod]?.desc }}
+      <!-- <div v-if="suggestions.length" class="dropdown-divider"></div> -->
+      <div
+        style="
+          padding: 3px;
+          overflow-y: auto;
+          max-height: 250px;
+          overscroll-behavior: contain;
+        ">
+        <template v-for="(option, i) in suggestions" :key="option.path + i">
+          <div
+            class="dropdown-item control-hover"
+            :class="{ active: cursor == i }"
+            @click="writePathOnClick(option)">
+            <div>
+              {{ option.path }}{{ suggestedValue }}
+              <div
+                v-if="!option.base"
+                class="text-muted show-hover"
+                style="font-size: 0.75rem">
+                {{ filterMods[option.mod]?.desc }}
+              </div>
             </div>
+            <small class="text-muted ms-auto text-end show-hover" style="min-width: 40px">
+              Tab
+            </small>
           </div>
-          <kbd class="text-muted ms-auto text-end show-hover" style="min-width: 40px">
-            Tab
-          </kbd>
-        </div>
-      </template>
+        </template>
+      </div>
 
       <div
         v-if="showSuggestedKbdMenu"
@@ -137,7 +148,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: 26th June 2025 - 05:44:07
+ * Modified: 30th June 2025 - 05:46:42
  **/
 
 import filterService from '../../services/filterService'
@@ -446,6 +457,12 @@ export default {
       this.f.box = option.path
     },
 
+    //+-------------------------------------------------
+    // writePath()
+    // Invoqued by the parent component on Enter key press
+    // -----
+    // Created on Mon Jun 30 2025
+    //+-------------------------------------------------
     writePath() {
       if (this.f.box.length && this.cursor == -1) {
         this.addFilter()
@@ -472,8 +489,10 @@ export default {
       // If there is no selected filter, we just run the search
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (!selected) {
-        this.f.string = this.f.box
-        this.$mitt.emit('search:run', 3)
+        console.warn('shouldnt happen anymore, delete block')
+        debugger
+        // this.f.string = this.f.box
+        // this.$mitt.emit('search:run', 3)
         return
       }
 

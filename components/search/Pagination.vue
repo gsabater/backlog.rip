@@ -36,7 +36,7 @@
       </v-btn>
 
       <v-btn
-        v-if="stats.results > 0"
+        v-if="stats.nextPage > 0"
         v-tippy="'Change pagination settings'"
         icon
         variant="text"
@@ -65,27 +65,6 @@
     </p>
   </div>
 
-  <!-- <div
-    v-if="f && f.show && f.show.perPage"
-    class="d-flex mt-4"
-    style="flex-direction: column; align-items: center">
-    <div v-if="stats.nextPage > 0" class="btn w-75 mb-3" @click="addPage">
-      Show {{ stats.nextPage }} more games
-    </div>
-
-    <p class="text-muted text-center w-50">
-      <template v-if="stats.results > 0">
-        Showing
-        <strong>{{ stats.showing }}</strong>
-        games, from a total of {{ format.num(stats.results) }}
-      </template>
-      <br />
-      <small v-if="stats.filtered > 0">
-        {{ format.num(stats.filtered) }} results excluded based on your filters
-      </small>
-    </p>
-  </div> -->
-
   <account-pagination-settings ref="settings" @updated="updatePaginationSettings" />
 </template>
 
@@ -95,7 +74,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 12th June 2025
- * Modified: Fri Jun 20 2025
+ * Modified: 1st July 2025 - 11:03:06
  **/
 
 export default {
@@ -123,23 +102,21 @@ export default {
       return this.stats?.pages
     },
 
-    currentPage() {
-      return this.f?.show?.page || 1
-    },
-
     // shouldShowPagination()
     // Returns true when pagination should be shown
     shouldShowPagination() {
       return this.config.style === 'pages' && this.stats.results > this.f.show.perPage
     },
 
+    //+-------------------------------------------------
     // shouldShowLoadMore()
     // Returns true when load more button should be shown
+    // -----
+    // Created on Tue Jul 01 2025
+    //+-------------------------------------------------
     shouldShowLoadMore() {
       return this.config.style === 'loadMore' && this.stats.nextPage > 0
     },
-
-    // No longer need these computed properties as Vuetify's v-pagination handles them internally
 
     //+-------------------------------------------------
     // currentPageText()
@@ -193,26 +170,7 @@ export default {
     },
 
     //+-------------------------------------------------
-    // goToPage()
-    // Sets the current page to the specified page number
-    // -----
-    // TODO: Update the URL query parameter for page
-    // this.$router.push({ query: { ...this.$route.query, page } })
-    // -----
-    // Created on Mon Jun 16 2025
-    //+-------------------------------------------------
-    goToPage(page) {
-      if (page < 1 || page > this.pages || page === this.currentPage) {
-        return
-      }
-
-      this.f.show.page = page
-      this.handlePageChange(page)
-    },
-
-    //+-------------------------------------------------
     // updatePaginationSettings()
-    //
     // -----
     // Created on Tue Jun 17 2025
     //+-------------------------------------------------

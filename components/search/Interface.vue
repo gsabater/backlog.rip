@@ -177,51 +177,15 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Tue Jun 17 2025
+ * Modified: 1st July 2025 - 04:36:01
  **/
 
 export default {
   name: 'SearchInterface',
-  props: {
-    // filters: {
-    //   type: Object,
-    //   default: () => ({}),
-    // },
-    // preset: {
-    //   type: String,
-    //   default: null,
-    // },
-  },
+  props: {},
 
   data() {
     return {
-      // f: {},
-      // slug: null,
-
-      // base: {
-      //   source: 'all',
-      //   string: '',
-
-      //   sortBy: 'score',
-      //   sortDir: 'desc',
-
-      //   states: [],
-      //   genres: [],
-      //   released: null,
-
-      //   mods: {
-      //     // states: 'any(of) // all(of) // not(of)'
-      //   },
-
-      //   show: {
-      //     page: 1,
-      //     perPage: 42,
-
-      //     layout: 'grid',
-      //     card: ['default'],
-      //   },
-      // },
-
       // presets: {
       //   'my-preset': {
       //     string: 'my preset',

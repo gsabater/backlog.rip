@@ -1,19 +1,24 @@
 <template>
-  <div class="col-3 px-4 offset-1">
-    <h1 class="display-6 mb-3 mt-5">{{ post.title }}</h1>
-    <div class="d-flex align-items-center flex-wrap mb-3">
-      <span v-if="post.version" class="version-chip me-3">v{{ post.version }}</span>
-      <div class="release-date text-muted">
-        {{ formatDate(post.date) }}
+  <div class="row">
+    <div class="col-12 col-lg-3 px-3 px-lg-4 offset-lg-1 mb-3 mb-lg-0">
+      <h1 class="display-6 mb-3 mt-0 mt-lg-5 text-center text-lg-right">
+        {{ post.title }}
+      </h1>
+      <div
+        class="d-flex align-items-center flex-wrap mb-3 justify-content-center justify-content-lg-start">
+        <span v-if="post.version" class="version-chip me-3">v{{ post.version }}</span>
+        <div class="release-date text-muted">
+          {{ formatDate(post.date) }}
+        </div>
       </div>
     </div>
-  </div>
-  <div class="col-7">
-    <!-- Content Card -->
-    <div class="card shadow-sm mb-5">
-      <div class="card-body p-4 pt-0">
-        <div class="changelog-content">
-          <ContentRenderer :value="post" />
+    <div class="col-12 col-lg-7 px-3 px-lg-0">
+      <!-- Content Card -->
+      <div class="card shadow-sm mb-3 mb-lg-5 changelog-card">
+        <div class="card-body p-3 p-lg-4 pt-3 pt-lg-0">
+          <div class="changelog-content">
+            <ContentRenderer :value="post" />
+          </div>
         </div>
       </div>
     </div>
@@ -57,6 +62,15 @@ export default {
   font-weight: 600;
   color: #00fdcf;
 }
+
+/* .version-chip {
+  background-color: #00fdcf;
+  color: #111;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+} */
 
 /* Button styling */
 .btn-outline-primary {
@@ -119,5 +133,53 @@ export default {
 
 :deep(.changelog-content p > code) {
   color: #00fdcf;
+}
+
+/* Mobile responsive adjustments for content */
+@media (max-width: 991.98px) {
+  :deep(.changelog-content h2) {
+    font-size: 1.3rem;
+    margin-top: 1.25rem;
+  }
+
+  :deep(.changelog-content h3) {
+    font-size: 1.1rem;
+    margin-top: 1rem;
+  }
+
+  :deep(.changelog-content pre) {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  :deep(.changelog-content ul) {
+    padding-left: 1.25rem;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  /* Make first image in changelog card bigger and remove padding on mobile */
+  .changelog-card .card-body {
+    padding: 0 !important;
+  }
+
+  .changelog-card :deep(.changelog-content img:first-child) {
+    width: 100% !important;
+    height: auto !important;
+    max-width: none !important;
+    border-radius: 0.375rem 0.375rem 0 0;
+    transform: scale(1.05);
+    transform-origin: center top;
+    margin-bottom: 1rem;
+  }
+
+  .changelog-card :deep(.changelog-content) {
+    padding: 1rem;
+  }
+
+  .changelog-card :deep(.changelog-content img:first-child + *) {
+    margin-top: 0.5rem;
+  }
 }
 </style>

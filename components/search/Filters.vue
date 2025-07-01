@@ -87,17 +87,22 @@
         @keydown="handleKeydown"
         style="position: relative; z-index: 10">
         <template v-slot:prepend-inner>
-          <Icon size="14" class="text-secondary me-2">Search</Icon>
-
-          <template v-if="showTags == 'inline'" v-for="(filter, i) in f.filters" :key="i">
+          <template
+            v-if="showTags == 'inline' && f.filters.length"
+            v-for="(filter, i) in f.filters"
+            :key="i">
             <search-filter-tag :index="i" :current="filter" mode="keyboard" />
           </template>
+
+          <Icon v-else size="14" class="text-secondary me-2">Search</Icon>
         </template>
 
         <template v-slot:clear>
           <Icon
-            size="16"
-            style="min-width: 1em; transform: translateY(1px)"
+            size="18"
+            class="mx-2"
+            width="2"
+            style="min-width: 1em"
             @click="clearSearchBox">
             SquareRoundedX
           </Icon>
@@ -119,6 +124,15 @@
           See our
           <a href="#">Terms and Service</a>
         </template> -->
+
+        <template v-slot:append-inner>
+          <kbd
+            v-if="showEnterHint"
+            class="text-muted small text-nowrap"
+            style="letter-spacing: normal; font-size: 11px; font-family: monospace">
+            Enter to search
+          </kbd>
+        </template>
       </v-text-field>
 
       <b-tippy-sheety ref="filtersTippy" to="#⚓searchBox" trigger="focusin">
@@ -296,7 +310,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: Mon Jun 16 2025
+ * Modified: 1st July 2025 - 01:19:19
  **/
 
 export default {
@@ -324,6 +338,15 @@ export default {
 
     ...mapStores(useSearchStore),
     ...mapState(useSearchStore, ['f', 'stats', 'loading', 'time']),
+
+    //+-------------------------------------------------
+    // showEnterHint()
+    // -----
+    // Created on Mon Jun 30 2025
+    //+-------------------------------------------------
+    showEnterHint() {
+      return (this.f.string || '').trim() !== (this.f.box || '').trim()
+    },
 
     //+-------------------------------------------------
     // sourceLabel()
@@ -522,13 +545,14 @@ export default {
 
       if (e.key == 'Enter') {
         action = true
-        let suggestedValue = this.$refs.filtersMenuKbd.suggestedValue
+        let { suggestedValue, suggestions } = this.$refs.filtersMenuKbd || {}
 
-        if (!suggestedValue) this.$refs.filtersMenuKbd.writePath()
-        else this.$refs.filtersMenuKbd.addFilter()
-
-        // this.$refs.searchBox.blur()
-        // this.$refs.filtersTippy.hide()
+        // If it has a suggested value, is a filter
+        if (suggestedValue) this.$refs.filtersMenuKbd.addFilter()
+        // If it has no suggested value, but there are suggestions, write the path
+        else if (suggestions?.length) this.$refs.filtersMenuKbd.writePath()
+        // If there are no suggestions, add the string as a filter
+        else this.addStringFilter()
       }
 
       if (e.key == 'ArrowUp') {
@@ -574,6 +598,11 @@ export default {
       if (this.f.filters.length > 3) {
         this.searchStore.f.show.tags = 'row'
       }
+    },
+
+    addStringFilter() {
+      this.f.string = this.f.box
+      this.$mitt.emit('search:run', 3)
     },
 
     // filterLabel(key) {
@@ -674,35 +703,7 @@ export default {
       if (this.f.show.card.length > 1 && this.f.show.card.includes('default')) {
         this.f.show.card.splice(this.f.show.card.indexOf('default'), 1)
       }
-
-      // this.notify()
     },
-
-    // Move selected to filters
-    // filter() {
-    //   console.warn(this.selected)
-
-    //   const values = Object.values(this.selected).map((item) => item[this.option.opValue])
-    //   this.f[this.option.filter] = values
-
-    //   // this.notify()
-    // },
-
-    // removeFilter(key) {
-    //   this.f[key] = []
-    //   // this.notify()
-    // },
-
-    // restoreFilter(option) {
-    //   const selected = {}
-    //   this.picked.forEach((param) => {
-    //     if (this.f[option.filter]?.includes(param[option.opValue])) {
-    //       selected[param[option.opValue]] = { ...param }
-    //     }
-    //   })
-
-    //   return selected
-    // },
 
     init() {},
   },

@@ -1,11 +1,5 @@
 <template>
   <div class="col-12 row align-items-center mt-2 mb-3">
-    <div class="col-12">
-      <code>
-        {{ $refs.filtersMenuKbd?.suggestedValue }}
-      </code>
-      <hr />
-    </div>
     <!--
       *+---------------------------------
       *| Source selector
@@ -136,7 +130,7 @@
             v-if="showEnterHint"
             class="text-muted small text-nowrap"
             style="letter-spacing: normal; font-size: 11px; font-family: monospace">
-            Enter to search - {{ f.string }} -- {{ f.box }}
+            Enter to search
           </kbd>
         </template>
       </v-text-field>
@@ -316,7 +310,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: 30th June 2025 - 05:54:22
+ * Modified: 1st July 2025 - 01:19:19
  **/
 
 export default {
@@ -346,13 +340,12 @@ export default {
     ...mapState(useSearchStore, ['f', 'stats', 'loading', 'time']),
 
     //+-------------------------------------------------
-    // function()
-    //
+    // showEnterHint()
     // -----
     // Created on Mon Jun 30 2025
     //+-------------------------------------------------
     showEnterHint() {
-      return this.f.string !== this.f.box
+      return (this.f.string || '').trim() !== (this.f.box || '').trim()
     },
 
     //+-------------------------------------------------
@@ -552,17 +545,14 @@ export default {
 
       if (e.key == 'Enter') {
         action = true
-        let suggestedValue = this.$refs.filtersMenuKbd?.suggestedValue
+        let { suggestedValue, suggestions } = this.$refs.filtersMenuKbd || {}
 
-        if (!suggestedValue) this.addStringFilter()
-        else this.$refs.filtersMenuKbd.writePath()
-
-        // if (!suggestedValue) this.$refs.filtersMenuKbd?.writePath()
-        // else this.addStringFilter()
-        // else
-
-        // this.$refs.searchBox.blur()
-        // this.$refs.filtersTippy.hide()
+        // If it has a suggested value, is a filter
+        if (suggestedValue) this.$refs.filtersMenuKbd.addFilter()
+        // If it has no suggested value, but there are suggestions, write the path
+        else if (suggestions?.length) this.$refs.filtersMenuKbd.writePath()
+        // If there are no suggestions, add the string as a filter
+        else this.addStringFilter()
       }
 
       if (e.key == 'ArrowUp') {

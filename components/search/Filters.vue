@@ -310,7 +310,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: 1st July 2025 - 01:19:19
+ * Modified: 24th July 2025 - 03:45:48
  **/
 
 export default {
@@ -413,42 +413,6 @@ export default {
         'achievements': 'Achievements',
       }
     },
-
-    //+-------------------------------------------------
-    // picked()
-    // Returns an array of available options based on the
-    // current selected filer (this.option)
-    // -----
-    // Created on Thu Sep 19 2024
-    //+-------------------------------------------------
-    // picked() {
-    //   const options = []
-    //   if (!this.option?.data) return options
-
-    //   this['_' + this.option.data].forEach((option) => {
-    //     let title = option[this.option.opLabel]
-    //     title = title?.toLowerCase() || ''
-    //     if (title.includes(this.ui.findOption.toLowerCase())) {
-    //       options.push(option)
-    //     }
-    //   })
-
-    //   // Special case for states
-    //   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //   if (this.option.data == 'states') {
-    //     options.unshift({
-    //       id: -1,
-    //       color: '#000000',
-    //       name: 'No state',
-    //       description: 'Display games without a state',
-    //     })
-    //   }
-
-    //   if (this.option.opSort)
-    //     options.sort((a, b) => a[this.option.opSort].localeCompare(b[this.option.opSort]))
-
-    //   return options
-    // },
 
     // _filters() {
     //   const enabled = ['states', 'genres', 'released']

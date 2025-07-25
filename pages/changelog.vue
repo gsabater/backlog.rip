@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="col-12 col-lg-5">
-          <div class="pe-lg-4 px-3 px-lg-0">
+          <div class="pe-lg-4 px-4 px-lg-0">
             <h1
               class="display-5 display-6-sm fw-bold mb-4 w-100 text-center text-lg-start"
               style="filter: drop-shadow(2px 2px 0px #000)">
@@ -110,8 +110,8 @@
         *+---------------------------------
         *| Latest Release Section
         *+--------------------------------- -->
-      <div class="row justify-content-center py-3 py-md-5">
-        <div class="col-12 px-3 px-md-0">
+      <div class="row justify-content-center py-3">
+        <div class="col-12 px-3 py-2 py-md-5">
           <!-- Latest Release using the ChangelogEntry component -->
           <DocsChangelogEntry v-if="latest" :post="latest" />
         </div>
@@ -126,7 +126,7 @@
         *| Changelog History Section
         *+--------------------------------- -->
       <div class="row mt-3 mt-md-5 pt-2 pt-md-4">
-        <div class="col-12 text-center mb-3 mb-md-5 px-3">
+        <div class="col-12 text-center mb-2 mb-md-5 px-3">
           <h2 class="display-6 mb-1" style="text-shadow: 2px 2px 0px #000">
             Previous Releases
           </h2>
@@ -185,7 +185,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th January 2024
- * Modified: 28th June 2025 - 04:18:42
+ * Modified: 28th June 2025 - 07:39:31
  **/
 
 const { data: changelog } = await useAsyncData('changelog', () => {

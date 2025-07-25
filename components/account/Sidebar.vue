@@ -20,7 +20,7 @@
         :style="
           $route.path.includes('me') ? 'color: var(--tblr-nav-link-hover-color); ' : ''
         ">
-        <Icon class="me-2">Fingerprint</Icon>
+        <Icon size="14" class="me-2">Fingerprint</Icon>
         Your account
       </NuxtLink>
     </li>
@@ -34,7 +34,7 @@
             ? 'color: var(--tblr-nav-link-hover-color); '
             : ''
         ">
-        <Icon class="me-2">Settings</Icon>
+        <Icon size="14" class="me-2">Settings</Icon>
         Preferences
       </NuxtLink>
     </li>
@@ -48,7 +48,7 @@
             ? 'color: var(--tblr-nav-link-hover-color); '
             : ''
         ">
-        <Icon class="me-2">Components</Icon>
+        <Icon size="14" class="me-2">Components</Icon>
         Community
       </NuxtLink>
     </li>
@@ -62,7 +62,7 @@
             ? 'color: var(--tblr-nav-link-hover-color); padding-bottom: 0.25rem;'
             : ''
         ">
-        <Icon class="me-2">CloudRain</Icon>
+        <Icon size="14" class="me-2">CloudRain</Icon>
         Cloud sync
       </NuxtLink>
     </li>
@@ -91,14 +91,14 @@
 
     <li class="nav-item">
       <NuxtLink to="/account/linked" class="nav-link">
-        <Icon class="me-2">LayersIntersect</Icon>
+        <Icon size="14" class="me-2">LayersIntersect</Icon>
         Integrations
       </NuxtLink>
     </li>
 
     <!-- <li class="nav-item">
       <NuxtLink to="/account/history" class="nav-link">
-        <Icon class="me-2">Clock</Icon>
+        <Icon size="14" class="me-2">Clock</Icon>
         history
       </NuxtLink>
     </li> -->
@@ -122,7 +122,7 @@
             ? 'color: var(--tblr-nav-link-hover-color); padding-bottom: 0.25rem;'
             : ''
         ">
-        <Icon class="me-2">Mist</Icon>
+        <Icon size="14" class="me-2">Mist</Icon>
         Lists
       </NuxtLink>
     </li>
@@ -138,21 +138,21 @@
 
     <li class="nav-item">
       <NuxtLink to="/account/states" class="nav-link">
-        <Icon class="me-2">Background</Icon>
+        <Icon size="14" class="me-2">Background</Icon>
         States
       </NuxtLink>
     </li>
 
     <li class="nav-item">
       <NuxtLink to="/account/database" class="nav-link">
-        <Icon class="me-2">Database</Icon>
+        <Icon size="14" class="me-2">Database</Icon>
         Database
       </NuxtLink>
     </li>
 
     <li v-if="$app.dev" class="nav-item">
       <NuxtLink to="/account/logs" class="nav-link">
-        <Icon class="me-2">Bug</Icon>
+        <Icon size="14" class="me-2">Bug</Icon>
         Application logs
       </NuxtLink>
     </li>

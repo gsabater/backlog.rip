@@ -28,10 +28,52 @@
     </div>
   </div>
 
+  <div class="card mb-2">
+    <div class="list-group card-list-group">
+      <div
+        class="list-group-item px-3"
+        style="padding-top: 0.8rem; padding-bottom: 0.8rem">
+        <div class="row g-3 align-items-center">
+          <div class="col-auto" style="align-self: baseline">
+            <span style="--tblr-status-color: #666">
+              <span class="status-dot"></span>
+            </span>
+            <div class="v-list-item-subtitle">&nbsp;</div>
+          </div>
+          <div class="col">
+            <span class="font-serif">
+              {{ empty.name }}
+              <small class="text-muted mx-2">
+                ∷ {{ format.num($app.count.states['state_-1']) }} games
+              </small>
+            </span>
+            <div class="v-list-item-subtitle">
+              <small class="text-muted">{{ empty.description }}</small>
+            </div>
+          </div>
+          <div class="col-auto text-secondary">
+            <div class="d-flex">
+              <span
+                v-tippy="'Display in sidebar'"
+                class="btn-action cursor-pointer"
+                @click="pinSidebar(-1)">
+                <Icon v-if="isPinned(-1)" class="icon" size="13" style="color: #575ac6">
+                  BookmarkFilled
+                </Icon>
+                <Icon v-else class="icon" size="13" style="color: #575ac6">Bookmark</Icon>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <div v-if="states.length" class="list-group card-list-group">
       <template v-for="(item, i) in states" :key="item.id">
         <div
+          v-if="item.id > -1"
           class="list-group-item px-3"
           style="padding-top: 0.8rem; padding-bottom: 0.8rem">
           <div class="row g-3 align-items-center">
@@ -45,18 +87,13 @@
               <span class="font-serif">
                 {{ item.name }}
                 <small class="text-muted mx-2">
-                  {{ format.num(stateStore.count(item.id)) }} games
+                  ∷ {{ format.num(stateStore.count(item.id)) }} games
                 </small>
               </span>
               <div class="v-list-item-subtitle">
                 <small class="text-muted">
                   {{ item.description }}
                 </small>
-                <!-- <small class="d-block text-muted mt-3">
-                  <Icon size="13" width="1.2">LayoutDashboard</Icon>
-                  There are  in this
-                  state
-                </small> -->
               </div>
             </div>
             <div class="col-auto text-secondary">
@@ -140,27 +177,6 @@
         </div>
       </template>
     </div>
-
-    <!-- <div
-      v-if="states.length === 0"
-      class="empty"
-      style="
-        border: 1px dashed #cccccc73;
-        border-radius: 4px;
-        height: auto;
-        padding: 2.5rem;
-      ">
-      <p class="empty-title mb-3 font-serif" style="font-weight: 300">
-        You don't have any custom states yet
-      </p>
-      <p class="empty-subtitle text-secondary">
-        Create your first custom state to get started.
-      </p>
-      <p class="empty-subtitle text-secondary">
-        States help you track your progress through games and generate personalized
-        recommendations.
-      </p>
-    </div> -->
   </div>
 
   <state-crud-dialog ref="crud" @stored="onStored" @deleted="$forceUpdate()" />
@@ -172,7 +188,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: Thu 13 March 2025 - 15:02:32
+ * Modified: 24th July 2025 - 04:05:22
  **/
 
 export default {
@@ -184,7 +200,8 @@ export default {
 
   computed: {
     ...mapStores(useStateStore),
-    ...mapState(useStateStore, ['states']),
+    ...mapState(useStateStore, ['states', 'empty']),
+    // ...mapState(useStateStore, { states: 'statesWithNoState' }),
   },
 
   methods: {
@@ -236,8 +253,8 @@ export default {
     },
 
     // async init() {
-    // await this.getData()
-    // this.ui.loading = false
+    //   await this.getData()
+    //   this.ui.loading = false
     // },
   },
 

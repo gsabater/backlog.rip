@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: Tue Jun 17 2025
+ * Modified: 29th September 2025 - 03:52:27
  */
 
 // import { reactive } from 'vue'
@@ -84,6 +84,8 @@ let app = {
     sidebar: false,
     updating: false,
     fullscreen: false,
+
+    showLogs: false,
   },
 
   // Background service

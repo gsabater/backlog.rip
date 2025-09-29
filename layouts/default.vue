@@ -307,7 +307,9 @@
 
     <!-- Navbar -->
     <!-- <div class="sticky-top" style="z-index: 999"> -->
-    <header class="navbar navbar-expand-md d-none d-lg-flex d-print-none">
+    <header
+      class="navbar navbar-expand-md d-none d-lg-flex d-print-none"
+      style="box-shadow: none">
       <div class="container-xl">
         <button
           class="navbar-toggler"
@@ -523,6 +525,17 @@
               class="nav-link cursor-pointer px-0 hide-theme-light"
               @click="changeTheme('light')">
               <Icon>Sun</Icon>
+            </div>
+          </div>
+
+          <!--
+            *+---------------------------------
+            *| Logs quick access
+            *+---------------------------------
+          -->
+          <div v-if="$app.ui.showLogs && false" class="mx-3">
+            <div v-tippy="'Enable light mode'" class="nav-link cursor-pointer px-0">
+              <Icon>FileCode</Icon>
             </div>
           </div>
 
@@ -1018,7 +1031,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 24th July 2025 - 03:23:19
+ * Modified: 29th September 2025 - 04:54:28
  **/
 
 export default {

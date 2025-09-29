@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: Tue 25 March 2025 - 11:36:55
+ * Modified: 29th September 2025 - 04:55:04
  */
 
 let $nuxt = null
@@ -12,9 +12,9 @@ let $library = null
 
 //+-------------------------------------------------
 // User auth and flow
-// ~~~~~~~~~~~~~~~~~~
-// - Anonymous account is created on first visit
-// - The user data and configuration can live offline on localDB
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// - User account data is created on first visit
+// - Data and configuration can live offline on localDB
 // - On page load, call authenticate()
 // > - $auth.user.me -- $db.account.get('me')
 
@@ -28,7 +28,7 @@ let $library = null
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    user: { username: 'Traveler' },
+    user: { username: 'John Doe' },
 
     jwt: null, // JWT token to sync data with the cloud
     bearer: null, // Determines if the user is logged in with the API
@@ -105,7 +105,7 @@ export const useUserStore = defineStore('user', {
 
     //+-------------------------------------------------
     // getApiData()
-    // Gets the userdata from the API
+    // Gets the userdata from api.backlog.rip
     // -----
     // Created on Fri Nov 17 2023
     // Updated on Thu Aug 01 2024 - Update Cloud data
@@ -124,11 +124,6 @@ export const useUserStore = defineStore('user', {
           // Assign account/user data
           this.me.steam = xhr.data.steam || this.me.steam
           this.me.avatar = this.me.avatar || xhr.data.avatar
-
-          // Assign library data
-          // $integration.link('steam', xhr.data.steam)
-          // this.me.steam_data = provider?.data || null
-          // this.me.steam_updated_at = provider.updated_at
 
           // Assign cloud data
           this.cloud.jwt = xhr.data.jwt
@@ -187,6 +182,31 @@ export const useUserStore = defineStore('user', {
 
       this.jwt = token
       this.cloud.jwt = token
+    },
+
+    //+-------------------------------------------------
+    // generateJWT()
+    // Requests a new JWT from the API
+    // Stores on the user and reinitializes the supabase client
+    // -----
+    // Created on Mon Sep 29 2025
+    //+-------------------------------------------------
+    async generateJWT() {
+      const xhr = await $nuxt.$axios.get('generateJWT')
+      let jwt = xhr?.data?.jwt
+
+      if (xhr?.status === 200 && jwt) {
+        log('🔑 New JWT generated')
+
+        this.setJWT(jwt)
+        await this.putAccount(this.cloud, 'cloud')
+        $nuxt.$mitt.emit('notification:show', {
+          mode: 'dialog',
+          title: 'A new session token has been generated',
+          message:
+            'Your session token expired and a new one has been generated automatically. You should reload the page to ensure proper functionality.',
+        })
+      }
     },
 
     //+-------------------------------------------------

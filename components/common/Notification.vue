@@ -14,34 +14,21 @@
     </template>
   </v-snackbar>
 
-  <v-dialog v-model="ui.dialog" persistent width="auto" min-width="450px">
+  <v-dialog v-model="ui.dialog" persistent min-width="450px" max-width="650">
     <v-card>
-      <v-card-title class="text-h6 pa-3 text-center" style="background-color: #efefef">
-        {{ event.title || 'Confirmar' }}
-      </v-card-title>
+      <template #title>
+        <Icon class="me-2">Mist</Icon>
+        <span class="font-serif mx-2">
+          {{ event.title || 'Information' }}
+        </span>
+      </template>
       <v-card-text class="text-center">
-        {{ event.message || '¿Estás seguro de realizar esta acción?' }}
-        <template v-if="event && event.item && event.item.id">
-          <div
-            class="text-disabled text-muted d-block pt-3 pb-0"
-            v-if="event.item.nombre"
-            style="font-size: 13px">
-            Se eliminará
-            <strong>"{{ formatHelper.fullName(event.item) }}"</strong>
-          </div>
-
-          <div class="text-disabled text-muted d-block py-1" style="font-size: 13px">
-            Con registro ID {{ event.item.id }}
-          </div>
-        </template>
-        <!-- <pre v-if="event.details">
-          {{ event.details }}
-        </pre> -->
+        {{ event.message || '...' }}
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="green-darken-1" variant="text" @click="ui.dialog = false">
-          Aceptar
+          Accept
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -49,6 +36,19 @@
 </template>
 
 <script>
+/**
+ * @file:    \components\common\Notification.vue
+ * @desc:    ...
+ * -------------------------------------------
+ * Created Date: 8th November 2024
+ * Modified: 29th September 2025 - 04:51:29
+ **/
+
+/*+-------------------------------------------------
+  $mitt.emit('notification:show', {
+
+  })
+//+------------------------------------------------- */
 export default {
   name: 'Notification snackbar',
   props: {

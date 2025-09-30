@@ -1,7 +1,7 @@
 <template>
   <div class="row">
-    <div class="col-12 col-lg-3 px-3 px-lg-4 offset-lg-1 mb-3 mb-lg-0">
-      <h1 class="display-6 mb-3 mt-0 mt-lg-5 text-center text-lg-right">
+    <div class="col-12 col-lg-3 px-2 px-lg-4 offset-lg-1 mb-3 mb-lg-0">
+      <h1 class="display-6 mb-3 mt-0 mt-lg-5 text-center text-md-start pt-md-3">
         {{ post.title }}
       </h1>
       <div
@@ -14,8 +14,8 @@
     </div>
     <div class="col-12 col-lg-7 px-3 px-lg-0">
       <!-- Content Card -->
-      <div class="card shadow-sm mb-3 mb-lg-5 changelog-card">
-        <div class="card-body p-3 p-lg-4 pt-3 pt-lg-0">
+      <div class="card shadow-sm mb-3 mb-lg-5 changelog-card p-md-3">
+        <div class="card-body p-2 p-md-5 pt-1 pt-lg-0">
           <div class="changelog-content">
             <ContentRenderer :value="post" />
           </div>
@@ -56,36 +56,6 @@ export default {
 </script>
 
 <style scoped>
-/* Latest Release Section Styling */
-.version-text {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #00fdcf;
-}
-
-/* .version-chip {
-  background-color: #00fdcf;
-  color: #111;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-} */
-
-/* Button styling */
-.btn-outline-primary {
-  color: #00fdcf;
-  border-color: #00fdcf;
-  background-color: transparent;
-  transition: all 0.2s ease;
-}
-
-.btn-outline-primary:hover {
-  color: #111;
-  background-color: #00fdcf;
-  border-color: #00fdcf;
-}
-
 /* Markdown Content Styling */
 :deep(.changelog-content) {
   line-height: 1.6;
@@ -155,21 +125,18 @@ export default {
   :deep(.changelog-content ul) {
     padding-left: 1.25rem;
   }
-}
 
-/* Responsive adjustments */
-@media (max-width: 991.98px) {
   /* Make first image in changelog card bigger and remove padding on mobile */
-  .changelog-card .card-body {
+  /* .changelog-card .card-body {
     padding: 0 !important;
-  }
+  } */
 
   .changelog-card :deep(.changelog-content img:first-child) {
     width: 100% !important;
     height: auto !important;
     max-width: none !important;
     border-radius: 0.375rem 0.375rem 0 0;
-    transform: scale(1.05);
+    transform: scale(1.12) translateY(-15px);
     transform-origin: center top;
     margin-bottom: 1rem;
   }

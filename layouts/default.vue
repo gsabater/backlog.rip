@@ -76,12 +76,7 @@
         <NuxtLink
           to="/"
           class="d-none d-lg-flex pt-1 pb-2 text-decoration-none"
-          style="
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            nheight: 56px;
-          ">
+          style="display: flex; align-items: center; flex-direction: column">
           <img
             src="/img/logo.png"
             alt="Backlog.rip"
@@ -221,8 +216,8 @@
                   target="_blank">
                   <svg
                     class="me-2"
-                    width="18"
-                    height="18"
+                    width="16"
+                    height="16"
                     viewBox="0 -28.5 256 256"
                     version="1.1"
                     preserveAspectRatio="xMidYMid">
@@ -241,7 +236,7 @@
                   href="https://www.patreon.com/c/BacklogRIP"
                   class="dropdown-item"
                   target="_blank">
-                  <Icon size="18" class="me-2">BrandPatreon</Icon>
+                  <Icon size="16" class="me-2">BrandPatreon</Icon>
                   Patreon
                   <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
                 </a>
@@ -264,18 +259,23 @@
                 <div class="dropdown-divider"></div>
 
                 <NuxtLink to="/changelog" class="dropdown-item">
-                  <Icon size="18" class="me-2">Broadcast</Icon>
+                  <Icon size="16" class="me-2">Broadcast</Icon>
                   Changelog
                 </NuxtLink>
 
                 <NuxtLink to="/sitemap" class="dropdown-item">
-                  <Icon size="18" class="me-2">Steam</Icon>
+                  <Icon size="16" class="me-2">Steam</Icon>
                   Sitemap
                 </NuxtLink>
 
                 <NuxtLink to="/support" class="dropdown-item">
-                  <Icon size="18" class="me-2">ActivityHeartbeat</Icon>
+                  <Icon size="16" class="me-2">ActivityHeartbeat</Icon>
                   <span class="fancy">Support the project</span>
+                </NuxtLink>
+
+                <NuxtLink v-if="$app.wip" to="/docs" class="dropdown-item">
+                  <Icon size="16" class="me-2">Album</Icon>
+                  Docs
                 </NuxtLink>
 
                 <span class="dropdown-header" style="text-transform: none">
@@ -307,7 +307,9 @@
 
     <!-- Navbar -->
     <!-- <div class="sticky-top" style="z-index: 999"> -->
-    <header class="navbar navbar-expand-md d-none d-lg-flex d-print-none">
+    <header
+      class="navbar navbar-expand-md d-none d-lg-flex d-print-none"
+      style="box-shadow: none">
       <div class="container-xl">
         <button
           class="navbar-toggler"
@@ -523,6 +525,17 @@
               class="nav-link cursor-pointer px-0 hide-theme-light"
               @click="changeTheme('light')">
               <Icon>Sun</Icon>
+            </div>
+          </div>
+
+          <!--
+            *+---------------------------------
+            *| Logs quick access
+            *+---------------------------------
+          -->
+          <div v-if="$app.ui.showLogs && false" class="mx-3">
+            <div v-tippy="'Enable light mode'" class="nav-link cursor-pointer px-0">
+              <Icon>FileCode</Icon>
             </div>
           </div>
 
@@ -1018,7 +1031,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 24th June 2025 - 03:51:52
+ * Modified: 29th September 2025 - 04:54:28
  **/
 
 export default {
@@ -1038,18 +1051,6 @@ export default {
   computed: {
     ...mapStores(useStateStore, useCloudStore),
     ...mapState(useStateStore, ['states']),
-
-    // //+-------------------------------------------------
-    // // function()
-    // // TODO: use the method in the store
-    // // -----
-    // // Created on Wed Apr 03 2024
-    // //+-------------------------------------------------
-    // pinnedStates() {
-    //   if (!this.$app.ready) return []
-    //   const pinned = this.$auth?.menu?.states || []
-    //   return this.states.filter((state) => pinned.includes(state.id))
-    // },
   },
 
   methods: {

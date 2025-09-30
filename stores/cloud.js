@@ -1,13 +1,15 @@
 /*
  * @file:    \stores\cloudStore.js
- * @desc:    ...
+ * @desc:    The cloud store manages the synchronization
+ * of data with the Supabase service.
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: Thu 03 April 2025 - 16:44:42
+ * Modified: 29th September 2025 - 04:21:38
  */
 
-import { createClient } from '@supabase/supabase-js'
+// import { createClient } from '@supabase/supabase-js'
 import cloudService from '../services/cloudService'
+import supabaseService from '../services/supabaseService'
 
 let $nuxt = null
 let $data = null
@@ -16,17 +18,15 @@ let $guild = null
 let $state = null
 
 //+-------------------------------------------------
-// Cloud status
-//+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Cloud states
+//+-------------------------------------------------
 // - local
 // - connecting
-// - conflict
-// - error
+// - connected
 // - syncing
-// - syncing:backup
-// - sync:done
+// - conflict -> backup:conflict
+// - error -> backup:error
 //+-------------------------------------------------
-
 export const useCloudStore = defineStore('cloud', {
   state: () => ({
     status: 'local',
@@ -893,7 +893,10 @@ export const useCloudStore = defineStore('cloud', {
 
       if (error) {
         this.status = 'error'
+
         log('⚡ Fatal error retrieving cloud backups', error.message)
+        if (error.message == 'JWT expired') $nuxt.$auth.generateJWT()
+
         return
       }
 

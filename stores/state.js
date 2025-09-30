@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: Mon 24 March 2025 - 19:22:58
+ * Modified: 24th July 2025 - 05:08:38
  */
 
 let $nuxt = null
@@ -27,7 +27,17 @@ export const useStateStore = defineStore('state', {
     playing: [], // Holds index for special state 'playing'
     completed: [], // Holds index for special state 'completed'
 
-    undeletable: [1, 2, 3],
+    undeletable: [-1, 1, 2, 3],
+
+    empty: {
+      id: -1,
+      key: 'state_-1',
+      slug: 'uncategorized',
+      color: '#666',
+      name: 'Uncategorized',
+      description:
+        'Games without any assigned status. Useful as a neutral or undefined state.',
+    },
 
     meta: {
       loaded: false,
@@ -49,16 +59,20 @@ export const useStateStore = defineStore('state', {
     // },
 
     pinnedStates() {
-      if (!this.states.length) return ['xx']
+      if (!this.states.length) return ['']
       const pinned = $nuxt.$auth?.menu?.states || []
       return this.states.filter((state) => pinned.includes(state.id))
     },
 
     unPinnedStates() {
-      if (!this.states.length) return ['xx']
+      if (!this.states.length) return ['']
       const pinned = $nuxt.$auth?.menu?.states || []
       return this.states.filter((state) => !pinned.includes(state.id))
     },
+
+    // statesWithNoState() {
+    //   return [noState, ...this.states]
+    // },
   },
 
   actions: {
@@ -446,6 +460,14 @@ export const useStateStore = defineStore('state', {
         $data.setIndex('hidden', hidden)
         $nuxt.$app.count['hidden'] = hidden.length || 0
       }
+
+      // Scan and find the amount of games without a state
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (scan == 'all') {
+        let empty = library.filter((app) => !app.state).map((app) => app.uuid)
+        this.index[-1] = empty
+        $nuxt.$app.count.states['state_-1'] = empty.length || 0
+      }
     },
 
     //+-------------------------------------------------
@@ -483,6 +505,7 @@ export const useStateStore = defineStore('state', {
       //   states[Math.floor(Math.random() * states.length)]
       // )
 
+      this.states.unshift(this.empty)
       this.meta.loaded = true
     },
 

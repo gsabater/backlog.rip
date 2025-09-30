@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Wed 04 June 2025 - 16:52:23
+ * Modified: 24th July 2025 - 03:46:01
  */
 
 let $nuxt = null
@@ -292,10 +292,10 @@ export default {
       $state ??= useStateStore()
       let item = $state.get(first) || {}
 
-      if (first == -1) {
-        item.color = null
-        item.name = 'No state'
-      }
+      // if (first == -1) {
+      //   item.color = null
+      //   item.name = 'No state'
+      // }
 
       return {
         label: item.name,

@@ -51,13 +51,13 @@
             <Icon size="12">CaretRightFilled</Icon>
           </span>
           <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
-            <div
-              v-for="(state, i) in states"
-              :key="'state-' + i"
-              class="dropdown-item"
-              :class="{ active: app.state == state.id }"
-              @click="setState(state)">
-              <!-- <div
+            <template v-for="(state, i) in states" :key="'state-' + i">
+              <div
+                v-if="state.id > -1"
+                class="dropdown-item"
+                :class="{ active: app.state == state.id }"
+                @click="setState(state)">
+                <!-- <div
                 v-if="app.state"
                 class="selection"
                 style="margin-right: 0.55rem; transform: translateY(-1px)">
@@ -70,45 +70,47 @@
                 </Icon>
                 <Icon v-else style="color: #666">Square</Icon>
               </div> -->
-              <div class="d-flex justify-center" style="width: 30px">
-                <span
-                  class="status-dot me-2"
-                  :style="{ 'background-color': state.color || '' }"
-                  :class="{ 'status-dot-animated': app.state == state.id }"></span>
-              </div>
-              <div>
-                {{ state.name }}
-
-                <div
-                  v-if="app.state == state.id"
-                  class="text-muted"
-                  style="font-size: 0.75rem">
+                <div class="d-flex justify-center" style="width: 30px">
                   <span
-                    v-if="
-                      app && app.is && app.is.state && app.is.state['state_' + state.id]
-                    ">
-                    {{ dates.timeAgo(app.is.state['state_' + state.id] * 1000) }}
-                  </span>
-
-                  <code class="mx-2">
-                    <Icon size="10" width="1" class="">ArrowBack</Icon>
-                    Undo
-                  </code>
+                    class="status-dot me-2"
+                    :style="{ 'background-color': state.color || '' }"
+                    :class="{ 'status-dot-animated': app.state == state.id }"></span>
                 </div>
-              </div>
+                <div>
+                  {{ state.name }}
 
-              <tippy class="text-muted ms-auto cursor-help" :content="state.description">
-                <span class="form-help">?</span>
-              </tippy>
+                  <div
+                    v-if="app.state == state.id"
+                    class="text-muted"
+                    style="font-size: 0.75rem">
+                    <span
+                      v-if="
+                        app && app.is && app.is.state && app.is.state['state_' + state.id]
+                      ">
+                      {{ dates.timeAgo(app.is.state['state_' + state.id] * 1000) }}
+                    </span>
 
-              <!-- <tippy
+                    <code class="mx-2">
+                      <Icon size="10" width="1" class="">ArrowBack</Icon>
+                      Undo
+                    </code>
+                  </div>
+                </div>
+
+                <tippy
+                  class="text-muted ms-auto cursor-help"
+                  :content="state.description">
+                  <span class="form-help">?</span>
+                </tippy>
+
+                <!-- <tippy
                 class="text-muted ms-auto cursor-help ps-4"
                 :content="state.description">
                 <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
                   HelpSmall
                 </Icon>
               </tippy> -->
-              <!-- <div
+                <!-- <div
                 class="content d-flex align-items-center w-100 px-1"
                 :class="{ 'control-hover': app.state }">
                 <div>
@@ -138,7 +140,8 @@
                   <span class="form-help">?</span>
                 </tippy>
               </div> -->
-            </div>
+              </div>
+            </template>
           </b-dropdown>
         </div>
 
@@ -554,7 +557,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: Thu 01 May 2025 - 12:50:28
+ * Modified: 25th July 2025 - 08:21:57
  **/
 
 export default {

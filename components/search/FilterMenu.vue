@@ -292,7 +292,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Wed 04 June 2025 - 13:48:09
+ * Modified: 24th July 2025 - 03:45:27
  **/
 
 import filterService from '../../services/filterService'
@@ -363,14 +363,6 @@ export default {
 
     _states() {
       let options = JSON.parse(JSON.stringify(this.stateStore.states))
-
-      options.unshift({
-        id: -1,
-        color: '#000000',
-        name: 'No state',
-        description: 'Display games without a state',
-      })
-
       return options
     },
 

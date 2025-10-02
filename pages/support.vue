@@ -397,9 +397,22 @@
                               {{ $nuxt.$dayjs(supporter.date).format('MMMM YYYY') }}
                             </span>
 
-                            <!-- <span v-if="supporter.level === 'Donation'">
+                            <!-- <span v-if="supporter.level === 'Donation'" >
                               {{ $nuxt.$dayjs(supporter.date).fromNow() }}
                             </span> -->
+                            <template v-if="supporter.level === 'Donation'">
+                              <span
+                                v-if="
+                                  $nuxt
+                                    .$dayjs()
+                                    .diff($nuxt.$dayjs(supporter.date), 'year') < 1
+                                ">
+                                {{ $nuxt.$dayjs(supporter.date).fromNow() }}
+                              </span>
+                              <span v-else>
+                                {{ $nuxt.$dayjs(supporter.date).format('MMMM YYYY') }}
+                              </span>
+                            </template>
                           </template>
                         </small>
                       </div>
@@ -485,7 +498,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th June 2025
- * Modified: 26th June 2025 - 06:13:51
+ * Modified: 2nd October 2025 - 10:02:02
  **/
 
 export default {
@@ -555,6 +568,15 @@ export default {
             'https://avatars.akamai.steamstatic.com/b1644846927280aebcc3994c22ade12fc288f109_full.jpg',
           date: '2025-02-01',
           level: 'Patron',
+        },
+
+        {
+          name: 'elThirtie',
+          steamId: 'elThirtie',
+          avatar:
+            'https://avatars.steamstatic.com/afad3155f9b9abda592c3f4f3c92879d3c3ad7a0_medium.jpg',
+          date: '2025-09-25',
+          level: 'Donation',
         },
 
         {

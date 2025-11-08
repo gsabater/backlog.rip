@@ -25,7 +25,7 @@
       :variant="ui.tab === 'accessibility' ? 'tonal' : 'text'"
       color="deep-purple-lighten-4"
       @click="ui.tab = 'accessibility'">
-      Accesibility
+      Accessibility
     </v-btn>
 
     <v-btn

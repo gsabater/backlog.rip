@@ -3,12 +3,13 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: Wed 19 March 2025 - 16:21:25
+ * Modified: 13th October 2025 - 01:57:27
  */
 
+let $db = null
+let $log = null
 let $nuxt = null
 let $data = null
-let $cloud = null
 
 export const useListStore = defineStore('list', {
   state: () => ({
@@ -76,9 +77,10 @@ export const useListStore = defineStore('list', {
       data.created_at = dates.now()
       data.updated_at = dates.now()
 
-      await $nuxt.$db.lists.put(data)
-      await this.load(true)
+      await $db.lists.put(data)
+      $log('[ listStore.create ]', data)
 
+      await this.load(true)
       return data
     },
 
@@ -100,13 +102,15 @@ export const useListStore = defineStore('list', {
       data.updated_at = dates.now()
       let item = JSON.parse(JSON.stringify(data))
 
-      await $nuxt.$db.lists.put(item)
+      await $db.lists.put(item)
       // await this.updateAPI(item)
 
       await this.load(true)
 
       // Update this list if is the current one
       if (this.list.uuid == data.uuid) this.list = { ...this.list, ...data }
+
+      $log('[ listStore.update ]', data)
     },
 
     //+-------------------------------------------------
@@ -129,7 +133,7 @@ export const useListStore = defineStore('list', {
     // Created on Wed Nov 06 2024
     //+-------------------------------------------------
     async delete(id) {
-      await $nuxt.$db.lists.delete(id)
+      await $db.lists.delete(id)
       await this.load(true)
 
       return true
@@ -318,53 +322,48 @@ export const useListStore = defineStore('list', {
     async load(reload = false) {
       if (this.meta.loaded && !reload) return
 
-      let lists = await $nuxt.$db.lists.toArray()
+      const { $app, $moment } = this.$nuxt
 
-      // sort the lists using $nuxt.$moment and updated_at in descending order
+      // Query and sort the lists to Dexie
+      // sort the lists using $moment in descending order
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      let lists = await $db.lists.toArray()
       let sorted = lists.sort((a, b) => {
-        return $nuxt.$moment(b.updated_at).diff($nuxt.$moment(a.updated_at))
+        return $moment(b.updated_at).diff($moment(a.updated_at))
       })
 
+      // Assign the sorted lists to the store
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       this.lists = sorted.map((list) => {
         list.key = list.uuid // list.key ||
         list.games = list.games || []
         return list
       })
 
-      // this.lists = sorted.reduce((obj, list) => {
-      //   list.key = 'list_' + list.uuid // list.key ||
-      //   list.games = list.games || []
-      //   obj[list.uuid] = list
-      //   return obj
-      // }, {})
-
+      // Set metadata
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      $app.count.lists = lists.length || 0
       this.meta.loaded = true
-      $nuxt.$app.count.lists = lists.length || 0
 
-      // WIP improve this
-      // log(
-      //   '🔖 Lists loaded',
-      //   `${lists.length} lists in local DB`,
-      //   lists[Math.floor(Math.random() * lists.length)]
-      // )
+      $log(`[ Lists ] Loaded ${lists.length} lists`)
+      console.debug(lists[Math.floor(Math.random() * lists.length)])
     },
 
     //+-------------------------------------------------
     // init()
-    // Assign references, load and index
+    // Assign references
     // -----
     // Created on Mon Sep 30 2024
+    // Updated on Tue Sep 30 2025 - Simplified
     //+-------------------------------------------------
     async init() {
       $nuxt ??= useNuxtApp()
+
+      $log ??= $nuxt.$log
+      $db ??= $nuxt.$db
+
       $data ??= useDataStore()
-      $cloud ??= useCloudStore()
-
-      this.load()
-
-      window.$lists = {
-        x: this,
-      }
+      await this.load()
     },
   },
 })

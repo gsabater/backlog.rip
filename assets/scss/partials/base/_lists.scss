@@ -9,3 +9,8 @@
   color: #929dab;
   background-color: rgba(var(--tblr-secondary-rgb), 0.04);
 }
+
+.list-group i.mdi-chevron-up,
+.list-group i.mdi-chevron-down {
+  transform: rotate(180deg);
+}

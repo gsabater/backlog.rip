@@ -14,9 +14,9 @@
           :key="'boxed' + app.uuid"
           class="col box p-0"
           :class="{
-            'col': i == 0 && covers.length <= 3,
+            'col i-0': i == 0 && covers.length <= 3,
             'col-4': i == 0 && covers.length >= 3,
-            'col': i > 0 && covers.length <= 2,
+            'col i+1': i > 0 && covers.length <= 2,
           }">
           <img
             :src="srcFor(app)"
@@ -389,7 +389,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th October 2024
- * Modified: Wed 06 November 2024 - 17:00:58
+ * Modified: 24th June 2025 - 03:57:52
  **/
 
 export default {
@@ -399,6 +399,11 @@ export default {
     games: {
       type: Array,
       default: () => [],
+    },
+
+    listData: {
+      type: Object,
+      default: null,
     },
   },
 
@@ -421,7 +426,14 @@ export default {
 
   computed: {
     ...mapStores(useDataStore),
-    ...mapState(useListStore, ['list']),
+    ...mapState(useListStore, {
+      listDB: 'list',
+    }),
+
+    // Use listData prop if available, otherwise fall back to store list
+    list() {
+      return this.listData || this.listDB
+    },
 
     layout() {
       if (!this.list?.games?.length) return null
@@ -466,7 +478,7 @@ export default {
 
   methods: {
     srcFor(app) {
-      if (!app.uuid) return
+      if (!app?.uuid) return
 
       if (app.steam_id || this.hydrated[app.uuid]?.steam_id) {
         let image = this.asset.steam.replace('%ID%', app.steam_id)
@@ -482,6 +494,7 @@ export default {
 
       return null
     },
+
     //+-------------------------------------------------
     // hydrate()
     // Makes an array of hydrated data from this.games
@@ -605,7 +618,6 @@ export default {
 .layout-flex .box:first-child {
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  /* border: 1px solid #000000cc; */
   border-right: 1px solid #000000cc;
 }
 

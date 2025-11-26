@@ -3,10 +3,10 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 15th January 2025
- * Modified: Mon 24 March 2025 - 19:23:15
+ * Modified: 7th October 2025 - 03:51:48
  */
 
-import steamAPIService from './steamAPIService'
+import steamAPI from '../modules/integrations/steamAPI'
 
 let $nuxt = null
 let $library = null
@@ -77,7 +77,7 @@ export default {
     // merge achievements after each step
 
     // First, check if any achievement in game has missing completion rate
-    let achieved = steamAPIService.getAchievements(game.id.steam)
+    let achieved = steamAPI.getAchievements(game.id.steam)
   },
 
   //+-------------------------------------------------

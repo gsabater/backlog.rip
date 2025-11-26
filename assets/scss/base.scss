@@ -76,6 +76,23 @@ body.has-debug {
   background: #555; /* Color of the scroll thumb on hover */
 }
 
+.thin-scroll::-webkit-scrollbar {
+  width: 4px; /* Adjust scrollbar width */
+}
+
+.thin-scroll::-webkit-scrollbar-track {
+  background: #191a22a2; /* Make scrollbar track transparent */
+}
+
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: #33333380; /* Color of the scroll thumb */
+  border-radius: 2px; /* Roundness of the scroll thumb */
+}
+
+.thin-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color of the scroll thumb on hover */
+}
+
 .ch {
   --geist-background: #151f2c;
   --gradient-from: 247 185 85;

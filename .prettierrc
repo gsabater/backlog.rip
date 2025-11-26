@@ -7,10 +7,10 @@
   "singleQuote": true,
   "quoteProps": "consistent",
   "tabWidth": 2,
-  "printWidth": 90,
+  "printWidth": 100,
   "eslintIntegration": true,
   "arrowParens": "always",
-  "disableLanguages": [ 
+  "disableLanguages": [
     "json",
     "jsonc"
   ],

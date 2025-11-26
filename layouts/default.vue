@@ -1,30 +1,8 @@
 <template>
   <div class="page">
-    <pre
-      v-if="$app.dev"
-      style="
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        z-index: 9999;
-        max-height: 90vh;
-        overflow-y: scroll;
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
-        padding: 10px;
-        border-radius: 5px;
-      "
-      @click="(($app.dev = false), ($app.wip = false))"
-      >{{ $app.v }}
----
-{{ $app.api }}
---
-{{ cloudStore.status }}
-    </pre>
-
     <!--
       *+---------------------------------
-      *| Main sidebar
+      *| Main sidebar / navbar on mobile
       *| Main menu and topbar on responsive
       *+--------------------------------- -->
     <aside class="navbar navbar-vertical navbar-expand-lg">
@@ -47,11 +25,7 @@
             <span class="input-group-text">
               <Icon size="16" class="me-1">Search</Icon>
             </span>
-            <input
-              type="text"
-              class="form-control"
-              autocomplete="off"
-              placeholder="Search" />
+            <input type="text" class="form-control" autocomplete="off" placeholder="Search" />
           </div>
         </div>
 
@@ -59,13 +33,8 @@
           *+---------------------------------
           *| Fullscreen toggler
           *+--------------------------------- -->
-        <button
-          class="navbar-toggler"
-          style="opacity: 0.8"
-          @click="$app.f.toggleFullscreen">
-          <Icon
-            size="25"
-            :icon="$app.ui.fullscreen ? 'WindowMinimize' : 'WindowMaximize'"></Icon>
+        <button class="navbar-toggler" style="opacity: 0.8" @click="$app.f.toggleFullscreen">
+          <Icon size="25" :icon="$app.ui.fullscreen ? 'WindowMinimize' : 'WindowMaximize'"></Icon>
         </button>
 
         <!--
@@ -103,94 +72,184 @@
         *| Used to display search and other options
         *+--------------------------------- -->
       <div class="d-lg-block aside-bottom w-100" style="position: absolute; bottom: 10px">
-        <!--
-        *+---------------------------------
-        *| Background process indicator
-        *| Displays background services status
-        *+--------------------------------- -->
-        <!-- <code>{{ $app.background.running }}</code> -->
-        <div v-if="$app.background.running" class="px-2 my-1">
-          <div class="card">
-            <div class="card-body" style="padding: 13px">
-              <div class="d-flex align-items-center mb-3">
-                <template v-if="$app.background.running == 'updatingLibrary'">
-                  <!-- <Icon size="18" width="1.5">Refresh</Icon> -->
+        <client-only>
+          <!--
+          *+---------------------------------
+          *| Server online services status
+          *+--------------------------------- -->
+          <div class="px-2 my-1">
+            <div class="card" style="background: #24232a; border: 1px solid #453331">
+              <div class="card-body" style="padding: 10px 17px">
+                <div class="d-flex align-items-center">
+                  <!--
+                    *+---------------------------------
+                    *| Cloud and app idle
+                    *|
+                    *+--------------------------------- -->
+                  <template v-if="!$cloud.process">
+                    <div>
+                      <div class="text-body">Operational</div>
+                      <small class="text-secondary" v-if="$app.ready">
+                        Booted in {{ dates.microTime($app.ready) }}
+                      </small>
+                    </div>
 
-                  <div class="nms-3">
-                    <div class="text-body">Updating library</div>
-                    <small class="text-secondary">Please wait a moment</small>
-                  </div>
-                </template>
-                <template v-if="$app.background.running == 'achievements'">
-                  <!-- <Icon size="18" width="1.5">Refresh</Icon> -->
+                    <div class="ms-auto">
+                      <span
+                        class="status-dot status-dot-animated"
+                        :style="{
+                          backgroundColor: serverStatusColor(),
+                        }"></span>
+                    </div>
+                  </template>
 
-                  <div class="nms-3">
-                    <div class="text-body mb-2">Sync. achievements</div>
-                    <small class="text-secondary">
-                      This process is handled in the background, you can close the window
-                      if you want
+                  <!--
+                    *+---------------------------------
+                    *| Processing cloud services
+                    *| Display more information
+                    *+--------------------------------- -->
+                  <template v-else>
+                    <div>
+                      <div class="text-body">{{ cloudProcessToHuman }}</div>
+                      <small v-if="$cloud.message" class="text-secondary">
+                        {{ $cloud.message }}
+                      </small>
+                    </div>
+                    <div class="ms-auto">
+                      <Icon size="16" width="2" class="text-muted icon-rotate">
+                        RotateClockwise2
+                      </Icon>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <div
+                v-if="$cloud.status == 'loading'"
+                class="card-footer p-1"
+                style="background-color: transparent">
+                <div class="progress progress-sm">
+                  <div class="progress-bar progress-bar-indeterminate"></div>
+                </div>
+              </div>
+
+              <div
+                v-if="$cloud.status == 'error'"
+                class="card-body p-2"
+                style="
+                  background-color: transparent;
+                  border: 1px solid #ff000085;
+                  border-radius: 3px;
+                ">
+                <small class="text-error">
+                  Something went wrong when syncing with the cloud. Please report it on Discord.
+                </small>
+              </div>
+              <b-dropdown
+                trigger="mouseenter focus"
+                placement="top"
+                style="
+                  min-width: 220px;
+                  max-width: 220px;
+                  overflow: hidden;
+                  letter-spacing: initial;
+                  background: #24232a;
+                  border: 1px solid #453331;
+                ">
+                <!-- <span class="dropdown-header">Header</span> -->
+                <div class="dropdown-item disabled">
+                  API status
+                  <span
+                    class="status-dot status-dot-animated ms-auto"
+                    :style="{
+                      backgroundColor: serverStatusColor('api'),
+                    }"></span>
+                </div>
+
+                <div class="dropdown-item disabled">
+                  Worker server
+                  <span
+                    class="status-dot status-dot-animated ms-auto"
+                    :style="{
+                      backgroundColor: serverStatusColor('worker'),
+                    }"></span>
+                </div>
+
+                <div class="dropdown-item disabled">
+                  Backups server
+                  <span
+                    class="status-dot status-dot-animated ms-auto"
+                    :style="{
+                      backgroundColor: serverStatusColor('backups'),
+                    }"></span>
+                </div>
+                <div class="dropdown-divider"></div>
+
+                <div
+                  v-if="$cloud.backup.is == 'local'"
+                  class="dropdown-item disabled d-block"
+                  style="text-wrap: auto">
+                  <span class="d-block">Backups disabled</span>
+                  <small class="text-muted">
+                    Your data is stored directly in your browser's storage and is not synced to the
+                    cloud. This means it is only accessible on this device and by you.
+                  </small>
+                </div>
+
+                <div v-else class="dropdown-item disabled d-block">
+                  <div class="d-flex w-100 mb-2" style="display: flex">
+                    <small class="text-muted">Library updated</small>
+                    <small class="text-muted ms-auto">
+                      {{ dates.timeAgo(latestUpdatedAt) }}
                     </small>
                   </div>
-                </template>
 
-                <!-- <div class="ms-auto">
-                  <a href="#" class="icon d-none d-md-inline-block text-muted">
-                    <Icon size="12">DotsVertical</Icon>
-                  </a>
-                </div> -->
-              </div>
+                  <div class="d-flex w-100" style="display: flex">
+                    <small class="text-muted">Latest backup</small>
+                    <small class="text-muted ms-auto">
+                      {{ dates.timeAgo(control?.local?.updated_at) }}
+                    </small>
+                  </div>
 
-              <div class="progress progress-sm">
-                <div class="progress-bar progress-bar-indeterminate"></div>
-              </div>
+                  <!-- <div class="d-flex align-items-center w-100 mb-2" style="display: flex">
+                    <small class="text-muted">Backup quota</small>
+                    <small class="text-muted ms-auto">3%</small>
+                  </div>
+                  <div class="progress progress" style="height: 3px">
+                    <div class="progress-bar bg-primary" style="width: 85%"></div>
+                  </div> -->
+                </div>
+
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" @click="$mitt.emit('dialog:about')">
+                  About the project
+                  <span class="ms-auto text-secondary">
+                    <Icon size="11">ProgressHelp</Icon>
+                  </span>
+                </div>
+              </b-dropdown>
             </div>
           </div>
-          <div class="d-none input-icon" style="overflow: hidden; border-radius: 4px">
-            <div class="progress progress-sm" style="position: absolute; height: 0.15rem">
-              <div class="progress-bar progress-bar-indeterminate"></div>
+
+          <!-- TEMP disabled, not working the search -->
+          <div v-if="false" class="px-3 my-2" @click.stop="$mitt.emit('search:palette')">
+            <div class="input-group input-group-flat input-palette cursor-pointer">
+              <span class="input-group-text">
+                <Icon size="14" class="me-1">Search</Icon>
+              </span>
+              <input
+                type="text"
+                class="form-control"
+                autocomplete="off"
+                placeholder="Search"
+                style="pointer-events: none" />
+              <span class="input-group-text">
+                <kbd style="font-size: 0.6rem">Ctrl K</kbd>
+              </span>
             </div>
-            <span class="input-icon-addon">
-              <Icon>BrandSteam</Icon>
-              <!-- <div
-                class="spinner-border spinner-border-sm text-secondary"
-                role="status"></div> -->
-            </span>
-            <input
-              type="text"
-              value="Updating your library…"
-              class="form-control"
-              style="background-color: transparent"
-              disabled />
-            <!-- <span class="input-icon-addon">
-                <div
-                  class="spinner-border spinner-border-sm text-secondary"
-                  role="status"></div>
-              </span> -->
           </div>
-        </div>
 
-        <!-- TEMP disabled, not working the search -->
-        <div
-          v-else-if="false"
-          class="px-3 my-2"
-          @click.stop="$mitt.emit('search:palette')">
-          <div class="input-group input-group-flat input-palette cursor-pointer">
-            <span class="input-group-text">
-              <Icon size="14" class="me-1">Search</Icon>
-            </span>
-            <input
-              type="text"
-              class="form-control"
-              autocomplete="off"
-              placeholder="Search"
-              style="pointer-events: none" />
-            <span class="input-group-text">
-              <kbd style="font-size: 0.6rem">Ctrl K</kbd>
-            </span>
-          </div>
-        </div>
-
-        <!-- <button
+          <!-- <button
           style="transform: scale(0.9)"
           class="form-control d-flex align-items-center cursor-pointer"
           @click.stop="$mitt.emit('search:palette')">
@@ -203,113 +262,132 @@
           <span class="v-kbd">Control + K</span>
         </button> -->
 
-        <div v-else class="row w-100">
-          <div class="col col d-flex justify-content-center">
-            <v-btn icon size="small" variant="text">
-              <Icon size="18" style="transform: translateY(1px)">Terminal2</Icon>
-              <b-dropdown
-                placement="top-start"
-                style="overflow: hidden; letter-spacing: initial">
-                <a
-                  class="dropdown-item"
-                  href="https://discord.gg/F2sPE5B"
-                  target="_blank">
-                  <svg
-                    class="me-2"
-                    width="16"
-                    height="16"
-                    viewBox="0 -28.5 256 256"
-                    version="1.1"
-                    preserveAspectRatio="xMidYMid">
-                    <g>
-                      <path
-                        d="M216.856339,16.5966031 C200.285002,8.84328665 182.566144,3.2084988 164.041564,0 C161.766523,4.11318106 159.108624,9.64549908 157.276099,14.0464379 C137.583995,11.0849896 118.072967,11.0849896 98.7430163,14.0464379 C96.9108417,9.64549908 94.1925838,4.11318106 91.8971895,0 C73.3526068,3.2084988 55.6133949,8.86399117 39.0420583,16.6376612 C5.61752293,67.146514 -3.4433191,116.400813 1.08711069,164.955721 C23.2560196,181.510915 44.7403634,191.567697 65.8621325,198.148576 C71.0772151,190.971126 75.7283628,183.341335 79.7352139,175.300261 C72.104019,172.400575 64.7949724,168.822202 57.8887866,164.667963 C59.7209612,163.310589 61.5131304,161.891452 63.2445898,160.431257 C105.36741,180.133187 151.134928,180.133187 192.754523,160.431257 C194.506336,161.891452 196.298154,163.310589 198.110326,164.667963 C191.183787,168.842556 183.854737,172.420929 176.223542,175.320965 C180.230393,183.341335 184.861538,190.991831 190.096624,198.16893 C211.238746,191.588051 232.743023,181.531619 254.911949,164.955721 C260.227747,108.668201 245.831087,59.8662432 216.856339,16.5966031 Z M85.4738752,135.09489 C72.8290281,135.09489 62.4592217,123.290155 62.4592217,108.914901 C62.4592217,94.5396472 72.607595,82.7145587 85.4738752,82.7145587 C98.3405064,82.7145587 108.709962,94.5189427 108.488529,108.914901 C108.508531,123.290155 98.3405064,135.09489 85.4738752,135.09489 Z M170.525237,135.09489 C157.88039,135.09489 147.510584,123.290155 147.510584,108.914901 C147.510584,94.5396472 157.658606,82.7145587 170.525237,82.7145587 C183.391518,82.7145587 193.761324,94.5189427 193.539891,108.914901 C193.539891,123.290155 183.391518,135.09489 170.525237,135.09489 Z"
-                        fill="#5865F2"
-                        fill-rule="nonzero"></path>
-                    </g>
-                  </svg>
-                  Discord
-                  <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
-                </a>
+          <div v-else class="row w-100">
+            <div class="col col d-flex justify-content-center">
+              <v-btn
+                class="mx-2"
+                icon
+                size="small"
+                variant="text"
+                href="https://discord.gg/F2sPE5B"
+                target="_blank">
+                <b-logo name="discord" size="14"></b-logo>
+              </v-btn>
 
-                <a
-                  href="https://www.patreon.com/c/BacklogRIP"
-                  class="dropdown-item"
-                  target="_blank">
-                  <Icon size="16" class="me-2">BrandPatreon</Icon>
-                  Patreon
-                  <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
-                </a>
+              <v-btn
+                class="mx-2"
+                icon
+                size="small"
+                variant="text"
+                href="https://backlog.featurebase.app/en/roadmap"
+                target="_blank"
+                v-tippy="'Feedback board and roadmap on Featurebase'">
+                <Icon size="18" width="2" color="#fff">Map</Icon>
+              </v-btn>
 
-                <a
-                  href="https://github.com/gsabater/backlog.rip"
-                  class="dropdown-item"
-                  target="_blank">
-                  <b-logo
-                    name="github"
-                    size="16"
-                    class="me-2"
-                    color="#fff"
-                    style="opacity: 0.6"></b-logo>
-                  <!-- <Icon size="18" class="me-2">BrandGithub</Icon> -->
-                  Source code
-                  <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
-                </a>
+              <v-btn
+                class="mx-2"
+                icon
+                size="small"
+                variant="text"
+                href="https://github.com/gsabater/backlog.rip"
+                target="_blank">
+                <b-logo name="github" size="14" color="#fff" style="opacity: 0.6"></b-logo>
+              </v-btn>
+              <v-btn class="mx-2" icon size="small" variant="text">
+                <b-dropdown placement="top-start" style="overflow: hidden; letter-spacing: initial">
+                  <a class="dropdown-item" href="https://discord.gg/F2sPE5B" target="_blank">
+                    <svg
+                      class="me-2"
+                      width="16"
+                      height="16"
+                      viewBox="0 -28.5 256 256"
+                      version="1.1"
+                      preserveAspectRatio="xMidYMid">
+                      <g>
+                        <path
+                          d="M216.856339,16.5966031 C200.285002,8.84328665 182.566144,3.2084988 164.041564,0 C161.766523,4.11318106 159.108624,9.64549908 157.276099,14.0464379 C137.583995,11.0849896 118.072967,11.0849896 98.7430163,14.0464379 C96.9108417,9.64549908 94.1925838,4.11318106 91.8971895,0 C73.3526068,3.2084988 55.6133949,8.86399117 39.0420583,16.6376612 C5.61752293,67.146514 -3.4433191,116.400813 1.08711069,164.955721 C23.2560196,181.510915 44.7403634,191.567697 65.8621325,198.148576 C71.0772151,190.971126 75.7283628,183.341335 79.7352139,175.300261 C72.104019,172.400575 64.7949724,168.822202 57.8887866,164.667963 C59.7209612,163.310589 61.5131304,161.891452 63.2445898,160.431257 C105.36741,180.133187 151.134928,180.133187 192.754523,160.431257 C194.506336,161.891452 196.298154,163.310589 198.110326,164.667963 C191.183787,168.842556 183.854737,172.420929 176.223542,175.320965 C180.230393,183.341335 184.861538,190.991831 190.096624,198.16893 C211.238746,191.588051 232.743023,181.531619 254.911949,164.955721 C260.227747,108.668201 245.831087,59.8662432 216.856339,16.5966031 Z M85.4738752,135.09489 C72.8290281,135.09489 62.4592217,123.290155 62.4592217,108.914901 C62.4592217,94.5396472 72.607595,82.7145587 85.4738752,82.7145587 C98.3405064,82.7145587 108.709962,94.5189427 108.488529,108.914901 C108.508531,123.290155 98.3405064,135.09489 85.4738752,135.09489 Z M170.525237,135.09489 C157.88039,135.09489 147.510584,123.290155 147.510584,108.914901 C147.510584,94.5396472 157.658606,82.7145587 170.525237,82.7145587 C183.391518,82.7145587 193.761324,94.5189427 193.539891,108.914901 C193.539891,123.290155 183.391518,135.09489 170.525237,135.09489 Z"
+                          fill="#5865F2"
+                          fill-rule="nonzero"></path>
+                      </g>
+                    </svg>
+                    Discord
+                    <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
+                  </a>
 
-                <div class="dropdown-divider"></div>
+                  <a
+                    href="https://www.patreon.com/c/BacklogRIP"
+                    class="dropdown-item"
+                    target="_blank">
+                    <Icon size="16" class="me-2">BrandPatreon</Icon>
+                    Patreon
+                    <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
+                  </a>
 
-                <NuxtLink to="/changelog" class="dropdown-item">
-                  <Icon size="16" class="me-2">Broadcast</Icon>
-                  Changelog
-                </NuxtLink>
+                  <a
+                    href="https://backlog.featurebase.app/en/roadmap"
+                    target="_blank"
+                    class="dropdown-item">
+                    <Icon size="16" class="me-2">Map</Icon>
+                    Roadmap
+                    <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
+                  </a>
 
-                <NuxtLink to="/sitemap" class="dropdown-item">
-                  <Icon size="16" class="me-2">Steam</Icon>
-                  Sitemap
-                </NuxtLink>
+                  <a
+                    href="https://github.com/gsabater/backlog.rip"
+                    class="dropdown-item"
+                    target="_blank">
+                    <b-logo
+                      name="github"
+                      size="16"
+                      class="me-2"
+                      color="#fff"
+                      style="opacity: 0.6"></b-logo>
+                    <!-- <Icon size="18" class="me-2">BrandGithub</Icon> -->
+                    Source code
+                    <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
+                  </a>
 
-                <NuxtLink to="/support" class="dropdown-item">
-                  <Icon size="16" class="me-2">ActivityHeartbeat</Icon>
-                  <span class="fancy">Support the project</span>
-                </NuxtLink>
+                  <div class="dropdown-divider"></div>
 
-                <NuxtLink v-if="$app.wip" to="/docs" class="dropdown-item">
-                  <Icon size="16" class="me-2">Album</Icon>
-                  Docs
-                </NuxtLink>
+                  <NuxtLink to="/changelog" class="dropdown-item">
+                    <Icon size="16" class="me-2">Broadcast</Icon>
+                    Changelog
+                  </NuxtLink>
 
-                <span class="dropdown-header" style="text-transform: none">
-                  <span class="text-muted my-4">
-                    Version
-                    {{ $app.v }}
+                  <NuxtLink to="/sitemap" class="dropdown-item">
+                    <Icon size="16" class="me-2">Steam</Icon>
+                    Sitemap
+                  </NuxtLink>
+
+                  <NuxtLink to="/support" class="dropdown-item">
+                    <Icon size="16" class="me-2">ActivityHeartbeat</Icon>
+                    <span class="fancy">Support the project</span>
+                  </NuxtLink>
+
+                  <!-- <NuxtLink v-if="$app.wip" to="/docs" class="dropdown-item">
+                    <Icon size="16" class="me-2">Album</Icon>
+                    Docs
+                  </NuxtLink> -->
+
+                  <span class="dropdown-header" style="text-transform: none">
+                    <span class="text-muted my-4">
+                      Version
+                      {{ $app.v }}
+                    </span>
                   </span>
-                </span>
-              </b-dropdown>
-            </v-btn>
-            <!-- <div
-              class="btn btn-ghost-secondary btn-sm btn-icon"
-              style="border-radius: 50%">
-
-            </div> -->
+                </b-dropdown>
+                <Icon size="18" style="transform: translateY(1px)">Terminal2</Icon>
+              </v-btn>
+            </div>
           </div>
-          <div class="col col d-flex justify-content-center">
-            <NuxtLink
-              v-if="$app.dev"
-              to="/docs"
-              class="btn btn-ghost-secondary btn-sm btn-icon"
-              style="border-radius: 50%">
-              <Icon size="18" style="transform: translateY(1px)">Book</Icon>
-            </NuxtLink>
-          </div>
-        </div>
+        </client-only>
       </div>
     </aside>
 
     <!-- Navbar -->
     <!-- <div class="sticky-top" style="z-index: 999"> -->
-    <header
-      class="navbar navbar-expand-md d-none d-lg-flex d-print-none"
-      style="box-shadow: none">
+    <header class="navbar navbar-expand-md d-none d-lg-flex d-print-none" style="box-shadow: none">
       <div class="container-xl">
         <button
           class="navbar-toggler"
@@ -334,14 +412,9 @@
           <input type="text" />
         </h1> -->
 
-        <v-alert
-          v-if="$app.beta"
-          :icon="false"
-          type="warning"
-          variant="text"
-          density="compact">
-          You are viewing the Beta version of Backlog.rip. This version is still in
-          development and may contain (even more) bugs or errors.
+        <v-alert v-if="$app.beta" :icon="false" type="warning" variant="text" density="compact">
+          You are viewing the Beta version of Backlog.rip. This version is still in development and
+          may contain (even more) bugs or errors.
 
           <v-btn
             size="small"
@@ -362,10 +435,7 @@
         </v-alert>
 
         <div class="d-flex">
-          <button
-            class="navbar-toggler"
-            style="opacity: 0.8"
-            @click="$mitt.emit('search:palette')">
+          <button class="navbar-toggler" style="opacity: 0.8" @click="$mitt.emit('search:palette')">
             <Icon size="25">ListSearch</Icon>
           </button>
 
@@ -504,8 +574,7 @@
           </div> -->
         </div>
 
-        <div
-          class="d-none d-md-flex navbar-nav flex-row order-md-last align-items-center">
+        <div class="d-none d-md-flex navbar-nav flex-row order-md-last align-items-center">
           <!--
             *+---------------------------------
             *| Design modes
@@ -541,205 +610,51 @@
 
           <!--
             *+---------------------------------
-            *| Cloud status
-            *| Indicator for the cloud Sync
+            *| Avatar and user menu
             *+---------------------------------
           -->
-          <div v-if="$auth.config.cloud" class="mx-3">
-            <!-- <div class="nav-item dropdown d-none d-md-flex me-3">
-              <a
-                href="#"
-                class="nav-link px-0"
-                data-bs-toggle="dropdown"
-                tabindex="-1"
-                aria-label="Show notifications"
-                aria-expanded="false">
-                <Icon width="1.5" style="color: green">CloudCheck</Icon>
-                <!-- <span class="badge bg-red"></span> - ->
-                <span class="badge bg-success"></span>
-              </a>
-            </div> -->
-
+          <client-only>
             <div
-              class="avatar avatar-sm rounded-circle"
-              :class="{
-                'gray-600': $cloud.is == 'local',
-                'bg-teal-lt': $cloud.is == 'syncing' || $cloud.is == 'connecting',
-                'bg-green-lt': $cloud.is == 'sync:done',
-                'bg-orange-lt': $cloud.is == 'conflict',
-                'bg-red-lt': $cloud.is == 'error',
-              }"
-              style="
-                --tblr-bg-opacity: 0.3;
-                border: 1px solid rgb(255 255 255 / 15%);
-                outline: rgba(0, 0, 0, 0.52) solid 1px;
-                outline-offset: -1px;
-                background-color: rgb(0 0 0 / 15%);
-              ">
-              <span
-                v-if="$cloud.is == 'local'"
-                class="status-dot status-dot-animated"
-                style="--tblr-status-color: green"></span>
-
-              <!-- <Icon v-if="$cloud.is == 'local'" size="14" width="1.5">DatabaseSmile</Icon> -->
-              <Icon v-if="$cloud.is == 'conflict'" size="14" width="1.5">
-                CloudExclamation
-              </Icon>
-              <Icon v-if="$cloud.is == 'error'" size="14" width="1.5">CloudOff</Icon>
-              <Icon v-if="$cloud.is == 'connecting'" size="14" width="1.5">Point</Icon>
-              <Icon v-if="$cloud.is == 'syncing'" size="14" width="1.5">CloudRain</Icon>
-              <Icon v-if="$cloud.is == 'sync:done'" size="14" width="1.5">
-                CloudCheck
-              </Icon>
-            </div>
-
-            <b-dropdown
-              trigger="mouseenter focus click hover manual"
-              placement="bottom"
-              style="min-width: 230px">
-              <!-- <span class="dropdown-header">Add games to your library</span>
-              <div class="dropdown-item" @click.stop="$mitt.emit('game:add')">
-                <Icon size="16" class="me-2 text-muted">SquareRoundedPlus</Icon>
-                Manually
-                <small class="text-secondary ms-auto me-0">Insert</small>
-              </div> -->
-              <div v-if="$cloud.is == 'error'" class="dropdown-item">
-                <div class="d-flex align-items-center">
-                  <div
-                    class="avatar avatar-sm rounded-circle bg-red-lt"
-                    style="
-                      --tblr-bg-opacity: 0.3;
-                      border: 1px solid;
-                      outline: 1px solid #00000085;
-                      outline-offset: -1px;
-                    ">
-                    <Icon size="18" width="1.5">CloudOff</Icon>
+              class="d-none d-md-block nav-item dropdown align-self-center"
+              v-if="$auth && $auth.user">
+              <div class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
+                <span
+                  class="avatar avatar-sm"
+                  :style="$auth.user.avatar ? `background-image: url(${$auth.user.avatar})` : ''">
+                  <!-- {{ !$auth.user.avatar ? $auth.user.username[0] : '' }} -->
+                </span>
+                <div class="d-none d-xl-block ps-2">
+                  <div>{{ $auth.user.username }}</div>
+                  <div class="mt-1 small text-secondary">
+                    {{ format.num($app.count.library) }} games
                   </div>
-                  <div class="ms-3">
-                    <div class="text-body">Something went wrong</div>
-                    <small class="text-secondary" style="white-space: normal">
-                      Looks like there was an error syncing your account with the cloud.
-                      Please try again by reloading the page.
-                      <br />
-                      If the problem persists, please contact us on Discord.
+                </div>
+                <b-dropdown placement="bottom-end">
+                  <NuxtLink to="/library" class="dropdown-item">
+                    Library
+                    <small class="text-secondary ms-auto me-0">
+                      {{ format.num($app.count.library) }}
                     </small>
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="$cloud.is == 'sync:done'" class="dropdown-item disabled">
-                <div class="d-flex align-items-center">
-                  <div
-                    class="avatar avatar-sm rounded-circle bg-green-lt"
-                    style="
-                      --tblr-bg-opacity: 0.3;
-                      border: 1px solid;
-                      outline: 1px solid #00000085;
-                      outline-offset: -1px;
-                    ">
-                    <Icon size="18" width="1.5">CloudCheck</Icon>
-                  </div>
-                  <div class="ms-3">
-                    <a href="javascript:void(0)" class="text-body">Synchronized</a>
-                    <div v-tippy="$auth.cloud.updated_at" class="text-secondary">
-                      Synchronized
-                      {{ dates.dynamicTimeAgo($auth.cloud.updated_at) }} ago
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="$cloud.is == 'local'" class="dropdown-item disabled">
-                <div class="d-flex align-items-center">
-                  <div>
-                    <h4 class="text-secondary m-0">Local-only database</h4>
-                    <small class="text-secondary" style="white-space: normal">
-                      Your data is stored directly in your browser's IndexedDB and is not
-                      synced to the cloud. This means it is only accessible on this device
-                      and by you.
+                  </NuxtLink>
+                  <NuxtLink to="/account/lists" class="dropdown-item">
+                    Lists
+                    <small class="text-secondary ms-auto me-0">
+                      {{ format.num($app.count.lists) }}
                     </small>
-                  </div>
-                </div>
+                  </NuxtLink>
+                  <!-- <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink> -->
+                  <div class="dropdown-divider"></div>
+                  <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
+                  <NuxtLink to="/account/preferences" class="dropdown-item">Preferences</NuxtLink>
+                </b-dropdown>
               </div>
-
-              <div v-else-if="$cloud.is !== 'sync:done'" class="dropdown-item disabled">
-                <div class="d-flex align-items-center">
-                  <span class="badge bg-orange badge-blink"></span>
-                  <div class="ms-3">
-                    <div class="text-secondary text-capitalize">{{ $cloud.status }}</div>
-                  </div>
-                </div>
-              </div>
-              <!-- <div class="dropdown-divider"></div> -->
-              <!-- <div>
-                <small class="text-secondary d-block" style="white-space: normal">
-                  Cloud saves are disabled. You can use the application as you want, but
-                  you won't be able to access your data on another device.
-                </small>
-              </div> -->
-              <!-- <NuxtLink to="/library" class="dropdown-item">
-                Library
-                <small class="text-secondary ms-auto me-0">
-                  {{ format.num($app.count.library) }}
-                </small>
-              </NuxtLink>
-              <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink> -->
-              <div class="dropdown-divider"></div>
-
-              <NuxtLink to="/account/cloud" class="dropdown-item">
-                <Icon size="16" class="me-2 text-muted">CloudComputing</Icon>
-                {{ $cloud.is == 'local' ? 'Enable cloud saves' : 'Usage and history' }}
-              </NuxtLink>
-
-              <!-- <NuxtLink to="/journal" class="dropdown-item">
-                <Icon size="16" class="me-2 text-muted">CloudCog</Icon>
-                Cloud settings
-              </NuxtLink> -->
-            </b-dropdown>
-          </div>
-
-          <div class="d-none d-md-block nav-item dropdown align-self-center">
-            <div class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
-              <span
-                class="avatar avatar-sm"
-                :style="
-                  $auth.user.avatar ? `background-image: url(${$auth.user.avatar})` : ''
-                ">
-                {{ !$auth.user.avatar ? $auth.user.username[0] : '' }}
-              </span>
-              <div class="d-none d-xl-block ps-2">
-                <div>{{ $auth.user.username }}</div>
-                <div class="mt-1 small text-secondary">
-                  {{ format.num($app.count.library) }} games
-                </div>
-              </div>
-              <b-dropdown placement="bottom-end">
-                <NuxtLink to="/library" class="dropdown-item">
-                  Library
-                  <small class="text-secondary ms-auto me-0">
-                    {{ format.num($app.count.library) }}
-                  </small>
-                </NuxtLink>
-                <NuxtLink to="/account/lists" class="dropdown-item">
-                  Lists
-                  <small class="text-secondary ms-auto me-0">
-                    {{ format.num($app.count.lists) }}
-                  </small>
-                </NuxtLink>
-                <!-- <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink> -->
-                <div class="dropdown-divider"></div>
-                <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink>
-                <NuxtLink to="/account/preferences" class="dropdown-item">
-                  Preferences
-                </NuxtLink>
-              </b-dropdown>
-            </div>
-            <!-- <b-menu ref="menu" position="end">
+              <!-- <b-menu ref="menu" position="end">
                 <a href="./sign-in.html" class="dropdown-item">Logout</a>
                 <div class="dropdown-divider"></div>
                 <div class="dropdown-item">Upgrade to Pro</div>
               </b-menu> -->
-          </div>
+            </div>
+          </client-only>
         </div>
       </div>
     </header>
@@ -847,6 +762,7 @@
     *| Mostly notifications and dialogs
     *+--------------------------------- -->
   <client-only>
+    <common-aboutDialog />
     <common-notification />
     <common-confirmDialog />
 
@@ -857,8 +773,10 @@
     <game-manager />
     <game-random-dialog />
 
-    <cloud-conflict />
     <list-crud-dialog />
+    <backup-reload-dialog />
+    <backup-restore-dialog />
+    <!-- <backup-conflict-dialog /> -->
     <!-- <list-cover id="cover-helper" /> -->
 
     <!-- <search-palette></search-palette> -->
@@ -930,15 +848,8 @@
                      0 0 1 0 0
                      33 33 33 101 -132"
         result="bright-colors"></feColorMatrix>
-      <feMorphology
-        in="bright-colors"
-        operator="dilate"
-        radius="2"
-        result="spread"></feMorphology>
-      <feGaussianBlur
-        in="spread"
-        stdDeviation="30"
-        result="ambilight-light"></feGaussianBlur>
+      <feMorphology in="bright-colors" operator="dilate" radius="2" result="spread"></feMorphology>
+      <feGaussianBlur in="spread" stdDeviation="30" result="ambilight-light"></feGaussianBlur>
       <feOffset in="SourceGraphic" result="source"></feOffset>
       <feComposite in="source" in2="ambilight-light" operator="over"></feComposite>
     </filter>
@@ -982,10 +893,7 @@
         </svg>
         Discord
       </a>
-      <a
-        href="https://github.com/gsabater/backlog.rip"
-        class="dropdown-item"
-        target="_blank">
+      <a href="https://github.com/gsabater/backlog.rip" class="dropdown-item" target="_blank">
         <Icon size="18" class="me-2">BrandGithub</Icon>
         Code on Github
       </a>
@@ -1031,8 +939,10 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 29th September 2025 - 04:54:28
+ * Modified: 19th November 2025 - 02:47:25
  **/
+
+import synchronizationService from '../services/synchronizationService'
 
 export default {
   name: 'DefaultLayout',
@@ -1041,19 +951,54 @@ export default {
     return {
       ui: {
         theme: 'dark', // 'light',
-
-        test: false,
         mobileMenu: false,
       },
     }
   },
 
   computed: {
-    ...mapStores(useStateStore, useCloudStore),
+    ...mapStores(useStateStore, useBackupStore, useLibraryStore),
+
     ...mapState(useStateStore, ['states']),
+    ...mapState(useBackupStore, ['control']),
+    ...mapState(useLibraryStore, ['latestUpdatedAt']),
+
+    //+-------------------------------------------------
+    // cloudProcessToHuman()
+    // TODO: could be a method in syncrhonization store
+    // -----
+    // Created on Tue Oct 21 2025
+    //+-------------------------------------------------
+    cloudProcessToHuman() {
+      return synchronizationService.processToHuman(this.$cloud.process)
+    },
   },
 
   methods: {
+    serverStatusColor(serverName) {
+      const STATUS_COLORS = {
+        online: 'green',
+        offline: 'rgb(255, 0, 0)', // red
+        warning: 'rgb(255, 193, 7)', // yellow
+        unknown: 'gray',
+      }
+
+      // Check specific server status
+      if (serverName) {
+        const status = this.$cloud.server[serverName]
+        return STATUS_COLORS[status] || STATUS_COLORS.unknown
+      }
+
+      // Check all servers status
+      if (!serverName) {
+        const servers = Object.values(this.$cloud.server)
+        if (servers.every((status) => status === 'online')) return STATUS_COLORS.online
+        return STATUS_COLORS.warning
+      }
+
+      return STATUS_COLORS.error
+    },
+
     goTo(route, options = {}) {
       navigateTo(route, options)
 
@@ -1077,14 +1022,6 @@ export default {
     closeMobileMenu() {
       this.ui.mobileMenu = false
     },
-  },
-
-  mounted() {
-    this.$app.initClient()
-
-    this.$mitt.on('app:render', () => {
-      this.$forceUpdate()
-    })
   },
 }
 </script>

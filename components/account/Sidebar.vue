@@ -17,9 +17,7 @@
       <NuxtLink
         to="/account/me"
         class="nav-link"
-        :style="
-          $route.path.includes('me') ? 'color: var(--tblr-nav-link-hover-color); ' : ''
-        ">
+        :style="$route.path.includes('me') ? 'color: white; ' : ''">
         <Icon size="14" class="me-2">Fingerprint</Icon>
         Your account
       </NuxtLink>
@@ -29,11 +27,7 @@
       <NuxtLink
         to="/account/preferences"
         class="nav-link"
-        :style="
-          $route.path.includes('preferences')
-            ? 'color: var(--tblr-nav-link-hover-color); '
-            : ''
-        ">
+        :style="$route.path.includes('preferences') ? 'color: white; ' : ''">
         <Icon size="14" class="me-2">Settings</Icon>
         Preferences
       </NuxtLink>
@@ -43,11 +37,7 @@
       <NuxtLink
         to="/account/community"
         class="nav-link"
-        :style="
-          $route.path.includes('community')
-            ? 'color: var(--tblr-nav-link-hover-color); '
-            : ''
-        ">
+        :style="$route.path.includes('community') ? 'color: white; ' : ''">
         <Icon size="14" class="me-2">Components</Icon>
         Community
       </NuxtLink>
@@ -55,19 +45,15 @@
 
     <li class="nav-item">
       <NuxtLink
-        to="/account/cloud"
+        to="/account/backups"
         class="nav-link"
-        :style="
-          isCloud
-            ? 'color: var(--tblr-nav-link-hover-color); padding-bottom: 0.25rem;'
-            : ''
-        ">
+        :style="isCloud ? 'color: white; n-padding-bottom: 0.25rem;' : ''">
         <Icon size="14" class="me-2">CloudRain</Icon>
-        Cloud sync
+        Backups
       </NuxtLink>
     </li>
 
-    <template v-if="isCloud">
+    <!-- <template v-if="isCloud">
       <li>
         <a href="#settings" class="nav-link ms-2 pb-0">
           <Icon size="6" width="1" class="me-2">PointFilled</Icon>
@@ -87,11 +73,14 @@
           Used quota
         </a>
       </li>
-    </template>
+    </template> -->
 
     <li class="nav-item">
-      <NuxtLink to="/account/linked" class="nav-link">
-        <Icon size="14" class="me-2">LayersIntersect</Icon>
+      <NuxtLink
+        to="/account/integrations"
+        class="nav-link"
+        :style="$route.path.includes('integrations') ? 'color: white; ' : ''">
+        <Icon size="14" class="me-2">CloudNetwork</Icon>
         Integrations
       </NuxtLink>
     </li>
@@ -104,9 +93,7 @@
     </li> -->
   </ul>
 
-  <div class="hr-text">※※※</div>
-
-  <div class="row g-2 align-items-center">
+  <div class="row g-2 align-items-center mt-4">
     <div class="col">
       <h3>Your data</h3>
     </div>
@@ -117,41 +104,46 @@
       <NuxtLink
         to="/account/lists"
         class="nav-link"
-        :style="
-          $route.path.includes('lists')
-            ? 'color: var(--tblr-nav-link-hover-color); padding-bottom: 0.25rem;'
-            : ''
-        ">
+        :style="$route.path.includes('lists') ? 'color: white; npadding-bottom: 0.25rem;' : ''">
         <Icon size="14" class="me-2">Mist</Icon>
         Lists
       </NuxtLink>
     </li>
 
-    <template v-if="$route.path.includes('lists')">
+    <!-- <template v-if="$route.path.includes('lists')">
       <li @click.prevent="$mitt.emit('list:create')">
         <a href="#" class="nav-link ms-2">
           <Icon size="14" width="1" class="me-2">SquareRoundedPlus</Icon>
           Create a new list
         </a>
       </li>
-    </template>
+    </template> -->
 
     <li class="nav-item">
-      <NuxtLink to="/account/states" class="nav-link">
+      <NuxtLink
+        to="/account/states"
+        class="nav-link"
+        :style="$route.path.includes('states') ? 'color: white; ' : ''">
         <Icon size="14" class="me-2">Background</Icon>
         States
       </NuxtLink>
     </li>
 
     <li class="nav-item">
-      <NuxtLink to="/account/database" class="nav-link">
+      <NuxtLink
+        to="/account/database"
+        class="nav-link"
+        :style="$route.path.includes('database') ? 'color: white; ' : ''">
         <Icon size="14" class="me-2">Database</Icon>
         Database
       </NuxtLink>
     </li>
 
     <li v-if="$app.dev" class="nav-item">
-      <NuxtLink to="/account/logs" class="nav-link">
+      <NuxtLink
+        to="/account/logs"
+        class="nav-link"
+        :style="$route.path.includes('logs') ? 'color: white; ' : ''">
         <Icon size="14" class="me-2">Bug</Icon>
         Application logs
       </NuxtLink>
@@ -421,7 +413,7 @@ export default {
 
   computed: {
     isCloud() {
-      return this.$route.path.includes('cloud') && this.$auth.hasCloud
+      return this.$route.path.includes('backups') && this.$auth.hasCloud
     },
   },
 

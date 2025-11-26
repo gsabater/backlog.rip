@@ -14,11 +14,7 @@
         <slot name="game:prepend"></slot>
         <div class="col-auto text-secondary">
           <div class="game__cover">
-            <game-asset
-              :app="app"
-              asset="banner"
-              fallback="cover"
-              :priority="['steam', 'igdb']" />
+            <game-asset :app="app" asset="banner" fallback="cover" :priority="['steam', 'igdb']" />
           </div>
         </div>
         <div class="col">
@@ -29,13 +25,8 @@
                 {{ app._.released_at ?? '' }}
               </small>
 
-              <small
-                v-if="visible.includes('score') && app.score"
-                class="text-muted me-2">
-                <Icon
-                  size="12"
-                  width="1.5"
-                  style="transform: translateY(-1px); margin-right: 0px">
+              <small v-if="visible.includes('score') && app.score" class="text-muted me-2">
+                <Icon size="12" width="1.5" style="transform: translateY(-1px); margin-right: 0px">
                   Diamond
                 </Icon>
                 {{ app.score ?? 'Unscored' }}
@@ -68,6 +59,7 @@
       :class="[
         app.state ? 'is-state_' + app.state : '',
         {
+          'is-hidden': app.is?.hidden,
           'is-bordered': $auth.config.game_state_borders,
           'is-disabled': disabled,
           'is-tracking': tracking,
@@ -110,7 +102,8 @@
 
           <span
             v-if="visible.includes('name') || visible.includes('default')"
-            class="details__name font-serif d-block text-truncate">
+            class="details__name n-font-serif d-block text-truncate"
+            style="font-weight: 400">
             {{ app.name }}
           </span>
 
@@ -153,11 +146,7 @@
                 '-head.png'
               "
               class="ms-2"
-              style="
-                max-width: 14px;
-                max-height: 14px;
-                transform: translate(-1px, -2px);
-              " />
+              style="max-width: 14px; max-height: 14px; transform: translate(-1px, -2px)" />
             {{ format.scoreToHuman(app.scores.oc, 'oc', 'label') }}
           </small>
 
@@ -186,9 +175,7 @@
 
             <Icon
               v-if="app.scores.steamCount > 100000"
-              v-tippy="
-                'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'
-              "
+              v-tippy="'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'"
               class="ms-1"
               width="1"
               size="12">
@@ -196,9 +183,7 @@
             </Icon>
             <Icon
               v-else-if="app.scores.steamCount > 10000"
-              v-tippy="
-                'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'
-              "
+              v-tippy="'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'"
               class="ms-1"
               width="1"
               size="12">
@@ -209,43 +194,29 @@
           </small>
 
           <small v-if="visible.includes('playtime')" class="d-block text-muted">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               ClockHour3
             </Icon>
             <template v-if="app._.playtime == 0">Not played</template>
             <template v-else>Played {{ dates.minToHours(app._.playtime) }}</template>
           </small>
 
-          <small
-            v-if="visible.includes('released') && app._.released"
-            class="d-block text-muted">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+          <small v-if="visible.includes('released') && app._.released" class="d-block text-muted">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               Calendar
             </Icon>
             {{ app._.released }}
           </small>
 
           <small v-if="visible.includes('date.lib')" class="d-block text-muted">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               Calendar
             </Icon>
             {{ app._.owned_at }}
           </small>
 
           <small v-if="visible.includes('genres')" class="d-block text-muted">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               Graph
             </Icon>
 
@@ -259,10 +230,7 @@
           <small
             v-if="visible.includes('hltb') && app.hltb && app.hltb.main"
             class="d-block text-muted">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               SquareRoundedCheck
             </Icon>
             {{ dates.minToHours(app.hltb.main / 60) }}
@@ -277,15 +245,10 @@
                   ' achievements are hidden or marked as bugged. Achievements count is adjusted accordingly'
                 : false
             ">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               Trophy
             </Icon>
-            {{ app._.astats.completed }} / {{ app._.astats.total }} ({{
-              app._.astats.percentage
-            }}%)
+            {{ app._.astats.completed }} / {{ app._.astats.total }} ({{ app._.astats.percentage }}%)
             <small class="cursor-help" v-if="app._.astats.hidden > 0">˟</small>
           </div>
 
@@ -302,7 +265,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat 07 June 2025 - 18:58:55
+ * Modified: 15th October 2025 - 05:56:13
  **/
 
 export default {
@@ -491,6 +454,7 @@ export default {
     //+-------------------------------------------------
     updateData(payload) {
       this.app = this.dataStore.get(payload.uuid)
+      console.warn('updated...', this.app.name, this.app.state)
     },
 
     //+-------------------------------------------------
@@ -513,48 +477,27 @@ export default {
   mounted() {
     this.init()
 
-    this.$mitt.on('game:data', (payload) => {
+    this.$mitt.on('game:updated', (payload) => {
       if (payload.uuid != this.app.uuid) return
       this.updateData(payload)
     })
 
-    this.$mitt.on('state:change', (payload) => {
-      if (payload.uuid != this.app.uuid) return
+    // this.$mitt.on('data:deleted', (payload) => {
+    //   if (payload.uuid != this.app.uuid) return
 
-      if (payload.state == 'fav') {
-        this.app.is.fav = payload.fav
-      } else {
-        this.app.state = payload.state
-      }
+    //   this.app.state = null
+    //   this.app.is.fav = false
+    //   this.app.is.lib = false
+    //   // this.app.is.dirty = false
+    //   this.app.is.pinned = false
+    //   this.app.is.hidden = false
 
-      this.$forceUpdate()
-    })
-
-    this.$mitt.on('pinned:change', (payload) => {
-      if (payload.uuid != this.app.uuid) return
-      this.app.is.pinned = payload.pinned
-      this.$forceUpdate()
-    })
-
-    this.$mitt.on('data:deleted', (payload) => {
-      if (payload.uuid != this.app.uuid) return
-
-      this.app.state = null
-      this.app.is.fav = false
-      this.app.is.lib = false
-      // this.app.is.dirty = false
-      this.app.is.pinned = false
-      this.app.is.hidden = false
-
-      this.$forceUpdate()
-    })
+    //   this.$forceUpdate()
+    // })
   },
 
   beforeUnmount() {
-    this.$mitt.off('game:data')
-    this.$mitt.off('data:deleted')
-    this.$mitt.off('state:change')
-    this.$mitt.off('pinned:change')
+    // this.$mitt.off('game:updated')
 
     const el = this.$refs.card
     if (!el) return

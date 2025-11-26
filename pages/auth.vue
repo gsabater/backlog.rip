@@ -42,7 +42,7 @@
  *           this token identifies the user in the backlog.rip database
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 31 July 2024 - 12:05:45
+ * Modified: 18th November 2025 - 12:17:51
  **/
 
 export default {
@@ -92,6 +92,10 @@ export default {
         // And update the local ddbb
         await this.userStore.register()
 
+        // Notify the application
+        $nuxt.$mitt.emit('user:login', this.userStore.user)
+
+        // Redirect to welcome or to the original page
         this.$router.push(redirect ? redirect : '/welcome')
       } catch (e) {
         // errors.value = e

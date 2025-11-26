@@ -1,4 +1,3 @@
-components/svgs/index.vue
+components/svgs/*
 *.md
 *.json
-

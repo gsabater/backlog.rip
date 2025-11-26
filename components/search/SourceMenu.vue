@@ -132,7 +132,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th January 2025
- * Modified: Tue 03 June 2025 - 11:23:51
+ * Modified: 15th October 2025 - 02:16:04
  **/
 
 export default {
@@ -233,7 +233,7 @@ export default {
       //   this.f.sortDir = 'desc'
       // }
 
-      // this.$mitt.emit('search:run')
+      this.$mitt.emit('search:run')
     },
   },
 

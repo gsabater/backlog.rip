@@ -12,8 +12,8 @@
             <div class="card-body">
               <h3 class="card-title">There has been an error</h3>
               <p class="text-muted">
-                The importing process has encountered an error. Please, check your logs
-                and try again or report the issue
+                The importing process has encountered an error. Please, check your logs and try
+                again or report the issue
               </p>
               <pre>{{ logs }}</pre>
             </div>
@@ -43,17 +43,14 @@
             *| Block of login
             *| Shown when the error is account:provider
             *+--------------------------------- -->
-          <div
-            v-if="ui.error == 'account:provider'"
-            class="container container-tight py-4">
+          <div v-if="ui.error == 'account:provider'" class="container container-tight py-4">
             <div class="card card-md">
               <div class="card-body text-center">
                 <div class="mb-4">
                   <h2>You need to login first</h2>
                   <p class="text-secondary mb-4">
-                    In order to get your Steam library, you have to login with your Steam
-                    account. This is a safe process, and only your SteamID will be shared
-                    with us.
+                    In order to get your Steam library, you have to login with your Steam account.
+                    This is a safe process, and only your SteamID will be shared with us.
                   </p>
                 </div>
                 <div>
@@ -110,9 +107,7 @@
                 <div class="row align-items-center">
                   <div class="col-12">
                     <h3 class="card-title mb-1">Scanning library...</h3>
-                    <div class="text-muted">
-                      This shouldn't take more than a few moments...
-                    </div>
+                    <div class="text-muted">This shouldn't take more than a few moments...</div>
                     <div class="mt-3">
                       <div class="row g-2 align-items-center">
                         <!-- <div class="col-auto">
@@ -169,9 +164,7 @@
             *| Main waiting to start block
             *| Show account data and start button
             *+--------------------------------- -->
-          <div
-            v-if="process.ready && ui.step == 'prep'"
-            class="container container-tight py-3">
+          <div v-if="process.ready && ui.step == 'prep'" class="container container-tight py-3">
             <import-card :module="module" :integration="integration">
               <template #card:action>
                 <div>
@@ -242,9 +235,7 @@
                     </div>
                   </div>
 
-                  <div
-                    v-if="data.steambacklog && data.steambacklog.account"
-                    class="col-12">
+                  <div v-if="data.steambacklog && data.steambacklog.account" class="col-12">
                     <div class="card">
                       <div class="card-body">
                         <div class="d-flex align-items-center">
@@ -255,8 +246,7 @@
 
                         <div class="mb-3">
                           <div class="text-secondary mb-3">
-                            In future updates we will be able to import your old backlog
-                            account
+                            In future updates we will be able to import your old backlog account
                           </div>
 
                           <ul class="list-unstyled space-y">
@@ -265,9 +255,7 @@
                                 <Icon class="me-1 text-success">Check</Icon>
                               </span>
                               <span class="col">
-                                <strong class="d-block">
-                                  Backlog status on your library
-                                </strong>
+                                <strong class="d-block">Backlog status on your library</strong>
                                 <span class="d-block text-secondary">
                                   Your completed games, games to play and more
                                 </span>
@@ -321,8 +309,8 @@
                 </div>
                 <div class="text-secondary p-2">
                   <p>
-                    You can review the list and select which games you want to import or
-                    just import everything
+                    You can review the list and select which games you want to import or just import
+                    everything
                   </p>
                 </div>
               </div>
@@ -331,16 +319,12 @@
                 <div class="w-100">
                   <div class="row">
                     <div class="col">
-                      <div
-                        class="btn w-100"
-                        @click="((ui.step = 'review:plus'), toggleAll())">
+                      <div class="btn w-100" @click="((ui.step = 'review:plus'), toggleAll())">
                         Review your data
                       </div>
                     </div>
                     <div class="col">
-                      <div class="btn btn-success w-100" @click="store">
-                        Update everything
-                      </div>
+                      <div class="btn btn-success w-100" @click="store">Update everything</div>
                     </div>
                   </div>
                 </div>
@@ -478,10 +462,7 @@
 
             <div class="row mb-3 align-items-center">
               <div class="col-8">
-                <b-input
-                  v-model="table.filters.search"
-                  placeholder="Filter..."
-                  clearable></b-input>
+                <b-input v-model="table.filters.search" placeholder="Filter..." clearable></b-input>
               </div>
               <div class="d-none col-5">
                 <!-- <button class="btn dropdown-toggle">
@@ -514,8 +495,7 @@
                   <small class="text-muted form-check-label form-check-label-on">
                     Unselect everything
                   </small>
-                  <small
-                    class="text-muted form-check-label form-check-label-off text-white">
+                  <small class="text-muted form-check-label form-check-label-off text-white">
                     Select all ({{ format.num(data.changes.length) }}) games
                   </small>
                 </label>
@@ -524,8 +504,7 @@
 
             <search-empty v-if="!loopToReview.length" preset="filtering"></search-empty>
             <div v-else class="card">
-              <div
-                class="list-group card-list-group list-group-hoverable games-group games--list">
+              <div class="list-group card-list-group list-group-hoverable games-group games--list">
                 <div
                   v-for="(app, i) in loopToReview"
                   :key="'game' + i"
@@ -534,10 +513,7 @@
                   <div class="row align-items-center">
                     <div class="col-auto fs-3">
                       <label class="form-check form-switch mb-0 ms-2">
-                        <input
-                          :checked="app.enabled"
-                          class="form-check-input"
-                          type="checkbox" />
+                        <input :checked="app.enabled" class="form-check-input" type="checkbox" />
                       </label>
                     </div>
 
@@ -694,74 +670,74 @@
             Block with account profile data
             Waiting to start the process
           -->
-          <div v-if="ui.step == 'complete'" class="container container-tight py-4">
+          <div v-if="ui.step == 'complete'" class="container container-tight">
             <div class="card card-md">
               <div class="card-body text-center">
-                <h2 class="mb-2">awesome</h2>
+                <img
+                  src="/img/transhumans/growth.png"
+                  class="img-fluid"
+                  style="
+                    max-height: 330px;
+                    object-fit: cover;
+                    filter: drop-shadow(1px 1px 0px currentcolor);
+                    color: #00fdcf;
+                  " />
 
-                <div class="mb-4">
-                  Your library has been updated with
-                  <!-- {{ appsToImport.length }} -->
-                  WIP new games
-                </div>
-
-                <div>
+                <h2>Completed 🎉</h2>
+                <div class="mb-4">Your games have been updated</div>
+              </div>
+              <div class="card-footer">
+                <div class="w-100">
                   <NuxtLink to="/library" class="btn btn-primary w-100">
                     <Icon class="me-2">Apps</Icon>
                     View your library
                   </NuxtLink>
-
-                  <!-- <div class="btn btn-primary w-100" @click="store">Again</div>
-                  <div class="btn btn-primary w-100" @click="$importer.notify()">
-                    only wrap
-                  </div> -->
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div v-if="manifest" class="col-lg-4">
-          <div class="card" style="position: sticky; top: 20px">
-            <div class="card-body">
-              <div class="d-flex align-items-center mb-2">
-                <div class="me-3">
-                  <img
-                    :src="manifest?.source?.logo"
-                    style="max-width: 30px; max-height: 30px" />
+        <ClientOnly>
+          <div v-if="manifest" class="col-lg-4">
+            <div class="card" style="position: sticky; top: 20px">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-2">
+                  <div class="me-3">
+                    <img :src="manifest?.source?.logo" style="max-width: 30px; max-height: 30px" />
+                  </div>
+                  <div>
+                    <small class="text-secondary">Integration</small>
+                    <h3 class="card-title lh-1 mb-1">
+                      {{ manifest.name }}
+                    </h3>
+                  </div>
                 </div>
-                <div>
-                  <small class="text-secondary">Integration</small>
-                  <h3 class="card-title lh-1 mb-1">
-                    {{ manifest.name }}
-                  </h3>
+                <div class="text-muted mb-3">
+                  {{ manifest.description }}
                 </div>
+                <small class="text-muted">
+                  By
+                  <strong>{{ manifest.author }}</strong>
+                  <span class="px-1">•</span>
+                  <a :href="manifest.url" target="_blank">version {{ manifest.ver }}</a>
+                  <br />
+                  Last build
+                  {{ dates.format(manifest.updated_at, 'LL') }}
+                </small>
               </div>
-              <div class="text-muted mb-3">
-                {{ manifest.description }}
-              </div>
-              <small class="text-muted">
-                By
-                <strong>{{ manifest.author }}</strong>
-                <span class="px-1">•</span>
-                <a :href="manifest.url" target="_blank">version {{ manifest.ver }}</a>
-                <br />
-                Last build
-                {{ dates.format(manifest.updated_at, 'LL') }}
-              </small>
-            </div>
 
-            <div class="card-body">
-              <ul class="steps steps-vertical">
-                <li
-                  v-for="(step, key) in steps"
-                  :key="key"
-                  class="step-item"
-                  :class="{ active: key == ui.step }">
-                  <div class="h4 m-0">{{ step.action }}</div>
-                  <div v-if="ui.step == key" class="text-muted">{{ step.desc }}</div>
-                </li>
-              </ul>
-              <!-- <ul class="list-unstyled space-y-1">
+              <div class="card-body">
+                <ul class="steps steps-vertical">
+                  <li
+                    v-for="(step, key) in steps"
+                    :key="key"
+                    class="step-item"
+                    :class="{ active: key == ui.step }">
+                    <div class="h4 m-0">{{ step.action }}</div>
+                    <div v-if="ui.step == key" class="text-muted">{{ step.desc }}</div>
+                  </li>
+                </ul>
+                <!-- <ul class="list-unstyled space-y-1">
                   <li v-for="(el, i) in module.steps" :key="i">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green" width="24" height="24"
                       viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -772,30 +748,31 @@
                     {{ el }}
                   </li>
                 </ul> -->
-            </div>
-            <div
-              v-if="['review', 'review:plus', 'complete'].includes(ui.step)"
-              class="card-body p-3">
-              <b-btn
-                block
-                :color="ui.step.indexOf('review') == -1 ? 'secondary' : 'success'"
-                :disabled="ui.step.indexOf('review') == -1"
-                @click="store">
-                Update library
-              </b-btn>
-              <!-- v-if="ui.step == 'complete'" <b-btn v-else block color="success">View library</b-btn> -->
-            </div>
-            <div class="card-footer small text-muted">
-              This module is open source. If you want to know more about the code or
-              review your privacy and security, you can
-              <a
-                href="https://github.com/gsabater/backlog.rip/blob/master/modules/importers"
-                target="_blank">
-                check the code on Github.
-              </a>
+              </div>
+              <div
+                v-if="['review', 'review:plus', 'complete'].includes(ui.step)"
+                class="card-body p-3">
+                <b-btn
+                  block
+                  :color="ui.step.indexOf('review') == -1 ? 'secondary' : 'success'"
+                  :disabled="ui.step.indexOf('review') == -1 || enabled.length == 0"
+                  @click="store">
+                  Apply {{ format.num(enabled.length) }} changes
+                </b-btn>
+                <!-- v-if="ui.step == 'complete'" <b-btn v-else block color="success">View library</b-btn> -->
+              </div>
+              <div class="card-footer small text-muted">
+                This module is open source. If you want to know more about the code or review your
+                privacy and security, you can
+                <a
+                  href="https://github.com/gsabater/backlog.rip/blob/master/modules/importers"
+                  target="_blank">
+                  check the code on Github.
+                </a>
+              </div>
             </div>
           </div>
-        </div>
+        </ClientOnly>
       </div>
     </div>
   </div>
@@ -807,17 +784,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: Thu 13 March 2025 - 15:02:34
+ * Modified: 7th November 2025 - 10:03:53
  **/
 
 export default {
   name: 'LibraryImporter',
-
-  setup() {
-    definePageMeta({
-      ssr: false,
-    })
-  },
 
   data() {
     return {
@@ -1192,6 +1163,7 @@ export default {
         notify: true,
         journal: true,
         apps: {
+          enabled: this.enabled,
           // toUpdate: this.data.appsToUpdate,
           // toImport: this.appsToImport,
           // toIgnore: this.appsToIgnore,
@@ -1251,7 +1223,7 @@ export default {
       log('✨ importer', 'detectAndConnect()')
 
       const connection = await this.$importer.sync({
-        log: this._log,
+        log: this.$log,
         platform: this.platform,
         background: false,
       })

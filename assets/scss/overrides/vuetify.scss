@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 20th June 2024
- * Modified: Sat Jun 21 2025
+ * Modified: 2nd October 2025 - 06:50:18
  **/
 
 //+-------------------------------------------------
@@ -186,4 +186,91 @@
 
 ul.v-pagination__list {
   margin: 0;
+}
+
+//+-------------------------------------------------
+// New text fields
+//+-------------------------------------------------
+
+.form-group-default {
+  background-color: #1c1922;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  position: relative;
+  border: 1px solid #3f3f46;
+  border-top-color: #3f3f46;
+  border-radius: 3px;
+  padding-top: 7px;
+  padding-bottom: 6px;
+  padding-left: 10px;
+  padding-right: 10px;
+  overflow-x: hidden;
+  width: 100%;
+  -webkit-transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease;
+  cursor: text;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group label:not(.error) {
+  color: #91a0b6;
+  transition:
+    all 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-group-default label {
+  margin: 0;
+  display: block;
+  opacity: 1;
+  cursor: text;
+  -webkit-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+}
+
+.form-group-default .form-control {
+  border: none;
+  height: 25px;
+  min-height: 25px;
+  padding: 0;
+  margin-top: -4px;
+  background: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.form-group-default .v-field__input {
+  padding: 0;
+}
+
+.form-group-default .v-input__details {
+  padding-left: 0 !important;
+}
+
+.form-group-attached > div:not(:last-child) .form-group-default,
+.form-group-attached > div:not(:last-child).form-group-default {
+  border-bottom-color: transparent;
+}
+
+.form-group-attached > div:first-child.form-group-default {
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.form-group-attached .form-group.form-group-default {
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+.form-group-attached > div {
+  margin: 0;
+}
+
+.form-group-attached > div.row > [class*='col-'] {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
 }

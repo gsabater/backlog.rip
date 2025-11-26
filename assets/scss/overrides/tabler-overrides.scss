@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 7th November 2024
- * Modified: Tue Jun 17 2025
+ * Modified: 6th November 2025 - 03:27:21
  **/
 
 //+-------------------------------------------------
@@ -195,4 +195,10 @@ pre.highlight {
   background: var(--tblr-primary-lt) no-repeat center/100% 100%;
   border-color: var(--tblr-primary);
   min-height: 316px;
+}
+
+ul.steps.steps-vertical {
+  padding-left: 0;
+  border: none;
+  margin-left: 0;
 }

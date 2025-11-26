@@ -5,7 +5,7 @@
  *           https://eslint.org/docs/latest/use/configure/migration-guide
  * ----------------------------------------------
  * Created Date: 11th November 2023
- * Modified: Tue 28 January 2025 - 16:56:58
+ * Modified: 8th October 2025 - 12:45:47
  */
 
 import js from '@eslint/js'
@@ -75,7 +75,7 @@ export default [
         useUserStore: true,
         useGameStore: true,
         useStateStore: true,
-        useCloudStore: true,
+        useBackupStore: true,
         useGuildStore: true,
         useJournalStore: true,
         useLibraryStore: true,

@@ -3,23 +3,15 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th November 2024
- * Modified: Fri 21 February 2025 - 12:47:30
+ * Modified: 14th October 2025 - 11:23:02
  */
 
+let $log = null
 let $nuxt = null
 let $user = null
 
 export const useGuildStore = defineStore('guild', {
   state: () => ({
-    // profile: {
-    //   disabled: null,
-
-    //   username: null,
-    //   avatar: null,
-    //   games: null,
-    //   slug: null,
-    // },
-
     _community: [],
     loaded: [],
   }),
@@ -62,8 +54,7 @@ export const useGuildStore = defineStore('guild', {
 
     //+-------------------------------------------------
     // build()
-    // Makes a new profile object
-    // and returns if the object is diff or stale
+    // Makes a profile object
     // -----
     // Created on Tue Jan 28 2025
     //+-------------------------------------------------
@@ -85,13 +76,14 @@ export const useGuildStore = defineStore('guild', {
       let data1 = helpers.sortedStringify(profile, ['ping_at'])
       let data2 = helpers.sortedStringify(this.profile, ['ping_at'])
 
-      // Check if the object is stale (6h)
-      let stale = $nuxt.$dayjs().diff($nuxt.$dayjs(this.profile?.ping_at), 'hours') > 6
+      // Check if the user has recently pinged the community
+      // let stale = $nuxt.$dayjs().diff($nuxt.$dayjs(this.profile?.ping_at), 'hours') > 6
+      let isDue = dates.isDue(this.profile?.ping_at, 6, 'hours')
 
       return {
         data: profile,
-        stale: stale,
-        updated: stale || data1 !== data2,
+        isDue: isDue,
+        hasChanges: isDue || data1 !== data2,
       }
     },
 
@@ -103,17 +95,16 @@ export const useGuildStore = defineStore('guild', {
     // Created on Wed Dec 18 2024
     //+-------------------------------------------------
     async ping() {
-      // debugger
       let profile = this.build()
 
       if (!$user.hasApi) return
-      if (!profile.updated) return
+      if (!profile.hasChanges) return
       if (profile.data.disabled) return
 
       const xhr = await $nuxt.$axios.post(`/ping`, profile.data)
 
       if (xhr?.status === 200 && xhr?.data) {
-        log(`[Guild] checked in`)
+        $log(`[Guild] checked in`)
 
         if (xhr.data?.user?.slug) $user.me.slug = xhr.data.user.slug
         if (xhr.data?.user?.username) $user.me.username = xhr.data.user.username
@@ -136,7 +127,7 @@ export const useGuildStore = defineStore('guild', {
       const xhr = await $nuxt.$axios.get(`/community`)
       if (xhr.status) this._community = xhr.data
 
-      log(`[Guild] loaded community`)
+      $log(`[Guild] loaded community`)
       this.loaded.push('community.json')
 
       return xhr.data
@@ -148,12 +139,11 @@ export const useGuildStore = defineStore('guild', {
     // -----
     // Created on Thu Sep 26 2024
     //+-------------------------------------------------
-    init(ping = false) {
+    init() {
       $nuxt ??= useNuxtApp()
-      $user ??= useUserStore()
+      $log = $nuxt.$log
 
-      if (ping) this.ping()
-      if (window) window.$guild = this
+      $user ??= useUserStore()
     },
   },
 })

@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd February 2024
- * Modified: Thu 27 March 2025 - 11:42:53
+ * Modified: 14th October 2025 - 04:15:23
  */
 
 import { useMagicKeys, whenever } from '@vueuse/core'
@@ -33,10 +33,9 @@ async function init() {
   registerMagicKeys()
 
   document.addEventListener('contextmenu', function (event) {
-    console.log('Right-clicked ', event)
+    // console.log('Right-clicked ', event)
 
-    let trigger =
-      event.target.closest('.card-game') || event.target.closest('.game--list')
+    let trigger = event.target.closest('.card-game') || event.target.closest('.game--list')
     let attr = trigger?.getAttribute('uuid') || null
     let disabled = trigger?.classList.contains('is-disabled') || false
 

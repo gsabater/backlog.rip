@@ -1,11 +1,14 @@
 /* eslint-disable no-unused-vars */
 
 /*
- * @file:    \plugins\dexie.js
+ * @file:    \plugins\lib.dexie.client.js
  * @desc:    ...
  * -------------------------------------------
+ * Events:
+ * |- db:ready ⇢ Dexie is ready to use and installed
+ * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: Wed 19 March 2025 - 15:32:27
+ * Modified: 24th November 2025 - 05:07:55
  */
 
 import Dexie from 'dexie'
@@ -71,29 +74,30 @@ function check() {
 // Created on Thu Nov 09 2023
 // Updated on Tue Nov 28 2023
 //+-------------------------------------------------
-function install() {
+async function install() {
   if (check() === false) return
 
   let installer = new DexieInstaller(db)
-  installer.account()
-  installer.states()
-  installer.configure()
-  installer.journal()
+  await installer.states()
+  await installer.account()
+  await installer.configure()
+  // await installer.journal()
 
   db.status = 'ready'
+  $nuxt.$mitt.emit('db:ready')
 }
 
-//+-------------------------------------------------
-// getValue()
-// 🤷‍♀️ IDK if this exists
-// -----
-// Created on Thu Nov 09 2023
-//+-------------------------------------------------
-async function getValue(store, key) {
-  let data = await db[store].get(key)
-  if (data && data.value) return data.value
-  return null
-}
+// //+-------------------------------------------------
+// // getValue()
+// // 🤷‍♀️ IDK if this exists
+// // -----
+// // Created on Thu Nov 09 2023
+// //+-------------------------------------------------
+// async function getValue(store, key) {
+//   let data = await db[store].get(key)
+//   if (data && data.value) return data.value
+//   return null
+// }
 
 //+-------------------------------------------------
 // Define Nuxt plugin
@@ -102,8 +106,8 @@ async function getValue(store, key) {
 // Created on Tue Nov 28 2023
 //+-------------------------------------------------
 export default defineNuxtPlugin((nuxtApp) => {
-  db.get = getValue
-  db.value = getValue
+  // db.get = getValue
+  // db.value = getValue
 
   db.sch = sch
   db.ver = ver

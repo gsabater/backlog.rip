@@ -19,17 +19,33 @@
             <div class="row justify-center my-5">
               <div class="col-auto">&nbsp;</div>
               <div class="col-auto">
-                <v-btn to="import" color="purple" variant="flat">
+                <!-- <v-btn
+                  to="import"
+                  color="deep-purple-darken-4"
+                  variant="flat"
+                  style="
+                    box-shadow: 0 0 1.5rem rgba(174, 62, 201, 0.1);
+                    outline: 1px solid #06212e;
+                  ">
                   Import your library
+                </v-btn> -->
+                <v-btn
+                  to="games"
+                  variant="tonal"
+                  color="rgb(135 140 195)"
+                  style="
+                    filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+                    outline: 1px solid #9e58581c;
+                    outline-offset: -1px;
+                  ">
+                  Browse games
                 </v-btn>
-                <!-- <b-btn to="import" color="purple" size="sm">Import your library</b-btn> -->
               </div>
 
               <div class="col-auto">
-                <v-btn to="games" color="secondary" variant="text">Browse games</v-btn>
-                <!-- <b-btn to="games" variant="ghost" size="sm" color="secondary">
-                  Browse games
-                </b-btn> -->
+                <v-btn to="import" color="secondary" variant="text">
+                  Import your Steam library
+                </v-btn>
               </div>
             </div>
 
@@ -66,7 +82,7 @@
               <a
                 v-tippy="'Join us at Discord'"
                 href="https://discord.gg/F2sPE5B"
-                class="link-secondary link-underline-opacity-0 ms-2 mx-1"
+                class="link-secondary link-underline-opacity-0 ms-2"
                 target="_blank">
                 <svg
                   class="me-1"
@@ -88,11 +104,17 @@
               <a
                 v-tippy="'Support on Patreon'"
                 href="https://www.patreon.com/c/BacklogRIP"
+                class="link-secondary link-underline-opacity-0 mx-2"
+                target="_blank">
+                <Icon size="16" style="transform: translateY(-1px)">BrandPatreonFilled</Icon>
+              </a>
+
+              <a
+                v-tippy="'Submit ideas and feedback on Featurebase'"
+                href="https://backlog.featurebase.app"
                 class="link-secondary link-underline-opacity-0 mx-1"
                 target="_blank">
-                <Icon size="16" style="transform: translateY(-1px)">
-                  BrandPatreonFilled
-                </Icon>
+                <Icon size="16" style="transform: translateY(-1px)">Map</Icon>
               </a>
             </p>
           </div>
@@ -126,7 +148,6 @@
         </div>
       </div>
 
-      <!-- <gameList :apps="hot" cols="6" class="py-2 justify-content-center"></gameList> -->
       <search-results
         ref="hotGames"
         :disabled="false"
@@ -151,9 +172,7 @@
             href="https://github.com/gsabater/backlog.rip"
             class="link-secondary link-underline-opacity-0"
             target="_blank">
-            <Icon size="14" class="me-0" style="transform: translateY(-1px)">
-              BrandGithub
-            </Icon>
+            <Icon size="14" class="me-0" style="transform: translateY(-1px)">BrandGithub</Icon>
             Source code on Github
           </a>
 
@@ -192,7 +211,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: Thu Jun 19 2025
+ * Modified: 26th November 2025 - 09:58:30
  **/
 
 export default {
@@ -219,14 +238,6 @@ export default {
   computed: {
     ...mapStores(useDataStore, useRepositoryStore),
     ...mapState(useRepositoryStore, ['hot', 'genres', 'loaded']),
-
-    //+-------------------------------------------------
-    // function()
-    // Timeline 1 - 9 ok
-    // Timeline 2 - 9 ... (more radius)
-    // -----
-    // Created on Fri Apr 19 2024
-    //+-------------------------------------------------
 
     randPosters() {
       return this.posters.sort(() => Math.random() - 0.5).slice(0, 8)

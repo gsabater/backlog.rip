@@ -1,13 +1,12 @@
 /*
- * @file:    \plugins\importer.client.js
+ * @file:    \plugins\importerService.client.js
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Fri 11 April 2025 - 13:41:00
+ * Modified: 7th November 2025 - 10:53:37
  */
 
-import importer from '~/utils/importer'
-// import Toast from '../components/toasts/Importing.vue'
+import importerService from '../services/importerService'
 
 //+-------------------------------------------------
 // Importer plugin (_sync)
@@ -146,7 +145,7 @@ async function sync(options = {}) {
 // Created on Tue Jan 23 2024
 //+-------------------------------------------------
 async function detect() {
-  const detected = importer.detect(_sync.x)
+  const detected = importerService.detect(_sync.x)
 
   if (detected) {
     _sync.x.module = { ...detected.module, wip: 'deleteme' }
@@ -165,7 +164,7 @@ async function detect() {
 // Created on Tue Jan 23 2024
 //+-------------------------------------------------
 async function connect() {
-  const connected = importer.connect(_sync.x)
+  const connected = importerService.connect(_sync.x)
 
   return connected
 }
@@ -177,7 +176,7 @@ async function connect() {
 // Created on Tue Jan 23 2024
 //+-------------------------------------------------
 async function scan() {
-  const scanned = await importer.scan(_sync.x)
+  const scanned = await importerService.scan(_sync.x)
 
   if (_sync.x.status) return _sync.x
   if (scanned) _sync.x.data = { ...scanned }
@@ -194,16 +193,11 @@ async function scan() {
 // Updated on Thu Nov 28 2024 - Simplified with a single changes array
 //+-------------------------------------------------
 async function prepare() {
-  const prepared = await importer.prepare(_sync.x)
+  const prepared = await importerService.prepare(_sync.x)
 
   if (prepared) {
     _sync.x.library = prepared.library
     _sync.x.changes = prepared.changes
-    // apps = {
-    //   toReview: prepared.toReview,
-    //   toImport: prepared.toImport,
-    //   toUpdate: prepared.toUpdate,
-    // }
   }
 
   return true
@@ -220,16 +214,17 @@ async function prepare() {
 async function store(options = {}) {
   if (options.apps) {
     _sync.x.apps = {
+      enabled: options.apps.enabled ?? true,
       toUpdate: options.apps.toUpdate || [],
       toImport: options.apps.toImport || [],
       toIgnore: options.apps.toIgnore || [],
     }
   }
 
-  const stored = await importer.store(_sync.x)
+  const stored = await importerService.store(_sync.x)
 
   if (stored) {
-    _sync.x.apps.stored = [...stored.uuids]
+    _sync.x.apps.stored = stored
     notify()
     return true
   }
@@ -245,11 +240,11 @@ async function store(options = {}) {
 // Updated on Sun Mar 02 2025 - Emit a notification
 //+-------------------------------------------------
 function notify() {
-  importer.wrap(_sync.x)
+  importerService.wrap(_sync.x)
 
   $nuxt.$toast.dismiss($toast)
   $nuxt.$toast.info('Your ' + _sync.x.source + ' library has been updated', {
-    description: 'Updated ' + _sync.x.apps.stored.length + ' games in your library',
+    description: 'Applied ' + _sync.x.apps.enabled.length + ' changes to your library',
   })
 
   $nuxt.$mitt.emit('library:added')
@@ -274,18 +269,18 @@ function notify() {
 // Created on Mon Jan 22 2024
 //+-------------------------------------------------
 export default defineNuxtPlugin((nuxtApp) => {
-  if (!$nuxt) $nuxt = nuxtApp
+  let time = performance.now()
+  let { $app, $mitt } = nuxtApp
 
-  window.$_sync = _sync
-  // init()
+  $nuxt = nuxtApp
+  $toast = nuxtApp.$toast
 
   _sync.sync = sync
   _sync.scan = scan
   _sync.store = store
 
-  return {
-    provide: {
-      importer: _sync,
-    },
-  }
+  // Register and provide the app object to Nuxt
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  $app.register('importer', time)
+  nuxtApp.provide('importer', _sync)
 })

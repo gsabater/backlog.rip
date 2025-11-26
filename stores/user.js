@@ -3,9 +3,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: 29th September 2025 - 04:55:04
+ * Modified: 24th November 2025 - 05:33:43
  */
 
+let $db = null
+let $log = null
 let $nuxt = null
 let $cloud = null
 let $library = null
@@ -61,20 +63,19 @@ export const useUserStore = defineStore('user', {
     async authenticate() {
       if (this.user?.uuid) return this.user
 
-      $nuxt ??= useNuxtApp()
-      $cloud ??= useCloudStore()
-      $library ??= useLibraryStore()
-
       await this.loadMe()
       await this.getApiData()
 
       this.user = { ...this.api, ...this.me }
-      log('🥸 User logged in as ' + this.user.username, this.user)
+
+      $log(`[ User ] Loaded ${this.user.username}`)
+      console.debug('User', this.user)
+      console.debug('Config', this.config)
 
       this.is.checked = true
       if (this.bearer) this.is.logged = true
 
-      $nuxt.$mitt.emit('user:ready')
+      $mitt.emit('user:ready')
     },
 
     //+-------------------------------------------------
@@ -86,19 +87,15 @@ export const useUserStore = defineStore('user', {
     // Updated on Tue Jan 28 2025 - load guild profile
     //+-------------------------------------------------
     async loadMe() {
-      let config = await $nuxt.$db.config.toArray()
-
-      this.me = (await $nuxt.$db.account.get('me')) || {}
-      this.cloud = (await $nuxt.$db.account.get('cloud')) || {}
-      this.guild = (await $nuxt.$db.account.get('guild')) || {}
+      this.me = (await $db.account.get('me')) || {}
+      this.cloud = (await $db.account.get('cloud')) || {}
+      this.guild = (await $db.account.get('guild')) || {}
 
       this.setJWT(this.cloud?.jwt)
       this.setBearer(this.me?.bearer)
 
-      // prettier-ignore
-      let _config = config.reduce((acc, row) =>
-        ({ ...acc, [row.key]: row.value }),
-        {})
+      let config = await $db.config.toArray()
+      let _config = config.reduce((acc, row) => ({ ...acc, [row.key]: row.value }), {})
 
       this.config = _config
     },
@@ -135,17 +132,7 @@ export const useUserStore = defineStore('user', {
             ? xhr.data.username
             : this.me.username
 
-          log('🧭 Userdata from API', xhr.data)
-
-          // Store the user data after the login
-          await this.register()
-
-          // Connect to the cloud if the user has cloud enabled
-          if (this.config.cloud && $cloud.is == 'local') $cloud.connect()
-
-          // Init the library again
-          await delay(300)
-          $library.init()
+          $log('[User] Userdata from API', xhr.data)
         }
       } catch (e) {
         debugger
@@ -163,11 +150,12 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     async setBearer(token = false) {
       if (!token) return
+      const { $axios } = this.$nuxt
 
       this.bearer = token
       this.me.bearer = token
 
-      $nuxt.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+      $axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
     },
 
     //+-------------------------------------------------
@@ -178,7 +166,7 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     async setJWT(token = false) {
       if (!token) return
-      $cloud ??= useCloudStore()
+      $cloud ??= useBackupStore()
 
       this.jwt = token
       this.cloud.jwt = token
@@ -196,7 +184,7 @@ export const useUserStore = defineStore('user', {
       let jwt = xhr?.data?.jwt
 
       if (xhr?.status === 200 && jwt) {
-        log('🔑 New JWT generated')
+        $log('🔑 New JWT generated')
 
         this.setJWT(jwt)
         await this.putAccount(this.cloud, 'cloud')
@@ -221,6 +209,13 @@ export const useUserStore = defineStore('user', {
       await this.putAccount(this.cloud, 'cloud')
 
       this.user = { ...this.api, ...this.me }
+
+      $log(`[ User ] Registered user ${this.user.username}`)
+      console.debug('User', this.user)
+      console.debug('Config', this.config)
+
+      this.is.checked = true
+      if (this.bearer) this.is.logged = true
     },
 
     //+-------------------------------------------------
@@ -250,7 +245,7 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     putAccount(json, uuid) {
       let data = JSON.parse(JSON.stringify(json))
-      return $nuxt.$db.account.put({
+      return $db.account.put({
         ...data,
         uuid,
         updated_at: dates.now(),
@@ -268,17 +263,17 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     async updateMe(field = null) {
       if (!field) return
-      log(`Updating $db.account('me').${field} with value ${this.me[field]}`)
+      $log(`[User] Update $db.account.me.${field}`)
+      console.debug(`↪ ${JSON.stringify(this.me[field])}`)
 
-      let account = await $nuxt.$db.account.get('me')
+      let account = await $db.account.get('me')
       let data = { ...account }
 
       if (field) data[field] = this.me[field]
       if (this.user[field]) this.user[field] = this.me[field]
       // this.user = { ...this.api, ...this.me }
 
-      // await $cloud.update('account')
-      $nuxt.$db.account.put(data)
+      $db.account.put(data)
       $nuxt.$mitt.emit('account:updated', {
         account: 'me',
         field,
@@ -297,15 +292,17 @@ export const useUserStore = defineStore('user', {
       if (!field) return
 
       let value = JSON.parse(JSON.stringify(this.config[field]))
-      log(`Updating $db.config.${field} with value`, value)
 
-      await $nuxt.$db.config.put({
+      $log(`Update $db.config.${field}`)
+      console.debug(`↪ ${JSON.stringify(value)}`)
+
+      await $db.config.put({
         key: field,
         value,
       })
 
       if (field == 'debug') {
-        $nuxt.$app.setDebug(this.config.debug)
+        $nuxt.$app.dev = value
       }
 
       // if (field !== 'cloud') await $cloud.update('account')
@@ -313,6 +310,50 @@ export const useUserStore = defineStore('user', {
         field,
         value: this.config[field],
       })
+    },
+
+    //+-------------------------------------------------
+    // isCronDue()
+    // Checks if a cron job is due to run based on the interval
+    // -----
+    // Created on Thu Oct 10 2025
+    //+-------------------------------------------------
+    isCronDue(key, interval) {
+      const lastRun = this.cron[key]
+      if (!lastRun) return true
+
+      return dates.isDue(lastRun, interval, 'hours')
+    },
+
+    //+-------------------------------------------------
+    // updateCron()
+    // Updates a cron timestamp and saves to config
+    // -----
+    // Created on Thu Oct 10 2025
+    //+-------------------------------------------------
+    async updateCron(cronKey) {
+      if (!this.config.cron) {
+        this.config.cron = {}
+      }
+
+      this.config.cron[cronKey] = dates.stamp()
+      await this.setConfig('cron')
+    },
+
+    //+-------------------------------------------------
+    // init()
+    // Assign references
+    // -----
+    // Created on Tue Sep 30 2025
+    //+-------------------------------------------------
+    async init() {
+      $nuxt ??= useNuxtApp()
+
+      $log ??= $nuxt.$log
+      $db ??= $nuxt.$db
+
+      $cloud ??= useBackupStore()
+      $library ??= useLibraryStore()
     },
   },
 
@@ -365,6 +406,14 @@ export const useUserStore = defineStore('user', {
     //+-------------------------------------------------
     hasCloud() {
       return this.config?.cloud && this.cloud?.sub
+    },
+
+    latestLibraryUpdate() {
+      let backlog = this.user?.lib_backlog_updated_at
+      let steamBacklog = this.user?.lib_steamBacklog_updated_at
+      debugger
+
+      return Math.max(backlog || 0, steamBacklog || 0)
     },
   },
 })

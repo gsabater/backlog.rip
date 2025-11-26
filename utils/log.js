@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: Tue 14 January 2025 - 11:12:16
+ * Modified: 1st October 2025 - 11:35:43
  */
 let $nuxt = null
 
@@ -31,6 +31,7 @@ function logd(...args) {
 // Created on Tue Nov 10 2023
 //+-------------------------------------------------
 async function logDefault(...args) {
+  console.warn('deprecated logDefault()')
   $nuxt ??= useNuxtApp()
 
   const error = new Error()
@@ -61,13 +62,14 @@ async function logDefault(...args) {
   // const padL = (nr, len = 2) => String(nr).padStart(len, '0')
   // ${padL(dt.getHours())}:${padL(dt.getMinutes())}:${padL(dt.getSeconds())}
 
-  $nuxt.$app.log.unshift({
-    message: args[0],
-    args,
-    stack: stack.slice(5),
-    time: dt.toLocaleTimeString(),
-    date: dt.toLocaleDateString(),
-  })
+  // TODO: Move logic to logger.js
+  // $nuxt.$app.log.unshift({
+  //   message: args[0],
+  //   args,
+  //   stack: stack.slice(5),
+  //   time: dt.toLocaleTimeString(),
+  //   date: dt.toLocaleDateString(),
+  // })
 }
 
 export { logd, info, error, warn }

@@ -24,6 +24,11 @@
     outline: 2px solid var(--bckg-state-color);
   }
 
+  &.is-hidden &__cover {
+    opacity: 0.3;
+    filter: grayscale(1) brightness(0.7);
+  }
+
   &.is-tracking &__cover {
     transform: perspective(525px) translateZ(0) rotateX(var(--dx)) rotateY(var(--dy));
     transition: all 150ms linear;

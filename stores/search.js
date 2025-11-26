@@ -3,17 +3,19 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: 26th June 2025 - 02:09:29
+ * Modified: 26th November 2025 - 10:19:46
  */
 
-import apiService from '../services/apiService'
 import searchService from '../services/searchService'
 import filterService from '../services/filterService'
 
+import backlogrip from '../modules/integrations/backlogrip'
+
+let $log = null
 let $nuxt = null
 let $data = null
+let $repo = null
 let $state = null
-let $repos = null
 
 // Hashed
 // Stores instances for each search executed
@@ -196,9 +198,7 @@ export const useSearchStore = defineStore('search', {
       // Dynamically detect some source options from the slug
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       const library = ['pinned', 'hidden', 'favorites']
-      let slug = Array.isArray($route.params?.slug)
-        ? $route.params.slug[0]
-        : $route.params?.slug
+      let slug = Array.isArray($route.params?.slug) ? $route.params.slug[0] : $route.params?.slug
 
       if (library.includes(slug)) {
         filters.source = 'library:' + slug
@@ -292,11 +292,11 @@ export const useSearchStore = defineStore('search', {
 
       let filters = []
       let slugged = false
+      $state ??= useStateStore()
 
       // Dynamically add state as a filter
       // When the slug is set and found in the states array
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      $state ??= useStateStore()
       if (!slugged && $state.states.length) {
         const state = $state.states.find((g) => g.slug == slug)
         if (state) {
@@ -317,7 +317,7 @@ export const useSearchStore = defineStore('search', {
       // When the slug is set and found in the genres array
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (!slugged) {
-        let genres = await $repos.getGenres()
+        let genres = await $repo.load('genres')
 
         const genre = genres.find((g) => g.slug == slug)
         if (genre?.id) {
@@ -512,13 +512,13 @@ export const useSearchStore = defineStore('search', {
     // }
 
     //+-------------------------------------------------
-    // getSource()
+    // buildSource()
     // Returns the source to use in the search
     // -----
     // Created on Wed Jul 24 2024
     // Updated on Mon Jan 13 2025 - Handle source:params
     //+-------------------------------------------------
-    getSource(filters) {
+    buildSource(filters) {
       // Source is an array of fixed items
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (Array.isArray(filters.source)) {
@@ -536,11 +536,7 @@ export const useSearchStore = defineStore('search', {
       let type = 'library'
       let apps = null
 
-      if (
-        !filters?.source ||
-        filters.source == 'library' ||
-        filters.source.includes('state:')
-      ) {
+      if (!filters?.source || filters.source == 'library' || filters.source.includes('state:')) {
         return { type: 'library', apps: $data.library() }
       }
 
@@ -570,7 +566,7 @@ export const useSearchStore = defineStore('search', {
       this.loading = true
 
       let filters = f || this.f
-      let source = this.getSource(filters)
+      let source = this.buildSource(filters)
 
       // Initialize the search
       // And preload some data when needed
@@ -578,8 +574,8 @@ export const useSearchStore = defineStore('search', {
       filters.is = source.type
       this.prepareStats(filters, source)
 
-      if (source.type == 'all' && !$repos.loaded.includes('popular')) {
-        $repos.topGames('popular')
+      if (source.type == 'all' && !$repo.loaded.includes('popular')) {
+        $repo.load('top-popular')
       }
 
       // Filter, sort and paginate
@@ -591,8 +587,7 @@ export const useSearchStore = defineStore('search', {
 
       // Search for the API
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      apiService.search(hash?.api)
-
+      this.searchBacklogRIP(hash)
       this.endSearch(filters, filtered)
 
       return {
@@ -636,6 +631,26 @@ export const useSearchStore = defineStore('search', {
       this.stats.nextPage = searchService.calcNextPage(filters, filtered.results)
 
       this.loading = false
+    },
+
+    //+-------------------------------------------------
+    // searchBacklogRIP()
+    // Handles API search to BacklogRIP
+    // -----
+    // Created on Wed Nov 26 2025
+    //+-------------------------------------------------
+    async searchBacklogRIP(hash) {
+      if (!hash?.api) return
+
+      let start = performance.now()
+      let data = await backlogrip.search(hash.api)
+      let end = performance.now()
+
+      this.stats.api = end - start
+      this.stats.api_end = end
+      this.stats.api_start = start
+
+      if (data) await $data.process(data, 'api')
     },
 
     //+-------------------------------------------------
@@ -694,17 +709,16 @@ export const useSearchStore = defineStore('search', {
 
     //+-------------------------------------------------
     // init()
-    // Initializes the search store
     // -----
     // Created on Thu Sep 26 2024
+    // Updated on Wed Oct 01 2025
     //+-------------------------------------------------
     async init() {
       $nuxt ??= useNuxtApp()
-      $data ??= useDataStore()
-      $state ??= useStateStore()
-      $repos ??= useRepositoryStore()
+      $log ??= $nuxt.$log
 
-      if (window) window.$search = { x: this }
+      $data ??= useDataStore()
+      $repo ??= useRepositoryStore()
     },
   },
 

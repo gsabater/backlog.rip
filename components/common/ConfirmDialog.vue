@@ -2,18 +2,18 @@
   <v-dialog v-model="ui.show" width="auto" min-width="450px">
     <v-card>
       <template v-slot:title>
-        <Icon>Mist</Icon>
+        <Icon>Checkbox</Icon>
         <span class="font-serif mx-2">
           {{ event.title || 'Confirm' }}
         </span>
       </template>
 
-      <v-card-text class="text-center">
+      <v-card-text>
         {{ event.message || 'Are you sure that you want to do that?' }}
         <template v-if="event">
           <div
             v-if="event.item && event.item.name"
-            class="text-disabled text-muted d-block pt-3 pb-0"
+            class="text-disabled text-muted d-block"
             style="font-size: 13px">
             This will be deleted
             <br />
@@ -22,7 +22,7 @@
         </template>
       </v-card-text>
       <v-card-actions>
-        <v-btn variant="text" @click="ui.show = false">Cancelar</v-btn>
+        <v-btn variant="text" @click="ui.show = false">Cancel</v-btn>
         <v-spacer></v-spacer>
         <v-btn color="green-darken-1" variant="text" @click="confirm">Confirm</v-btn>
       </v-card-actions>
@@ -36,7 +36,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 29th September 2025 - 04:49:19
+ * Modified: 15th October 2025 - 11:53:08
  **/
 
 /*+-------------------------------------------------
@@ -86,10 +86,6 @@ export default {
 
   mounted() {
     this.init()
-  },
-
-  beforeUnmount() {
-    // this.$event.$off('documents:show')
   },
 }
 </script>

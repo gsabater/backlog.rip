@@ -3,23 +3,21 @@
     <div class="card-body" style="padding: 1.9rem">
       <div class="d-flex align-items-center mb-4">
         <div class="me-3">
-          <img
-            :src="module?.manifest.source.logo"
-            style="max-width: 40px; max-height: 40px" />
+          <img :src="module?.manifest.source.logo" style="max-width: 40px; max-height: 40px" />
         </div>
         <div>
           <small class="text-secondary">Synchronize your library with</small>
           <h3 class="card-title lh-2 mb-1">{{ module?.manifest.source.name }}</h3>
         </div>
         <div class="ms-auto">
-          <NuxtLink to="/account/linked">
+          <!-- <NuxtLink to="/account/linked">
             <Icon
               size="16"
               class="text-muted"
               v-tippy="'Configure your library integrations'">
               Settings2
             </Icon>
-          </NuxtLink>
+          </NuxtLink> -->
         </div>
         <!-- <div class="ms-auto text-center">
           <Icon>ChevronRight</Icon>
@@ -39,9 +37,7 @@
             :style="`background-image: url('${integration?.avatar || ''}')`"></span>
         </div>
         <div>
-          <small class="text-secondary">
-            Your profile on {{ module?.manifest.source.name }}
-          </small>
+          <small class="text-secondary">Your profile on {{ module?.manifest.source.name }}</small>
           <h3 class="card-title lh-2 mb-1">{{ integration?.username }}</h3>
         </div>
 
@@ -96,7 +92,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 4th December 2024
- * Modified: Thu 13 March 2025 - 15:11:46
+ * Modified: 7th November 2025 - 10:42:08
  **/
 
 export default {

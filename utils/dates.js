@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: Tue 25 March 2025 - 11:29:18
+ * Modified: 11th October 2025 - 12:13:05
  */
 
 let $nuxt = null
@@ -172,16 +172,17 @@ export default {
   //+-------------------------------------------------
   microTime(ms) {
     if (ms > 1000) return format.round(ms / 1000, 2) + 's'
-    return format.round(ms, 0) + 'ms'
+    return format.round(ms, 2) + 'ms'
   },
 
   //+-------------------------------------------------
-  // isStale()
-  // Checks if a unix timestamp is older than a specified amount of time
+  // isDue()
+  // Checks if a unix timestamp is due given a a timestamp
+  // amount and unit (hours, days, weeks)
   // -----
   // Created on Thu Feb 27 2025
   //+-------------------------------------------------
-  isStale(timestamp, amount, unit = 'hours') {
+  isDue(timestamp, amount, unit = 'hours') {
     timestamp = parseInt(timestamp) || 0
 
     const now = Math.floor(Date.now() / 1000) // Current unix timestamp in seconds

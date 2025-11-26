@@ -6,53 +6,50 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: 29th September 2025 - 03:52:27
+ * Modified: 24th November 2025 - 05:07:22
  */
 
 // import { reactive } from 'vue'
 // import { useWindowSize } from '@vueuse/core'
 // import { useBreakpoints } from '@vueuse/core'
 
+let $log = null
 let $nuxt = null
-let $user = null
-let $data = null
-let $game = null
-let $list = null
-let $state = null
-let $repos = null
-let $guild = null
-let $cloud = null
-let $search = null
-let $integration = null
 
 let app = {
-  v: '0.21.1 β', //β
+  v: '0.21.2 β', //β
   t: 1748963753259, // Date.now()
 
-  // Global app state
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  wip: false,
+  // App State and services
+  // reactive declaration of the app status for other components
   dev: false,
+  wip: false,
   beta: false,
-  offline: false,
-
-  has: [],
   ready: false,
-
-  // $db.status
-  // can be true when is ready or a status
-  // like 'loading' , 'error' or 'update'
-  // db: null,
+  offline: false,
+  env: 'prod', // dev, beta, prod
 
   width: 0,
   device: null,
   controller: false,
 
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Application services
+  //
+  // Services are registered when they are ready
+  // The app is ready when all critical services are ready
+  // Other services can be loaded after another
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  critical: new Set(['user', 'data', 'states']),
+  services: {
+    user: false,
+    data: false,
+  },
+
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Counters of data
   //
   // count.api is the # of games available in the api
-  // count.data is the # of games in cache
   // count.library is the # of games in local library
   //
   // states.backlog (and others) is the # of games in each state
@@ -70,8 +67,6 @@ let app = {
     states: {},
   },
 
-  api: {},
-
   f: {
     toggleFullscreen: null,
   },
@@ -87,18 +82,6 @@ let app = {
 
     showLogs: false,
   },
-
-  // Background service
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  background: {
-    running: false,
-  },
-
-  // Global log
-  // Has every message received from the app
-  // Used to debug and review messages
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  log: [],
 }
 
 //+-------------------------------------------------
@@ -115,64 +98,56 @@ let app = {
 // -----
 // Created on Wed Dec 27 2023
 //+-------------------------------------------------
-async function toggleSidebar($nuxt) {
+async function toggleSidebar() {
   app.layout.sidebar = !app.layout.sidebar
-  // $nuxt.$mitt.emit('app:render')
 }
 
 //+-------------------------------------------------
 // detectEnvironment()
-// Detects the environment and sets the app.dev and app.env
+// Detects if the application is running in a specific environment
 // -----
 // Created on Fri Jan 12 2024
 // Updated on Fri Sep 20 2024 - Added app.wip for localhost
 //+-------------------------------------------------
 function detectEnvironment() {
-  if (window.location.hostname == 'localhost') {
+  const origin = process.server ? useRequestURL().origin : window.location.origin
+  const hostname = process.server ? useRequestURL().hostname : window.location.hostname
+
+  if (hostname == 'localhost') {
+    app.dev = true
     app.wip = true
     app.env = 'local'
   }
 
-  if (window.location?.origin?.includes('beta.')) {
+  if (origin?.includes('beta.')) {
     app.beta = true
+    app.env = 'beta'
   }
+}
 
-  if ($nuxt.$auth.config.debug) {
-    app.dev = true
-  }
+//+-------------------------------------------------
+// boot()
+// Boots the app on server side
+// -----
+// Created on Sun Feb 04 2024
+//+-------------------------------------------------
+async function boot() {
+  detectEnvironment()
 }
 
 //+-------------------------------------------------
 // init()
-// Initializes which itself initializes some early modules
-// -----
-// Created on Sun Feb 04 2024
-//+-------------------------------------------------
-async function init() {
-  $nuxt ??= useNuxtApp()
-  $game ??= useGameStore()
-  $repos ??= useRepositoryStore()
-
-  $game.init()
-  $repos.init()
-}
-
-//+-------------------------------------------------
-// initClient()
 // Initializes client modules
 // -----
 // Created on Tue Feb 27 2024
 // Updated on Tue Nov 26 2024
 //+-------------------------------------------------
-async function initClient() {
-  // $data ??= useDataStore()
-  // $user ??= useUserStore()
-  // $list ??= useListStore()
-  // $cloud ??= useCloudStore()
-  // $guild ??= useGuildStore()
-  // $state ??= useStateStore()
-  // $search ??= useSearchStore()
-  // $integration ??= useLibraryStore()
+async function init() {
+  app.t = performance.now()
+
+  // Define interface information
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  const { width, height } = useWindowSize()
 
   const breakpoints = useBreakpoints({
     sm: 0,
@@ -181,64 +156,76 @@ async function initClient() {
     xl: 1200,
   })
 
-  const { width, height } = useWindowSize()
-  const { isFullscreen, toggle } = useFullscreen(document.documentElement)
-
   app.width = width
   app.device = breakpoints.active()
 
+  const { isFullscreen, toggle } = useFullscreen(document.documentElement)
   app.f.toggleFullscreen = toggle
   app.ui.fullscreen = isFullscreen
-
-  detectEnvironment()
-
-  $nuxt.$mitt.emit('app:start')
-
-  // console.groupCollapsed('🔸 Initializing')
-  return
-
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Authenticate the user
-  // Try to determinate if the user has an account
-  // either locally or online and load values
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  await $user.authenticate()
-
-  $guild.init('ping')
-
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Initialize stores
-  // Initialize only the stores that are needed
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  await $data.init()
-  apiService.init()
-  $search.init()
-  $integration.init()
-  await $state.init()
-  await $list.init()
-
-  // console.groupEnd()
-  // await delay(333)
-  app.ready = true
-
-  // emit.app:ready
 }
 
-export default defineNuxtPlugin(() => {
-  init()
+//+-------------------------------------------------
+// register()
+// Services register when they are ready
+// -----
+// Created on Tue Sep 30 2025
+//+-------------------------------------------------
+function register(service, time = 0) {
+  let now = dates.microTime(performance.now() - time)
+
+  // Register the service
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // console.warn(`${service} registered in ${now} ${app.critical.has(service) ? '<critical>' : ''}`)
+  app.services[service] = now
+
+  // Check if all critical services are ready
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  const criticalReady = [...app.critical].every((srv) => app.services[srv])
+  if (criticalReady && !app.ready) {
+    // Notify application is ready
+    // All major services are initialized
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    $nuxt.$mitt.emit('app:ready')
+    app.ready = performance.now()
+
+    $nuxt.$log(`[ App ] 🟢 Ready in ${dates.microTime(app.ready)}`)
+    console.debug('↪ ' + JSON.stringify(app.services))
+    console.debug('↪ ' + JSON.stringify({ data: app.count }))
+    console.debug(
+      '↪ ' +
+        JSON.stringify({
+          app: { ready: app.ready },
+          cron: JSON.parse(JSON.stringify($nuxt.$auth.cron)),
+        })
+    )
+  }
+}
+
+// Nuxt Plugin
+// Created on Thu Oct 02 2025
+//+-------------------------------------------------
+export default defineNuxtPlugin((nuxtApp) => {
+  boot()
+
+  $nuxt = nuxtApp
+  $log = $nuxt.$log
 
   app = reactive({
     init,
-    initClient,
+    register,
     toggleSidebar,
 
     ...app,
   })
 
-  return {
-    provide: {
-      app,
-    },
-  }
+  // Extend pinia to have access to nuxtApp
+  // This allows to use $nuxt inside pinia stores with this.$nuxt
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  nuxtApp.$pinia.use(({ store }) => {
+    store.$nuxt = nuxtApp
+  })
+
+  // Provide the app object to the Nuxt instance
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  nuxtApp.provide('app', app)
 })

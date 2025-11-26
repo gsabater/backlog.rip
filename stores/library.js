@@ -3,22 +3,26 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th November 2024
- * Modified: Wed 19 March 2025 - 16:06:09
+ * Modified: 7th November 2025 - 10:39:30
  */
-
-let $nuxt = null
 
 import steam from '~/modules/importers/steam'
 import steamBacklog from '~/modules/importers/steam-backlog'
 
-// Available integration modules
-const INTEGRATIONS = ['steam', 'steamBacklog']
+let $db = null
+let $log = null
+let $nuxt = null
 
 export const useLibraryStore = defineStore('library', {
   state: () => ({
     linked: {},
-    module: {},
-    integrations: INTEGRATIONS,
+
+    module: {
+      steam,
+      steamBacklog,
+    },
+
+    integrations: ['steam', 'steamBacklog'],
 
     base: {
       data: {},
@@ -31,11 +35,6 @@ export const useLibraryStore = defineStore('library', {
     },
   }),
 
-  getters: {
-    // WIP -> change for steamModule ??
-    steam: (state) => state.module.steam,
-  },
-
   actions: {
     //+-------------------------------------------------
     // connect()
@@ -45,6 +44,8 @@ export const useLibraryStore = defineStore('library', {
     // Created on Wed Feb 26 2025
     //+-------------------------------------------------
     connect(modules) {
+      console.warn('🔥 WIP Library.connect()')
+      return
       modules.forEach((module) => {
         const account = this.linked[module]
         if (!account) return
@@ -52,7 +53,8 @@ export const useLibraryStore = defineStore('library', {
         account.bearer = $nuxt.$auth.user.bearer
 
         if (this.module[module]?.connect) {
-          this.module[module].connect(account)
+          debugger
+          // this.module[module].connect(account)
         }
       })
     },
@@ -113,12 +115,12 @@ export const useLibraryStore = defineStore('library', {
       )
 
       item.uuid = 'lib:' + source
-      await $nuxt.$db.account.put({
+      await $db.account.put({
         ...item,
       })
 
       this.link(source, item)
-      log('🔗 Platform linked', source, this.linked)
+      $log('🔗 Platform linked', source, this.linked)
     },
 
     //+-------------------------------------------------
@@ -126,11 +128,18 @@ export const useLibraryStore = defineStore('library', {
     // Updates a linked library. Takes values from this.linked
     // -----
     // Created on Tue Mar 11 2025
+    // Updated on Fri Nov 07 2025
     //+-------------------------------------------------
-    async updateLib(source) {
-      const data = JSON.parse(JSON.stringify(this.linked[source]))
+    async updateLib(source, merge = {}) {
+      this.linked[source] = {
+        ...this.linked[source],
+        ...merge,
+      }
+
+      let data = JSON.parse(JSON.stringify(this.linked[source]))
       delete data.manifest
-      await $nuxt.$db.account.put({
+
+      await $db.account.put({
         ...data,
       })
     },
@@ -167,14 +176,14 @@ export const useLibraryStore = defineStore('library', {
     },
 
     //+-------------------------------------------------
-    // loadRegisteredPlatforms()
+    // load()
     // Loads registered platforms from database
     // This "accounts" are not loaded on user store because
     // They are specific to the library modules.
     // -----
     // Created on Tue Nov 26 2024
     //+-------------------------------------------------
-    async loadRegisteredPlatforms() {
+    async load() {
       if (this.loaded) return
       this.loaded = true
 
@@ -183,30 +192,14 @@ export const useLibraryStore = defineStore('library', {
 
       await Promise.all(
         activeIntegrations.map(async (source) => {
-          const db = await $nuxt.$db.account.get('lib:' + source)
+          const db = await $db.account.get('lib:' + source)
           if (!db) return
 
           this.link(source, db)
+          $log(`[ Library.load ] ${source}`)
+          // console.debug(db)
         })
       )
-
-      // WIP improve this
-      // log(
-      //   '🧩 Libraries loaded',
-      //   `${Object.keys(this.linked).length} platforms`,
-      //   this.linked
-      // )
-    },
-
-    //+-------------------------------------------------
-    // loadModules()
-    // Loads integration module implementations
-    // -----
-    // Created on Tue Nov 26 2024
-    //+-------------------------------------------------
-    async loadModules() {
-      this.module.steam = steam
-      this.module.steamBacklog = steamBacklog
     },
 
     //+-------------------------------------------------
@@ -214,21 +207,42 @@ export const useLibraryStore = defineStore('library', {
     // Initializes the library store
     // -----
     // Created on Tue Nov 26 2024
+    // Created on Fri Oct 17 2025 - Simplified
     //+-------------------------------------------------
     async init() {
       $nuxt ??= useNuxtApp()
 
-      await this.loadModules()
-      await this.loadRegisteredPlatforms()
+      $db ??= $nuxt.$db
+      $log ??= $nuxt.$log
 
+      await this.load()
       this.autoLinkAccounts()
-      this.connect(['steam'])
 
-      if (window)
-        window.$library = {
-          x: this,
-          l: this.linked,
-        }
+      // WIP: Maybe move this to synchronization service
+      // this.connect(['steam'])
+    },
+  },
+
+  getters: {
+    // WIP -> change for steamModule ??
+    steam: (state) => state.module.steam,
+
+    //+-------------------------------------------------
+    // latestUpdate()
+    //
+    // -----
+    // Created on Thu Nov 06 2025
+    //+-------------------------------------------------
+    latestUpdatedAt() {
+      const timestamps = Object.values(this.linked)
+        .map((account) => account.updated_at)
+        .filter((timestamp) => timestamp !== null)
+
+      if (timestamps.length === 0) return null
+
+      return timestamps.reduce((latest, current) => {
+        return new Date(current) > new Date(latest) ? current : latest
+      })
     },
   },
 })

@@ -37,11 +37,17 @@
           </div>
 
           <div v-if="mode == 'viewer'" class="d-flex justify-content-center mb-4">
-            <v-btn class="me-2" color="primary" variant="tonal" @click.stop="$refs.crud.edit(list)">
+            <v-btn
+              class="me-2"
+              variant="tonal"
+              color="rgb(110 116 180)"
+              @click.stop="$refs.crud.edit(list)">
               List details
             </v-btn>
 
-            <v-btn color="primary" variant="tonal" @click="mode = 'editor'">Edit games</v-btn>
+            <v-btn variant="tonal" color="rgb(110 116 180)" @click="mode = 'editor'">
+              Edit games
+            </v-btn>
           </div>
 
           <div v-else class="d-flex justify-content-center mb-4">
@@ -77,7 +83,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th September 2024
- * Modified: 25th November 2025 - 07:47:09
+ * Modified: 27th November 2025 - 05:31:32
  **/
 
 export default {

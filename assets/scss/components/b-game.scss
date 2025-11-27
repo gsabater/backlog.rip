@@ -162,6 +162,12 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
+
+      &.squared {
+        aspect-ratio: 1/1;
+        max-height: 55px;
+        border-radius: 2px;
+      }
     }
   }
 }

@@ -26,8 +26,9 @@
             type="list"
             :uuid="item"
             :action="null"
-            style="padding-top: 0.65rem; padding-bottom: 0.65rem"
+            :showListDetails="false"
             class="px-3"
+            style="padding-top: 0.65rem; padding-bottom: 0.65rem"
             :class="{
               'disabled opacity-25 cursor-not-allowed': !hasAPIUUID(item),
               'opacity-50': listHasApp(item),
@@ -87,7 +88,7 @@
     *+--------------------------------- -->
   <div class="col-6 ps-5">
     <div class="col-12">
-      <h5>Games in the list</h5>
+      <h5>&nbsp;</h5>
     </div>
 
     <template v-if="list.games.length">
@@ -107,6 +108,7 @@
                 :uuid="element"
                 :display="['name', 'score']"
                 :action="null"
+                :showListDetails="true"
                 style="padding-top: 0.65rem; padding-bottom: 0.65rem">
                 <template #game:prepend>
                   <!-- <div
@@ -132,59 +134,30 @@
                     v-model.number="element._position"
                     @keyup.enter="updatePosition(element, element._position)">
                   </v-text-field> -->
+
                   <v-btn
-                    v-tippy="'Drag to reorder'"
                     icon
+                    v-tippy="'Drag to reorder'"
                     class="handle cursor-move"
                     variant="text"
                     size="x-small"
-                    color="grey-lighten-1">
+                    color="grey-lighten-1"
+                    style="transform: translateX(-4px)">
                     <Icon size="16" width="1">GripVertical</Icon>
                   </v-btn>
-
-                  <v-number-input
-                    :model-value="index + 1"
-                    :min="1"
-                    :max="list.games.length"
-                    variant="solo"
-                    density="compact"
-                    hide-details
-                    inset
-                    style="width: 20px; transform: scale(0.75)"
-                    v-tippy="{
-                      content: 'Set position in the list.<br> Press Enter to save.',
-                      allowHTML: true,
-                    }"
-                    @update:model-value="updatePosition(element, $event)" />
-                </template>
-
-                <template #details>
-                  <!-- <pre class="d-block">
-                    {{ element }}
-                  </pre> -->
-                  <!-- <small>This game cannot be added to the list</small> -->
                 </template>
 
                 <template #actions>
-                  <div class="col-auto">
-                    <!-- <v-btn
-                    icon
-                    variant="text"
-                    size="x-small"
-                    color="grey-lighten-1"
-                    v-tippy="'Move up'"
-                    @click="move(element, 'up')">
-                    <Icon size="16">ChevronUp</Icon>
-                  </v-btn>
-                  <v-btn
-                    icon
-                    variant="text"
-                    size="x-small"
-                    color="grey-lighten-1"
-                    v-tippy="'Move down'"
-                    @click="move(element, 'down')">
-                    <Icon size="16">ChevronDown</Icon>
-                  </v-btn> -->
+                  <div class="col-auto d-flex align-items-center">
+                    <v-number-input
+                      class="list-position me-2"
+                      :model-value="index + 1"
+                      :min="1"
+                      :max="list.games.length"
+                      inset
+                      hide-details
+                      variant="solo filled"
+                      @update:model-value="updatePosition(element, $event)" />
 
                     <v-btn
                       v-tippy="'Remove from the list'"
@@ -195,14 +168,6 @@
                       @click="removeFromList(element)">
                       <Icon size="18">TrashX</Icon>
                     </v-btn>
-
-                    <!-- <v-btn
-                    variant="text"
-                    icon="mdi-chevron-right"
-                    size="x-small"
-                    color="grey-lighten-1">
-                    <Icon size="18" width="2">DotsVertical</Icon>
-                  </v-btn> -->
                   </div>
                 </template>
               </b-game>
@@ -228,7 +193,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: 26th November 2025 - 10:17:33
+ * Modified: 27th November 2025 - 05:46:37
  **/
 
 import draggable from 'vuedraggable'
@@ -242,20 +207,6 @@ export default {
   emits: ['stored'],
 
   data: () => ({
-    // searched: null,
-    // dragging: false,
-
-    // f: {
-    //   string: '',
-    //   source: 'all',
-    //   sortBy: 'score',
-    //   sortDir: 'desc',
-    //   show: {
-    //     page: 1,
-    //     perPage: 42,
-    //   },
-    // },
-
     ui: {
       ping: 0,
       show: false,

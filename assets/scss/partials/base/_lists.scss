@@ -14,3 +14,21 @@
 .list-group i.mdi-chevron-down {
   transform: rotate(180deg);
 }
+
+// List position input
+.list-position {
+  max-width: 125px;
+  transform: scale(0.65) translateX(5px);
+
+  .v-field {
+    border: none;
+    border-radius: 3px;
+    background-color: rgb(255 255 255 / 3%);
+    box-shadow: none;
+  }
+
+  &.v-number-input .v-field__input {
+    transform: none;
+    padding-left: 8px;
+  }
+}

@@ -130,12 +130,8 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: 6th November 2025 - 02:03:02
+ * Modified: 27th November 2025 - 03:56:04
  **/
-
-definePageMeta({
-  ssr: false,
-})
 
 export default {
   name: 'AccountLinked',

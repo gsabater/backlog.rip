@@ -13,13 +13,13 @@
       <div class="row align-items-center">
         <slot name="game:prepend"></slot>
         <div class="col-auto text-secondary">
-          <div class="game__cover">
-            <game-asset :app="app" asset="banner" fallback="cover" :priority="['steam', 'igdb']" />
+          <div class="game__cover squared">
+            <game-asset :app="app" asset="cover" fallback="cover" :priority="['steam', 'igdb']" />
           </div>
         </div>
         <div class="col">
           <span class="font-serif">{{ app.name }}</span>
-          <div class="v-list-item-subtitle">
+          <div v-if="!showListDetails" class="v-list-item-subtitle">
             <slot name="details">
               <small v-if="visible.includes('released')" class="text-muted me-2">
                 {{ app._.released_at ?? '' }}
@@ -42,6 +42,107 @@
               <Icon>ChevronRight</Icon>
             </v-btn>
           </div> -->
+      </div>
+
+      <!-- Second row with detailed information -->
+      <div
+        v-if="showListDetails"
+        class="row mt-2"
+        style="
+          background: #00000026;
+          margin: -0.65rem -1.25rem;
+          padding: 10px;
+          border-bottom: 1px solid #3e3e45;
+        ">
+        <div class="col">
+          <slot name="details-row">
+            <div class="d-flex flex-wrap gap-3">
+              <small v-if="app.score" class="text-muted" v-tippy="'Backlog.rip Score'">
+                <Icon size="12" width="1.5" style="transform: translateY(-1px); margin-right: 3px">
+                  Star
+                </Icon>
+                {{ app.score }}
+              </small>
+
+              <small
+                v-if="app.scores?.metascore"
+                class="text-muted"
+                v-tippy="'Metascore from Metacritic'">
+                <b-logo
+                  name="metacritic"
+                  size="12"
+                  style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+                {{ app.scores.metascore }}
+              </small>
+
+              <small
+                v-if="app.scores?.oc"
+                class="text-muted"
+                v-tippy="`OpenCritic: ${format.scoreToHuman(app.scores.oc, 'oc', 'label')}`">
+                <b-logo
+                  name="opencritic"
+                  size="12"
+                  style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+                {{ app.scores.oc }}
+                <img
+                  :src="
+                    'https://backlog.rip/img/scores/' +
+                    format.scoreToHuman(app.scores.oc, 'oc', 'label') +
+                    '-head.png'
+                  "
+                  class="ms-1"
+                  style="max-width: 14px; max-height: 14px; transform: translate(-1px, -2px)" />
+              </small>
+
+              <small v-if="app.scores?.steamscore" class="text-muted" v-tippy="'Steam User Score'">
+                <b-logo
+                  name="steam"
+                  size="12"
+                  color="#fff"
+                  style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+                {{ app.scores.steamscore }}
+              </small>
+
+              <small
+                v-if="app.scores?.steamdb"
+                class="text-muted"
+                v-tippy="
+                  'SteamDB Rating: ' +
+                  Math.round(app.scores.steamdb) +
+                  ' (' +
+                  format.num(app.scores.steamCount) +
+                  ' ratings)'
+                ">
+                <b-logo
+                  name="steamdb"
+                  size="12"
+                  color="#fff"
+                  style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+                {{ Math.round(app.scores.steamdb) }}
+                <Icon v-if="app.scores.steamCount > 100000" class="ms-1" width="1" size="12">
+                  Sparkles
+                </Icon>
+                <Icon v-else-if="app.scores.steamCount > 10000" class="ms-1" width="1" size="12">
+                  Comet
+                </Icon>
+              </small>
+
+              <small v-if="app._.released" class="text-muted" v-tippy="'Release Date'">
+                <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
+                  Calendar
+                </Icon>
+                {{ app._.released }}
+              </small>
+
+              <small v-if="app.hltb?.main" class="text-muted" v-tippy="'HowLongToBeat: Main Story'">
+                <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
+                  SquareRoundedCheck
+                </Icon>
+                {{ dates.minToHours(app.hltb.main / 60) }}
+              </small>
+            </div>
+          </slot>
+        </div>
       </div>
     </div>
 
@@ -265,21 +366,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 15th October 2025 - 05:56:13
+ * Modified: 27th November 2025 - 05:29:52
  **/
 
 export default {
   name: 'GameCard',
   props: {
-    // type
-    // Defines the general layout of the item
-    // Values: card, list, table
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    type: {
-      type: String,
-      default: 'card',
-    },
-
     // uuid
     // Used to locate the app in $data
     // This uuid is also the API UUID if not local:
@@ -289,16 +381,25 @@ export default {
       default: null,
     },
 
-    api: {
-      type: [String],
-      default: null,
-    },
-
     // data
     // Uses the object as the app data
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     data: {
       type: Object,
+      default: null,
+    },
+
+    // type
+    // Defines the general layout of the item
+    // Values: card, list, table
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    type: {
+      type: String,
+      default: 'card',
+    },
+
+    api: {
+      type: [String],
       default: null,
     },
 
@@ -324,6 +425,14 @@ export default {
     visible: {
       type: Array,
       default: () => ['default'],
+    },
+
+    // showListDetails
+    // Shows a second row with additional details (only for list type)
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    showListDetails: {
+      type: Boolean,
+      default: true,
     },
   },
 

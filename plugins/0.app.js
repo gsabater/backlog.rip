@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: 26th November 2025 - 03:08:42
+ * Modified: 27th November 2025 - 04:38:25
  */
 
 // import { reactive } from 'vue'
@@ -17,7 +17,7 @@ let $log = null
 let $nuxt = null
 
 let app = {
-  v: '0.21.2 β', //β
+  v: '0.21.5 β', //β
   t: 1748963753259, // Date.now()
 
   // App State and services

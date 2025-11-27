@@ -1,10 +1,5 @@
 <template>
-  <img
-    loading="lazy"
-    :src="src"
-    crossorigin="anonymous"
-    @error="showAnother"
-    @load="emitLoaded" />
+  <img loading="lazy" :src="src" crossorigin="anonymous" @error="showAnother" @load="emitLoaded" />
 </template>
 
 <script>
@@ -18,17 +13,12 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: Thu 16 January 2025 - 17:10:05
+ * Modified: 27th November 2025 - 03:22:59
  **/
 
 export default {
   name: 'GameAsset',
   props: {
-    // uuid: {
-    //   type: String,
-    //   default: null,
-    // },
-
     app: {
       type: Object,
       default: () => ({}),
@@ -47,11 +37,6 @@ export default {
     fallback: {
       type: String,
       default: null,
-    },
-
-    adapt: {
-      type: Array,
-      default: () => [],
     },
   },
 

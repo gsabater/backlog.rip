@@ -5,26 +5,24 @@
  *           https://eslint.org/docs/latest/use/configure/migration-guide
  * ----------------------------------------------
  * Created Date: 11th November 2023
- * Modified: 8th October 2025 - 12:45:47
+ * Modified: 27th November 2025 - 04:32:30
+ */
+
+/**
+ * ESLint Configuration File
+ * ----------------------------------------------
+ * The project uses ESLint and Prettier for code quality and formatting.
+ * ESLint is configured to enforce coding standards and catch potential errors,
+ * while Prettier is used to maintain consistent code formatting across the codebase.
+ *
  */
 
 import js from '@eslint/js'
-import path from 'node:path'
+import vue from 'eslint-plugin-vue'
+import prettierPlugin from 'eslint-plugin-prettier'
+import prettierConfig from 'eslint-config-prettier'
+import nuxtConfig from '@nuxt/eslint-config'
 import globals from 'globals'
-import eslintPluginPrettier from 'eslint-plugin-prettier'
-import eslintConfigPrettier from 'eslint-config-prettier'
-
-import { fileURLToPath } from 'node:url'
-import { FlatCompat } from '@eslint/eslintrc'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-})
 
 export default [
   {
@@ -39,19 +37,37 @@ export default [
     ],
   },
 
-  // If you have multiple rulesets in your extend section,
-  // each following ruleset will extend or overwrite the previous ones.
-  // So you will only have one setting for each rule
-  ...compat.extends(
-    'eslint:recommended',
-    // "plugin:vue/vue3-essential" ... base, plus rules to prevent errors or unintended behavior.
-    // "plugin:vue/vue3-strongly-recommended" ... Above, plus rules to considerably improve code readability and/or dev experience.
-    // "plugin:vue/vue3-recommended" ... Above, plus rules to enforce subjective community defaults to ensure consistency.
+  // Base configuration rules
+  js.configs.recommended,
 
-    'plugin:vue/vue3-strongly-recommended',
-    '@nuxt/eslint-config',
-    'prettier'
-  ),
+  // Nuxt 3 rules
+  // Provided by @nuxt/eslint-config
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  nuxtConfig,
+
+  // Vue 3 rules
+  // Provided by eslint-plugin-vue
+  // Extends only strongly-recommended ruleset
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    plugins: { vue },
+    ...vue.configs['vue3-strongly-recommended'],
+  },
+
+  // Prettier rules
+  // Those rules disable conflicting rules and activate the plugin
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    plugins: { prettier: prettierPlugin },
+    rules: {
+      ...prettierConfig.rules,
+      'prettier/prettier': 'error',
+    },
+  },
+
+  // Personalized rules
+  // Specific for the project
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     languageOptions: {
       globals: {
@@ -94,11 +110,6 @@ export default [
       },
     },
 
-    plugins: {
-      prettier: eslintPluginPrettier,
-      eslintConfigPrettier,
-    },
-
     rules: {
       'no-debugger': 'warn',
       'no-unreachable': 'warn',
@@ -106,13 +117,6 @@ export default [
       'vue/no-v-html': 'off',
       'vue/first-attribute-linebreak': 'off',
       'vue/no-multiple-template-root': 'off',
-
-      // override/add rules settings here, such as:
-      // 'vue/no-unused-vars': 'error'
-      // "vue/require-default-prop": "off",
-
-      // Notify prettier rules as errors in eslint
-      // 'prettier/prettier': 'warn',
 
       'vue/order-in-components': [
         'error',

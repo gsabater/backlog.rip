@@ -188,11 +188,16 @@
     <div class="col-auto d-flex align-items-center ms-auto">
       <v-btn id="⚓sortby" variant="text" size="small" color="blue-grey-lighten-1">
         <small>
-          Sorting by
-          <strong class="ps-1">
-            {{ sortLabel[f.sortBy] ?? '...' }}
-            {{ !f.sortBy || !f.sortDir ? '' : f.sortDir == 'asc' ? '(Asc)' : '(Desc)' }}
-          </strong>
+          <template v-if="f.sortBy == 'none'">
+            <span>Sorted by the author</span>
+          </template>
+          <template v-else>
+            Sorting by
+            <strong class="ps-1">
+              {{ sortLabel[f.sortBy] ?? '...' }}
+              {{ !f.sortBy || !f.sortDir ? '' : f.sortDir == 'asc' ? '(Asc)' : '(Desc)' }}
+            </strong>
+          </template>
         </small>
 
         <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">Selector</Icon>
@@ -290,7 +295,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: 15th October 2025 - 02:43:12
+ * Modified: 27th November 2025 - 05:02:12
  **/
 
 export default {
@@ -379,6 +384,7 @@ export default {
     //+-------------------------------------------------
     sortLabel() {
       return {
+        'none': 'None',
         'name': 'Name',
         'rand': 'Random',
         'score': 'Score',

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: 13th October 2025 - 01:57:27
+ * Modified: 27th November 2025 - 01:39:28
  */
 
 let $db = null
@@ -38,10 +38,11 @@ export const useListStore = defineStore('list', {
   actions: {
     //+-------------------------------------------------
     // use()
-    // Assigns a list to this.list
+    // Assigns a deep copy of a list to this.list
     // And populates the subset to dataStore
     // -----
     // Created on Fri Oct 25 2024
+    // Updated on Wed Nov 27 2025 - Use deep copy instead of reference
     //+-------------------------------------------------
     use(ref, populate = true) {
       if (this.lists.length == 0) return
@@ -57,7 +58,7 @@ export const useListStore = defineStore('list', {
 
       this.list = {
         ...this.base,
-        ...list,
+        ...JSON.parse(JSON.stringify(list)),
       }
 
       if (populate) $data.process(this.list.games, 'list:populate')
@@ -152,7 +153,6 @@ export const useListStore = defineStore('list', {
 
       let data = $data.get(app.uuid)
       if (!data || data.error) return
-      // if (!data?.id?.api) return
       if (data.uuid.includes('local:')) return
 
       let item = {

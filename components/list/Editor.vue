@@ -156,7 +156,10 @@
                       :max="list.games.length"
                       inset
                       hide-details
-                      variant="solo filled"
+                      variant="solo"
+                      @focus="positionInputFocused = true"
+                      @blur="updatePosition(element, $event.target.value, 'clear')"
+                      @keyup.enter="updatePosition(element, $event.target.value, 'clear')"
                       @update:model-value="updatePosition(element, $event)" />
 
                     <v-btn
@@ -193,7 +196,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: 27th November 2025 - 05:46:37
+ * Modified: 28th November 2025 - 01:34:42
  **/
 
 import draggable from 'vuedraggable'
@@ -207,6 +210,8 @@ export default {
   emits: ['stored'],
 
   data: () => ({
+    positionInputFocused: false,
+
     ui: {
       ping: 0,
       show: false,
@@ -306,13 +311,26 @@ export default {
       this.listStore.removeFromList(this.list, app)
     },
 
+    onDragUpdate(evt) {
+      console.log('Items reordered', evt)
+    },
+
     //+-------------------------------------------------
     // updatePosition()
     // Updates the position of an item in the list
+    // Only sorts if input is not focused (allows arrow clicks but prevents sorting while typing)
     // -----
     // Created on Wed Jun 11 2025
     //+-------------------------------------------------
-    updatePosition(item, newIndex) {
+    updatePosition(item, newIndex, clearFocus) {
+      // Clear focus flag if requested (e.g., from blur or enter key)
+      if (clearFocus == 'clear') {
+        this.positionInputFocused = false
+      }
+
+      // Skip if input is focused (user is typing)
+      if (this.positionInputFocused) return
+
       const currentIndex = this.list.games.findIndex((g) => g.uuid === item.uuid)
       if (currentIndex === -1) return
 
@@ -370,27 +388,23 @@ export default {
     //   this.list.games.splice(index + 1, 0, app.uuid)
     // },
 
-    onDragUpdate(evt) {
-      console.log('Items reordered', evt)
-    },
+    // //+-------------------------------------------------
+    // // edit()
+    // // Gives an item and displays the modal
+    // // -----
+    // // Created on Tue May 30 2023
+    // //+-------------------------------------------------
+    // edit(item, index, modal = true) {
+    //   this.item = { ...item }
+    //   this.item.index = index
+    //   this.item.action = 'update'
 
-    //+-------------------------------------------------
-    // edit()
-    // Gives an item and displays the modal
-    // -----
-    // Created on Tue May 30 2023
-    //+-------------------------------------------------
-    edit(item, index, modal = true) {
-      this.item = { ...item }
-      this.item.index = index
-      this.item.action = 'update'
-
-      if (modal) this.ui.show = true
-      this.$nextTick(() => {
-        this.$refs.name.focus()
-        this.$refs.name.$el.select()
-      })
-    },
+    //   if (modal) this.ui.show = true
+    //   this.$nextTick(() => {
+    //     this.$refs.name.focus()
+    //     this.$refs.name.$el.select()
+    //   })
+    // },
 
     //+-------------------------------------------------
     // submit()

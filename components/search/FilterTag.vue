@@ -119,7 +119,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: Wed 04 June 2025 - 16:43:34
+ * Modified: 15th October 2025 - 02:15:56
  **/
 
 import filterService from '../../services/filterService'
@@ -358,8 +358,9 @@ export default {
   },
 
   mounted() {
+    // This is a bad idea
+    // this.runSearch()
     // this.showTippy()
-    this.runSearch()
     // this.$nextTick(() => {
     //   this.$refs.inputField.focus()
     // })

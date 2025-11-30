@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 14th March 2024
- * Modified: Thu 29 May 2025 - 17:23:06
+ * Modified: 15th October 2025 - 10:53:22
  **/
 
 // [data-bs-theme='dark'] {
@@ -99,4 +99,8 @@ header.navbar {
   .navbar-expand-lg.navbar-vertical ~ .page-wrapper {
     margin-left: calc(15rem - 5px);
   }
+}
+
+.nav .nav-item .nav-link:hover {
+  color: white !important;
 }

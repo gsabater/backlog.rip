@@ -17,12 +17,6 @@
                 filter: drop-shadow(1px 1px 0px currentcolor);
                 color: #00fdcf;
               " />
-
-            <small class="text-muted d-block mt-1">
-              Illustration from
-              <strong>Transhumans</strong>
-              by Pablo Stanley
-            </small>
           </div>
         </div>
         <div class="col-12 col-lg-5">
@@ -36,14 +30,13 @@
             </h1>
 
             <p class="lead mb-3 text-center text-lg-start">
-              Stay updated with the latest features, improvements, and bug fixes in our
-              product. Explore our changelog to see how we are evolving and enhancing your
-              experience.
+              Stay updated with the latest features, improvements, and bug fixes in our product.
+              Explore our changelog to see how we are evolving and enhancing your experience.
             </p>
             <p class="lead mb-4 text-center text-lg-start">
               <strong>Join our community on Discord</strong>
-              to discuss updates, share feedback, and connect with other users. We value
-              your input and are excited to hear from you!
+              to discuss updates, share feedback, and connect with other users. We value your input
+              and are excited to hear from you!
             </p>
             <p class="text-muted text-center text-lg-start" style="font-size: 0.75rem">
               <a
@@ -96,9 +89,7 @@
                   href="https://www.patreon.com/c/BacklogRIP"
                   class="link-secondary link-underline-opacity-0 mx-1"
                   target="_blank">
-                  <Icon size="16" style="transform: translateY(-1px)">
-                    BrandPatreonFilled
-                  </Icon>
+                  <Icon size="16" style="transform: translateY(-1px)">BrandPatreonFilled</Icon>
                 </a>
               </span>
             </p>
@@ -127,9 +118,7 @@
         *+--------------------------------- -->
       <div class="row mt-3 mt-md-5 pt-2 pt-md-4">
         <div class="col-12 text-center mb-2 mb-md-5 px-3">
-          <h2 class="display-6 mb-1" style="text-shadow: 2px 2px 0px #000">
-            Previous Releases
-          </h2>
+          <h2 class="display-6 mb-1" style="text-shadow: 2px 2px 0px #000">Previous Releases</h2>
 
           <p class="text-muted">A history of all our updates and improvements</p>
         </div>
@@ -185,7 +174,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th January 2024
- * Modified: 28th June 2025 - 07:39:31
+ * Modified: 27th November 2025 - 05:43:55
  **/
 
 const { data: changelog } = await useAsyncData('changelog', () => {

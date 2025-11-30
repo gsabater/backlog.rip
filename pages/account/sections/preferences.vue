@@ -7,8 +7,8 @@
         </div>
       </div>
       <p>
-        Customize how content is shown across the site. Adjust pagination, result counts,
-        and visual preferences to match your browsing style.
+        Customize how content is shown across the site. Adjust pagination, result counts, and visual
+        preferences to match your browsing style.
       </p>
     </div>
   </div>
@@ -94,9 +94,7 @@
     <div class="card mb-3">
       <div class="card-body">
         <h2 class="mb-2">Library management</h2>
-        <p class="card-subtitle">
-          Settings available to tailor your categorization options
-        </p>
+        <p class="card-subtitle">Settings available to tailor your categorization options</p>
         <div class="row g-3">
           <div class="col-md-12 nope-col-lg-8">
             <div class="mb-3">
@@ -109,15 +107,13 @@
                   class="form-check-input"
                   @change="setConfig('favorites')" />
                 <span class="form-check-label">
-                  <Icon size="14" width="1.5" style="transform: translateY(-2px)">
-                    Heart
-                  </Icon>
+                  <Icon size="14" width="1.5" style="transform: translateY(-2px)">Heart</Icon>
                   Favorites
                 </span>
 
                 <span class="form-check-description ps-1">
-                  A special list for your favorite games. This list can be used to
-                  generate suggestions.
+                  A special list for your favorite games. This list can be used to generate
+                  suggestions.
                   <br />
                   Games added to favorites will be automatically included in your library.
                 </span>
@@ -131,8 +127,7 @@
                     LayersSelected
                   </Icon>
                   <div class="d-inline-block">
-                    This enables a link in the sidebar and an option in the right click
-                    menu
+                    This enables a link in the sidebar and an option in the right click menu
                   </div>
                 </div>
               </label>
@@ -144,14 +139,12 @@
                   class="form-check-input"
                   @change="setConfig('pinned')" />
                 <span class="form-check-label">
-                  <Icon size="14" width="1.5" style="transform: translateY(-2px)">
-                    Bookmark
-                  </Icon>
+                  <Icon size="14" width="1.5" style="transform: translateY(-2px)">Bookmark</Icon>
                   Pinned games
                 </span>
                 <span class="form-check-description ps-1">
-                  Allows you to quickly pin games for quick access, and shows a special
-                  list with those games.
+                  Allows you to quickly pin games for quick access, and shows a special list with
+                  those games.
                   <br />
                   Pinned games will not be included in your library.
                 </span>
@@ -164,8 +157,7 @@
                     LayersSelected
                   </Icon>
                   <div class="d-inline-block">
-                    This enables a link in the sidebar and an option in the right click
-                    menu
+                    This enables a link in the sidebar and an option in the right click menu
                   </div>
                 </div>
               </label>
@@ -177,8 +169,8 @@
                   @change="setConfig('hidden')" />
                 <span class="form-check-label">Hidden games</span>
                 <span class="form-check-description ps-1">
-                  Allows you to hide games from any source. Hidden games will be excluded
-                  from any list or search.
+                  Allows you to hide games from any source. Hidden games will be excluded from any
+                  list or search.
                 </span>
 
                 <div class="form-check-description mt-2" style="vertical-align: top">
@@ -189,9 +181,7 @@
                     style="vertical-align: top">
                     LayersSelected
                   </Icon>
-                  <div class="d-inline-block">
-                    This enables an option in the right click menu
-                  </div>
+                  <div class="d-inline-block">This enables an option in the right click menu</div>
                 </div>
               </label>
               <div class="form-check-description ms-1" style="vertical-align: top">
@@ -229,7 +219,7 @@
       <div class="row g-3">
         <div class="col-md-8">
           <div class="mb-3">
-            <div class="form-label pb-2">Visual accessibility</div>
+            <!-- <div class="form-label pb-2">Visual indicators</div> -->
 
             <label class="form-check form-switch cursor-pointer pb-2">
               <input
@@ -239,8 +229,8 @@
                 @change="setConfig('game_state_borders')" />
               <span class="form-check-label">Display state borders</span>
               <span class="form-check-description ps-1">
-                Adds colored borders to game cards, visually indicating their current
-                state. Those borders are more visible when the cursor is over the game.
+                Adds colored borders to game cards, visually indicating their current state. Those
+                borders are more visible when the cursor is over the game.
               </span>
             </label>
           </div>
@@ -312,7 +302,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th July 2024
- * Modified: Tue Jun 17 2025
+ * Modified: 3rd October 2025 - 07:00:33
  **/
 
 export default {

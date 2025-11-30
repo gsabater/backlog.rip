@@ -3,62 +3,43 @@
     <div class="card-body">
       <div>
         <div class="d-flex mb-3">
-          <h1 class="m-0">Your lists</h1>
+          <h1 class="m-0">
+            <Icon class="me-2" style="transform: translateY(-2px)">Mist</Icon>
+            Your lists
+          </h1>
         </div>
       </div>
-      <!-- <p>
-        Lists are perfect way to organize your games. You can create as many lists as you
-        want, and you can add many games to them.
+      <p>
+        <strong>Lists are like playlists for your games.</strong>
+        Create as many as you need (like "Favorite RPGs", "Local Co-op Games", "My 2025 favorites")
+        and add games to multiple lists for complete flexibility.
       </p>
-
-      <p>You can add many games to a list, and you can add a game to many lists.</p>
       <p>
-        Lists are different from states in that states are used to categorize your games,
-        and used to generate personalized recommendations and insights on your dashboard.
-        A game can only have a single state, but can be in multiple lists.
-      </p> -->
-
-      <p>
-        Lists are the perfect way to organize your games exactly how you want. Create as
-        many lists as you need - like "Favorite RPGs" or "Local Co-op Games". You can add
-        games to multiple lists, giving you complete flexibility in how you organize your
-        collection of games.
+        <strong>What's the difference between lists and states?</strong>
+        States track progress and power recommendations. Lists let you organize however you want. A
+        game has one state but can be in unlimited lists.
       </p>
-
       <p>
-        While states (like "Playing" or "Completed") are used to track your progress and
-        help generate personalized recommendations, lists are your personal way to group
-        games however you prefer. Think of them like playlists - a game can only have one
-        state, but it can be part of as many lists as you want.
-      </p>
-
-      <p>
-        You can create both private lists that stay on your device and public lists to
-        share with the community (coming soon!). Whether you're organizing games by genre,
-        mood, or your own unique categories, lists give you the freedom to arrange your
-        games your way.
+        <strong>Keep your lists private or share them with the community.</strong>
+        Lists stay on your device by default, with public sharing on the way. Organize by genre,
+        mood, or any category you choose.
       </p>
     </div>
   </div>
 
-  <!-- <div
-    class="hr-text font-serif w-75 mx-auto"
-    style="margin-top: 2rem !important; margin-bottom: 2rem !important">
-    ◈ ◈ ◈
-  </div> -->
-
-  <!-- <div
-    class="divider"
-    style="border-top: 1px dashed rgb(204 204 204 / 25%); margin: 2rem"></div> -->
-
   <div class="row mb-3">
     <div class="col-6">
-      <v-btn variant="tonal" color="primary" @click="$mitt.emit('list:create')">
+      <v-btn
+        variant="tonal"
+        color="rgb(135 140 195)"
+        style="
+          filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+          outline: 1px solid #9e58581c;
+          outline-offset: -1px;
+        "
+        @click="$mitt.emit('list:create')">
         Create a new list
       </v-btn>
-      <!-- <a class="btn btn-primary px-3" @click="$mitt.emit('list:create')">
-        Create a new list
-      </a> -->
     </div>
     <!-- <div class="col-auto ms-auto">
       <v-btn variant="tonal" color="secondary" style="min-width: 40px" class="me-2">
@@ -85,7 +66,10 @@
             </v-btn>
           </div> -->
             <div class="col">
-              <span class="font-serif">{{ item.name }}</span>
+              <div>
+                <Icon size="12" class="text-muted me-2">Mist</Icon>
+                <span class="font-serif">{{ item.name }}</span>
+              </div>
               <div class="v-list-item-subtitle">
                 <small class="text-muted">
                   Public 🔸 {{ item.games.length }} games 🔸
@@ -102,32 +86,37 @@
               </v-btn>
             </div> -->
 
-            <div class="col-auto text-secondary" @click.prevent="() => {}">
+            <div class="col-auto text-secondary" @click.stop.prevent="() => {}">
               <div style="position: relative">
-                <v-btn
-                  variant="text"
-                  icon="mdi-chevron-right"
-                  size="x-small"
-                  color="grey-lighten-1">
+                <v-btn variant="text" icon size="x-small" color="grey-lighten-1">
                   <Icon size="18" width="2">DotsVertical</Icon>
                 </v-btn>
                 <b-dropdown
-                  trigger="mouseenter focus click hover manual"
-                  placement="bottom-end"
+                  trigger="mouseenter focus click"
+                  singleton-group="list-actions"
                   :debounce="15"
-                  style="min-width: 180px">
-                  <div
-                    class="dropdown-item"
-                    @click.stop="$mitt.emit('list:edit', { item })">
+                  placement="left-start"
+                  style="
+                    min-width: 220px;
+                    max-width: 220px;
+                    overflow: hidden;
+                    letter-spacing: initial;
+                    background: #24232a;
+                    border: 1px solid #453331;
+                  ">
+                  <div class="dropdown-header">
+                    {{ item.name }}
+                  </div>
+
+                  <div class="dropdown-item" @click.stop="$mitt.emit('list:edit', { item })">
                     <Icon size="16" class="me-2 text-muted">Pencil</Icon>
-                    Edit details
+                    Edit list
                   </div>
 
                   <div class="dropdown-item" @click.stop="goToList(item, 'edit')">
                     <Icon size="16" class="me-2 text-muted">Replace</Icon>
-                    Modify list
+                    Modify games
                   </div>
-                  <div class="dropdown-divider"></div>
                   <div
                     class="dropdown-item text-red"
                     @click.stop="
@@ -139,7 +128,7 @@
                       })
                     ">
                     <Icon size="16" class="me-2 text-red">Trash</Icon>
-                    Delete list
+                    Delete
                   </div>
                 </b-dropdown>
               </div>
@@ -156,27 +145,21 @@
     </div>
 
     <!--
-      *+---------------------------------
-      *| Empty block
-      *| Message when there are no results
-      *+--------------------------------- -->
+        *+---------------------------------
+        *| Empty block
+        *| Message when there are no results
+        *+--------------------------------- -->
     <div
       v-if="Object.keys(lists).length == 0"
       class="empty"
-      style="
-        border: 1px dashed #cccccc73;
-        border-radius: 4px;
-        height: auto;
-        padding: 2.5rem;
-      ">
+      style="border: 1px dashed #cccccc73; border-radius: 4px; height: auto; padding: 2.5rem">
       <p class="empty-title mb-3 font-serif" style="font-weight: 300">
         You don't have any lists yet
       </p>
       <p class="empty-subtitle text-secondary">Go ahead and create your first list.</p>
       <p class="empty-subtitle text-secondary">
-        Lists are perfect way to organize your games. You can create as many lists as you
-        want, and you can add many games to them. Also, lists can be private or shared
-        with others.
+        Lists are perfect way to organize your games. You can create as many lists as you want, and
+        you can add many games to them. Also, lists can be private or shared with others.
       </p>
     </div>
   </div>
@@ -223,11 +206,6 @@
       </template>
     </v-list-item>
   </div> -->
-  <!-- <list-crud-dialog
-    ref="crud"
-    @close="selected = null"
-    @stored="$forceUpdate()"
-    @deleted="$forceUpdate()" /> -->
 </template>
 
 <script>
@@ -236,7 +214,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: Wed 06 November 2024 - 14:01:05
+ * Modified: 30th November 2025 - 06:17:18
  **/
 
 export default {
@@ -260,123 +238,6 @@ export default {
       let slug = item.slug || item.uuid
       navigateTo('/my/list/' + slug + (edit ? '/edit' : ''))
     },
-
-    //+-------------------------------------------------
-    // clear()
-    // Clears (empties) a table in database.
-    // -----
-    // Created on Thu Jan 18 2024
-    //+-------------------------------------------------
-    async clear(table) {
-      return await this.$db[table].clear()
-    },
-
-    //+-------------------------------------------------
-    // function()
-    //
-    // -----
-    // Created on Sat Feb 03 2024
-    //+-------------------------------------------------
-    async reset() {
-      this.db.tables.forEach(async (table) => {
-        await this.clear(table.name)
-      })
-
-      return true
-    },
-
-    //+-------------------------------------------------
-    // function()
-    //
-    // -----
-    // Created on Sat Feb 03 2024
-    //+-------------------------------------------------
-    async exportAndDownload() {
-      const progressCallback = this.progressCallback
-
-      try {
-        const blob = await this.$db.export({ prettyJson: false, progressCallback })
-        this.download(blob, 'my.backlog', 'application/json')
-      } catch (error) {
-        console.error('' + error)
-      }
-    },
-
-    download(blob, filename) {
-      const url = window.URL.createObjectURL(
-        new Blob([blob], { type: 'application/json' })
-      )
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', filename)
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    },
-
-    progressCallback({ totalRows, completedRows }) {
-      this.log = `Progress: ${completedRows} of ${totalRows} rows completed`
-      // this.log.push(`Progress: ${completedRows} of ${totalRows} rows completed`)
-    },
-
-    openFileDialog() {
-      this.$refs.fileInput.click()
-    },
-
-    //+-------------------------------------------------
-    // function()
-    //
-    // -----
-    // Created on Sat Feb 03 2024
-    //+-------------------------------------------------
-    async handleFile(e) {
-      const file = e.target.files[0]
-      if (!file) return
-      await this.selectAndImport(file)
-    },
-
-    //+-------------------------------------------------
-    // function()
-    //
-    // -----
-    // Created on Sat Feb 03 2024
-    //+-------------------------------------------------
-    async selectAndImport(file) {
-      try {
-        const progressCallback = this.progressCallback
-
-        if (!file) throw new Error(`Only files can be dropped here`)
-        console.log('Importing ' + file.name)
-        // await this.$db.delete()
-        await this.reset()
-        await this.$db.import(file, {
-          progressCallback,
-        })
-        console.log('Import complete')
-        window.location.reload()
-      } catch (error) {
-        console.error('' + error)
-      }
-    },
-
-    // async getData() {
-    //   this.db.tables = await Promise.all(
-    //     this.$db.tables.map(async (table) => ({
-    //       name: table.name,
-    //       count: await table.count(),
-    //       primKey: table.schema.primKey.src,
-    //     }))
-    //   )
-    // },
-
-    async init() {
-      // await this.getData()
-      // this.ui.loading = false
-    },
-  },
-
-  mounted() {
-    this.init()
   },
 }
 </script>

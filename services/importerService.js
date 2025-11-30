@@ -3,11 +3,10 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: Sat 07 June 2025 - 18:52:16
+ * Modified: 7th November 2025 - 10:48:00
  */
 
 import axios from 'axios'
-// import steam from '~/modules/importers/steam'
 
 let $nuxt = null
 let $data = null
@@ -102,11 +101,7 @@ export default {
       } else {
         account = { error: 'account:login' }
 
-        x.log(
-          'User needs to login with provider - code: [account:login]',
-          'error',
-          'account:login'
-        )
+        x.log('User needs to login with provider - code: [account:login]', 'error', 'account:login')
       }
 
       x.log('✅ Detected')
@@ -362,10 +357,9 @@ export default {
 
     x.log('Check 6.2: Storing apps')
     await $data.process(items, 'import')
-    // await $state.indexLibrary('all')
 
     x.log('✅ Data stored')
-
+    return items.map((x) => x.uuid)
     return {
       uuids: x.changes.map((x) => x.uuid),
     }
@@ -379,22 +373,27 @@ export default {
   //+-------------------------------------------------
   wrap(x = {}) {
     x.log('💠 Importer(7): Wrapping up ...')
-    if (!$nuxt) $nuxt = useNuxtApp()
-    if (!$data) $data = useDataStore()
-    if (!$journal) $journal = useJournalStore()
 
-    x.log('7.1: Writing journal')
-    let keys = x.apps.stored || []
-    $journal.add({
-      event: 'added',
-      data: {
-        store: x.source,
-        games: keys,
-      },
+    $nuxt ??= useNuxtApp()
+    $data ??= useDataStore()
+    $library ??= useLibraryStore()
+
+    // if (!$journal) $journal = useJournalStore()
+
+    // x.log('7.1: Writing journal')
+    // let keys = x.apps.stored || []
+    // $journal.add({
+    //   event: 'added',
+    //   data: {
+    //     store: x.source,
+    //     games: keys,
+    //   },
+    // })
+
+    x.log('7.2: Updating user library')
+    $library.updateLib(x.source, {
+      games: x.data?.games?.length || 0,
+      updated_at: dates.now(),
     })
-
-    x.log('7.2: Updating user data')
-    $nuxt.$auth.me.steam_updated_at = dates.now()
-    $nuxt.$auth.updateMe('steam_updated_at')
   },
 }

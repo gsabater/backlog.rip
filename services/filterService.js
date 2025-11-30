@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: 24th July 2025 - 03:46:01
+ * Modified: 31st October 2025 - 04:13:31
  */
 
 let $nuxt = null
@@ -267,10 +267,7 @@ export default {
       valid = false
     }
 
-    if (
-      this.definitions[by].type === 'array' &&
-      (!Array.isArray(value) || !value.length)
-    ) {
+    if (this.definitions[by].type === 'array' && (!Array.isArray(value) || !value.length)) {
       console.warn(`Invalid value for filter "${by}": ${value}. Expected an array.`)
       valid = false
     }
@@ -522,9 +519,7 @@ export default {
 
     // Input and value must match exactly (no extras, no missing)
     if (mod == 'is') {
-      return (
-        inputArray.every((i) => value.includes(i)) && inputArray.length === value.length
-      )
+      return inputArray.every((i) => value.includes(i)) && inputArray.length === value.length
     }
 
     return null

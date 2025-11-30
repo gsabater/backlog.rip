@@ -1,10 +1,11 @@
 /*
- * @file:    \services\steamAPIService.js
+ * @file:    \modules\integrations\steamAPI.js
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 25th February 2025
- * Modified: Tue 18 March 2025 - 22:35:33
+ * Modified: 7th October 2025 - 03:51:02
  */
+
 let $nuxt
 let domain = 'https://api.steampowered.com'
 

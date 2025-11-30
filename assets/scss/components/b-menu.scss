@@ -82,6 +82,15 @@ header div.container-xl > [data-tippy-root] {
 
   max-height: 55vh;
   overflow-y: auto;
+
+  // min-width: 220px;
+  // overflow: hidden;
+  // letter-spacing: initial;
+}
+
+.b-menu.high-contrast {
+  background: #24232a;
+  border: 1px solid #453331;
 }
 
 .mobile-menu {

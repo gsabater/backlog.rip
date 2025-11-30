@@ -74,7 +74,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 12th June 2025
- * Modified: 1st July 2025 - 11:03:06
+ * Modified: 1st October 2025 - 03:40:20
  **/
 
 export default {
@@ -91,7 +91,7 @@ export default {
 
     config() {
       return (
-        $auth?.config?.pagination || {
+        this.$auth?.config?.pagination || {
           style: 'pages',
           perPage: 42,
         }

@@ -3,16 +3,8 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th February 2024
- * Modified: Tue Feb 27 2024
+ * Modified: 30th September 2025 - 11:05:18
  */
-
-let $nuxt = null
-
-async function initApp() {
-  if (!$nuxt) $nuxt = useNuxtApp()
-  // await $nuxt.$app.init()
-  window.$app = $nuxt.$app
-}
 
 export default defineNuxtPlugin({
   name: 'App initializer',
@@ -20,13 +12,22 @@ export default defineNuxtPlugin({
 
   hooks: {
     'app:mounted'() {
-      // console.warn('xxx')
-      initApp()
+      const nuxtApp = useNuxtApp()
+
+      // Boot the app on the mounted hook
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      nuxtApp.$app.init()
+
+      // Expose the app and nuxt instances to the window
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (window && !window.$app) window.$app = nuxtApp.$app
+      if (window && !window.$nuxt) window.$nuxt = nuxtApp
     },
   },
 
   env: {
-    // Set this value to `false` if you don't want the plugin to run when rendering server-only or island components.
+    // Set this value to `false` if you don't want the plugin
+    //  to run when rendering server-only or island components.
     islands: false,
   },
 })

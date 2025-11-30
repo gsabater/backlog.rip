@@ -168,11 +168,7 @@
         </div> -->
       <div
         class="row w-100 h-100 m-0"
-        style="
-          background-color: #cdcdcd;
-          color: #3a4049;
-          border-bottom: 1px dashed #0000001f;
-        ">
+        style="background-color: #cdcdcd; color: #3a4049; border-bottom: 1px dashed #0000001f">
         <div class="col-3 my-3"></div>
         <div class="col-9 my-2 px-3">
           <v-btn
@@ -251,17 +247,11 @@
               <div class="mb-2">
                 <div class="d-flex flex-column">
                   <div>
-                    <Icon
-                      size="16"
-                      width="1.2"
-                      class="me-1"
-                      style="transform: translateY(-1px)">
+                    <Icon size="16" width="1.2" class="me-1" style="transform: translateY(-1px)">
                       ClockHour3
                     </Icon>
                     <template v-if="app._.playtime == 0">Not played</template>
-                    <template v-else>
-                      Played {{ dates.minToHours(app._.playtime) }}
-                    </template>
+                    <template v-else>Played {{ dates.minToHours(app._.playtime) }}</template>
                   </div>
                   <div v-if="app._.playtime > 0" class="text-muted" style="zoom: 0.9">
                     <div class="d-inline-block me-2" style="width: 15px">&nbsp;</div>
@@ -271,21 +261,13 @@
               </div>
 
               <div v-if="app.is.lib" v-tippy="'Date added to your library'" class="mb-2">
-                <Icon
-                  size="16"
-                  width="1.2"
-                  class="me-1"
-                  style="transform: translateY(-1px)">
+                <Icon size="16" width="1.2" class="me-1" style="transform: translateY(-1px)">
                   CalendarWeek
                 </Icon>
                 <span>{{ app._.owned_at }}</span>
               </div>
               <div v-else class="mb-2">
-                <Icon
-                  size="16"
-                  width="1.2"
-                  class="me-1"
-                  style="transform: translateY(-1px)">
+                <Icon size="16" width="1.2" class="me-1" style="transform: translateY(-1px)">
                   Cards
                 </Icon>
                 <span>Not in your library</span>
@@ -367,9 +349,7 @@
                   <strong class="text-muted">{{ app._.releasedYear }}</strong>
                   <div class="d-inline-block px-2 opacity-50">🔸</div>
                   <strong v-tippy="'Median score'" class="text-muted">
-                    <Icon size="12" width="1" style="transform: translateY(-2px)">
-                      StarFilled
-                    </Icon>
+                    <Icon size="12" width="1" style="transform: translateY(-2px)">StarFilled</Icon>
                     {{ app.score }}
                   </strong>
 
@@ -392,9 +372,7 @@
                           'outline': '1px solid ' + state.color,
                         }"
                         @click.stop="$refs.bstate.showManager($event)">
-                        <span
-                          v-if="state.id"
-                          class="status-dot status-dot-animated me-2"></span>
+                        <span v-if="state.id" class="status-dot status-dot-animated me-2"></span>
                         {{ state.name || 'Assign a state' }}
                         <Icon size="12" class="ms-1" style="transform: translateX(3px)">
                           ChevronDown
@@ -592,9 +570,7 @@
                       </div>
                     </div>
                   </div>
-                  <div
-                    class="col-sm-6 col-lg-3"
-                    style="display: flex; align-items: center">
+                  <div class="col-sm-6 col-lg-3" style="display: flex; align-items: center">
                     <a
                       v-tippy="hltbSource ? 'Click to open' : null"
                       :href="hltbSource || 'javascript:void(0)'"
@@ -621,35 +597,20 @@
                 <div v-if="app.hltb && app.hltb.main" class="my-2">
                   <h5>Time to beat</h5>
                   <small v-tippy="'Main game'" class="text-muted me-5">
-                    <Icon
-                      size="18"
-                      width="2"
-                      style="transform: translateY(-2px)"
-                      class="">
+                    <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
                       SquareRoundedCheck
                     </Icon>
 
                     {{ dates.minToHours(app.hltb.main / 60) }}
                   </small>
                   <small v-tippy="'Main game with extras'" class="text-muted me-5">
-                    <Icon
-                      size="18"
-                      width="2"
-                      style="transform: translateY(-2px)"
-                      class="">
+                    <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
                       DiscountCheck
                     </Icon>
                     {{ dates.minToHours(app.hltb.extras / 60) }}
                   </small>
-                  <small
-                    v-if="app.hltb.comp"
-                    v-tippy="'Completionist'"
-                    class="text-muted me-5">
-                    <Icon
-                      size="18"
-                      width="2"
-                      style="transform: translateY(-2px)"
-                      class="">
+                  <small v-if="app.hltb.comp" v-tippy="'Completionist'" class="text-muted me-5">
+                    <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
                       Trophy
                     </Icon>
                     {{ dates.minToHours(app.hltb.comp / 60) }}
@@ -661,11 +622,7 @@
                     :target="hltbSource ? '_blank' : null"
                     class="text-muted"
                     :class="{ disabled: !hltbSource }">
-                    <Icon
-                      size="18"
-                      width="2"
-                      style="transform: translateY(-2px)"
-                      class="">
+                    <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
                       Click
                     </Icon>
                     From HLTB
@@ -719,9 +676,7 @@
                             style="transform: translate(1px, -1px); opacity: 0.6" />
                           {{ app.scores.steamscoreAlt }}
                         </h3>
-                        <div
-                          class="w-100 text-center px-3"
-                          style="transform: translateY(2px)">
+                        <div class="w-100 text-center px-3" style="transform: translateY(2px)">
                           <div class="progress" style="height: 4px">
                             <div
                               class="progress-bar"
@@ -742,9 +697,7 @@
                       </div>
                     </div>
                   </div>
-                  <div
-                    v-if="app.scores.metascore || app.scores.userscore"
-                    class="col-md-3">
+                  <div v-if="app.scores.metascore || app.scores.userscore" class="col-md-3">
                     <div class="card card-sm">
                       <div class="card-body">
                         <h3 class="m-0" style="letter-spacing: 0 !important">
@@ -759,11 +712,7 @@
                             " />
                           <span
                             :style="{
-                              color: format.scoreToHuman(
-                                app.scores.metascore,
-                                'meta',
-                                'color'
-                              ),
+                              color: format.scoreToHuman(app.scores.metascore, 'meta', 'color'),
                             }">
                             {{ app.scores.metascore }}
                           </span>
@@ -774,11 +723,7 @@
                           </small>
                           <span
                             :style="{
-                              color: format.scoreToHuman(
-                                app.scores.userscore,
-                                'meta',
-                                'color'
-                              ),
+                              color: format.scoreToHuman(app.scores.userscore, 'meta', 'color'),
                             }">
                             {{ app.scores.userscore }}
                           </span>
@@ -1015,10 +960,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
               <template v-if="app.scores.metascore">
                 🔸
                 <a href="https://www.metacritic.com" target="_blank">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="20"
-                    viewBox="0 0 176 40">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 176 40">
                     <path d="M36.978 19.49a17.49 17.49 0 1 1 0-.021" fill="#000" />
                     <path
                       d="m17.209 32.937 3.41-3.41-6.567-6.567c-.276-.276-.576-.622-.737-1.014-.369-.783-.53-2.004.369-2.903 1.106-1.106 2.58-.645 4.009.784l6.313 6.313 3.41-3.41-6.59-6.59c-.276-.276-.599-.691-.76-1.037-.438-.898-.415-2.027.392-2.834 1.129-1.129 2.603-.714 4.24.922l6.128 6.129 3.41-3.41L27.6 9.274c-3.364-3.364-6.52-3.249-8.686-1.083-.83.83-1.337 1.705-1.59 2.696a6.71 6.71 0 0 0-.092 2.81l-.046.047c-1.66-.691-3.549-.277-5 1.175-1.936 1.935-1.866 3.986-1.636 5.184l-.07.07-1.681-1.36-2.95 2.949c1.037.945 2.282 2.097 3.687 3.502l7.673 7.673Z"
@@ -1043,7 +985,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st November 2024
- * Modified: Mon 24 March 2025 - 19:24:05
+ * Modified: 26th November 2025 - 10:40:20
  **/
 
 export default {
@@ -1148,17 +1090,16 @@ export default {
 
   methods: {
     initLightbox() {
-      // debugger
       if (this.lightbox) {
         this.lightbox.destroy()
         this.lightbox = null
       }
 
-      this.lightbox = new this.$PhotoSwipeLightbox({
+      this.lightbox = new this.$Photoswipe.lightbox({
         // gallery: '#game-gallery',
         // children: 'a',
         dataSource: this.screenshots,
-        pswpModule: this.$PhotoSwipe,
+        pswpModule: this.$Photoswipe.core,
 
         showHideAnimationType: 'zoom',
         bgOpacity: 0.6,

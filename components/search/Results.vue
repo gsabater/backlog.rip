@@ -160,13 +160,25 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 26th June 2025 - 06:16:53
+ * Modified: 29th November 2025 - 07:17:28
  **/
 
 import { useThrottleFn } from '@vueuse/core'
 
 export default {
   name: 'SearchResults',
+
+  inject: {
+    $source: {
+      from: '$source',
+      default: null,
+    },
+
+    $filters: {
+      from: '$filters',
+      default: () => ({}),
+    },
+  },
 
   props: {
     disabled: {
@@ -197,12 +209,13 @@ export default {
   emits: ['search:ready', 'search:start', 'search:end'],
 
   setup(props, { emit }) {
-    // const $nuxt = useNuxtApp()
-    // const $data = useDataStore()
-    const $route = useRoute()
+    const $nuxt = useNuxtApp()
     const $search = useSearchStore()
 
-    const ready = false
+    // const $data = useDataStore()
+    // const $route = useRoute()
+
+    // const ready = false
     const items = ref([])
 
     //+-------------------------------------------------
@@ -220,17 +233,6 @@ export default {
         if (!$app.ready) return
         if (props.disabled) return
 
-        // if (Object.keys(props.filters).length === 0) return
-
-        // console.groupCollapsed('🔸 Search at ..' + $route.path + ' (' + trigger + ')')
-        // log('search', '⇢ search:start', trigger || 'direct')
-        // emit('search:start', trigger)
-
-        // let filters = null
-        // if (props.filters?.source) {
-        //   filters = JSON.parse(JSON.stringify(props.filters))
-        // }
-
         // Conserve the trigger
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         $search.f.trigger = trigger
@@ -241,7 +243,7 @@ export default {
         const search = $search.run()
         items.value = search.items
 
-        log(`🧭 search:end (${$search.stats.time.toFixed(3)}ms)`, {
+        $nuxt.$log(`[ search:end ] ${dates.microTime($search.stats.time)} @${$search.f.trigger}`, {
           string: $search.f.string,
           trigger: $search.f.trigger,
           source: $search.f.is,
@@ -254,7 +256,7 @@ export default {
         emit('search:end')
         // console.groupEnd()
       },
-      1500,
+      700,
       true
     )
 
@@ -278,6 +280,7 @@ export default {
       () => $search.f.string,
       (value, old) => {
         // if (props.disabled) return
+        if (!old) return
         search('filters:updated')
       }
     )
@@ -310,13 +313,14 @@ export default {
       this.init()
     },
 
-    'source': {
-      handler() {
-        if (!this.source.length) return
-        this.search('watch:source')
-      },
-      deep: true,
-    },
+    // 'f.source': {
+    //   handler(value, old) {
+    //     if (!old) return
+    //     // if (!this.source.length) return
+    //     // this.search('watch:source')
+    //   },
+    //   deep: true,
+    // },
   },
 
   methods: {
@@ -324,9 +328,32 @@ export default {
       if (!this.$app.ready) return
 
       let filters = null
-      if (Array.isArray(this.source)) {
+
+      // Apply a source if provided
+      // The source can be set to the parent as well
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      let providedSource = this.source || this.$source
+      if (Array.isArray(providedSource)) {
         filters = {
-          source: this.source,
+          source: providedSource,
+        }
+      }
+
+      // Set filters from props
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (this.filters && typeof this.filters == 'object') {
+        filters = {
+          ...filters,
+          ...this.filters,
+        }
+      }
+
+      // Set filters from injected $filters
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (this.$filters && typeof this.$filters == 'object') {
+        filters = {
+          ...filters,
+          ...this.$filters,
         }
       }
 
@@ -344,30 +371,23 @@ export default {
         this.search('event:run')
       })
 
-      // @data:updated
+      // @data:added
       // Reset the search hashed cache
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      this.$mitt.on('data:updated', () => {
-        // this.searchStore.resetHashed()
-        this.search('data:updated')
+      this.$mitt.on('data:added', () => {
+        console.warn('heeeyyyy....')
+        this.search('data:added')
       })
     },
   },
 
   mounted() {
     this.init()
-
-    // this.$mitt.on('data:deleted', () => {
-    //   if (!$app.ready) return
-    //   if (this.$app.dev) log('🪡 Search from event', 'data:deleted')
-    //   this.search('data:deleted')
-    // })
   },
 
   beforeUnmount() {
     this.$mitt.off('search:run')
-    this.$mitt.off('data:updated')
-    // this.$mitt.off('data:deleted')
+    this.$mitt.off('data:added')
   },
 }
 </script>

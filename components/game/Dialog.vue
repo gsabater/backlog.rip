@@ -67,11 +67,7 @@
             "
             @click="ui.tab = 'details'"></game-asset>
           <div class="blur_back" style="">
-            <game-asset
-              ref="background"
-              :app="app"
-              asset="gen"
-              :priority="['steam']"></game-asset>
+            <game-asset ref="background" :app="app" asset="gen" :priority="['steam']"></game-asset>
           </div>
         </template>
 
@@ -226,9 +222,7 @@
           <div v-if="app.score" class="my-2">
             <h5>Scores</h5>
             <div class="d-flex align-items-center">
-              <div
-                v-tippy="'Median score'"
-                class="d-flex align-items-center text-muted small me-4">
+              <div v-tippy="'Median score'" class="d-flex align-items-center text-muted small me-4">
                 <Icon size="16" width="1.8" class="me-1">Universe</Icon>
 
                 {{ app.score }}
@@ -280,11 +274,7 @@
                     color: black !important;
                   "
                   :style="{
-                    'background-color': format.scoreToHuman(
-                      app.scores.metascore,
-                      'meta',
-                      'color'
-                    ),
+                    'background-color': format.scoreToHuman(app.scores.metascore, 'meta', 'color'),
                   }">
                   {{ app.scores.metascore }}
                 </div>
@@ -311,11 +301,7 @@
                     color: black !important;
                   "
                   :style="{
-                    'background-color': format.scoreToHuman(
-                      app.scores.userscore,
-                      'meta',
-                      'color'
-                    ),
+                    'background-color': format.scoreToHuman(app.scores.userscore, 'meta', 'color'),
                   }">
                   {{ app.scores.userscore }}
                 </div>
@@ -360,9 +346,7 @@
               {{ dates.minToHours(app.hltb.extras / 60) }}
             </small>
             <small v-if="app.hltb.comp" v-tippy="'Completionist'" class="text-muted me-5">
-              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-                Trophy
-              </Icon>
+              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">Trophy</Icon>
               {{ dates.minToHours(app.hltb.comp / 60) }}
             </small>
 
@@ -372,9 +356,7 @@
               :target="hltbSource ? '_blank' : null"
               class="text-muted"
               :class="{ disabled: !hltbSource }">
-              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-                Click
-              </Icon>
+              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">Click</Icon>
               From HLTB
             </a>
           </div>
@@ -648,7 +630,7 @@
  * @desc:    ... https://davidwalsh.name/detect-sticky
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: Mon 10 March 2025 - 15:39:22
+ * Modified: 15th October 2025 - 06:06:20
  **/
 
 export default {

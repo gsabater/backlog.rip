@@ -23,10 +23,7 @@
 
               <div class="mb-3">
                 <label class="form-label">Additional info</label>
-                <textarea
-                  v-model="item.description"
-                  class="form-control"
-                  rows="4"></textarea>
+                <textarea v-model="item.description" class="form-control" rows="4"></textarea>
               </div>
 
               <!-- <div class="mb-3">
@@ -48,12 +45,13 @@
                 </div>
               </div> -->
             </div>
-            <div class="col-12 col-md-6 d-flex">
+            <div class="col-12 col-md-6">
               <v-color-picker
                 v-model="item.color"
                 elevation="2"
                 nhide-sliders
                 hide-inputs
+                class="ms-auto"
                 :modes="['rgb']"
                 :style="`border: 5px solid ${item.color}`"></v-color-picker>
             </div>
@@ -69,9 +67,7 @@
           </div> -->
         </v-card-text>
 
-        <v-card-actions
-          v-if="!ui.loading"
-          style="padding: 16px 24px; background: #00000015">
+        <v-card-actions v-if="!ui.loading" style="padding: 16px 24px; background: #00000015">
           <!-- <v-spacer></v-spacer> -->
           <!-- <v-btn
             variant="plain"
@@ -108,7 +104,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th June 2024
- * Modified: Thu 30 January 2025 - 15:06:31
+ * Modified: 29th October 2025 - 11:59:54
  **/
 
 export default {

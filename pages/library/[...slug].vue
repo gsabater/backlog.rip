@@ -3,88 +3,87 @@
     <div class="container-xl">
       <div class="row g-2 align-items-center">
         <div class="col">
-          <div class="page-pretitle">Your games</div>
-          <h2 class="page-title text-capitalize d-inline-block">
-            {{ source }}
-            <!-- <Icon
+          <ClientOnly>
+            <div class="page-pretitle">Your games</div>
+            <h2 class="page-title text-capitalize d-inline-block">
+              {{ source }}
+              <!-- <Icon
               size="12"
               class="text-muted ms-1"
               style="width: 1rem; transform: translateY(2px)">
               ChevronDown
             </Icon> -->
 
-            <b-dropdown v-if="false" style="overflow: visible; min-width: 240px">
-              <span class="dropdown-header">This is your complete library</span>
+              <b-dropdown v-if="false" style="overflow: visible; min-width: 240px">
+                <span class="dropdown-header">This is your complete library</span>
 
-              <NuxtLink to="/library" class="dropdown-item">
-                <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon size="17" width="1.5" class="text-muted">LayoutDashboard</Icon>
-                </span>
-                <span class="nav-link-title">Your library</span>
-                <small class="ms-auto text-secondary me-1">
-                  {{ format.num($app.count.library) }}
-                </small>
-              </NuxtLink>
+                <NuxtLink to="/library" class="dropdown-item">
+                  <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                    <Icon size="17" width="1.5" class="text-muted">LayoutDashboard</Icon>
+                  </span>
+                  <span class="nav-link-title">Your library</span>
+                  <small class="ms-auto text-secondary me-1">
+                    {{ format.num($app.count.library) }}
+                  </small>
+                </NuxtLink>
 
-              <NuxtLink
-                v-if="$auth.config.favorites"
-                to="/library/favorites"
-                class="dropdown-item pe-2">
-                <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
-                </span>
-                <span class="nav-link-title">Favorites</span>
-              </NuxtLink>
+                <NuxtLink
+                  v-if="$auth.config.favorites"
+                  to="/library/favorites"
+                  class="dropdown-item pe-2">
+                  <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                    <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
+                  </span>
+                  <span class="nav-link-title">Favorites</span>
+                </NuxtLink>
 
-              <NuxtLink
-                v-for="(state, i) in pinnedStates"
-                :key="'state' + i"
-                :to="'/library/' + state.slug"
-                class="dropdown-item ps-3">
-                <span
-                  class="status-dot ms-0 me-4"
-                  :style="{ 'background-color': state.color || '' }"
-                  style="transform: translateX(1px)"></span>
+                <NuxtLink
+                  v-for="(state, i) in pinnedStates"
+                  :key="'state' + i"
+                  :to="'/library/' + state.slug"
+                  class="dropdown-item ps-3">
+                  <span
+                    class="status-dot ms-0 me-4"
+                    :style="{ 'background-color': state.color || '' }"
+                    style="transform: translateX(1px)"></span>
 
-                <span class="nav-link-title">{{ state.name }}</span>
-                <small class="ms-auto text-secondary me-1">
-                  {{ format.num(stateStore.count(state.id)) }}
-                </small>
-              </NuxtLink>
+                  <span class="nav-link-title">{{ state.name }}</span>
+                  <small class="ms-auto text-secondary me-1">
+                    {{ format.num(stateStore.count(state.id)) }}
+                  </small>
+                </NuxtLink>
 
-              <div v-if="unPinnedStates.length > 0" class="dropdown-item">
-                <div style="width: 30px">
-                  <Icon size="18" class="text-muted" width="1.5">Background</Icon>
-                </div>
+                <div v-if="unPinnedStates.length > 0" class="dropdown-item">
+                  <div style="width: 30px">
+                    <Icon size="18" class="text-muted" width="1.5">Background</Icon>
+                  </div>
 
-                <span>Other states</span>
+                  <span>Other states</span>
 
-                <span class="text-muted ms-auto">
-                  <Icon size="14">CaretRightFilled</Icon>
-                </span>
-                <b-dropdown
-                  placement="right-start"
-                  style="overflow: visible; min-width: 240px">
-                  <NuxtLink
-                    v-for="(state, i) in unPinnedStates"
-                    :key="'state' + i"
-                    :to="'/library/' + state.slug"
-                    class="dropdown-item px-2">
-                    <div class="content d-flex align-items-center w-100 px-1">
-                      <span
-                        class="status-dot ms-1 me-4"
-                        :style="{ 'background-color': state.color || '' }"></span>
+                  <span class="text-muted ms-auto">
+                    <Icon size="14">CaretRightFilled</Icon>
+                  </span>
+                  <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
+                    <NuxtLink
+                      v-for="(state, i) in unPinnedStates"
+                      :key="'state' + i"
+                      :to="'/library/' + state.slug"
+                      class="dropdown-item px-2">
+                      <div class="content d-flex align-items-center w-100 px-1">
+                        <span
+                          class="status-dot ms-1 me-4"
+                          :style="{ 'background-color': state.color || '' }"></span>
 
-                      <span class="me-4">
-                        {{ state.name }}
-                      </span>
+                        <span class="me-4">
+                          {{ state.name }}
+                        </span>
 
-                      <small class="ms-auto text-secondary me-1">
-                        {{ format.num(stateStore.count(state.id)) }}
-                      </small>
-                    </div>
+                        <small class="ms-auto text-secondary me-1">
+                          {{ format.num(stateStore.count(state.id)) }}
+                        </small>
+                      </div>
 
-                    <!-- <div class="d-flex justify-center" style="width: 30px">
+                      <!-- <div class="d-flex justify-center" style="width: 30px">
                 <Icon v-if="isFav(state.name)" style="color: red; fill: pink">Heart</Icon>
                 <span
                   v-else
@@ -98,36 +97,36 @@
               <tippy class="text-muted ms-auto cursor-help" :content="state.description">
                 <Icon>HelpCircleFilled</Icon>
               </tippy> -->
-                    <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
-                  </NuxtLink>
-                </b-dropdown>
-              </div>
+                      <!-- <span class="badge bg-primary text-primary-fg ms-auto">12</span> -->
+                    </NuxtLink>
+                  </b-dropdown>
+                </div>
 
-              <div
-                v-if="$auth.config.pinned || $auth.config.hidden"
-                class="dropdown-divider"></div>
+                <div
+                  v-if="$auth.config.pinned || $auth.config.hidden"
+                  class="dropdown-divider"></div>
 
-              <NuxtLink
-                v-if="$auth.config.pinned"
-                to="/library/pinned"
-                class="dropdown-item pe-2">
-                <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon size="17" width="1.5" class="text-muted">Bookmark</Icon>
-                </span>
-                <span class="nav-link-title">Pinned games</span>
-              </NuxtLink>
+                <NuxtLink
+                  v-if="$auth.config.pinned"
+                  to="/library/pinned"
+                  class="dropdown-item pe-2">
+                  <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                    <Icon size="17" width="1.5" class="text-muted">Bookmark</Icon>
+                  </span>
+                  <span class="nav-link-title">Pinned games</span>
+                </NuxtLink>
 
-              <NuxtLink
-                v-if="$auth.config.hidden"
-                to="/library/hidden"
-                class="dropdown-item pe-2">
-                <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
-                </span>
-                <span class="nav-link-title">Hidden games</span>
-              </NuxtLink>
+                <NuxtLink
+                  v-if="$auth.config.hidden"
+                  to="/library/hidden"
+                  class="dropdown-item pe-2">
+                  <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+                    <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
+                  </span>
+                  <span class="nav-link-title">Hidden games</span>
+                </NuxtLink>
 
-              <!-- <NuxtLink to="/library" class="dropdown-item">
+                <!-- <NuxtLink to="/library" class="dropdown-item">
                 Library
                 <small class="text-secondary ms-auto me-0">
                   {{ format.num($app.count.library) }}
@@ -136,8 +135,9 @@
               <NuxtLink to="/journal" class="dropdown-item">Journal</NuxtLink>
               <div class="dropdown-divider"></div>
               <NuxtLink to="/account/me" class="dropdown-item">Account</NuxtLink> -->
-            </b-dropdown>
-          </h2>
+              </b-dropdown>
+            </h2>
+          </ClientOnly>
         </div>
         <div class="col-auto ms-auto">
           <!-- <div class="text-secondary mt-1 text-right" style="text-align: right">
@@ -163,7 +163,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th December 2023
- * Modified: Sat 11 January 2025 - 20:10:41
+ * Modified: 29th October 2025 - 05:28:48
  **/
 
 export default {

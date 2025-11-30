@@ -27,6 +27,53 @@
             @change="update('username', $auth.me.username)" />
         </div>
 
+        <!-- <div class="col-md-12">
+          <div class="form-group form-group-default required">
+            <label>Label1</label>
+            <v-text-field
+              density="comfortable"
+              variant="default"
+              placeholder="pepepe"
+              hint="This is only you display name"
+              :rules="[(v) => !!v || 'Label is required']"
+              @change="update('username', $auth.me.username)" />
+          </div>
+        </div> -->
+
+        <!-- <div class="mb-3">
+          <label class="form-label">Floating inputs</label>
+          <div class="form-floating mb-3">
+            <input
+              type="email"
+              class="form-control"
+              id="floating-input"
+              value="name@example.com"
+              autocomplete="off" />
+            <label for="floating-input">Email address</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input
+              type="password"
+              class="form-control"
+              id="floating-password"
+              value="Password"
+              autocomplete="off" />
+            <label for="floating-password">Password</label>
+          </div>
+          <div class="form-floating">
+            <select
+              class="form-select"
+              id="floatingSelect"
+              aria-label="Floating label select example">
+              <option selected="">Open this select menu</option>
+              <option value="1">One</option>
+              <option value="2">Two</option>
+              <option value="3">Three</option>
+            </select>
+            <label for="floatingSelect">Select</label>
+          </div>
+        </div> -->
+
         <!-- <div v-if="false && $app.wip" class="mb-3">
           <label class="form-label font-serif">Your public profile URL</label>
           <div class="input-group input-group-flat">
@@ -129,9 +176,7 @@
         <template v-if="$cloud.sub">
           🔸
 
-          <span
-            v-tippy="'This is your cloud user identifier'"
-            class="text-muted cursor-help">
+          <span v-tippy="'This is your cloud user identifier'" class="text-muted cursor-help">
             <Icon width="1.2" size="14" class="me-1" style="transform: translateY(-1px)">
               CloudRain
             </Icon>
@@ -149,7 +194,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 13 March 2025 - 15:02:23
+ * Modified: 31st October 2025 - 12:26:23
  **/
 
 export default {

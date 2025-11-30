@@ -3,50 +3,48 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: Thu 15 May 2025 - 16:15:02
+ * Modified: 6th October 2025 - 05:01:54
  */
 
-let $nuxt = null
-let $data = null
+import backlogrip from '../modules/integrations/backlogrip'
+
+let hot = []
+let genres = []
 
 export const useRepositoryStore = defineStore('repository', {
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // List of defined repositories
-  //
-  // - top: top 500 games
-  // - hot: hot games this month + autoloaded
-  // - genres: list of genres + autoloaded
-  //
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   state: () => ({
-    _hot: [],
-    _genres: [],
-
     loaded: [],
+
+    // Getter flags
+    // Those flags are set when the repository is loaded
+    // triggering the getter again and returning the data
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    getHot: false,
+    getGenres: false,
   }),
 
   getters: {
     //+-------------------------------------------------
     // hot()
-    // Dynamically loads repository and returns data
+    // Loads HOT repository and returns shuffled data
     // -----
     // Created on Fri Apr 19 2024
+    // Created on Tue Sep 30 2025 - Improve lazy loading
     //+-------------------------------------------------
     hot() {
-      if (this._hot.length === 0) this.load('hot')
-      return this._hot.sort(() => Math.random() - 0.5).slice(0, 7)
+      if (!this.getHot) this.load('hot')
+      return hot.sort(() => Math.random() - 0.5)
     },
 
     //+-------------------------------------------------
     // genres()
-    // Dynamically loads repository and returns data
+    // Lazy loads Genres repository
     // -----
     // Created on Mon Feb 12 2024
     //+-------------------------------------------------
     genres() {
-      if (this._genres.length === 0) this.getGenres()
-      return this._genres
+      if (!this.getGenres) this.load('genres')
+      return genres
     },
 
     keyedGenres() {
@@ -61,30 +59,42 @@ export const useRepositoryStore = defineStore('repository', {
 
   actions: {
     //+-------------------------------------------------
-    // getGenres()
+    // load()
+    // Loads a repository of data
     // -----
-    // Created on Mon Jan 15 2024
+    // Created on Wed Dec 20 2023
+    // Updated on Fri Apr 19 2024 - assign to _{repo}
+    // Updated on Wed Oct 01 2025 - Use backlogrip integration
     //+-------------------------------------------------
-    async getGenres() {
-      if (this.loaded.includes('genres')) return this.genres
+    async load(repository) {
+      if (!repository) return
 
-      const xhr = await $nuxt.$axios.get(`repository/genres.json`)
-      if (xhr.status) this._genres = xhr.data
+      if (!this.$nuxt.$app.ready) return []
+      if (this.loaded.includes(`${repository}`)) {
+        return this[repository] || null
+      }
 
-      log(
-        '❇️ Genres loaded',
-        `${xhr.data.length} genres loaded from API`,
-        xhr.data[Math.floor(Math.random() * xhr.data.length)]
-      )
+      this.loaded.push(repository)
+      let data = await backlogrip.getRepository(repository)
 
-      this.loaded.push('genres')
-      return xhr.data
+      if (data) {
+        if (repository == 'hot') hot = data
+        if (repository == 'hot') this.getHot = true
+
+        if (repository == 'genres') genres = data
+        if (repository == 'genres') this.getGenres = true
+
+        if (repository == 'hot' || repository == 'top-popular') {
+          let $data = useDataStore()
+          $data.process(data, 'api')
+        }
+      }
+
+      return data
     },
 
     searchGenres(query) {
-      return this.genres.filter((genre) =>
-        genre.name.toLowerCase().includes(query.toLowerCase())
-      )
+      return this.genres.filter((genre) => genre.name.toLowerCase().includes(query.toLowerCase()))
     },
 
     //+-------------------------------------------------
@@ -101,43 +111,6 @@ export const useRepositoryStore = defineStore('repository', {
       }
 
       return []
-    },
-
-    //+-------------------------------------------------
-    // load()
-    // Returns a named batch of 500 games.
-    // -----
-    // Created on Wed Dec 20 2023
-    // Updated on Fri Apr 19 2024 - assign to _{repo}
-    //+-------------------------------------------------
-    async load(repo) {
-      if (!repo) return
-      if (!$nuxt.$app.ready) return []
-      if (this.loaded.includes(`${repo}`)) return
-
-      const xhr = await $nuxt.$axios.get(`repository/${repo}.json`)
-      if (xhr.status) {
-        this.loaded.push(repo)
-        $data.process(xhr.data, 'api')
-        if (this[`_${repo}`]) this[`_${repo}`] = xhr.data
-      }
-    },
-
-    //+-------------------------------------------------
-    // topGames()
-    // Returns a named batch of 500 games.
-    // -----
-    // Created on Wed Dec 20 2023
-    //+-------------------------------------------------
-    async topGames(batch) {
-      if (!batch) return
-      if (this.loaded.includes(`top:${batch}`)) return
-      this.loaded.push(`top:${batch}`)
-
-      const xhr = await $nuxt.$axios.get(`repository/top-${batch}.json`)
-      if (xhr.status) {
-        $data.process(xhr.data, 'api')
-      }
     },
 
     async init() {

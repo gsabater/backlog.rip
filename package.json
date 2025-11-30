@@ -19,15 +19,15 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.1",
-    "@eslint/js": "9.36.0",
+    "@eslint/js": "^9.39.1",
     "@nuxt/devtools": "2.6.5",
-    "@nuxt/eslint-config": "1.9.0",
-    "eslint": "9.36.0",
+    "@nuxt/eslint-config": "^1.11.0",
+    "eslint": "^9.39.1",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.4",
-    "eslint-plugin-vue": "10.5.0",
+    "eslint-plugin-vue": "^10.6.1",
     "globals": "16.4.0",
-    "nuxt": "^3.17.5",
+    "nuxt": "3.17.7",
     "prettier": "^3.6.2",
     "sass": "^1.89.2",
     "sass-loader": "^16.0.5",
@@ -44,7 +44,7 @@
     "@vueuse/nuxt": "13.9.0",
     "@vueuse/rxjs": "13.9.0",
     "animate.css": "^4.1.1",
-    "axios": "1.12.2",
+    "axios": "^1.13.0",
     "better-sqlite3": "11.10.0",
     "dayjs": "1.11.18",
     "dexie": "^4.0.11",
@@ -61,8 +61,8 @@
     "vue-sonner": "^2.0.1",
     "vue-tippy": "^6.7.1",
     "vuedraggable": "4.1.0",
-    "vuetify": "3.10.3",
-    "vuetify-nuxt-module": "0.18.7"
+    "vuetify": "^3.10.7",
+    "vuetify-nuxt-module": "0.18.8"
   },
   "tobeinstalled": {
     "tabulator-tables": "^6.3.1"

@@ -13,29 +13,20 @@
       <div class="row align-items-center">
         <slot name="game:prepend"></slot>
         <div class="col-auto text-secondary">
-          <div class="game__cover">
-            <game-asset
-              :app="app"
-              asset="banner"
-              fallback="cover"
-              :priority="['steam', 'igdb']" />
+          <div class="game__cover squared">
+            <game-asset :app="app" asset="cover" fallback="cover" :priority="['steam', 'igdb']" />
           </div>
         </div>
         <div class="col">
           <span class="font-serif">{{ app.name }}</span>
-          <div class="v-list-item-subtitle">
+          <div v-if="!showListDetails" class="v-list-item-subtitle">
             <slot name="details">
               <small v-if="visible.includes('released')" class="text-muted me-2">
                 {{ app._.released_at ?? '' }}
               </small>
 
-              <small
-                v-if="visible.includes('score') && app.score"
-                class="text-muted me-2">
-                <Icon
-                  size="12"
-                  width="1.5"
-                  style="transform: translateY(-1px); margin-right: 0px">
+              <small v-if="visible.includes('score') && app.score" class="text-muted me-2">
+                <Icon size="12" width="1.5" style="transform: translateY(-1px); margin-right: 0px">
                   Diamond
                 </Icon>
                 {{ app.score ?? 'Unscored' }}
@@ -51,6 +42,107 @@
               <Icon>ChevronRight</Icon>
             </v-btn>
           </div> -->
+      </div>
+
+      <!-- Second row with detailed information -->
+      <div
+        v-if="showListDetails"
+        class="row mt-2"
+        style="
+          background: #00000026;
+          margin: -0.65rem -1.25rem;
+          padding: 10px;
+          border-bottom: 1px solid #3e3e45;
+        ">
+        <div class="col">
+          <slot name="details-row">
+            <div class="d-flex flex-wrap gap-3">
+              <small v-if="app.score" class="text-muted" v-tippy="'Backlog.rip Score'">
+                <Icon size="12" width="1.5" style="transform: translateY(-1px); margin-right: 3px">
+                  Star
+                </Icon>
+                {{ app.score }}
+              </small>
+
+              <small
+                v-if="app.scores?.metascore"
+                class="text-muted"
+                v-tippy="'Metascore from Metacritic'">
+                <b-logo
+                  name="metacritic"
+                  size="12"
+                  style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+                {{ app.scores.metascore }}
+              </small>
+
+              <small
+                v-if="app.scores?.oc"
+                class="text-muted"
+                v-tippy="`OpenCritic: ${format.scoreToHuman(app.scores.oc, 'oc', 'label')}`">
+                <b-logo
+                  name="opencritic"
+                  size="12"
+                  style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+                {{ app.scores.oc }}
+                <img
+                  :src="
+                    'https://backlog.rip/img/scores/' +
+                    format.scoreToHuman(app.scores.oc, 'oc', 'label') +
+                    '-head.png'
+                  "
+                  class="ms-1"
+                  style="max-width: 14px; max-height: 14px; transform: translate(-1px, -2px)" />
+              </small>
+
+              <small v-if="app.scores?.steamscore" class="text-muted" v-tippy="'Steam User Score'">
+                <b-logo
+                  name="steam"
+                  size="12"
+                  color="#fff"
+                  style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+                {{ app.scores.steamscore }}
+              </small>
+
+              <small
+                v-if="app.scores?.steamdb"
+                class="text-muted"
+                v-tippy="
+                  'SteamDB Rating: ' +
+                  Math.round(app.scores.steamdb) +
+                  ' (' +
+                  format.num(app.scores.steamCount) +
+                  ' ratings)'
+                ">
+                <b-logo
+                  name="steamdb"
+                  size="12"
+                  color="#fff"
+                  style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
+                {{ Math.round(app.scores.steamdb) }}
+                <Icon v-if="app.scores.steamCount > 100000" class="ms-1" width="1" size="12">
+                  Sparkles
+                </Icon>
+                <Icon v-else-if="app.scores.steamCount > 10000" class="ms-1" width="1" size="12">
+                  Comet
+                </Icon>
+              </small>
+
+              <small v-if="app._.released" class="text-muted" v-tippy="'Release Date'">
+                <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
+                  Calendar
+                </Icon>
+                {{ app._.released }}
+              </small>
+
+              <small v-if="app.hltb?.main" class="text-muted" v-tippy="'HowLongToBeat: Main Story'">
+                <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
+                  SquareRoundedCheck
+                </Icon>
+                {{ dates.minToHours(app.hltb.main / 60) }}
+              </small>
+            </div>
+          </slot>
+        </div>
       </div>
     </div>
 
@@ -68,6 +160,7 @@
       :class="[
         app.state ? 'is-state_' + app.state : '',
         {
+          'is-hidden': app.is?.hidden,
           'is-bordered': $auth.config.game_state_borders,
           'is-disabled': disabled,
           'is-tracking': tracking,
@@ -110,7 +203,8 @@
 
           <span
             v-if="visible.includes('name') || visible.includes('default')"
-            class="details__name font-serif d-block text-truncate">
+            class="details__name n-font-serif d-block text-truncate"
+            style="font-weight: 400">
             {{ app.name }}
           </span>
 
@@ -153,11 +247,7 @@
                 '-head.png'
               "
               class="ms-2"
-              style="
-                max-width: 14px;
-                max-height: 14px;
-                transform: translate(-1px, -2px);
-              " />
+              style="max-width: 14px; max-height: 14px; transform: translate(-1px, -2px)" />
             {{ format.scoreToHuman(app.scores.oc, 'oc', 'label') }}
           </small>
 
@@ -186,9 +276,7 @@
 
             <Icon
               v-if="app.scores.steamCount > 100000"
-              v-tippy="
-                'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'
-              "
+              v-tippy="'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'"
               class="ms-1"
               width="1"
               size="12">
@@ -196,9 +284,7 @@
             </Icon>
             <Icon
               v-else-if="app.scores.steamCount > 10000"
-              v-tippy="
-                'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'
-              "
+              v-tippy="'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'"
               class="ms-1"
               width="1"
               size="12">
@@ -209,43 +295,29 @@
           </small>
 
           <small v-if="visible.includes('playtime')" class="d-block text-muted">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               ClockHour3
             </Icon>
             <template v-if="app._.playtime == 0">Not played</template>
             <template v-else>Played {{ dates.minToHours(app._.playtime) }}</template>
           </small>
 
-          <small
-            v-if="visible.includes('released') && app._.released"
-            class="d-block text-muted">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+          <small v-if="visible.includes('released') && app._.released" class="d-block text-muted">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               Calendar
             </Icon>
             {{ app._.released }}
           </small>
 
           <small v-if="visible.includes('date.lib')" class="d-block text-muted">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               Calendar
             </Icon>
             {{ app._.owned_at }}
           </small>
 
           <small v-if="visible.includes('genres')" class="d-block text-muted">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               Graph
             </Icon>
 
@@ -259,10 +331,7 @@
           <small
             v-if="visible.includes('hltb') && app.hltb && app.hltb.main"
             class="d-block text-muted">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               SquareRoundedCheck
             </Icon>
             {{ dates.minToHours(app.hltb.main / 60) }}
@@ -277,15 +346,10 @@
                   ' achievements are hidden or marked as bugged. Achievements count is adjusted accordingly'
                 : false
             ">
-            <Icon
-              size="12"
-              width="1.4"
-              style="transform: translateY(-1px); margin-right: 3px">
+            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
               Trophy
             </Icon>
-            {{ app._.astats.completed }} / {{ app._.astats.total }} ({{
-              app._.astats.percentage
-            }}%)
+            {{ app._.astats.completed }} / {{ app._.astats.total }} ({{ app._.astats.percentage }}%)
             <small class="cursor-help" v-if="app._.astats.hidden > 0">˟</small>
           </div>
 
@@ -302,21 +366,12 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat 07 June 2025 - 18:58:55
+ * Modified: 27th November 2025 - 05:29:52
  **/
 
 export default {
   name: 'GameCard',
   props: {
-    // type
-    // Defines the general layout of the item
-    // Values: card, list, table
-    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    type: {
-      type: String,
-      default: 'card',
-    },
-
     // uuid
     // Used to locate the app in $data
     // This uuid is also the API UUID if not local:
@@ -326,16 +381,25 @@ export default {
       default: null,
     },
 
-    api: {
-      type: [String],
-      default: null,
-    },
-
     // data
     // Uses the object as the app data
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     data: {
       type: Object,
+      default: null,
+    },
+
+    // type
+    // Defines the general layout of the item
+    // Values: card, list, table
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    type: {
+      type: String,
+      default: 'card',
+    },
+
+    api: {
+      type: [String],
       default: null,
     },
 
@@ -361,6 +425,14 @@ export default {
     visible: {
       type: Array,
       default: () => ['default'],
+    },
+
+    // showListDetails
+    // Shows a second row with additional details (only for list type)
+    //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    showListDetails: {
+      type: Boolean,
+      default: true,
     },
   },
 
@@ -491,6 +563,7 @@ export default {
     //+-------------------------------------------------
     updateData(payload) {
       this.app = this.dataStore.get(payload.uuid)
+      console.warn('updated...', this.app.name, this.app.state)
     },
 
     //+-------------------------------------------------
@@ -513,48 +586,27 @@ export default {
   mounted() {
     this.init()
 
-    this.$mitt.on('game:data', (payload) => {
+    this.$mitt.on('game:updated', (payload) => {
       if (payload.uuid != this.app.uuid) return
       this.updateData(payload)
     })
 
-    this.$mitt.on('state:change', (payload) => {
-      if (payload.uuid != this.app.uuid) return
+    // this.$mitt.on('data:deleted', (payload) => {
+    //   if (payload.uuid != this.app.uuid) return
 
-      if (payload.state == 'fav') {
-        this.app.is.fav = payload.fav
-      } else {
-        this.app.state = payload.state
-      }
+    //   this.app.state = null
+    //   this.app.is.fav = false
+    //   this.app.is.lib = false
+    //   // this.app.is.dirty = false
+    //   this.app.is.pinned = false
+    //   this.app.is.hidden = false
 
-      this.$forceUpdate()
-    })
-
-    this.$mitt.on('pinned:change', (payload) => {
-      if (payload.uuid != this.app.uuid) return
-      this.app.is.pinned = payload.pinned
-      this.$forceUpdate()
-    })
-
-    this.$mitt.on('data:deleted', (payload) => {
-      if (payload.uuid != this.app.uuid) return
-
-      this.app.state = null
-      this.app.is.fav = false
-      this.app.is.lib = false
-      // this.app.is.dirty = false
-      this.app.is.pinned = false
-      this.app.is.hidden = false
-
-      this.$forceUpdate()
-    })
+    //   this.$forceUpdate()
+    // })
   },
 
   beforeUnmount() {
-    this.$mitt.off('game:data')
-    this.$mitt.off('data:deleted')
-    this.$mitt.off('state:change')
-    this.$mitt.off('pinned:change')
+    // this.$mitt.off('game:updated')
 
     const el = this.$refs.card
     if (!el) return

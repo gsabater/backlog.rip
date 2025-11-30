@@ -4,7 +4,7 @@
       *+---------------------------------
       *| Source selector
       *+--------------------------------- -->
-    <div class="col-6 col-md-auto d-flex align-items-center">
+    <div v-if="f.is !== 'array'" class="col-6 col-md-auto d-flex align-items-center">
       <v-btn id="⚓source" variant="tonal" color="rgb(110 116 180)">
         <Icon v-if="f.source == 'all'" size="14" class="me-1">Cards</Icon>
         <Icon v-if="f.source == 'library'" size="14" class="me-1">LayoutDashboard</Icon>
@@ -20,9 +20,7 @@
 
         {{ sourceLabel }}
 
-        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">
-          Selector
-        </Icon>
+        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">Selector</Icon>
 
         <b-tippy-sheety ref="source" to="#⚓source" trigger="click">
           <search-source-menu ref="sourceMenu" />
@@ -62,9 +60,7 @@
         <Icon size="15" class="me-1">Filter</Icon>
         Filter
 
-        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">
-          Selector
-        </Icon>
+        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">Selector</Icon>
 
         <b-tippy-sheety to="#⚓filtersMenu" trigger="click">
           <search-filters-menu ref="filtersMenu" @selected="handleNewFilter" />
@@ -98,12 +94,7 @@
         </template>
 
         <template v-slot:clear>
-          <Icon
-            size="18"
-            class="mx-2"
-            width="2"
-            style="min-width: 1em"
-            @click="clearSearchBox">
+          <Icon size="18" class="mx-2" width="2" style="min-width: 1em" @click="clearSearchBox">
             SquareRoundedX
           </Icon>
         </template>
@@ -136,10 +127,7 @@
       </v-text-field>
 
       <b-tippy-sheety ref="filtersTippy" to="#⚓searchBox" trigger="focusin">
-        <search-filters-menu
-          ref="filtersMenuKbd"
-          mode="keyboard"
-          @selected="handleNewFilter" />
+        <search-filters-menu ref="filtersMenuKbd" mode="keyboard" @selected="handleNewFilter" />
       </b-tippy-sheety>
     </div>
 
@@ -163,13 +151,7 @@
   <div class="col-12 row align-items-center mb-5">
     <div
       class="col"
-      style="
-        gap: 7px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        flex-wrap: wrap;
-      ">
+      style="gap: 7px; display: flex; flex-direction: row; align-items: center; flex-wrap: wrap">
       <template v-if="f.string">
         <search-filter-tag :index="-1" class="is-chip" />
       </template>
@@ -206,16 +188,19 @@
     <div class="col-auto d-flex align-items-center ms-auto">
       <v-btn id="⚓sortby" variant="text" size="small" color="blue-grey-lighten-1">
         <small>
-          Sorting by
-          <strong class="ps-1">
-            {{ sortLabel[f.sortBy] ?? '...' }}
-            {{ !f.sortBy || !f.sortDir ? '' : f.sortDir == 'asc' ? '(Asc)' : '(Desc)' }}
-          </strong>
+          <template v-if="f.sortBy == 'none'">
+            <span>Sorted by the author</span>
+          </template>
+          <template v-else>
+            Sorting by
+            <strong class="ps-1">
+              {{ sortLabel[f.sortBy] ?? '...' }}
+              {{ !f.sortBy || !f.sortDir ? '' : f.sortDir == 'asc' ? '(Asc)' : '(Desc)' }}
+            </strong>
+          </template>
         </small>
 
-        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">
-          Selector
-        </Icon>
+        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">Selector</Icon>
 
         <b-tippy-sheety to="#⚓sortby" trigger="click">
           <search-sort-menu @sort="sortBy" />
@@ -310,7 +295,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: 24th July 2025 - 03:45:48
+ * Modified: 27th November 2025 - 05:02:12
  **/
 
 export default {
@@ -399,6 +384,7 @@ export default {
     //+-------------------------------------------------
     sortLabel() {
       return {
+        'none': 'None',
         'name': 'Name',
         'rand': 'Random',
         'score': 'Score',
@@ -485,16 +471,6 @@ export default {
       return this.f?.show?.tags
     },
   },
-
-  // watch: {
-  //   filters: {
-  //     handler: function (val) {
-  //       console.warn('xxx')
-  //       this.f = { ...val }
-  //     },
-  //     deep: true,
-  //   },
-  // },
 
   methods: {
     //+-------------------------------------------------

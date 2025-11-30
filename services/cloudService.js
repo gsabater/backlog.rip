@@ -3,28 +3,53 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 29th January 2025
- * Modified: Thu 13 March 2025 - 17:39:25
+ * Modified: 29th October 2025 - 03:48:34
  */
+
+import backlogrip from '../modules/integrations/backlogrip.js'
+
+let $nuxt = null
 
 export default {
   //+-------------------------------------------------
-  // prepareAchievements()
-  //
+  // APIStatus()
+  // Call status endpoint on api.backlog.rip
   // -----
-  // Created on Thu Mar 13 2025
+  // Created on Mon Oct 06 2025
   //+-------------------------------------------------
-  prepareAchievements(game) {
-    if (!game.achievements) return false
+  async APIStatus() {
+    $nuxt ??= useNuxtApp()
+    let { $app, $log, $cloud } = $nuxt
 
-    let prepared = []
-    game.achievements.forEach((achievement) => {
-      if (!achievement.is?.status) return
-      prepared.push({
-        steam_key: achievement.steam_key,
-        is: achievement.is,
-      })
-    })
+    let status = await backlogrip.getApiStatus()
+    if (!status) {
+      $cloud.server.api = 'offline'
+      $log('⚠️ [ Cloud ] API seems to be offline, working on offline mode')
+      return
+    }
 
-    return prepared
+    // $cloud.api = status
+    $cloud.server.api = 'online'
+    $app.count.api = status?.games?.total || 0
+  },
+
+  //+-------------------------------------------------
+  // workerStatus()
+  // Call status endpoint on api.backlog.rip
+  // -----
+  // Created on Mon Oct 06 2025
+  //+-------------------------------------------------
+  async workerStatus() {
+    $nuxt ??= useNuxtApp()
+    let { $app, $log, $cloud } = $nuxt
+
+    let status = await backlogrip.getWorkerStatus()
+    if (!status) {
+      $cloud.server.worker = 'offline'
+      $log('⚠️ [ Cloud ] Worker seems to be offline...')
+      return
+    }
+
+    $cloud.server.worker = 'online'
   },
 }

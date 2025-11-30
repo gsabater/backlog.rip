@@ -92,10 +92,7 @@
               </div> -->
               <h2
                 class="p-0"
-                style="
-                  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-                  margin-bottom: 0.35rem;
-                ">
+                style="text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); margin-bottom: 0.35rem">
                 {{ app.name }}
               </h2>
 
@@ -116,9 +113,7 @@
                   </template> -->
 
                   <client-only>
-                    <div
-                      v-if="app._.releasedYear && genre"
-                      class="d-inline-block px-2 opacity-50">
+                    <div v-if="app._.releasedYear && genre" class="d-inline-block px-2 opacity-50">
                       🔸
                     </div>
                     <template v-if="genre">
@@ -140,9 +135,7 @@
                           'noutline': '1px solid ' + state.color,
                         }"
                         @click.stop="$refs.bstate.showManager($event)">
-                        <span
-                          v-if="state.id"
-                          class="status-dot status-dot-animated me-2"></span>
+                        <span v-if="state.id" class="status-dot status-dot-animated me-2"></span>
                         {{ state.name || 'Assign a state' }}
                         <Icon size="12" class="ms-1" style="transform: translateX(3px)">
                           ChevronDown
@@ -210,11 +203,7 @@
                     'The median is the middle value in a set of scores when arranged in order. It avoids being skewed by extreme values, making it a fairer representation of the central tendency compared to the average.'
                   "
                   class="d-flex align-items-center text-muted small me-4">
-                  <Icon
-                    size="14"
-                    width="1.2"
-                    class="me-2"
-                    style="transform: translateY(1px)">
+                  <Icon size="14" width="1.2" class="me-2" style="transform: translateY(1px)">
                     Star
                   </Icon>
 
@@ -254,11 +243,7 @@
                 <div
                   v-if="app.scores.metascore || app.scores.userscore"
                   class="me-3"
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    transform: translateY(-2px);
-                  ">
+                  style="display: flex; justify-content: center; transform: translateY(-2px)">
                   <b-logo
                     name="metacritic"
                     size="16"
@@ -280,8 +265,7 @@
                     "
                     :style="{
                       border:
-                        '1px solid ' +
-                        format.scoreToHuman(app.scores.metascore, 'meta', 'color'),
+                        '1px solid ' + format.scoreToHuman(app.scores.metascore, 'meta', 'color'),
                     }">
                     {{ app.scores.metascore }}
                   </div>
@@ -302,8 +286,7 @@
                     "
                     :style="{
                       border:
-                        '1px solid ' +
-                        format.scoreToHuman(app.scores.userscore, 'meta', 'color'),
+                        '1px solid ' + format.scoreToHuman(app.scores.userscore, 'meta', 'color'),
                     }">
                     {{ app.scores.userscore }}
                   </div>
@@ -336,30 +319,19 @@
             <div v-if="app.hltb && app.hltb.main" class="my-2">
               <h5>Time to beat</h5>
               <small v-tippy="'Main game'" class="text-muted me-3">
-                <Icon
-                  size="15"
-                  width="1.5"
-                  style="transform: translateY(-1px)"
-                  class="me-1">
+                <Icon size="15" width="1.5" style="transform: translateY(-1px)" class="me-1">
                   SquareRoundedCheck
                 </Icon>
 
                 {{ dates.minToHours(app.hltb.main / 60) }}
               </small>
               <small v-tippy="'Main game with extras'" class="text-muted me-3">
-                <Icon
-                  size="15"
-                  width="1.5"
-                  style="transform: translateY(-1px)"
-                  class="me-1">
+                <Icon size="15" width="1.5" style="transform: translateY(-1px)" class="me-1">
                   DiscountCheck
                 </Icon>
                 {{ dates.minToHours(app.hltb.extras / 60) }}
               </small>
-              <small
-                v-if="app.hltb.comp"
-                v-tippy="'Completionist'"
-                class="text-muted me-3">
+              <small v-if="app.hltb.comp" v-tippy="'Completionist'" class="text-muted me-3">
                 <!-- <Icon
                   size="15"
                   width="1.5"
@@ -554,14 +526,10 @@
         </div>
       </template> -->
         <template #title>
-          <span class="text-body-2 px-1 font-serif">
-            Game suggestions are a work in progress
-          </span>
+          <span class="text-body-2 px-1 font-serif">Game suggestions are a work in progress</span>
         </template>
         <template #subtitle>
-          <small class="text-muted px-1">
-            Share what you think and report bugs on Discord
-          </small>
+          <small class="text-muted px-1">Share what you think and report bugs on Discord</small>
         </template>
         <!-- <template v-slot:append>
         <v-btn icon>
@@ -584,7 +552,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 2nd January 2025
- * Modified: Thu 29 May 2025 - 17:09:15
+ * Modified: 14th October 2025 - 05:38:55
  **/
 
 export default {
@@ -705,17 +673,14 @@ export default {
       this.loadAndShow(payload)
     })
 
-    this.$mitt.on('state:change', (payload) => {
-      if (payload.uuid != this.app.uuid) return
+    // this.$mitt.on('state:changed', (payload) => {
+    //   if (payload.uuid != this.app.uuid) return
 
-      if (payload.state == 'fav') {
-        this.app.is.fav = payload.fav
-      } else {
-        this.app.state = payload.state
-      }
+    //   if (payload.state == 'fav') this.app.is.fav = payload.fav
+    //   else this.app.state = payload.state
 
-      this.$forceUpdate()
-    })
+    //   this.$forceUpdate()
+    // })
   },
 }
 </script>

@@ -3,11 +3,11 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Sat 07 June 2025 - 18:49:48
+ * Modified: 7th October 2025 - 03:51:27
  */
 
 import axios from 'axios'
-import steamAPI from '~/services/steamAPIService'
+import steamAPI from '../integrations/steamAPI'
 
 let $log = null
 let $axios = null

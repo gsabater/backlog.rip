@@ -104,10 +104,7 @@ export default {
       // Match with on app.name and store IDs
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (filters?.string?.length > 0) {
-        if (
-          appName.indexOf(searchString) === -1 &&
-          app.id.steam?.toString() !== searchString
-        ) {
+        if (appName.indexOf(searchString) === -1 && app.id.steam?.toString() !== searchString) {
           // counters.skip++
           // data.hidden.string.push(id.steam)
 

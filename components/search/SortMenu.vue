@@ -1,17 +1,4 @@
 <template>
-  <!-- <tippy
-            ref="tippySort"
-            to="parent"
-            tag="div"
-            content-tag="div"
-            :animate-fill="true"
-            :interactive="true"
-            :interactive-debounce="55"
-            animation="scale-subtle"
-            placement="bottom-start"
-            trigger="click"
-            theme="filters">
-            <template #content="{ hide }"> -->
   <div class="b-menu dropdown-menu show" style="min-width: 280px; letter-spacing: normal">
     <template v-if="withUser">
       <span class="dropdown-header">
@@ -30,9 +17,7 @@
         <tippy
           class="text-muted ms-auto cursor-help ps-4"
           :content="'This is the original order in which the games were added to the list'">
-          <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-            HelpSmall
-          </Icon>
+          <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">HelpSmall</Icon>
         </tippy>
       </label>
 
@@ -70,9 +55,7 @@
           size="16"
           width="2"
           class="me-1"
-          :icon="
-            f.sortDir == 'asc' ? 'SortAscendingLetters' : 'SortDescendingLetters'
-          "></Icon>
+          :icon="f.sortDir == 'asc' ? 'SortAscendingLetters' : 'SortDescendingLetters'"></Icon>
       </div>
       <div>
         Name
@@ -110,9 +93,7 @@
       <tippy
         class="text-muted ms-auto cursor-help ps-4"
         :content="'Sorting by median will rank games based on their middle review score when arranged in order. This method avoids being skewed by extreme values, making it a fairer representation of overall sentiment.'">
-        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-          HelpSmall
-        </Icon>
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">HelpSmall</Icon>
       </tippy>
     </label>
 
@@ -137,10 +118,7 @@
           <strong>all games</strong>
         </small>
 
-        <div
-          v-else-if="f.sortBy == 'metascore'"
-          class="text-muted"
-          style="font-size: 0.75rem">
+        <div v-else-if="f.sortBy == 'metascore'" class="text-muted" style="font-size: 0.75rem">
           {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
           <Icon size="14" width="2" class="mx-1">Repeat</Icon>
         </div>
@@ -148,9 +126,7 @@
       <tippy
         class="text-muted ms-auto cursor-help ps-4"
         :content="'Sorting by Metacritic will only show games with a known Metacritic score. Not all games in the database have a Metacritic rating.'">
-        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-          HelpSmall
-        </Icon>
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">HelpSmall</Icon>
       </tippy>
     </label>
 
@@ -183,9 +159,7 @@
       <tippy
         class="text-muted ms-auto cursor-help ps-4"
         :content="'Sorting by OpenCritic will rank games based on their OpenCritic score. Only games with a known OpenCritic rating will be included.'">
-        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-          HelpSmall
-        </Icon>
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">HelpSmall</Icon>
       </tippy>
     </label>
 
@@ -210,10 +184,7 @@
           <strong>all games</strong>
         </small>
 
-        <div
-          v-else-if="f.sortBy == 'steamdb'"
-          class="text-muted"
-          style="font-size: 0.75rem">
+        <div v-else-if="f.sortBy == 'steamdb'" class="text-muted" style="font-size: 0.75rem">
           {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
           <Icon size="14" width="2" class="mx-1">Repeat</Icon>
         </div>
@@ -221,9 +192,7 @@
       <tippy
         class="text-muted ms-auto cursor-help ps-4"
         :content="'Sorting by SteamDB rating will only show games with a known Steam rating. This metric, calculated by SteamDB.info, adjusts a game\'s Steam rating based on the number of reviews it has, making it a more reliable representation of overall player sentiment.'">
-        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-          HelpSmall
-        </Icon>
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">HelpSmall</Icon>
       </tippy>
     </label>
 
@@ -280,10 +249,7 @@
       </div>
       <div>
         Release date
-        <div
-          v-if="f.sortBy == 'date.released'"
-          class="text-muted"
-          style="font-size: 0.75rem">
+        <div v-if="f.sortBy == 'date.released'" class="text-muted" style="font-size: 0.75rem">
           {{ f.sortDir == 'asc' ? 'Oldest' : 'Newest' }}
           <Icon size="14" width="2" class="mx-1">Repeat</Icon>
         </div>
@@ -307,9 +273,7 @@
       <tippy
         class="text-muted ms-auto cursor-help ps-4"
         :content="'How long to beat is a metric that measures how much time is needed to complete a game. Data provided from howlongtobeat.com'">
-        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-          HelpSmall
-        </Icon>
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">HelpSmall</Icon>
       </tippy>
     </label>
 
@@ -360,10 +324,7 @@
       </div>
       <div>
         Achievements
-        <div
-          v-if="f.sortBy == 'achievements'"
-          class="text-muted"
-          style="font-size: 0.75rem">
+        <div v-if="f.sortBy == 'achievements'" class="text-muted" style="font-size: 0.75rem">
           {{ f.sortDir == 'asc' ? 'Ascending' : 'Descending' }}
           <Icon size="14" width="2" class="mx-1">Repeat</Icon>
         </div>
@@ -371,19 +332,9 @@
       <tippy
         class="text-muted ms-auto cursor-help ps-4"
         :content="'Games will be sorted by the number of achievements you have unlocked. This metric is only available for games that support Steam achievements.'">
-        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-          HelpSmall
-        </Icon>
+        <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">HelpSmall</Icon>
       </tippy>
     </label>
-
-    <div
-      v-if="!ui.showAdvanced"
-      class="dropdown-item small text-muted"
-      @click="ui.showAdvanced = true">
-      <Icon size="14" class="me-2">Sparkles</Icon>
-      Show advanced filters
-    </div>
   </div>
 </template>
 
@@ -393,7 +344,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st October 2024
- * Modified: Tue 13 May 2025 - 17:56:25
+ * Modified: 27th November 2025 - 05:03:55
  **/
 
 export default {
@@ -410,10 +361,7 @@ export default {
 
   data() {
     return {
-      ui: {
-        dice: 4,
-        showAdvanced: false,
-      },
+      ui: {},
     }
   },
 
@@ -450,7 +398,5 @@ export default {
       this.$emit('sort', { by, dir, toggle })
     },
   },
-
-  mounted() {},
 }
 </script>

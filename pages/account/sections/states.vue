@@ -7,32 +7,27 @@
         </div>
       </div>
       <p>
-        States help you track your progress through games in your collection. From
-        "Playing" to "Completed", they represent your current engagement with each game,
-        making it easy to know where you are with every title.
+        States help you track your progress through games in your collection. From "Playing" to
+        "Completed", they represent your current engagement with each game, making it easy to know
+        where you are with every title.
       </p>
       <p>
-        You can create custom states, edit existing ones, and arrange them in the order
-        that works best for you. While special states that power recommendations cannot be
-        deleted, you can freely manage any custom states you create to match your
-        preferences.
+        You can create custom states, edit existing ones, and arrange them in the order that works
+        best for you. While special states that power recommendations cannot be deleted, you can
+        freely manage any custom states you create to match your preferences.
       </p>
     </div>
   </div>
 
   <div class="row mb-3">
     <div class="col-6">
-      <v-btn variant="tonal" color="primary" @click="$refs.crud.create()">
-        Create a new state
-      </v-btn>
+      <v-btn variant="tonal" color="primary" @click="$refs.crud.create()">Create a new state</v-btn>
     </div>
   </div>
 
   <div class="card mb-2">
     <div class="list-group card-list-group">
-      <div
-        class="list-group-item px-3"
-        style="padding-top: 0.8rem; padding-bottom: 0.8rem">
+      <div class="list-group-item px-3" style="padding-top: 0.8rem; padding-bottom: 0.8rem">
         <div class="row g-3 align-items-center">
           <div class="col-auto" style="align-self: baseline">
             <span style="--tblr-status-color: #666">
@@ -44,7 +39,7 @@
             <span class="font-serif">
               {{ empty.name }}
               <small class="text-muted mx-2">
-                ∷ {{ format.num($app.count.states['state_-1']) }} games
+                {{ format.num($app.count.states['state_-1']) }} games
               </small>
             </span>
             <div class="v-list-item-subtitle">
@@ -87,7 +82,7 @@
               <span class="font-serif">
                 {{ item.name }}
                 <small class="text-muted mx-2">
-                  ∷ {{ format.num(stateStore.count(item.id)) }} games
+                  {{ format.num(stateStore.count(item.id)) }} games
                 </small>
               </span>
               <div class="v-list-item-subtitle">
@@ -98,35 +93,44 @@
             </div>
             <div class="col-auto text-secondary">
               <div class="d-flex">
-                <span
-                  v-tippy="'Display in sidebar'"
-                  class="btn-action cursor-pointer"
+                <v-btn
+                  variant="text"
+                  icon
+                  size="x-small"
+                  color="grey-lighten-1"
+                  v-tippy="'Pin to the sidebar'"
                   @click="pinSidebar(item.id)">
-                  <Icon
-                    v-if="isPinned(item.id)"
-                    class="icon"
-                    size="13"
-                    style="color: #575ac6">
+                  <Icon v-if="isPinned(item.id)" class="icon" size="13" style="color: #575ac6">
                     BookmarkFilled
                   </Icon>
-                  <Icon v-else class="icon" size="13" style="color: #575ac6">
-                    Bookmark
-                  </Icon>
-                </span>
+                  <Icon v-else class="icon" size="13" style="color: #575ac6">Bookmark</Icon>
+                </v-btn>
 
-                <div style="position: relative">
-                  <v-btn
-                    variant="text"
-                    icon="mdi-chevron-right"
-                    size="x-small"
-                    color="grey-lighten-1">
+                <div>
+                  <v-btn variant="text" icon size="x-small" color="grey-lighten-1">
                     <Icon size="18" width="2">DotsVertical</Icon>
                   </v-btn>
                   <b-dropdown
+                    singleton-group="state-actions"
                     trigger="mouseenter focus click hover manual"
-                    placement="bottom-end"
+                    placement="left-start"
                     :debounce="15"
-                    style="min-width: 180px">
+                    style="
+                      min-width: 220px;
+                      max-width: 220px;
+                      overflow: hidden;
+                      letter-spacing: initial;
+                      background: #24232a;
+                      border: 1px solid #453331;
+                    ">
+                    <div class="dropdown-header">
+                      <span :style="{ '--tblr-status-color': item.color || '' }">
+                        <span class="status-dot status-dot-animated me-2"></span>
+                      </span>
+                      {{ item.name }}
+                    </div>
+                    <div class="dropdown-divider"></div>
+
                     <template v-if="i > 0">
                       <div class="dropdown-item" @click.stop="sort('up', item.id)">
                         <Icon size="16" class="me-2 text-muted">ChevronUp</Icon>
@@ -147,7 +151,6 @@
                     </div>
 
                     <template v-if="stateStore.canBeDeleted(item)">
-                      <div class="dropdown-divider"></div>
                       <div
                         class="dropdown-item text-red"
                         @click.stop="
@@ -163,10 +166,9 @@
                       </div>
                     </template>
                     <template v-else>
-                      <div class="dropdown-divider"></div>
                       <div class="dropdown-item text-muted cursor-not-allowed">
                         <Icon size="16" class="me-2">Trash</Icon>
-                        This state cannot be deleted
+                        Cannot be deleted
                       </div>
                     </template>
                   </b-dropdown>
@@ -188,7 +190,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: 24th July 2025 - 04:05:22
+ * Modified: 4th November 2025 - 10:11:47
  **/
 
 export default {
@@ -201,7 +203,6 @@ export default {
   computed: {
     ...mapStores(useStateStore),
     ...mapState(useStateStore, ['states', 'empty']),
-    // ...mapState(useStateStore, { states: 'statesWithNoState' }),
   },
 
   methods: {
@@ -251,15 +252,6 @@ export default {
       this.$toast.success('Your new state has been created')
       this.$forceUpdate()
     },
-
-    // async init() {
-    //   await this.getData()
-    //   this.ui.loading = false
-    // },
-  },
-
-  mounted() {
-    // this.init()
   },
 }
 </script>

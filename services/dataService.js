@@ -3,11 +3,10 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 31st December 2024
- * Modified: Tue 25 March 2025 - 17:34:32
+ * Modified: 17th October 2025 - 02:01:23
  */
 
-import queueService from './queueService'
-
+let $log = null
 let $nuxt = null
 let $data = null
 let $game = null
@@ -22,10 +21,6 @@ export default {
   // Updated on Wed Jan 15 2025 - Moved to dataService
   //+-------------------------------------------------
   prepareToData(item) {
-    $nuxt ??= useNuxtApp()
-    $data ??= useDataStore()
-    $game ??= useGameStore()
-
     item = this.normalize(item)
     item._ = this.normalize_(item)
 
@@ -99,7 +94,7 @@ export default {
       const weekInSeconds = 7 * 24 * 60 * 60
       const now = dates.stamp()
       if (!game.dates?.swapped || now - game.dates.swapped > weekInSeconds) {
-        queueService.queue([game.uuid, game.id.api], 'swap')
+        $nuxt.$queue.add([game.uuid, game.id.api], 'swap')
 
         game.dates.swapped = now
         game.uuid = game.id.api
@@ -269,8 +264,7 @@ export default {
     )
 
     const validAchievements = app.achievements.filter(
-      (ach) =>
-        !ach.is?.status || (ach.is.status !== 'abandoned' && ach.is.status !== 'bugged')
+      (ach) => !ach.is?.status || (ach.is.status !== 'abandoned' && ach.is.status !== 'bugged')
     )
 
     // Calculate basic stats
@@ -384,8 +378,6 @@ export default {
   // Created on Wed Jan 15 2025
   //+-------------------------------------------------
   async findAppsToUpdate(levels = ['empty'], action = 'get') {
-    $data ??= useDataStore()
-
     let outdated = {
       api: [],
       steam: [],
@@ -405,7 +397,7 @@ export default {
     outdated.amount = outdated.api.length + outdated.steam.length
 
     if (action === 'get') {
-      // log('↻ Updating a batch...', outdated)
+      // $log('↻ Updating a batch...', outdated)
       await this.getBatch(outdated)
     }
 
@@ -421,14 +413,13 @@ export default {
   async getBatch(apps) {
     if (!apps.amount) return
 
-    $nuxt ??= useNuxtApp()
-    $data ??= useDataStore()
-
-    log('🪂 Requesting a batch of games', apps)
+    $log('[dataService] Requesting a batch of games', apps)
 
     const xhr = await $nuxt.$axios.post(`get/batch`, apps)
+    console.warn('move to the integration')
+    debugger
     if (xhr.status) {
-      log('🪂 Data from API', xhr.data)
+      $log('[dataService] Data from API', xhr.data)
       await $data.process(xhr.data, 'api:batch')
     }
   },
@@ -463,30 +454,44 @@ export default {
   // Created on Wed Mar 05 2025
   //+-------------------------------------------------
   async deduplicate(item, indexed) {
-    $nuxt ??= useNuxtApp()
-    $data ??= useDataStore()
-    $game ??= useGameStore()
-
     if (!item.is?.lib) return
-    let app = $data.get(indexed.uuid)
 
-    if (!app.is?.lib) return
+    const app = $data.get(indexed.uuid)
+    if (!app?.is?.lib) return
 
     // If the item is a local one, and the indexed is not
     // update the indexed app and delete the local item
     if (item.uuid.includes('local:') && !app.uuid.includes('local:')) {
+      $log?.warn('[dataService.deduplicate] Swapping')
+      console.warn(`↪ ${item.name} ${JSON.stringify({ uuid: item.uuid, id: { ...item.id } })} `)
+      console.warn(`↪ ${app.name} ${JSON.stringify({ uuid: app.uuid, id: { ...app.id } })}`)
+
       $game.update(app, {
         is: item.is || {},
         dates: item.dates || {},
         achievements: item.achievements || [],
       })
 
-      queueService.queue(item.uuid, 'delete')
+      $nuxt.$queue.add(item.uuid, 'delete')
       return
     }
 
-    // This means the app is duplicated but did not fall in the previous case
-    // WIP there is still work to be done
-    // debugger
+    $log('[dataService] Two applications share IDs but no deduplication action can be taken')
+    console.warn(`↪ ${item.name} ${JSON.stringify({ uuid: item.uuid, id: { ...item.id } })} `)
+    console.warn(`↪ ${app.name} ${JSON.stringify({ uuid: app.uuid, id: { ...app.id } })}`)
+  },
+
+  //+-------------------------------------------------
+  // init()
+  // Help handle stores
+  // -----
+  // Created on Fri Oct 17 2025
+  //+-------------------------------------------------
+  init() {
+    $nuxt ??= useNuxtApp()
+    $log = $nuxt.$log
+
+    $data = useDataStore()
+    $game = useGameStore()
   },
 }

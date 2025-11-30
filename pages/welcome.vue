@@ -4,10 +4,7 @@
       <div class="row justify-content-center">
         <div class="col-8 row mt-5">
           <div class="col-5 d-none d-md-block">
-            <div
-              class="card"
-              style="border: none"
-              @click="set = set == 'one' ? 'two' : 'one'">
+            <div class="card" style="border: none" @click="set = set == 'one' ? 'two' : 'one'">
               <div
                 class="card-body"
                 style="
@@ -22,9 +19,7 @@
             <div class="row pt-2 px-1">
               <div class="col">
                 <small class="text-muted">
-                  <Icon style="transform: translateY(-1px); margin-right: 2px">
-                    Photo
-                  </Icon>
+                  <Icon style="transform: translateY(-1px); margin-right: 2px">Photo</Icon>
                   Image created with AI
                 </small>
               </div>
@@ -36,9 +31,7 @@
                     theme: 'translucent',
                   }"
                   class="text-muted cursor-help">
-                  <Icon style="transform: translateY(-1px); margin-right: 2px">
-                    Terminal2
-                  </Icon>
+                  <Icon style="transform: translateY(-1px); margin-right: 2px">Terminal2</Icon>
                   Prompt
                 </small>
               </div>
@@ -57,8 +50,8 @@
             <div v-if="step == 0">
               <h1>Welcome to Backlog.rip</h1>
               <p>
-                With Backlog.rip you can organize, keep track of your progress and have a
-                single place for all your games.
+                With Backlog.rip you can organize, keep track of your progress and have a single
+                place for all your games.
               </p>
 
               <!-- <div class="card-body text-center my-5">
@@ -75,12 +68,12 @@
               <h1>Everything is yours</h1>
 
               <p>
-                All data is stored in your browser, you own it and you can export, import
-                and modify it at any time.
+                All data is stored in your browser, you own it and you can export, import and modify
+                it at any time.
               </p>
               <p>
-                With zero ads, zero tracking and zero bullshit, you can be sure that your
-                data is safe.
+                With zero ads, zero tracking and zero bullshit, you can be sure that your data is
+                safe.
               </p>
               <div class="btn w-100 my-4" @click="step++">Continue</div>
             </div>
@@ -88,8 +81,8 @@
             <div v-if="step == 2">
               <h1>Bring your games</h1>
               <p>
-                You can automatically import your library from Steam (Public profiles),
-                with more to come.
+                You can automatically import your library from Steam (Public profiles), with more to
+                come.
               </p>
 
               <div class="btn w-100 my-4" @click="step++">Continue</div>
@@ -98,8 +91,8 @@
             <div v-if="step == 3">
               <h1>Keep a journal</h1>
               <p>
-                Everything you do is recorded automatically in your journal. But you can
-                add your own notes too.
+                Everything you do is recorded automatically in your journal. But you can add your
+                own notes too.
               </p>
               <div class="btn w-100 my-4" @click="step++">Continue</div>
             </div>
@@ -107,14 +100,13 @@
             <div v-if="step == 4">
               <h1>Your games, your way</h1>
               <p>
-                You can manually add any games to your Backlog, even if you don't have
-                them in any library. Then, you can add a state to any game to keep track
-                of your progress.
+                You can manually add any games to your Backlog, even if you don't have them in any
+                library. Then, you can add a state to any game to keep track of your progress.
               </p>
               <p>You start with 7 states, but you can modify them to fit your needs.</p>
-              <b-btn to="import" class="btn btn-primary w-100 my-4">
-                <Icon class="me-2">ArrowsTransferDown</Icon>
-                Import your library
+              <b-btn to="library" class="btn btn-primary w-100 my-4">
+                <!-- <Icon class="me-2">ArrowsTransferDown</Icon> -->
+                View your library
               </b-btn>
             </div>
           </div>
@@ -130,7 +122,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 19th January 2024
- * Modified: Thu 19 December 2024 - 10:00:32
+ * Modified: 11th November 2025 - 11:03:38
  **/
 
 export default {

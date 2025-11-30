@@ -50,7 +50,11 @@
           <span class="text-muted ms-auto">
             <Icon size="12">CaretRightFilled</Icon>
           </span>
-          <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
+          <b-dropdown
+            singleton-group="manager"
+            placement="right-start"
+            appendTo="body"
+            style="overflow: visible; min-width: 240px">
             <template v-for="(state, i) in states" :key="'state-' + i">
               <div
                 v-if="state.id > -1"
@@ -79,14 +83,8 @@
                 <div>
                   {{ state.name }}
 
-                  <div
-                    v-if="app.state == state.id"
-                    class="text-muted"
-                    style="font-size: 0.75rem">
-                    <span
-                      v-if="
-                        app && app.is && app.is.state && app.is.state['state_' + state.id]
-                      ">
+                  <div v-if="app.state == state.id" class="text-muted" style="font-size: 0.75rem">
+                    <span v-if="app && app.is && app.is.state && app.is.state['state_' + state.id]">
                       {{ dates.timeAgo(app.is.state['state_' + state.id] * 1000) }}
                     </span>
 
@@ -97,9 +95,7 @@
                   </div>
                 </div>
 
-                <tippy
-                  class="text-muted ms-auto cursor-help"
-                  :content="state.description">
+                <tippy class="text-muted ms-auto cursor-help" :content="state.description">
                   <span class="form-help">?</span>
                 </tippy>
 
@@ -160,7 +156,11 @@
           <span class="text-muted ms-auto">
             <Icon size="12">CaretRightFilled</Icon>
           </span>
-          <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
+          <b-dropdown
+            singleton-group="manager"
+            placement="right-start"
+            appendTo="body"
+            style="overflow: visible; min-width: 240px">
             <div class="dropdown-item" @click="createList">
               <div class="d-flex nope-justify-content-center" style="width: 30px">
                 <Icon size="17" width="1.5" class="text-muted">SquareRoundedPlus</Icon>
@@ -197,28 +197,20 @@
               </div>
 
               <template v-if="listHasApp(list, app)">
-                <small
-                  class="text-muted ms-auto hide-hover text-end"
-                  style="min-width: 40px">
+                <small class="text-muted ms-auto hide-hover text-end" style="min-width: 40px">
                   <Icon size="12" width="1">Check</Icon>
                   Added
                 </small>
-                <small
-                  class="text-muted ms-auto show-hover text-end"
-                  style="min-width: 40px">
+                <small class="text-muted ms-auto show-hover text-end" style="min-width: 40px">
                   Remove
                 </small>
               </template>
 
               <template v-else>
-                <small
-                  class="text-muted ms-auto hide-hover text-end"
-                  style="min-width: 40px">
+                <small class="text-muted ms-auto hide-hover text-end" style="min-width: 40px">
                   {{ list.games?.length || 0 }}
                 </small>
-                <small
-                  class="text-muted ms-auto show-hover text-end"
-                  style="min-width: 40px">
+                <small class="text-muted ms-auto show-hover text-end" style="min-width: 40px">
                   Add
                 </small>
               </template>
@@ -296,11 +288,7 @@
               <Icon
                 size="17"
                 width="1.5"
-                style="
-                  color: red;
-                  fill: #ff000094;
-                  filter: drop-shadow(1px 1px 6px #00000069);
-                ">
+                style="color: red; fill: #ff000094; filter: drop-shadow(1px 1px 6px #00000069)">
                 Heart
               </Icon>
             </div>
@@ -414,65 +402,18 @@
           </div>
         </template>
 
-        <template v-if="$app.dev">
-          <!--
-          *+---------------------------------
-          *| DEV
-          *| xxx
-          *+--------------------------------- -->
-          <div class="dropdown-item">
-            <div class="d-flex nope-justify-content-center" style="width: 30px">
-              <Icon size="17" width="1.5" class="text-muted">Code</Icon>
-            </div>
-
-            <span>Debug</span>
-
-            <span class="text-muted ms-auto">
-              <Icon size="12">CaretRightFilled</Icon>
-            </span>
-            <b-dropdown placement="right-start">
-              <div
-                class="d-flex"
-                style="flex-direction: column; text-align: center; align-items: center">
-                <h5>{{ appUUID }}</h5>
-                <pre class="d-block" style="text-align: left; max-width: 100%">{{
-                  app
-                }}</pre>
-              </div>
-            </b-dropdown>
+        <div v-if="!ui.isRightClick" class="dropdown-item">
+          <div class="d-flex nope-justify-content-center" style="width: 30px">
+            <Icon size="17" class="text-muted">Mouse</Icon>
           </div>
 
-          <div v-if="!ui.isRightClick" class="dropdown-item">
-            <div class="d-flex nope-justify-content-center" style="width: 30px">
-              <Icon size="17" class="text-muted">Mouse</Icon>
-            </div>
-
-            <div>
-              <span href="javascript:void(0)" class="dropdown-header p-0">
-                Did you know?
-              </span>
-              <small class="d-block text-secondary">
-                Open this menu with right click on the game
-              </small>
-            </div>
+          <div>
+            <span href="javascript:void(0)" class="dropdown-header p-0">You can just click</span>
+            <small class="d-block text-secondary">
+              Open this menu with right click on the game
+            </small>
           </div>
-
-          <!-- <div class="dropdown-item">
-            <div class="d-flex align-items-center">
-              <div
-                class="avatar avatar-sm rounded-circle bg-green-lt"
-                style="--tblr-bg-opacity: 0.3">
-                <Icon size="17" width="1.2">MouseFilled</Icon>
-              </div>
-              <div class="ms-3">
-                <a href="javascript:void(0)" class="text-body">Did you know?</a>
-                <small class="d-block text-secondary">
-                  you can open this menu with right click
-                </small>
-              </div>
-            </div>
-          </div> -->
-        </template>
+        </div>
       </div>
     </template>
   </tippy>
@@ -557,7 +498,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: 25th July 2025 - 08:21:57
+ * Modified: 15th October 2025 - 03:05:20
  **/
 
 export default {

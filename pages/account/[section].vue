@@ -21,33 +21,33 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: Thu 30 January 2025 - 14:30:47
+ * Modified: 4th November 2025 - 01:39:09
  **/
 
 import me from './sections/me'
 import logs from './sections/logs'
-import cloud from './sections/cloud'
 import lists from './sections/lists'
 import states from './sections/states'
-import linked from './sections/linked'
 import history from './sections/history'
+import backups from './sections/backups'
 import database from './sections/database'
 import community from './sections/community.vue'
 import preferences from './sections/preferences'
+import integrations from './sections/integrations'
 
 export default {
   name: 'AccountPages',
   components: {
     me,
     logs,
-    cloud,
     lists,
     states,
-    linked,
     history,
+    backups,
     database,
     community,
     preferences,
+    integrations,
   },
 
   data() {

@@ -1,56 +1,89 @@
 /*
- * @file:    \services\queueService.js
- * @desc:    ...
- * ----------------------------------------------
- * Created Date: 15th January 2025
- * Modified: Thu 13 March 2025 - 16:09:37
+ * @file:    \plugins\mod.queue.client.js
+ * @desc:    The queue plugin
+ * -------------------------------------------
+ * Files:
+ * |- /
+ *
+ * Events:
+ * - data:deleted
+ * - config:updated
+ * - account:updated
+ * -------------------------------------------
+ * Created Date: 6th October 2025
+ * Modified: 7th November 2025 - 10:46:11
  */
 
 import { useThrottleFn } from '@vueuse/core'
 
+/*
+// Access the reactive queue object directly
+console.log($nuxt.$queue.queue.add)  // reactive array
+console.log($nuxt.$queue.queue.delete)  // reactive array
+
+// Use the new method names
+$nuxt.$queue.add(uuid, 'add')
+$nuxt.$queue.remove(uuid)
+
+// Or use legacy names (still work)
+$nuxt.$queue.queue(uuid, 'add')
+$nuxt.$queue.unqueue(uuid)
+
+// Access other methods
+$nuxt.$queue.get('add')
+$nuxt.$queue.swap(data)
+$nuxt.$queue.run()
+*/
+
+let $log = null
 let $nuxt = null
 let $data = null
-let $cloud = null
+let $backup = null
+
+// Timer for the queue runner
 let runner = null
 
-let queue = {
+// Reactive queue object
+let queue = reactive({
   add: [],
   swap: [],
   cloud: [],
   delete: [],
-}
+})
 
 //+-------------------------------------------------
 // run()
 // Runs the queue to persist data
 // -----
 // Created on Thu Jan 30 2025
-// Updated on Wed Mar 12 2025 - Handle cloud queue
+// Updated on Wed Mar 12 2025 - Handle backups queue
 //+-------------------------------------------------
 async function run() {
-  $data ??= useDataStore()
-
   // Handle queue "add"
+  // This queue is used to store items in $db.games
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (queue.add.length > 0) {
-    log(`⛓️ Persisting queue on ${queue.add.length} games`)
+    $log(`[Queue] ⇢ Persisting ${queue.add.length} items`)
     await $data.store(queue.add)
     queue.add = []
   }
 
   // Handle queue "delete"
+  // This queue is used to delete items from $db.games
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (queue.delete.length > 0) {
-    log(`⛓️ Clearing queue of deletes ${queue.delete.length}`)
+    $log(`[Queue] ⇢ Deleting ${queue.delete.length} items`)
     await $data.delete(queue.delete)
     queue.delete = []
   }
 
   // Handle queue "swap"
+  // Change the uuid of a game by creating a new record and deleting the old one
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (queue.swap.length > 0) {
+    $log(`[Queue] ⇢ Swapping ${queue.swap.length} items`)
     queue.swap.forEach(async (uuid) => {
-      await this.swap(uuid)
+      await queueAPI.swap(uuid)
     })
 
     queue.swap = []
@@ -59,30 +92,30 @@ async function run() {
   // Handle cloud sync
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (queue.cloud.length > 0) {
-    $cloud ??= useCloudStore()
+    $log(`[Queue] ⇢ Cloud syncing ${queue.cloud.join(', ')}`)
+    console.debug('↪ Cloud queue:', queue.cloud)
+
     queue.cloud.forEach((dimension) => {
-      $cloud.client[dimension] = '0.update'
+      $backup.action[dimension] = 'upload'
     })
 
-    $cloud.sync()
     queue.cloud = []
+    $backup.backupToCloud()
   }
 }
 
-export default {
-  get(key) {
-    if (key) return queue[key]
-    return queue
-  },
+let queueAPI = {
+  // Expose the reactive queue object
+  items: queue,
 
   //+-------------------------------------------------
-  // queue()
+  // add()
   // Adds an item to the queue
   // -----
   // Created on Wed Dec 11 2024
   // Updated on Fri Dec 13 2024 - Use JS queue
   //+-------------------------------------------------
-  async queue(uuid, action = 'add') {
+  async add(uuid, action = 'add') {
     if (queue.add.includes(uuid)) return
 
     if (action == 'add') queue.add.push(uuid)
@@ -92,16 +125,17 @@ export default {
     if (action == 'cloud') queue.cloud.push(uuid)
     else queue.cloud.push('library')
 
-    log(`⛓️ Queueing to ${action} (${queue[action].length})`, uuid)
+    $log(`[Queue] ⇢ ${action} (${queue[action].length} items in queue.${action})`, uuid)
     // if (action == 'cloud') log('⛓️ Queueing ' + uuid + ' to the cloud')
     // else log(`⛓️ ${uuid} `, `${queue.add.length}/${queue.delete.length} items`)
 
     clearTimeout(runner)
-    runner = setTimeout(() => this.run(), 3000)
+    runner = setTimeout(() => queueAPI.run(), 3000)
   },
 
-  unqueue(uuid) {
-    if (queue.add[uuid]) delete queue.add[uuid]
+  remove(uuid) {
+    const index = queue.add.indexOf(uuid)
+    if (index > -1) queue.add.splice(index, 1)
   },
 
   //+-------------------------------------------------
@@ -158,12 +192,12 @@ export default {
     if (length == 0 && toDelete == 0) return
 
     if (!amount || amount !== length) {
-      this.storeQueue(length)
+      queueAPI.storeQueue(length)
       return
     }
 
     log(`⛓️ Persisting queue on ${amount} games`)
-    this.store(queue.add)
+    queueAPI.store(queue.add)
     queue.add = []
 
     if (toDelete > 0) {
@@ -173,7 +207,7 @@ export default {
       // queue.delete = []
     }
 
-    $cloud.update('library')
+    $backup.update('library')
     // let text = 'Details have been updated in ' + amount
     // text += amount > 1 ? ' games' : ' game'
     // $nuxt.$toast.success(text, {
@@ -181,6 +215,56 @@ export default {
     // })
 
     await delay(1000, true)
-    this.storeQueue()
+    queueAPI.storeQueue()
   },
 }
+
+// Nuxt Plugin
+// Created on Mon Oct 06 2025
+//+-------------------------------------------------
+export default defineNuxtPlugin((nuxtApp) => {
+  // nuxtApp.$log('✨✅ [ Queue ]')
+
+  let { $mitt } = nuxtApp
+  $log ??= nuxtApp.$log
+
+  $data ??= useDataStore()
+  $backup ??= useBackupStore()
+
+  // Register and provide the queue API to Nuxt
+  // Provides both methods and reactive queue object
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  nuxtApp.provide('queue', queueAPI)
+
+  // Event handling
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  $mitt.on('data:deleted', () => {
+    console.warn('🔥 wip data deleted')
+    // $data.countLibrary()
+    // queueAPI.add('library', 'cloud')
+  })
+
+  // Backup user data and configuration
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  $mitt.on('config:updated', () => {
+    queueAPI.add('account', 'cloud')
+  })
+
+  $mitt.on('account:updated', () => {
+    queueAPI.add('account', 'cloud')
+  })
+
+  // Backup states
+  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  $mitt.on('state:created', () => {
+    queueAPI.add('states', 'cloud')
+  })
+
+  $mitt.on('state:updated', () => {
+    queueAPI.add('states', 'cloud')
+  })
+
+  $mitt.on('state:deleted', () => {
+    queueAPI.add('states', 'cloud')
+  })
+})

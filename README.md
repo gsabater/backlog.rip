@@ -1,4 +1,5 @@
 # Backlog.rip
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip?ref=badge_shield)
 ![Discord](https://img.shields.io/discord/297380113673355264?logo=discord&logoColor=%23ffffff&label=Discord&cacheSeconds=6000)
 [![MadeWithVueJs.com shield](https://madewithvuejs.com/storage/repo-shields/5535-shield.svg)](https://madewithvuejs.com/p/backlogrip/shield-link)
@@ -12,56 +13,102 @@
 
 🚀 **Backlog.rip** is a **free and open-source library manager** for all your games. It works **in the cloud** without any launchers, allowing you to **organize and manage your game collection effortlessly**.
 
-📌 **Features:**
-- Works entirely in the browser
-- Saves all data **locally** using IndexedDB
-- Add games manually add games or import from sources like Steam.
-- You can manage games from any Platform
-- Track your progress and gaming backlog
-- **Add Games**: Manually add games or import from sources like Steam.
-- **Organize Your Library**: Categorize, tag, and track your backlog.
-- **Keep Progress**: Mark games as completed, in progress, or on hold.
-- **Local Storage**: All data is stored in your browser’s IndexedDB.
+🔗 **Website**: [backlog.rip](https://backlog.rip)
 
-🔗 **Live Demo**: [backlog.rip](https://backlog.rip)
+## ✨ Features
 
-## Setup
+- **Local First**: Works entirely in the browser. All data is stored locally using IndexedDB (via Dexie.js).
+- **Cross-Platform**: Manage games from any platform (PC, Console, etc.).
+- **Import Capabilities**: Easily import your library from sources like Steam.
+- **Organization**: Categorize, tag, and track your backlog.
+- **Progress Tracking**: Mark games as completed, in progress, or on hold.
+- **Modern UI**: Built with Vuetify and Tabler for a sleek, responsive experience.
 
-Make sure to install the dependencies:
+## 🛠 Tech Stack
+
+| Technology | Description |
+| :--- | :--- |
+| **[Nuxt.js](https://nuxt.com/)** | The Hybrid Vue Framework (SSR & Static) |
+| **[Vue.js](https://vuejs.org/)** | The Progressive JavaScript Framework |
+| **[Vuetify](https://vuetifyjs.com/)** | Material Design Component Framework |
+| **[Dexie.js](https://dexie.org/)** | Wrapper for IndexedDB |
+| **[Pinia](https://pinia.vuejs.org/)** | Intuitive, type-safe, light and flexible Store for Vue |
+| **[Tabler](https://tabler.io/)** | UI Kit and Icons |
+| **[VueUse](https://vueuse.org/)** | Collection of Essential Vue Composition Utilities |
+| **[Supabase](https://supabase.com/)** | Open Source Firebase Alternative (Auth/DB) |
+| **[RxJS](https://rxjs.dev/)** | Reactive Extensions for JavaScript |
+
+## 📂 Project Structure
 
 ```bash
-# npm
-npm install
-
+.
+├── assets/          # Static assets (images, styles)
+├── components/      # Vue components
+├── content/         # Markdown content (if using Nuxt Content)
+├── layouts/         # App layouts
+├── middleware/      # Route middleware
+├── modules/         # Nuxt modules
+├── pages/           # Application routes/pages
+├── plugins/         # Vue/Nuxt plugins
+├── public/          # Public static files
+├── services/        # Service logic
+├── stores/          # Pinia state stores
+├── utils/           # Utility functions
+└── nuxt.config.ts   # Nuxt configuration
 ```
 
-## Development Server
+## 🚀 Getting Started
 
-Start the development server on http://localhost:1337
+### Prerequisites
+
+- Node.js v22.11
+- npm
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/gsabater/backlog.rip.git
+   cd backlog.rip
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+### Development
+
+Start the development server on `http://localhost:1337`:
 
 ```bash
 npm run dev
 ```
 
-## 🛠 Tech Stack
+### Build
 
-| Technology   | Used for |
-|-------------|------------|
-| **Vue.js**  | Frontend framework |
-| **Nuxt.js** | SSR & Static Site Generator |
-| **Dexie.js** | IndexedDB wrapper for game storage |
-| **Tabler** | UI Kit and Icons |
-| **Vuetify** | UI components & Material Design |
-| **Axios** | HTTP client |
-| **Mitt.js** | Event handling |
-| **Pinia** | State management |
+Build the application for production:
 
-### Project health
+```bash
+npm run build
+```
 
-![Alt](https://repobeats.axiom.co/api/embed/8ad80c908f2c331683b4aa34bb542501b3332bb5.svg "Repobeats analytics image")
+## 🤝 Contributing
 
-## License
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
 *License not yet decided*
 
 ## 💖 Support
+
 If you find Backlog.rip useful, consider starring ⭐ the repo or supporting the project:
+
+- [Patreon](https://patreon.com)

@@ -3,7 +3,7 @@
  * @desc:    Handle operations related to data with their index
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: 19th November 2025 - 04:08:19
+ * Modified: 30th November 2025 - 06:17:50
  */
 
 import gameService from '../services/gameService'
@@ -151,9 +151,10 @@ export const useDataStore = defineStore('data', {
           continue
         }
 
-        if (!from.includes) {
+        if (!from?.includes) {
           console.warn(item, from)
-          debugger
+          $log(`[ dataStore.process ] Error when processing item`, item, from)
+          return
         }
 
         // Handle api items
@@ -175,6 +176,8 @@ export const useDataStore = defineStore('data', {
           // console.warn(' ⇢ updating app from API', item.uuid, item.name)
           //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           if (indexed) {
+            // console.warn('⇢ app already indexed', item.uuid, item.name)
+
             if (from.includes(':batch')) {
               item.dates = item.dates || {}
               item.dates.refreshed = dates.stamp()

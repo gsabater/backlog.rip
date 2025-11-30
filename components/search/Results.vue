@@ -160,7 +160,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 3rd November 2025 - 05:09:32
+ * Modified: 29th November 2025 - 07:17:28
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -186,11 +186,10 @@ export default {
       default: false,
     },
 
-    // Not used anymore
-    // filters: {
-    //   type: Object,
-    //   default: null,
-    // },
+    filters: {
+      type: Object,
+      default: null,
+    },
 
     // Source array
     // Used for constrained searches
@@ -342,6 +341,15 @@ export default {
 
       // Set filters from props
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (this.filters && typeof this.filters == 'object') {
+        filters = {
+          ...filters,
+          ...this.filters,
+        }
+      }
+
+      // Set filters from injected $filters
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (this.$filters && typeof this.$filters == 'object') {
         filters = {
           ...filters,
@@ -367,6 +375,7 @@ export default {
       // Reset the search hashed cache
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       this.$mitt.on('data:added', () => {
+        console.warn('heeeyyyy....')
         this.search('data:added')
       })
     },
@@ -374,18 +383,11 @@ export default {
 
   mounted() {
     this.init()
-
-    // this.$mitt.on('data:deleted', () => {
-    //   if (!$app.ready) return
-    //   if (this.$app.dev) log('🪡 Search from event', 'data:deleted')
-    //   this.search('data:deleted')
-    // })
   },
 
   beforeUnmount() {
     this.$mitt.off('search:run')
     this.$mitt.off('data:added')
-    // this.$mitt.off('data:deleted')
   },
 }
 </script>

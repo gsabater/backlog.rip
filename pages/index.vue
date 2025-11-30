@@ -6,12 +6,11 @@
           <h1 class="hero-title">Backlog.rip</h1>
 
           <p class="hero-description">
-            Free and open source library manager for all your games.
+            A free and open source game library manager.
             <br />
-            All data is saved locally in your browser, without any cookies or trackers.
-
+            All your data stays local in your browser. No cookies, no trackers, just privacy.
             <span style="display: block; margin: 15px">
-              Organize your library and games with ease.
+              Organize, track, and discover games with ease.
             </span>
           </p>
 
@@ -124,7 +123,7 @@
             <div class="main-wcontent">
               <div class="scene">
                 <div class="group">
-                  <div v-for="item in randPosters" class="xcard">
+                  <div v-for="item in randPosters" :key="item" class="xcard">
                     <div
                       class="xcard__img"
                       :style="`
@@ -139,7 +138,77 @@
     </div>
   </section>
 
-  <section v-if="hot.length" class="py-5 py-md-6" style="background: rgba(0, 0, 0, 0.1)">
+  <section v-if="gameAwardsNominees.length" class="py-6">
+    <div class="container-xl">
+      <div
+        style="
+          padding: 40px;
+          background: rgb(36, 35, 42);
+          border: 1px solid rgb(69, 51, 49);
+          border-radius: 6px;
+          background: linear-gradient(
+            135deg,
+            rgba(255, 215, 0, 0.08) 0%,
+            rgba(139, 92, 246, 0.12) 25%,
+            rgba(236, 72, 153, 0.1) 50%,
+            rgba(139, 92, 246, 0.12) 75%,
+            rgba(255, 215, 0, 0.08) 100%
+          );
+        ">
+        <div class="text-center mb-4">
+          <h2
+            class="display-6 mb-2"
+            style="
+              background: linear-gradient(
+                135deg,
+                #ffd700 0%,
+                #ffed4e 25%,
+                #ffd700 50%,
+                #ffed4e 75%,
+                #ffd700 100%
+              );
+              -wnebkit-background-clip: text;
+              -nwebkit-text-fill-color: transparent;
+              background-clip: text;
+              filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+              text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+              animation: shimmer 3s infinite linear;
+              color: blanchedalmond;
+            ">
+            The Game Awards
+          </h2>
+          <p class="text-light mb-2" style="font-size: 1.1rem; opacity: 0.9">
+            Celebrating the best of gaming · December 11, 2025
+          </p>
+          <p class="text-light mb-3">
+            Cast your vote at
+            <a
+              href="https://www.thegameawards.com/"
+              target="_blank"
+              class="link-secondary link-underline-opacity-0">
+              thegameawards.com
+            </a>
+          </p>
+        </div>
+        <search-results
+          ref="gameAwardsNomineesGames"
+          :source="gameAwardsNominees"
+          :filters="{
+            sortBy: 'rand',
+            sortDir: 'asc',
+          }"
+          class="py-2 justify-content-center" />
+      </div>
+
+      <!-- <game-list
+        :items="gameAwardsNominees"
+        :enable-sorting="false"
+        :display-props="['name', 'score', 'released']"
+        class="game-awards-results" /> -->
+    </div>
+  </section>
+
+  <!-- <section v-if="hot.length" class="py-5 py-md-6" style="background: rgba(0, 0, 0, 0.1)">
     <div class="container">
       <div class="row my-3 pb-2 align-items-center">
         <div class="col-12 text-center">
@@ -154,7 +223,7 @@
         :source="hot"
         class="py-2 justify-content-center" />
     </div>
-  </section>
+  </section> -->
 
   <footer class="pt-7 pb-9 md:pt-10 md:pb-13">
     <div class="container">
@@ -211,7 +280,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: 26th November 2025 - 09:58:30
+ * Modified: 30th November 2025 - 06:22:00
  **/
 
 export default {
@@ -231,6 +300,49 @@ export default {
         '1604030',
         '1880330',
         '2231450',
+      ],
+
+      gameAwardsNominees: [
+        {
+          uuid: 'eccd1345-88b9-4564-abbf-81bed612ff2a',
+          id: { api: 'eccd1345-88b9-4564-abbf-81bed612ff2a', steam: 1903340 },
+          name: 'Clair Obscur: Expedition 33',
+        },
+        {
+          uuid: 'bd18bdaa-57ce-429e-b9e6-d849670364b5',
+          id: {
+            api: 'bd18bdaa-57ce-429e-b9e6-d849670364b5',
+
+            igdb: 228530,
+          },
+          cover: { igdb: 'co9ipx' },
+          name: 'Death Stranding 2: On The Beach',
+        },
+        {
+          uuid: '302e1bab-a041-4798-aa74-a40107a4ca49',
+          id: { api: '302e1bab-a041-4798-aa74-a40107a4ca49', steam: 1145350 },
+          name: 'Hades II',
+        },
+        {
+          uuid: '3684c355-eb48-48f0-b311-14f60ef14561',
+          id: { api: '3684c355-eb48-48f0-b311-14f60ef14561', steam: 1030300 },
+          name: 'Hollow Knight: Silksong',
+        },
+        {
+          uuid: '92e38fb1-7447-468b-825e-aec0f745c111',
+          id: { api: '92e38fb1-7447-468b-825e-aec0f745c111', steam: 1771300 },
+          name: 'Kingdom Come: Deliverance II',
+        },
+        {
+          uuid: '6cf07825-0dc1-4e14-aa00-fba55bbd2601',
+          id: {
+            api: '6cf07825-0dc1-4e14-aa00-fba55bbd2601',
+
+            igdb: 338106,
+          },
+          cover: { igdb: 'coa082' },
+          name: 'Donkey Kong Bananza',
+        },
       ],
     }
   },
@@ -255,6 +367,7 @@ export default {
       if (!this.$app.ready) return
 
       this.$wow()
+      this.dataStore.process(this.gameAwardsNominees, 'list:batch')
     },
   },
   mounted() {
@@ -279,7 +392,7 @@ header.herod {
 
 section.home-hero {
   position: relative;
-  border-bottom: 2px solid #453331;
+  border-bottom: 1px solid #453331;
 }
 
 section.home-hero:after {

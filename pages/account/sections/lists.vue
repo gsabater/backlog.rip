@@ -24,47 +24,22 @@
         Lists stay on your device by default, with public sharing on the way. Organize by genre,
         mood, or any category you choose.
       </p>
-      <!-- <p>
-        Lists are perfect way to organize your games. You can create as many lists as you
-        want, and you can add many games to them.
-      </p>
-
-      <p>You can add many games to a list, and you can add a game to many lists.</p>
-      <p>
-        Lists are different from states in that states are used to categorize your games,
-        and used to generate personalized recommendations and insights on your dashboard.
-        A game can only have a single state, but can be in multiple lists.
-      </p> -->
-
-      <!-- <p>
-        Lists are the perfect way to organize your games exactly how you want. Create as many lists
-        as you need - like "Favorite RPGs" or "Local Co-op Games". You can add games to multiple
-        lists, giving you complete flexibility in how you organize your collection of games.
-      </p>
-
-      <p>
-        While states (like "Playing" or "Completed") are used to track your progress and help
-        generate personalized recommendations, lists are your personal way to group games however
-        you prefer. Think of them like playlists - a game can only have one state, but it can be
-        part of as many lists as you want.
-      </p>
-
-      <p>
-        You can create both private lists that stay on your device and public lists to share with
-        the community (coming soon!). Whether you're organizing games by genre, mood, or your own
-        unique categories, lists give you the freedom to arrange your games your way.
-      </p> -->
     </div>
   </div>
 
   <div class="row mb-3">
     <div class="col-6">
-      <v-btn variant="tonal" color="primary" @click="$mitt.emit('list:create')">
+      <v-btn
+        variant="tonal"
+        color="rgb(135 140 195)"
+        style="
+          filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+          outline: 1px solid #9e58581c;
+          outline-offset: -1px;
+        "
+        @click="$mitt.emit('list:create')">
         Create a new list
       </v-btn>
-      <!-- <a class="btn btn-primary px-3" @click="$mitt.emit('list:create')">
-        Create a new list
-      </a> -->
     </div>
     <!-- <div class="col-auto ms-auto">
       <v-btn variant="tonal" color="secondary" style="min-width: 40px" class="me-2">
@@ -231,11 +206,6 @@
       </template>
     </v-list-item>
   </div> -->
-  <!-- <list-crud-dialog
-    ref="crud"
-    @close="selected = null"
-    @stored="$forceUpdate()"
-    @deleted="$forceUpdate()" /> -->
 </template>
 
 <script>
@@ -244,7 +214,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: 4th November 2025 - 10:37:14
+ * Modified: 30th November 2025 - 06:17:18
  **/
 
 export default {
@@ -268,12 +238,6 @@ export default {
       let slug = item.slug || item.uuid
       navigateTo('/my/list/' + slug + (edit ? '/edit' : ''))
     },
-
-    async init() {},
-  },
-
-  mounted() {
-    this.init()
   },
 }
 </script>

@@ -1,5 +1,10 @@
 <template>
   <slot name="body" :items="items" v-bind="$attrs">
+    <!--
+      *+---------------------------------
+      *| Group headers
+      *| Kept for reference
+      *+--------------------------------- -->
     <!-- <div class="page-header">
         <div class="row align-items-center">
           <div class="col-auto">
@@ -160,7 +165,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 29th November 2025 - 07:17:28
+ * Modified: 1st December 2025 - 05:52:41
  **/
 
 import { useThrottleFn } from '@vueuse/core'

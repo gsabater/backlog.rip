@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: 26th November 2025 - 10:19:46
+ * Modified: 1st December 2025 - 05:35:47
  */
 
 import searchService from '../services/searchService'
@@ -148,6 +148,7 @@ export const useSearchStore = defineStore('search', {
         f.show.tags = 'bar'
       }
 
+      $log('[ searchStore.prepare ] filters to search', f)
       this.f = f
     },
 
@@ -183,7 +184,7 @@ export const useSearchStore = defineStore('search', {
 
       // Default values for library viewing
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if ($route.path.includes('library')) {
+      if ($route.path.includes('/library')) {
         filters.source = 'library'
         filters.sortBy = 'playtime'
       }
@@ -446,71 +447,6 @@ export const useSearchStore = defineStore('search', {
       } else this.f.filters.splice(index, 1)
     },
 
-    // handleRouteChanges(filters) {
-    //   let $route = useRoute()
-    //   const $router = useRouter()
-
-    //   if (!filters.is && filters.source == 'all' && $route.path.includes('library')) {
-    //     // $router.replace('/games')
-    //     window.history.replaceState(null, '', '/games')
-    //   }
-    // },
-
-    //+-------------------------------------------------
-    // setRouteFilters
-    // Append the current filters to the URL with params
-    // -----
-    // Created on Wed Feb 05 2025
-    //+-------------------------------------------------
-    setRouteFilters(filters, hash) {
-      console.warn('creo que no se usa')
-      console.warn('🔸🔸🔸🔸deleteme ...')
-      if (!$nuxt.$app.wip) return
-
-      // TODO: this should be this.inRoute or ENUM
-      const blacklist = ['source', 'is', 'mods', 'show']
-
-      // Default filter values to compare against
-      const defaultFilters = {
-        string: '',
-        sortBy: 'score',
-        sortDir: 'desc',
-      }
-
-      // Build query params for non-default, whitelisted filters
-      const queryParams = Object.entries(filters)
-        .filter(([key, value]) => {
-          return (
-            value &&
-            value !== '' &&
-            value.length != 0 &&
-            !blacklist.includes(key) &&
-            value !== defaultFilters[key]
-          )
-        })
-        .map(([key, value]) => {
-          if (key == 'string') key = 'search'
-          let encoded = encodeURIComponent(value)
-          encoded = encoded.replace(/%2C/g, '+')
-          return `${key}=${encoded}`
-        })
-        .join('&')
-
-      // Update URL without adding to history
-      const newUrl = queryParams
-        ? `${window.location.pathname}?${queryParams}`
-        : window.location.pathname
-
-      window.history.replaceState({}, '', newUrl)
-    },
-
-    // replaceRoute(path) {
-    //   if (this.$route.path !== path) {
-
-    //     this.$router.replace(path, () => {});
-    //   }
-    // }
-
     //+-------------------------------------------------
     // buildSource()
     // Returns the source to use in the search
@@ -651,60 +587,6 @@ export const useSearchStore = defineStore('search', {
       this.stats.api_start = start
 
       if (data) await $data.process(data, 'api')
-    },
-
-    //+-------------------------------------------------
-    // filter()
-    // Filters and sorts an array of elements using the service
-    // Then stores the operation with a hash.
-    // IF the hash exists, return it
-    // -----
-    // Created on Sun Jan 05 2025
-    // Created on Sun Mar 30 2025 - Disable hashes
-    //+-------------------------------------------------
-    // filter(hash, source, filters) {
-    //   console.warn('deleteme ...')
-    //   if (!hash) return searchService.filter(source.apps, filters)
-
-    //   this.latest = hash
-    //   if (hashed[hash]) {
-    //     // log('search', `· ⇢  Hash used`, hash)
-    //     // return hashed[hash]
-    //   }
-
-    //   let filtered = searchService.filter(source.apps, filters)
-    //   hashed[hash] = filtered
-    //   // log('search', `· ⇢  Hash cached ✅`, hash)
-
-    //   return filtered
-    // },
-
-    //+-------------------------------------------------
-    // resetHashed()
-    // Resets the hashed object and latest values while
-    // keeping API: hashes
-    // -----
-    // Created on Fri Jan 17 2025
-    //+-------------------------------------------------
-    // resetHashed() {
-    //   console.warn('deleteme ...')
-    //   if (Object.keys(hashed).length === 0) return
-
-    //   Object.keys(hashed).forEach((key) => {
-    //     if (!key.includes('API:')) delete hashed[key]
-    //   })
-
-    //   this.latest = null
-    // },
-
-    setTime(time) {
-      console.warn('deleteme ...')
-      this.stats[time] = performance.now()
-
-      if (time !== 'start') return
-      this.stats.end = 0
-      this.stats.api_end = 0
-      this.stats.api_start = 0
     },
 
     //+-------------------------------------------------

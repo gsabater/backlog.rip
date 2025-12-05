@@ -28,15 +28,15 @@
     "eslint-plugin-vue": "10.6.2",
     "globals": "16.5.0",
     "nuxt": "3.17.7",
-    "prettier": "3.7.3",
-    "sass": "^1.89.2",
-    "sass-loader": "^16.0.5",
+    "prettier": "3.7.4",
+    "sass": "1.94.2",
+    "sass-loader": "16.0.6",
     "vite-plugin-vuetify": "2.1.2"
   },
   "dependencies": {
     "@mdi/font": "7.4.47",
     "@nuxt/content": "^3.6.1",
-    "@pinia/nuxt": "0.11.2",
+    "@pinia/nuxt": "0.11.3",
     "@supabase/supabase-js": "^2.50.2",
     "@tabler/core": "1.4.0",
     "@tabler/icons-vue": "3.35.0",
@@ -52,7 +52,7 @@
     "gsap": "^3.13.0",
     "mitt": "^3.0.0",
     "photoswipe": "^5.4.4",
-    "pinia": "^3.0.3",
+    "pinia": "3.0.4",
     "rxjs": "^7.8.2",
     "swiper": "^11.2.10",
     "uuid": "13.0.0",
@@ -61,7 +61,7 @@
     "vue-sonner": "^2.0.1",
     "vue-tippy": "^6.7.1",
     "vuedraggable": "4.1.0",
-    "vuetify": "3.11.0",
+    "vuetify": "3.11.2",
     "vuetify-nuxt-module": "0.18.8"
   },
   "tobeinstalled": {

@@ -5,7 +5,7 @@
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: 6th October 2025 - 11:55:57
+ * Modified: Fri 05 December 2025 - 17:10:31
  */
 
 import { defineNuxtConfig } from 'nuxt/config'
@@ -19,7 +19,7 @@ export default defineNuxtConfig({
 
   nitro: {
     // preset: 'static'
-    // preset: 'cloudflare-pages',
+    preset: 'cloudflare-pages',
 
     prerender: {
       routes: ['/docs', '/sitemap', '/changelog'], //  '/changelog/v0.20'

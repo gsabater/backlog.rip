@@ -138,77 +138,7 @@
     </div>
   </section>
 
-  <section v-if="gameAwardsNominees.length" class="py-6">
-    <div class="container-xl">
-      <div
-        style="
-          padding: 40px;
-          background: rgb(36, 35, 42);
-          border: 1px solid rgb(69, 51, 49);
-          border-radius: 6px;
-          background: linear-gradient(
-            135deg,
-            rgba(255, 215, 0, 0.08) 0%,
-            rgba(139, 92, 246, 0.12) 25%,
-            rgba(236, 72, 153, 0.1) 50%,
-            rgba(139, 92, 246, 0.12) 75%,
-            rgba(255, 215, 0, 0.08) 100%
-          );
-        ">
-        <div class="text-center mb-4">
-          <h2
-            class="display-6 mb-2"
-            style="
-              background: linear-gradient(
-                135deg,
-                #ffd700 0%,
-                #ffed4e 25%,
-                #ffd700 50%,
-                #ffed4e 75%,
-                #ffd700 100%
-              );
-              -wnebkit-background-clip: text;
-              -nwebkit-text-fill-color: transparent;
-              background-clip: text;
-              filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
-              text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-              animation: shimmer 3s infinite linear;
-              color: blanchedalmond;
-            ">
-            The Game Awards
-          </h2>
-          <p class="text-light mb-2" style="font-size: 1.1rem; opacity: 0.9">
-            Celebrating the best of gaming · December 11, 2025
-          </p>
-          <p class="text-light mb-3">
-            Cast your vote at
-            <a
-              href="https://www.thegameawards.com/"
-              target="_blank"
-              class="link-secondary link-underline-opacity-0">
-              thegameawards.com
-            </a>
-          </p>
-        </div>
-        <search-results
-          ref="gameAwardsNomineesGames"
-          :source="gameAwardsNominees"
-          :filters="{
-            sortBy: 'rand',
-            sortDir: 'asc',
-          }"
-          class="py-2 justify-content-center" />
-      </div>
-
-      <!-- <game-list
-        :items="gameAwardsNominees"
-        :enable-sorting="false"
-        :display-props="['name', 'score', 'released']"
-        class="game-awards-results" /> -->
-    </div>
-  </section>
-
-  <!-- <section v-if="hot.length" class="py-5 py-md-6" style="background: rgba(0, 0, 0, 0.1)">
+  <section v-if="hot.length" class="py-5 py-md-6" style="background: rgba(0, 0, 0, 0.1)">
     <div class="container">
       <div class="row my-3 pb-2 align-items-center">
         <div class="col-12 text-center">
@@ -222,8 +152,17 @@
         :disabled="false"
         :source="hot"
         class="py-2 justify-content-center" />
+
+      <!-- <search-results
+          ref="gameAwardsNomineesGames"
+          :source="gameAwardsNominees"
+          :filters="{
+            sortBy: 'rand',
+            sortDir: 'asc',
+          }"
+          class="py-2 justify-content-center" /> -->
     </div>
-  </section> -->
+  </section>
 
   <footer class="pt-7 pb-9 md:pt-10 md:pb-13">
     <div class="container">
@@ -231,7 +170,6 @@
         <p class="text-muted my-4">
           <NuxtLink to="/changelog" class="link-secondary link-underline-opacity-0">
             Version
-            <!-- <Icon size="16" width="1.8" style="transform: translateY(-1px)">Beta</Icon> -->
             {{ $app.v }}
           </NuxtLink>
 
@@ -280,7 +218,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: 30th November 2025 - 06:22:00
+ * Modified: 24th December 2025 - 18:30:58
  **/
 
 export default {
@@ -300,49 +238,6 @@ export default {
         '1604030',
         '1880330',
         '2231450',
-      ],
-
-      gameAwardsNominees: [
-        {
-          uuid: 'eccd1345-88b9-4564-abbf-81bed612ff2a',
-          id: { api: 'eccd1345-88b9-4564-abbf-81bed612ff2a', steam: 1903340 },
-          name: 'Clair Obscur: Expedition 33',
-        },
-        {
-          uuid: 'bd18bdaa-57ce-429e-b9e6-d849670364b5',
-          id: {
-            api: 'bd18bdaa-57ce-429e-b9e6-d849670364b5',
-
-            igdb: 228530,
-          },
-          cover: { igdb: 'co9ipx' },
-          name: 'Death Stranding 2: On The Beach',
-        },
-        {
-          uuid: '302e1bab-a041-4798-aa74-a40107a4ca49',
-          id: { api: '302e1bab-a041-4798-aa74-a40107a4ca49', steam: 1145350 },
-          name: 'Hades II',
-        },
-        {
-          uuid: '3684c355-eb48-48f0-b311-14f60ef14561',
-          id: { api: '3684c355-eb48-48f0-b311-14f60ef14561', steam: 1030300 },
-          name: 'Hollow Knight: Silksong',
-        },
-        {
-          uuid: '92e38fb1-7447-468b-825e-aec0f745c111',
-          id: { api: '92e38fb1-7447-468b-825e-aec0f745c111', steam: 1771300 },
-          name: 'Kingdom Come: Deliverance II',
-        },
-        {
-          uuid: '6cf07825-0dc1-4e14-aa00-fba55bbd2601',
-          id: {
-            api: '6cf07825-0dc1-4e14-aa00-fba55bbd2601',
-
-            igdb: 338106,
-          },
-          cover: { igdb: 'coa082' },
-          name: 'Donkey Kong Bananza',
-        },
       ],
     }
   },
@@ -405,61 +300,6 @@ section.home-hero:after {
   width: 100%;
   height: 100%;
   background: linear-gradient(to top, #1d1630, transparent);
-}
-
-/* :root {
-  font-size: 16px;
-  --color-text: #111;
-  --color-bg: #e3efed;
-  --color-bg-alt: #8ca9af;
-  --color-link: rgba(0, 0, 0, 0.6);
-  --color-link-hover: #000;
-  --page-padding: 1.5rem;
-  --color-title: #000;
-}
-
-.demo-2 {
-  --color-bg: #d8e5ec;
-  --color-bg-alt: #7e8b92;
-  --color-title: #223233;
-}
-
-.demo-3 {
-  --color-bg: #ece6df;
-  --color-bg-alt: #8b8078;
-  --color-title: #191818;
-} */
-
-body {
-  /* margin: 0;
-  color: var(--color-text);
-  background-color: var(--color-bg);
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    Segoe UI,
-    Helvetica,
-    Arial,
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
-  height: 100vh; */
-
-  /* background-color: var(--color-bg); */
-}
-
-.unbutton {
-  background: none;
-  border: 0;
-  padding: 0;
-  margin: 0;
-  font: inherit;
-  cursor: pointer;
-}
-
-.unbutton:focus {
-  outline: none;
 }
 
 .frame {
@@ -553,24 +393,6 @@ main .main-wcontent {
   aspect-ratio: 2/3;
   background-position: center;
   background-size: cover;
-}
-
-.headings {
-  text-align: center;
-  position: relative;
-  z-index: 10;
-  color: var(--color-title);
-  text-transform: uppercase;
-}
-
-.headings__main {
-  line-height: 0.5;
-  font-size: clamp(2.5rem, 1.59rem + 3.883vw, 6.25rem);
-}
-
-.headings_subtitle {
-  line-height: 0.5;
-  font-size: clamp(1rem, 0.757rem + 1.036vw, 2rem);
 }
 
 @media screen and (min-width: 53em) {

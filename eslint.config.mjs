@@ -1,112 +1,82 @@
 /*
  * @file:    \eslint.config.mjs
- * @desc:    https://vueschool.io/articles/vuejs-tutorials/eslint-and-prettier-with-vite-and-vue-js-3/
- * @note:    Migrated from .eslintrc.js using npx @eslint/migrate-config .eslintrc.js
- *           https://eslint.org/docs/latest/use/configure/migration-guide
  * ----------------------------------------------
  * Created Date: 11th November 2023
- * Modified: 27th November 2025 - 04:32:30
+ * Modified: 24th December 2025 - 18:29:39
  */
 
 /**
  * ESLint Configuration File
  * ----------------------------------------------
  * The project uses ESLint and Prettier for code quality and formatting.
- * ESLint is configured to enforce coding standards and catch potential errors,
- * while Prettier is used to maintain consistent code formatting across the codebase.
+ * While the project uses both, there is a clear separation of concerns:
+ * ESLint is dedicated only to enforce code quality (logic, vue and best practices)
+ * and Prettier is dedicated to maintain consistent code formatting.
  *
+ * Eslint and prettier will work together, but formatting is enforced only via IDE settings
+ * using Format on Save, keeping the linting process faster and less noisy.
  */
 
 import js from '@eslint/js'
 import vue from 'eslint-plugin-vue'
-import prettierPlugin from 'eslint-plugin-prettier'
-import prettierConfig from 'eslint-config-prettier'
-import nuxtConfig from '@nuxt/eslint-config'
 import globals from 'globals'
+import prettierConfig from 'eslint-config-prettier'
+import { createConfigForNuxt } from '@nuxt/eslint-config'
 
-export default [
-  {
-    ignores: [
-      '**/node_modules',
-      '**/build',
-      '**/public',
-      '**/dist',
-      '**/schema',
-      '**/*.tmpl.*',
-      '**/sw.js',
-    ],
+export default createConfigForNuxt({
+  features: {
+    tooling: true,
   },
-
-  // Base configuration rules
-  js.configs.recommended,
-
-  // Nuxt 3 rules
-  // Provided by @nuxt/eslint-config
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  nuxtConfig,
-
-  // Vue 3 rules
-  // Provided by eslint-plugin-vue
+}).append(
+  // Vue and JS recommended rules
   // Extends only strongly-recommended ruleset
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  {
-    plugins: { vue },
-    ...vue.configs['vue3-strongly-recommended'],
-  },
+  js.configs.recommended,
+  vue.configs['flat/strongly-recommended'],
 
-  // Prettier rules
-  // Those rules disable conflicting rules and activate the plugin
+  // Manual project recommendations
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
-    plugins: { prettier: prettierPlugin },
-    rules: {
-      ...prettierConfig.rules,
-      'prettier/prettier': 'error',
-    },
-  },
+    files: ['**/*.js', '**/*.ts', '**/*.vue'],
 
-  // Personalized rules
-  // Specific for the project
-  //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  {
     languageOptions: {
       globals: {
         ...globals.browser,
         ...globals.node,
-        markRaw: true,
-        useNuxtApp: true,
-        useRoute: true,
-        useRouter: true,
-        useCookie: true,
-        navigateTo: true,
+        // markRaw: true,
+        // useNuxtApp: true,
+        // useRoute: true,
+        // useRouter: true,
+        // useCookie: true,
+        // navigateTo: true,
 
-        mapStores: true,
-        defineStore: true,
-        acceptHMRUpdate: true,
-        defineNuxtConfig: true,
-        defineNuxtPlugin: true,
-        defineNuxtRouteMiddleware: true,
+        // mapStores: true,
+        // defineStore: true,
+        // acceptHMRUpdate: true,
+        // defineNuxtConfig: true,
+        // defineNuxtPlugin: true,
+        // defineNuxtRouteMiddleware: true,
 
-        useDataStore: true,
-        useUserStore: true,
-        useGameStore: true,
-        useStateStore: true,
-        useBackupStore: true,
-        useGuildStore: true,
-        useJournalStore: true,
-        useLibraryStore: true,
-        useRepositoryStore: true,
+        // useDataStore: true,
+        // useUserStore: true,
+        // useGameStore: true,
+        // useStateStore: true,
+        // useBackupStore: true,
+        // useGuildStore: true,
+        // useJournalStore: true,
+        // useLibraryStore: true,
+        // useRepositoryStore: true,
 
-        log: true,
-        delay: true,
-        dates: true,
-        format: true,
-        helpers: true,
+        // log: true,
+        // delay: true,
+        // dates: true,
+        // format: true,
+        // helpers: true,
 
-        dataService: true,
-        gameService: true,
-        queueService: true,
-        searchService: true,
+        // dataService: true,
+        // gameService: true,
+        // queueService: true,
+        // searchService: true,
       },
     },
 
@@ -159,5 +129,8 @@ export default [
         },
       ],
     },
-  },
-]
+
+    // Finally, prettier rules
+    prettierConfig,
+  }
+)

@@ -1,63 +1,43 @@
 {
   "files.eol": "\n",
 
-  "editor.formatOnPaste": false,
-  "editor.formatOnType": false,
+  "editor.tabSize": 2,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
 
-  "eslint.validate": [
-    "vue",
-    "javascript",
-    "typescript",
-  ],
-
-  "[javascript]": {
-    "editor.tabSize": 2,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
+  "eslint.validate": [ "vue", "javascript", "typescript" ],
 
   "[vue]": {
-    "editor.tabSize": 2,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-    // "editor.defaultFormatter": "octref.vetur",
+    "editor.defaultFormatter": "prettier.prettier-vscode"
   },
 
+  "[javascript]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode"
+  },
+
+  "[typescript]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode"
+  },
+
+
   "[scss]": {
-    "editor.tabSize": 2,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "prettier.prettier-vscode"
   },
 
   "actionButtons": {
     "loadNpmCommands":false,
-    // "reloadButton":"♻️",
-
     "commands": [
       {
         "name": "⚡ dev",
-        // "color": "green",
         "command": "npm run dev",
       },
 
       {
-        "name": "⚓ install",
-        // "color": "green",
+        "name": "npm:install",
         "command": "npm install",
       },
-
-      // {
-      //   "name": "🛑 Commits en casa",
-      //   "color": "orange",
-      //   // "command": "npm run dev",
-      // },
-
-      // {
-      //   "name": "🤌 Añadir versión",
-      //   "color": "yellow",
-      //   // "command": "npm run dev",
-      // },
     ]
   },
 

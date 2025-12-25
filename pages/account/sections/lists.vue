@@ -56,9 +56,9 @@
     <div class="list-group card-list-group">
       <template v-for="item in lists" :key="item.uuid">
         <div
-          @click="goToList(item)"
           class="list-group-item px-3 cursor-pointer text-decoration-none"
-          style="padding-top: 0.8rem; padding-bottom: 0.8rem">
+          style="padding-top: 0.8rem; padding-bottom: 0.8rem"
+          @click="goToList(item)">
           <div class="row g-3 align-items-center">
             <!-- <div class="col-auto text-secondary">
             <v-btn variant="text" icon="mdi-chevron-right" size="small">
@@ -214,7 +214,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: 30th November 2025 - 06:17:18
+ * Modified: 24th December 2025 - 18:38:02
  **/
 
 export default {
@@ -235,7 +235,7 @@ export default {
     // Created on Fri Oct 11 2024
     //+-------------------------------------------------
     goToList(item, edit = false) {
-      let slug = item.slug || item.uuid
+      const slug = item.slug || item.uuid
       navigateTo('/my/list/' + slug + (edit ? '/edit' : ''))
     },
   },

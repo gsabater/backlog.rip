@@ -1,5 +1,11 @@
 <template>
-  <img loading="lazy" :src="src" crossorigin="anonymous" @error="showAnother" @load="emitLoaded" />
+  <img
+    :key="src"
+    :src="src"
+    loading="lazy"
+    crossorigin="anonymous"
+    @error="showAnother"
+    @load="emitLoaded" />
 </template>
 
 <script>
@@ -13,7 +19,7 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: 27th November 2025 - 03:22:59
+ * Modified: 24th December 2025 - 18:38:47
  **/
 
 export default {

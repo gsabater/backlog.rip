@@ -24,9 +24,7 @@
             <h2 v-if="_genresStartsWith(letter).length > 0" :id="letter" class="mb-2">
               {{ letter }}
             </h2>
-            <div
-              v-if="genres.length > 0 && _genresStartsWith(letter).length > 0"
-              class="card mb-3">
+            <div v-if="genres.length > 0 && _genresStartsWith(letter).length > 0" class="card mb-3">
               <div class="list-group card-list-group">
                 <template v-for="(genre, ii) in _genresStartsWith(letter)" :key="ii">
                   <NuxtLink
@@ -58,11 +56,11 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 15th January 2024
- * Modified: Wed 18 December 2024 - 15:24:52
+ * Modified: 4th December 2025 - 12:19:04
  **/
 
 export default {
-  name: 'Genres',
+  name: 'DiscoverGenres',
 
   data() {
     return {

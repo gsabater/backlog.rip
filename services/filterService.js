@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: 31st October 2025 - 04:13:31
+ * Modified: 1st December 2025 - 03:49:50
  */
 
 let $nuxt = null
@@ -166,10 +166,10 @@ export default {
     library: {
       advanced: true,
 
-      label: 'Added to library',
+      label: 'Library date',
       plural: '',
       icon: 'Calendar',
-      desc: 'Filter games by their library date',
+      desc: 'Filter games by when they were added to your library',
     },
 
     achievements: {

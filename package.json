@@ -60,7 +60,7 @@
     "vue-sonner": "^2.0.1",
     "vue-tippy": "^6.7.1",
     "vuedraggable": "4.1.0",
-    "vuetify": "^3.11.5",
+    "vuetify": "3.11.6",
     "vuetify-nuxt-module": "0.19.1"
   },
   "tobeinstalled": {

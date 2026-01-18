@@ -170,20 +170,32 @@
         </label> -->
       </div>
     </div>
-    <div class="card-footer">
+    <div class="card-footer d-flex justify-content-between align-items-center">
       <small>
         Registered {{ $moment($auth.user.created_at).format('LL') }}
-        <template v-if="$cloud.sub">
+        <template v-if="$cloud.backup && $cloud.backup.sub">
           🔸
 
-          <span v-tippy="'This is your cloud user identifier'" class="text-muted cursor-help">
+          <span v-tippy="'This is your user unique identifier'" class="text-muted cursor-help">
             <Icon width="1.2" size="14" class="me-1" style="transform: translateY(-1px)">
               CloudRain
             </Icon>
-            <strong>... {{ ($cloud?.sub || '').substr(-8) }}</strong>
+            <em>... {{ ($cloud.backup?.sub || '').substr(-22) }}</em>
           </span>
         </template>
       </small>
+
+      <v-btn
+        v-if="$auth.is.logged"
+        v-tippy="'Request a new session token from the server'"
+        variant="text"
+        size="small"
+        @click="$auth.generateJWT()"
+        class="text-secondary"
+        style="position: absolute; right: 11px">
+        <Icon size="16" class="me-1">Refresh</Icon>
+        Refresh session
+      </v-btn>
     </div>
   </div>
 </template>
@@ -194,7 +206,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 31st October 2025 - 12:26:23
+ * Modified: 18th January 2026 - 08:40:27
  **/
 
 export default {
@@ -218,12 +230,6 @@ export default {
       // if (store == 'config') this.$auth.setConfig(field)
       // else this.$auth.updateAccount(field)
     },
-
-    async init() {},
-  },
-
-  mounted() {
-    this.init()
   },
 }
 </script>

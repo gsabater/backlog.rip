@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2023
- * Modified: 24th November 2025 - 05:33:43
+ * Modified: 18th January 2026 - 08:40:43
  */
 
 let $db = null
@@ -188,12 +188,7 @@ export const useUserStore = defineStore('user', {
 
         this.setJWT(jwt)
         await this.putAccount(this.cloud, 'cloud')
-        $nuxt.$mitt.emit('notification:show', {
-          mode: 'dialog',
-          title: 'A new session token has been generated',
-          message:
-            'Your session token expired and a new one has been generated automatically. You should reload the page to ensure proper functionality.',
-        })
+        $nuxt.$mitt.emit('reload:show')
       }
     },
 

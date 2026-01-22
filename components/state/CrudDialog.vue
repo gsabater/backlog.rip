@@ -3,7 +3,7 @@
     <v-card :loading="ui.loading">
       <template #title>
         <Icon>Background</Icon>
-        <span class="font-serif mx-2">States</span>
+        <div class="font-serif mx-2">States</div>
       </template>
 
       <v-form ref="form" v-model="ui.isValid">
@@ -104,7 +104,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th June 2024
- * Modified: 29th October 2025 - 11:59:54
+ * Modified: 31st December 2025 - 18:38:49
  **/
 
 export default {

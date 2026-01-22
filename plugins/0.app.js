@@ -6,7 +6,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 20th December 2023
- * Modified: 27th November 2025 - 04:38:25
+ * Modified: 22nd January 2026 - 13:04:13
  */
 
 // import { reactive } from 'vue'
@@ -208,8 +208,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   boot()
 
   $nuxt = nuxtApp
-  $log = $nuxt.$log
-
   app = reactive({
     init,
     register,

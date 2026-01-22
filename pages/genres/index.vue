@@ -56,7 +56,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 15th January 2024
- * Modified: 4th December 2025 - 12:19:04
+ * Modified: 27th December 2025 - 18:13:25
  **/
 
 export default {
@@ -79,12 +79,6 @@ export default {
 
       return this.genres.filter((genre) => genre.name?.toUpperCase().startsWith(letter))
     },
-
-    async init() {},
-  },
-
-  mounted() {
-    // this.init()
   },
 }
 </script>

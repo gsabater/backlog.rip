@@ -4,10 +4,9 @@
  * of data with the Supabase service.
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: 19th November 2025 - 03:59:12
+ * Modified: 25th December 2025 - 20:04:20
  */
 
-import { consoleWarn } from 'vuetify/lib/util/console.mjs'
 import supabase from '../modules/integrations/supabase'
 import backupService from '../services/backupService'
 

@@ -5,7 +5,7 @@
  *           https://neon.tech/blog/build-and-deploy-global-serverless-nuxt-ssr-app-with-cloudflare-hyperdrive-and-postgres
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: 25th December 2025 - 20:34:57
+ * Modified: 7th January 2026 - 17:02:08
  */
 
 import { defineNuxtConfig } from 'nuxt/config'
@@ -198,7 +198,7 @@ export default defineNuxtConfig({
     vscode: {},
     enabled: false,
     timeline: {
-      enabled: true,
+      enabled: false,
     },
   },
 })

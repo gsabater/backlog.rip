@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd November 2023
- * Modified: 6th October 2025 - 05:01:54
+ * Modified: 22nd January 2026 - 17:54:18
  */
 
 import backlogrip from '../modules/integrations/backlogrip'
@@ -15,7 +15,7 @@ export const useRepositoryStore = defineStore('repository', {
   state: () => ({
     loaded: [],
 
-    // Getter flags
+    // Lazy loaded flags
     // Those flags are set when the repository is loaded
     // triggering the getter again and returning the data
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

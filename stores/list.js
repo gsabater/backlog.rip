@@ -3,8 +3,11 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: 27th November 2025 - 01:39:28
+ * Modified: 6th February 2026 - 11:54:17
  */
+
+import supabase from '../modules/integrations/supabase'
+import supabaseService from '../services/supabaseService'
 
 let $db = null
 let $log = null
@@ -16,15 +19,17 @@ export const useListStore = defineStore('list', {
     list: { games: [] },
     lists: [],
 
-    base: {
+    model: {
       games: [],
+      author: {},
+      is_public: false,
 
       name: '',
       description: '',
-      visibility: 'public', // public, occult, private
       layout: 'ordered', // null
+      sortBy: 'none',
+      sortDir: 'desc',
       type: 'list', // dynamic, challenge
-      author: null,
       created_at: null,
       updated_at: null,
     },
@@ -36,6 +41,16 @@ export const useListStore = defineStore('list', {
   }),
 
   actions: {
+    //+-------------------------------------------------
+    // reset()
+    // Resets the state
+    // -----
+    // Created on Fri Feb 06 2026
+    //+-------------------------------------------------
+    reset() {
+      this.list = { ...this.model }
+    },
+
     //+-------------------------------------------------
     // use()
     // Assigns a deep copy of a list to this.list
@@ -57,7 +72,7 @@ export const useListStore = defineStore('list', {
       }
 
       this.list = {
-        ...this.base,
+        ...this.model,
         ...JSON.parse(JSON.stringify(list)),
       }
 
@@ -70,15 +85,19 @@ export const useListStore = defineStore('list', {
     // -----
     // Created on Tue Oct 08 2024
     //+-------------------------------------------------
-    async create(data) {
+    async create(payload) {
+      const data = { ...payload }
       delete data.action
 
-      data.uuid = `local:${$nuxt.$uuid()}`
+      data.uuid = $nuxt.$uuid()
       data.slug = this.makeSlug(data)
+      data.games = this.prepareGames(data)
+
       data.created_at = dates.now()
       data.updated_at = dates.now()
 
       await $db.lists.put(data)
+      await this.storePublic(data)
       $log('[ listStore.create ]', data)
 
       await this.load(true)
@@ -104,27 +123,14 @@ export const useListStore = defineStore('list', {
       let item = JSON.parse(JSON.stringify(data))
 
       await $db.lists.put(item)
-      // await this.updateAPI(item)
+      await this.storePublic(data)
+      $log('[ listStore.update ]', data)
 
       await this.load(true)
 
-      // Update this list if is the current one
+      // Update this list if is the active
       if (this.list.uuid == data.uuid) this.list = { ...this.list, ...data }
-
-      $log('[ listStore.update ]', data)
-    },
-
-    //+-------------------------------------------------
-    // updateAPI()
-    // Sends the list to the API
-    // -----
-    // Created on Thu Oct 24 2024
-    //+-------------------------------------------------
-    async updateAPI(data) {
-      let body = { ...data }
-      const xhr = await $nuxt.$axios.post('lists/update', body)
-
-      debugger
+      return data
     },
 
     //+-------------------------------------------------
@@ -133,8 +139,9 @@ export const useListStore = defineStore('list', {
     // -----
     // Created on Wed Nov 06 2024
     //+-------------------------------------------------
-    async delete(id) {
-      await $db.lists.delete(id)
+    async delete(list) {
+      await this.deletePublic(list)
+      await $db.lists.delete(list.uuid)
       await this.load(true)
 
       return true
@@ -221,15 +228,6 @@ export const useListStore = defineStore('list', {
       if (!list.games?.length) {
         list = this.lists.find((item) => item.uuid == list.uuid)
       }
-
-      // console.warn(
-      //   list.name,
-      //   app.name,
-      //   app.uuid,
-      //   app.id?.api,
-      //   list.games.some((item) => item.uuid == app.uuid || item.uuid == app.id?.api),
-      //   list.games
-      // )
 
       return list.games.some((item) => item.uuid == app.uuid || item.uuid == app.id?.api)
 
@@ -347,6 +345,58 @@ export const useListStore = defineStore('list', {
 
       $log(`[ Lists ] Loaded ${lists.length} lists`)
       console.debug(lists[Math.floor(Math.random() * lists.length)])
+    },
+
+    //+-------------------------------------------------
+    // loadPublic()
+    // Loads a public list from Supabase
+    // -----
+    // Created on Tue Jan 20 2026
+    //+-------------------------------------------------
+    async loadPublic(user, slug) {
+      let xhr = await supabaseService.getList(user, slug)
+      if (xhr == null) xhr = { games: [], not_found: true }
+
+      this.list = this.list = {
+        ...this.model,
+        ...xhr,
+      }
+
+      $data.process(xhr.games, 'list:populate')
+    },
+
+    //+-------------------------------------------------
+    // storePublic()
+    // Sends the list to Supabase.
+    // To avoid having too many lists, only public lists with games are sent.
+    // -----
+    // Created on Mon Jan 05 2026
+    //+-------------------------------------------------
+    async storePublic(list) {
+      if (!list?.id && !list.is_public) return
+      if (!list?.id && list.games.length === 0) return
+
+      let response = await supabase.storeList(list)
+
+      // The new list has been created in supabase
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (!list?.id && response?.id) {
+        list.id = response.id
+        await $db.lists.put(list)
+      }
+
+      return list
+    },
+
+    //+-------------------------------------------------
+    // deletePublic()
+    //
+    // -----
+    // Created on Thu Jan 29 2026
+    //+-------------------------------------------------
+    async deletePublic(list) {
+      if (!list?.id) return
+      await supabase.deleteList(list.id)
     },
 
     //+-------------------------------------------------

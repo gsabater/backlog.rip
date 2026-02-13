@@ -3,7 +3,7 @@
     <ClientOnly>
       <v-card>
         <template #title>
-          <Icon class="me-2">CloudRain</Icon>
+          <Icon name="tabler:cloud-rain" class="me-2" />
           Backup restoration
         </template>
 
@@ -87,7 +87,7 @@
                       v-tippy="hashText"
                       class="text-muted d-inline-block cursor-help"
                       :class="{ 'text-red': hasLibraryChanges }">
-                      <Icon size="18" class="ms-2">Signature</Icon>
+                      <Icon name="tabler:signature" size="18" class="ms-2" />
 
                       {{ local.library?.slice(-8) }}
                     </small>
@@ -98,7 +98,7 @@
                       v-tippy="hashText"
                       class="text-muted d-inline-block cursor-help"
                       :class="{ 'text-red': hasLibraryChanges }">
-                      <Icon size="18" class="ms-2">Signature</Icon>
+                      <Icon name="tabler:signature" size="18" class="ms-2" />
                       {{ backup?.sign_library?.slice(-8) }}
                     </small>
                   </td>
@@ -112,7 +112,7 @@
                       v-tippy="hashText"
                       class="text-muted d-inline-block cursor-help"
                       :class="{ 'text-red': hasStatesChanges }">
-                      <Icon size="18" class="ms-2">Signature</Icon>
+                      <Icon name="tabler:signature" size="18" class="ms-2" />
                       {{ local.states?.slice(-8) }}
                     </small>
                   </td>
@@ -122,7 +122,7 @@
                       v-tippy="hashText"
                       class="text-muted d-inline-block cursor-help"
                       :class="{ 'text-red': hasStatesChanges }">
-                      <Icon size="18" class="ms-2">Signature</Icon>
+                      <Icon name="tabler:signature" size="18" class="ms-2" />
                       {{ backup?.sign_states?.slice(-8) }}
                     </small>
                   </td>
@@ -136,7 +136,7 @@
                       v-tippy="hashText"
                       class="text-muted d-inline-block cursor-help"
                       :class="{ 'text-red': hasAccountChanges }">
-                      <Icon size="18">Signature</Icon>
+                      <Icon name="tabler:signature" size="18" />
                       {{ local.account?.slice(-8) }}
                     </small>
                     <small v-else class="text-muted d-inline-block">Never synced</small>
@@ -146,7 +146,7 @@
                       v-tippy="hashText"
                       class="text-muted d-inline-block cursor-help"
                       :class="{ 'text-red': hasAccountChanges }">
-                      <Icon size="18">Signature</Icon>
+                      <Icon name="tabler:signature" size="18" />
                       {{ backup?.sign_account?.slice(-8) }}
                     </small>
                   </td>
@@ -176,7 +176,7 @@
                     loaded data.
                   </div>
                   <v-btn color="green-darken-2 my-2" block variant="tonal" @click="reload">
-                    <Icon size="16" width="1" class="mx-2">Checks</Icon>
+                    <Icon name="tabler:checks" size="16" width="1" class="mx-2" />
                     Accept changes and reload
                   </v-btn>
                   <small class="text-muted d-block py-2 my-1">
@@ -191,13 +191,13 @@
               <template v-if="ui.step == 'conflict'">
                 <div class="col-6">
                   <v-btn color="deep-purple-lighten-2" block variant="tonal" @click="upload">
-                    <Icon size="18" width="1" class="mx-2">WorldUpload</Icon>
+                    <Icon name="tabler:world-upload" size="18" width="1" class="mx-2" />
                     Upload local
                   </v-btn>
                 </div>
                 <div class="col-6">
                   <v-btn color="deep-purple-lighten-2" block variant="tonal" @click="applyBackup">
-                    <Icon size="18" width="1" class="mx-2">WorldDownload</Icon>
+                    <Icon name="tabler:world-download" size="18" width="1" class="mx-2" />
                     Download cloud Backup
                   </v-btn>
                 </div>
@@ -206,7 +206,7 @@
               <template v-if="ui.step == 'restore'">
                 <div class="col-11 mx-auto text-center">
                   <v-btn color="deep-purple-lighten-2" block variant="tonal" @click="applyBackup">
-                    <Icon size="18" width="1" class="mx-2">WorldDownload</Icon>
+                    <Icon name="tabler:world-download" size="18" width="1" class="mx-2" />
                     Download cloud Backup
                   </v-btn>
                 </div>
@@ -225,7 +225,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 23rd August 2024
- * Modified: 5th November 2025 - 03:44:59
+ * Modified: 24th January 2026 - 10:58:23
  **/
 
 export default {

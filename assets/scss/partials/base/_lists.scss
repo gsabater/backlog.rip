@@ -15,6 +15,68 @@
   transform: rotate(180deg);
 }
 
+.list-group-item {
+  & .list__marquee {
+    position: absolute;
+    right: 0;
+    width: 50%;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    bottom: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    -webkit-mask:
+      linear-gradient(180deg, black 58%, rgba(0, 0, 0, 0) 95%),
+      radial-gradient(15.77% 44.22% at 50% 104.95%, rgba(66, 66, 66, 0) 0%, #333333 100%),
+      radial-gradient(30.95% 86.8% at 30.69% 13.2%, rgba(66, 66, 66, 0.33) 0%, #333333 100%),
+      radial-gradient(
+        51.31% 143.89% at 49.99% 24.75%,
+        #000000 0%,
+        #000000 52.6%,
+        rgba(0, 0, 0, 0.18) 83.33%,
+        rgba(0, 0, 0, 0) 95.31%
+      ),
+      radial-gradient(
+        51.31% 143.89% at 49.99% 24.75%,
+        #000000 0%,
+        #000000 52.6%,
+        rgba(0, 0, 0, 0.18) 83.33%,
+        rgba(0, 0, 0, 0) 95.31%
+      ),
+      linear-gradient(180deg, #000000 90%, rgba(0, 0, 0, 0) 100%);
+    mask:
+      linear-gradient(180deg, black 58%, rgba(0, 0, 0, 0) 95%),
+      radial-gradient(15.77% 44.22% at 50% 104.95%, rgba(66, 66, 66, 0) 0%, #333333 100%),
+      radial-gradient(30.95% 86.8% at 30.69% 13.2%, rgba(66, 66, 66, 0.33) 0%, #333333 100%),
+      radial-gradient(
+        51.31% 143.89% at 49.99% 24.75%,
+        #000000 0%,
+        #000000 52.6%,
+        rgba(0, 0, 0, 0.18) 83.33%,
+        rgba(0, 0, 0, 0) 95.31%
+      ),
+      radial-gradient(
+        51.31% 143.89% at 49.99% 24.75%,
+        #000000 0%,
+        #000000 52.6%,
+        rgba(0, 0, 0, 0.18) 83.33%,
+        rgba(0, 0, 0, 0) 95.31%
+      ),
+      linear-gradient(180deg, #000000 90%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: source-in;
+    transition:
+      background-image 0.1s ease-out,
+      filter 0.2s ease-out;
+    filter: brightness(0.6) grayscale(0.9) opacity(0.1);
+  }
+  &:hover .list__marquee {
+    filter: brightness(0.6) grayscale(0.6) opacity(0.3);
+  }
+}
+
 // List position input
 .list-position {
   max-width: 135px;

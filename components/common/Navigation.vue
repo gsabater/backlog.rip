@@ -10,7 +10,7 @@
               class="nav-item cursor-pointer"
               @click="$app.toggleSidebar()">
               <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                <Icon>LayoutSidebarInactive</Icon>
+                <Icon name="tabler:layout-sidebar-inactive" />
               </span>
             </li>
 
@@ -19,21 +19,21 @@
             <li class="nav-item dropdown">
               <div class="nav-link dropdown-toggle cursor-pointer ps-0">
                 <!-- <span class="nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon>ChartBubble</Icon>
+                  <Icon name="tabler:chart-bubble" />
                 </span> -->
                 <span class="nav-link-title pe-2">Explore</span>
               </div>
               <b-dropdown>
                 <NuxtLink to="/games" class="dropdown-item">
                   <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                    <Icon>Cards</Icon>
+                    <Icon name="tabler:cards" />
                   </span>
                   <span class="nav-link-title">All games</span>
                 </NuxtLink>
 
                 <NuxtLink to="/genres" class="dropdown-item">
                   <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                    <Icon>Triangles</Icon>
+                    <Icon name="tabler:triangles" />
                   </span>
                   <span class="nav-link-title">Genres</span>
                 </NuxtLink>
@@ -46,7 +46,7 @@
             <!-- <li class="nav-item">
               <NuxtLink to="/games" class="nav-link">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon>Cards</Icon>
+                  <Icon name="tabler:cards" />
                 </span>
                 <span class="nav-link-title">
                   Browse games
@@ -60,7 +60,7 @@
             <li class="nav-item">
               <NuxtLink to="/dashboard" class="nav-link">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon>LayoutDashboard</Icon>
+                  <Icon name="tabler:layout-dashboard" />
                 </span>
                 <span class="nav-link-title">Dashboard</span>
               </NuxtLink>
@@ -69,7 +69,7 @@
             <li class="nav-item">
               <NuxtLink to="/library" class="nav-link">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon>Apps</Icon>
+                  <Icon name="tabler:apps" />
                 </span>
                 <span class="nav-link-title">Library and backlog</span>
               </NuxtLink>
@@ -78,7 +78,7 @@
             <li class="nav-item">
               <NuxtLink to="/journal" class="nav-link">
                 <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                  <Icon>Notebook</Icon>
+                  <Icon name="tabler:notebook" />
                 </span>
                 <span class="nav-link-title">Journal</span>
               </NuxtLink>
@@ -87,7 +87,7 @@
             <li class="nav-item">
               <NuxtLink to="/import" class="nav-link">
                 <span class="nav-link-title text-orange">
-                  <Icon>StepInto</Icon>
+                  <Icon name="tabler:step-into" />
                   Import library
                 </span>
               </NuxtLink>
@@ -96,7 +96,7 @@
             <!-- <li v-if="$app.dev" class="nav-item">
               <NuxtLink to="/welcome" class="nav-link">
                 <span class="nav-link-title text-yellow">
-                  <Icon>Subtask</Icon>
+                  <Icon name="tabler:subtask" />
                   Onboarding
                 </span>
               </NuxtLink>
@@ -105,7 +105,7 @@
             <li v-if="$app.dev" class="nav-item">
               <NuxtLink to="/docs" class="nav-link">
                 <span class="nav-link-title text-purple">
-                  <Icon>Note</Icon>
+                  <Icon name="tabler:note" />
                   Documentation
                 </span>
               </NuxtLink>
@@ -119,7 +119,7 @@
                 <div class="progress-bar progress-bar-indeterminate"></div>
               </div>
               <span class="input-icon-addon">
-                <Icon class="mx-2">CloudDown</Icon>
+                <Icon name="tabler:cloud-down" class="mx-2" />
               </span>
               <input
                 type="text"
@@ -180,7 +180,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th November 2022
- * Modified: Thu 19 December 2024 - 09:59:56
+ * Modified: 23rd January 2026 - 23:11:36
  **/
 
 export default {

@@ -10,7 +10,7 @@
       style="outline: rgb(117 106 132 / 61%) solid 1px; outline-offset: 1px">
       <!-- <template v-slot:prepend>
         <div class="p-2">
-          <Icon size="18" width="1.5" class="text-muted">Flask</Icon>
+          <Icon name="tabler:flask" size="18" width="1.5" class="text-muted" />
         </div>
       </template> -->
       <template #title>
@@ -40,7 +40,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 31st January 2025
- * Modified: 26th June 2025 - 08:16:41
+ * Modified: 27th January 2026 - 18:57:22
  **/
 
 export default {

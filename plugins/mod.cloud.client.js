@@ -19,7 +19,7 @@
  * |- backup:conflict
  * -------------------------------------------
  * Created Date: 30th September 2025
- * Modified: 24th November 2025 - 05:06:33
+ * Modified: 7th February 2026 - 11:35:49
  */
 
 import supabase from '../modules/integrations/supabase.js'
@@ -83,9 +83,10 @@ async function connectCloudServices() {
   plugin.backup = { ...$backup.local, is: $backup.status }
 
   // Init Community service
+  // No longer used, use community store instead
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  let $guild = useGuildStore()
-  $guild.init()
+  // let $guild = useGuildStore()
+  // $guild.init()
 
   // Synchronization service
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

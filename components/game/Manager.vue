@@ -40,7 +40,7 @@
               class="status-dot status-dot-animated"
               style="margin-left: 5px"
               :style="{ 'background-color': currState?.color || 'transparent' }"></span>
-            <Icon v-else size="16" width="1" class="text-muted">Background</Icon>
+            <Icon name="tabler:background" v-else size="16" width="1" class="text-muted" />
           </div>
 
           <span>
@@ -48,7 +48,7 @@
           </span>
 
           <span class="text-muted ms-auto">
-            <Icon size="12">CaretRightFilled</Icon>
+            <Icon name="tabler:caret-right-filled" size="12" />
           </span>
           <b-dropdown
             singleton-group="manager"
@@ -69,10 +69,8 @@
                   type="checkbox"
                   class="form-check-input"
                   style="transform: scale(0.8)" /> - ->
-                <Icon v-if="app.state == state.id" style="color: var(--tblr-primary)">
-                  SquareCheck
-                </Icon>
-                <Icon v-else style="color: #666">Square</Icon>
+                <Icon name="tabler:square-check" v-if="app.state == state.id" style="color: var(--tblr-primary)" />
+                <Icon name="tabler:square" v-else style="color: #666" />
               </div> -->
                 <div class="d-flex justify-center" style="width: 30px">
                   <span
@@ -89,7 +87,7 @@
                     </span>
 
                     <code class="mx-2">
-                      <Icon size="10" width="1" class="">ArrowBack</Icon>
+                      <Icon name="tabler:arrow-back" size="10" width="1" class="" />
                       Undo
                     </code>
                   </div>
@@ -102,9 +100,7 @@
                 <!-- <tippy
                 class="text-muted ms-auto cursor-help ps-4"
                 :content="state.description">
-                <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-                  HelpSmall
-                </Icon>
+                <Icon name="tabler:help-small" width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%" />
               </tippy> -->
                 <!-- <div
                 class="content d-flex align-items-center w-100 px-1"
@@ -122,9 +118,7 @@
                     class="d-block text-muted pe-4 me-4"
                     style="margin-left: -2px"
                     v-if="app.state == state.id">
-                    <Icon size="12" width="1" style="margin-right: 2px; margin-top: -1px">
-                      ToggleLeft
-                    </Icon>
+                    <Icon name="tabler:toggle-left" size="12" width="1" style="margin-right: 2px; margin-top: -1px" />
                     Click again to reset
                   </small>
                 </div>
@@ -148,13 +142,13 @@
           *+--------------------------------- -->
         <div class="dropdown-item">
           <div class="d-flex nope-justify-content-center" style="width: 30px">
-            <Icon size="18" width="1" class="text-muted">Books</Icon>
+            <Icon name="tabler:mist" size="18" width="1" class="text-muted" />
           </div>
 
           <span>Add to a list</span>
 
           <span class="text-muted ms-auto">
-            <Icon size="12">CaretRightFilled</Icon>
+            <Icon name="tabler:caret-right-filled" size="12" />
           </span>
           <b-dropdown
             singleton-group="manager"
@@ -163,7 +157,7 @@
             style="overflow: visible; min-width: 240px">
             <div class="dropdown-item" @click="createList">
               <div class="d-flex nope-justify-content-center" style="width: 30px">
-                <Icon size="17" width="1.5" class="text-muted">SquareRoundedPlus</Icon>
+                <Icon name="tabler:square-rounded-plus" size="17" width="1.5" class="text-muted" />
               </div>
 
               <span>Create a new list</span>
@@ -182,14 +176,14 @@
                   type="checkbox"
                   class="form-check-input"
                   style="transform: scale(0.8)" /> - ->
-                <Icon v-if="app.state == state.id" style="color: var(--tblr-primary)">
+                <Icon name="tabler:home" v-if="app.state == state.id" style="color: var(--tblr-primary)">
                   SquareCheck
                 </Icon>
-                <Icon v-else style="color: #666">Square</Icon>
+                <Icon name="tabler:home" v-else style="color: #666">Square</Icon>
               </div> -->
 
               <div class="d-flex" style="width: 30px">
-                <Icon size="17" width="1.5" class="text-muted">Mist</Icon>
+                <Icon name="tabler:mist" size="17" width="1.5" class="text-muted" />
               </div>
 
               <div class="me-1">
@@ -198,7 +192,7 @@
 
               <template v-if="listHasApp(list, app)">
                 <small class="text-muted ms-auto hide-hover text-end" style="min-width: 40px">
-                  <Icon size="12" width="1">Check</Icon>
+                  <Icon name="tabler:check" size="12" width="1" />
                   Added
                 </small>
                 <small class="text-muted ms-auto show-hover text-end" style="min-width: 40px">
@@ -218,7 +212,7 @@
               <!-- <tippy
                 class="text-muted ms-auto cursor-help ps-4"
                 :content="state.description">
-                <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
+                <Icon name="tabler:home" width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
                   HelpSmall
                 </Icon>
               </tippy> -->
@@ -238,7 +232,7 @@
                     class="d-block text-muted pe-4 me-4"
                     style="margin-left: -2px"
                     v-if="app.state == state.id">
-                    <Icon size="12" width="1" style="margin-right: 2px; margin-top: -1px">
+                    <Icon name="tabler:home" size="12" width="1" style="margin-right: 2px; margin-top: -1px">
                       ToggleLeft
                     </Icon>
                     Click again to reset
@@ -265,7 +259,7 @@
           *+--------------------------------- -->
         <div v-if="!app.is || !app.is.lib" class="dropdown-item" @click="addToLibrary">
           <div class="d-flex nope-justify-content-center" style="width: 30px">
-            <Icon size="17" width="1.5" class="text-muted">SquareRoundedPlus</Icon>
+            <Icon name="tabler:square-rounded-plus" size="17" width="1.5" class="text-muted" />
           </div>
 
           <span>Add to your library</span>
@@ -286,19 +280,18 @@
           <template v-if="app.is && app.is.fav">
             <div class="d-flex nope-justify-content-center" style="width: 30px">
               <Icon
+                name="tabler:heart"
                 size="17"
                 width="1.5"
-                style="color: red; fill: #ff000094; filter: drop-shadow(1px 1px 6px #00000069)">
-                Heart
-              </Icon>
+                style="color: red; fill: #ff000094; filter: drop-shadow(1px 1px 6px #00000069)" />
             </div>
             <span>No longer favorite</span>
           </template>
 
           <template v-else>
             <div class="d-flex nope-justify-content-center" style="width: 30px">
-              <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
-              <!-- <Icon size="17" width="1.5" class="text-muted">BookmarkPlus</Icon> -->
+              <Icon name="tabler:heart" size="17" width="1.5" class="text-muted" />
+              <!-- <Icon name="tabler:bookmark-plus" size="17" width="1.5" class="text-muted" /> -->
             </div>
 
             <span>Add to favorites</span>
@@ -320,22 +313,21 @@
           <template v-if="app.is && app.is.pinned">
             <div class="d-flex nope-justify-content-center" style="width: 30px">
               <Icon
+                name="tabler:bookmark-filled"
                 size="17"
                 width="1.5"
                 style="
                   fill: #1f4112d9 !important;
                   filter: drop-shadow(rgba(0, 0, 0, 0.41) 1px 1px 6px);
                   stroke: #0b651c;
-                ">
-                BookmarkFilled
-              </Icon>
+                " />
             </div>
             <span>Unpin</span>
           </template>
 
           <template v-else>
             <div class="d-flex nope-justify-content-center" style="width: 30px">
-              <Icon size="17" width="1.5" class="text-muted">BookmarkPlus</Icon>
+              <Icon name="tabler:bookmark-plus" size="17" width="1.5" class="text-muted" />
             </div>
 
             <span>Pin this</span>
@@ -359,14 +351,14 @@
         <div class="dropdown-item" @click="setState({ id: 'hidden' })">
           <template v-if="app.is && app.is.hidden">
             <div class="d-flex nope-justify-content-center" style="width: 30px">
-              <Icon size="17" width="1.5">Restore</Icon>
+              <Icon name="tabler:restore" size="17" width="1.5" />
             </div>
             <span class="me-3">Restore visibility</span>
           </template>
 
           <template v-else>
             <div class="d-flex nope-justify-content-center" style="width: 30px">
-              <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
+              <Icon name="tabler:cancel" size="17" width="1.5" class="text-muted" />
             </div>
 
             <span>Hide this game</span>
@@ -388,7 +380,7 @@
         <template v-if="app.is && app.is.lib">
           <div class="dropdown-item" @click="deleteme">
             <div class="d-flex nope-justify-content-center" style="width: 30px">
-              <Icon size="17" width="1.5" class="text-muted">PlaylistX</Icon>
+              <Icon name="tabler:playlist-x" size="17" width="1.5" class="text-muted" />
             </div>
 
             <span>Remove from library</span>
@@ -404,7 +396,7 @@
 
         <div v-if="!ui.isRightClick" class="dropdown-item">
           <div class="d-flex nope-justify-content-center" style="width: 30px">
-            <Icon size="17" class="text-muted">Mouse</Icon>
+            <Icon name="tabler:mouse" size="17" class="text-muted" />
           </div>
 
           <div>
@@ -445,7 +437,7 @@
         class="dropdown-item"
         @click="setState(state)">
         <div class="d-flex justify-center" style="width: 30px">
-          <Icon v-if="isFav(state.name)" style="color: red; fill: pink">Heart</Icon>
+          <Icon name="tabler:home" v-if="isFav(state.name)" style="color: red; fill: pink">Heart</Icon>
           <span
             v-else
             class="badge"
@@ -456,7 +448,7 @@
           {{ state.name }}
         </span>
         <tippy class="text-muted ms-auto cursor-help" :content="state.description">
-          <Icon>HelpCircleFilled</Icon>
+          <Icon name="tabler:help-circle-filled" />
         </tippy>
         <span class="badge bg-primary text-primary-fg ms-auto">12</span>
       </label>
@@ -498,7 +490,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: 15th October 2025 - 03:05:20
+ * Modified: 25th January 2026 - 08:05:13
  **/
 
 export default {

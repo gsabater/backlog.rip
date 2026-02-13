@@ -6,11 +6,11 @@
       *+--------------------------------- -->
     <div v-if="f.is !== 'array'" class="col-6 col-md-auto d-flex align-items-center">
       <v-btn id="⚓source" variant="tonal" color="rgb(110 116 180)">
-        <Icon v-if="f.source == 'all'" size="14" class="me-1">Cards</Icon>
-        <Icon v-if="f.source == 'library'" size="14" class="me-1">LayoutDashboard</Icon>
-        <Icon v-if="f.source == 'library:favorites'" size="14" class="me-1">Heart</Icon>
-        <Icon v-if="f.source == 'library:pinned'" size="14" class="me-1">Bookmark</Icon>
-        <Icon v-if="f.source == 'library:hidden'" size="14" class="me-1">Cancel</Icon>
+        <Icon name="tabler:cards" v-if="f.source == 'all'" size="14" class="me-1" />
+        <Icon name="tabler:layout-dashboard" v-if="f.source == 'library'" size="14" class="me-1" />
+        <Icon name="tabler:heart" v-if="f.source == 'library:favorites'" size="14" class="me-1" />
+        <Icon name="tabler:bookmark" v-if="f.source == 'library:pinned'" size="14" class="me-1" />
+        <Icon name="tabler:cancel" v-if="f.source == 'library:hidden'" size="14" class="me-1" />
 
         <span
           v-if="sourceState"
@@ -20,14 +20,18 @@
 
         {{ sourceLabel }}
 
-        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">Selector</Icon>
+        <Icon
+          name="tabler:selector"
+          class="text-muted"
+          size="15"
+          style="transform: translate(5px, 1px)" />
 
         <b-tippy-sheety ref="source" to="#⚓source" trigger="click">
           <search-source-menu ref="sourceMenu" />
         </b-tippy-sheety>
       </v-btn>
 
-      <!-- <div class="text-muted mx-3"><Icon size="14">Spaces</Icon></div> -->
+      <!-- <div class="text-muted mx-3"><Icon name="tabler:home" size="14">Spaces</Icon></div> -->
     </div>
 
     <div v-if="false" class="col-6 col-md-auto">
@@ -40,13 +44,13 @@
           background-color: none;
           outline: rgb(108 122 145 / 40%) solid 1px;
         ">
-        <v-btn><Icon>Clock</Icon></v-btn>
+        <v-btn><Icon name="tabler:clock" /></v-btn>
         <v-btn
           v-tippy="'Run via Steam '"
           :href="'steam://run/'"
           slim
           style="height: 36px; min-width: 0">
-          <Icon size="14" width="1.5">BrowserShare</Icon>
+          <Icon name="tabler:browser-share" size="14" width="1.5" />
         </v-btn>
       </v-btn-group>
     </div>
@@ -57,10 +61,14 @@
       *+--------------------------------- -->
     <div class="col-6 col-md-auto d-flex align-items-center">
       <v-btn id="⚓filtersMenu" variant="tonal" color="rgb(110 116 180)">
-        <Icon size="15" class="me-1">Filter</Icon>
+        <Icon name="tabler:filter" size="15" class="me-1" />
         Filter
 
-        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">Selector</Icon>
+        <Icon
+          name="tabler:selector"
+          class="text-muted"
+          size="15"
+          style="transform: translate(5px, 1px)" />
 
         <b-tippy-sheety to="#⚓filtersMenu" trigger="click">
           <search-filters-menu ref="filtersMenu" @selected="handleNewFilter" />
@@ -90,13 +98,17 @@
             <search-filter-tag :index="i" :current="filter" mode="keyboard" />
           </template>
 
-          <Icon v-else size="14" class="text-secondary me-2">Search</Icon>
+          <Icon name="tabler:search" v-else size="14" class="text-secondary me-2" />
         </template>
 
         <template v-slot:clear>
-          <Icon size="18" class="mx-2" width="2" style="min-width: 1em" @click="clearSearchBox">
-            SquareRoundedX
-          </Icon>
+          <Icon
+            name="tabler:square-rounded-x"
+            size="18"
+            class="mx-2"
+            width="2"
+            style="min-width: 1em"
+            @click="clearSearchBox" />
         </template>
 
         <!-- <template #append>
@@ -176,9 +188,11 @@
             "
             class="d-inline-block"
             style="cursor: help">
-            <Icon size="10" class="text-muted ms-1" style="transform: translateY(-1px)">
-              ClockRecord
-            </Icon>
+            <Icon
+              name="tabler:clock-record"
+              size="10"
+              class="text-muted ms-1"
+              style="transform: translateY(-1px)" />
 
             {{ dates.microTime(time) }}
           </span>
@@ -189,7 +203,7 @@
       <v-btn id="⚓sortby" variant="text" size="small" color="blue-grey-lighten-1">
         <small>
           <template v-if="f.sortBy == 'none'">
-            <span>Sorted by the author</span>
+            <span>Not sorted</span>
           </template>
           <template v-else>
             Sorting by
@@ -200,7 +214,11 @@
           </template>
         </small>
 
-        <Icon class="text-muted" size="15" style="transform: translate(5px, 1px)">Selector</Icon>
+        <Icon
+          name="tabler:selector"
+          class="text-muted"
+          size="15"
+          style="transform: translate(5px, 1px)" />
 
         <b-tippy-sheety to="#⚓sortby" trigger="click">
           <search-sort-menu @sort="sortBy" />
@@ -217,7 +235,7 @@
         size="x-small"
         color="blue-grey-lighten-1"
         @click="f.show.layout = 'list'">
-        <Icon width="1.2" size="16" class="mx-1">LayoutList</Icon>
+        <Icon name="tabler:layout-list" width="1.2" size="16" class="mx-1" />
       </v-btn>
 
       <v-btn
@@ -227,7 +245,7 @@
         size="x-small"
         color="blue-grey-lighten-1"
         @click="f.show.layout = 'grid'">
-        <Icon width="1.2" size="16" class="mx-1">LayoutGrid</Icon>
+        <Icon name="tabler:layout-grid" width="1.2" size="16" class="mx-1" />
       </v-btn>
 
       <v-btn
@@ -237,8 +255,8 @@
         size="x-small"
         color="blue-grey-lighten-1"
         @click="$mitt.emit('game:random', { filters: f })">
-        <Icon width="1.2" size="16" class="mx-1">Dice5</Icon>
-        <!-- <Icon class="text-muted" size="12" width="2">ChevronDown</Icon> -->
+        <Icon name="tabler:dice-5" width="1.2" size="16" class="mx-1" />
+        <!-- <Icon name="tabler:chevron-down" class="text-muted" size="12" width="2" /> -->
       </v-btn>
 
       <v-btn
@@ -248,8 +266,8 @@
         color="blue-grey-lighten-1"
         class="px-1 mx-0"
         style="--v-activated-opacity: 0.05">
-        <Icon width="1.2" size="16" class="me-1">PlayCardStar</Icon>
-        <Icon class="text-muted" size="12" width="2">ChevronDown</Icon>
+        <Icon name="tabler:play-card-star" width="1.2" size="16" class="me-1" />
+        <Icon name="tabler:chevron-down" class="text-muted" size="12" width="2" />
 
         <b-tippy-sheety to="#⚓itemDetails" trigger="click">
           <search-item-details :f="f" @show="visibleProps" />
@@ -295,7 +313,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 7th February 2024
- * Modified: 27th November 2025 - 05:02:12
+ * Modified: 29th January 2026 - 13:53:41
  **/
 
 export default {

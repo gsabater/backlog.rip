@@ -10,7 +10,7 @@
         <span class="font-serif mx-2">About Backlog.rip</span>
         <span class="ms-auto">
           <v-btn icon @click="ui.show = false" size="small" variant="text">
-            <Icon class="m-0" width="2">X</Icon>
+            <Icon name="tabler:x" class="m-0" width="2" />
           </v-btn>
         </span>
       </template>
@@ -30,11 +30,15 @@
             </h4>
             <a
               href="https://github.com/gsabater/backlog.rip"
-              class="text-secondary"
+              class="badge text-secondary"
               target="_blank"
               rel="noopener">
-              https://github.com/sabater/backlog.rip
-              <Icon width="1" size="11" style="transform: translateY(-1px)">ExternalLink</Icon>
+              gsabater/backlog.rip
+              <Icon
+                name="tabler:external-link"
+                width="1"
+                size="11"
+                style="transform: translateY(-1px)" />
             </a>
           </div>
 
@@ -66,7 +70,11 @@
                 target="_blank"
                 rel="noopener">
                 Nuxt.com
-                <Icon width="1" size="11" style="transform: translateY(-0px)">ExternalLink</Icon>
+                <Icon
+                  name="tabler:external-link"
+                  width="1"
+                  size="11"
+                  style="transform: translateY(-0px)" />
               </a>
             </span>
           </div>
@@ -83,7 +91,11 @@
                 target="_blank"
                 rel="noopener">
                 tabler.io
-                <Icon width="1" size="11" style="transform: translateY(-0px)">ExternalLink</Icon>
+                <Icon
+                  name="tabler:external-link"
+                  width="1"
+                  size="11"
+                  style="transform: translateY(-0px)" />
               </a>
             </span>
           </div>
@@ -100,7 +112,11 @@
                 target="_blank"
                 rel="noopener">
                 vuetifyjs.com
-                <Icon width="1" size="11" style="transform: translateY(-0px)">ExternalLink</Icon>
+                <Icon
+                  name="tabler:external-link"
+                  width="1"
+                  size="11"
+                  style="transform: translateY(-0px)" />
               </a>
             </span>
           </div>
@@ -117,7 +133,11 @@
                 target="_blank"
                 rel="noopener">
                 dexie.org
-                <Icon width="1" size="11" style="transform: translateY(-0px)">ExternalLink</Icon>
+                <Icon
+                  name="tabler:external-link"
+                  width="1"
+                  size="11"
+                  style="transform: translateY(-0px)" />
               </a>
             </span>
           </div>
@@ -134,7 +154,11 @@
               target="_blank"
               rel="noopener">
               transhumans.xyz
-              <Icon width="1" size="11" style="transform: translateY(-0px)">ExternalLink</Icon>
+              <Icon
+                name="tabler:external-link"
+                width="1"
+                size="11"
+                style="transform: translateY(-0px)" />
             </a>
           </div>
 
@@ -149,7 +173,7 @@
               Other great libraries used
             </h4>
             <span class="text-secondary">
-              axios, Bootstrap, dayjs, mitt, pinia, swiper, Tabler Icons, uuid, vue final modal, vue
+              axios, Bootstrap, dayjs, mitt, pinia, Swiper, Tabler Icons, uuid, vue final modal, vue
               sonner, vue tippy
             </span>
           </div>
@@ -170,7 +194,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th October 2025
- * Modified: 19th October 2025 - 01:43:55
+ * Modified: 27th January 2026 - 18:55:41
  **/
 
 export default {

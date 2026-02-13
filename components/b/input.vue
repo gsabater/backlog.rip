@@ -41,7 +41,7 @@
 
     <div class="input-icon">
       <span v-if="$attrs['prepend-icon']" class="input-icon-addon">
-        <Icon :icon="$attrs['prepend-icon']"></Icon>
+        <Icon :name="'tabler:' + $attrs['prepend-icon']" />
       </span>
 
       <input
@@ -55,7 +55,7 @@
         @input="onChange" />
 
       <span v-if="$attrs['append-icon']" class="input-icon-addon">
-        <Icon :icon="$attrs['append-icon']"></Icon>
+        <Icon :name="'tabler:' + $attrs['append-icon']" />
       </span>
 
       <span
@@ -63,7 +63,7 @@
         class="input-icon-addon cursor-pointer action-icon"
         :class="{ active: modelValue !== '' }"
         @click="onClear">
-        <Icon>SquareRoundedX</Icon>
+        <Icon name="tabler:square-rounded-x" />
       </span>
 
       <span v-if="loading" class="input-icon-addon">
@@ -103,7 +103,7 @@
  * @ref:     https://vuetifyjs.com/en/components/text-fields/#usage
  * -------------------------------------------
  * Created Date: 25th October 2023
- * Modified: Thu Jan 25 2024
+ * Modified: 24th January 2026 - 10:56:56
  **/
 
 export default {

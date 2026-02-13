@@ -19,7 +19,9 @@
             <div class="row pt-2 px-1">
               <div class="col">
                 <small class="text-muted">
-                  <Icon style="transform: translateY(-1px); margin-right: 2px">Photo</Icon>
+                  <Icon name="tabler:home" style="transform: translateY(-1px); margin-right: 2px">
+                    Photo
+                  </Icon>
                   Image created with AI
                 </small>
               </div>
@@ -31,7 +33,9 @@
                     theme: 'translucent',
                   }"
                   class="text-muted cursor-help">
-                  <Icon style="transform: translateY(-1px); margin-right: 2px">Terminal2</Icon>
+                  <Icon name="tabler:home" style="transform: translateY(-1px); margin-right: 2px">
+                    Terminal2
+                  </Icon>
                   Prompt
                 </small>
               </div>
@@ -105,7 +109,7 @@
               </p>
               <p>You start with 7 states, but you can modify them to fit your needs.</p>
               <b-btn to="library" class="btn btn-primary w-100 my-4">
-                <!-- <Icon class="me-2">ArrowsTransferDown</Icon> -->
+                <!-- <Icon name="tabler:home" class="me-2">ArrowsTransferDown</Icon> -->
                 View your library
               </b-btn>
             </div>
@@ -122,7 +126,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 19th January 2024
- * Modified: 11th November 2025 - 11:03:38
+ * Modified: 23rd January 2026 - 23:12:04
  **/
 
 export default {

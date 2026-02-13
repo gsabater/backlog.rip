@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th January 2024
- * Modified: Tue Jun 17 2025
+ * Modified: 29th January 2026 - 15:20:11
  */
 
 import filterService from './filterService'
@@ -221,65 +221,9 @@ export default {
       // Index: toSort
       // Create an index of elements to sort
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (filters?.sortBy == 'rand') {
-        toSort.push({ uuid: app.uuid, val: Math.random() })
-      }
-
-      if (filters?.sortBy == 'name') {
-        toSort.push({ uuid: app.uuid, val: appName || '' })
-      }
-
-      if (filters?.sortBy == 'score') {
-        toSort.push({ uuid: app.uuid, val: app.score || 0 })
-      }
-
-      if (filters.sortBy == 'metascore') {
-        toSort.push({ uuid: app.uuid, val: app.scores.metascore || 0 })
-      }
-
-      if (filters.sortBy == 'oc') {
-        toSort.push({ uuid: app.uuid, val: app.scores.oc || 0 })
-      }
-
-      if (filters.sortBy == 'steamscore') {
-        toSort.push({ uuid: app.uuid, val: app.scores.steamscore || 0 })
-      }
-
-      if (filters.sortBy == 'steamdb') {
-        toSort.push({ uuid: app.uuid, val: app.scores.steamdb || 0 })
-      }
-
-      if (filters?.sortBy == 'date.released') {
-        toSort.push({ uuid: app.uuid, val: app.dates.released || 0 })
-      }
-
-      if (filters?.sortBy == 'playtime') {
-        toSort.push({ uuid: app.uuid, val: app.playtime?.steam || 0 })
-      }
-
-      if (filters?.sortBy == 'achievements') {
-        toSort.push({ uuid: app.uuid, val: app._?.astats?.percentage || 0 })
-      }
-
-      if (filters?.sortBy == 'hltb') {
-        toSort.push({ uuid: app.uuid, val: app.hltb?.main || 0 })
-      }
-
-      if (filters.sortBy == 'date.lib') {
-        toSort.push({ uuid: app.uuid, val: app.is.lib })
-      }
-
-      if (!filters?.sortBy || filters?.sortBy == 'user') {
-        toSort.push({ uuid: app.uuid })
-      }
+      const sortValue = this.sortValue(app, filters.sortBy)
+      toSort.push({ uuid: app.uuid, val: sortValue })
     }
-
-    // log(
-    //   '✅ Filter done (amount, first, data[first])',
-    //   items.length,
-    //   items[0],
-    //   window.db?.d?.[items[0]]
-    // )
 
     let sorted = this.sort(toSort, filters)
 
@@ -366,6 +310,32 @@ export default {
     // Just return the items
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     return items.map((item) => item.uuid)
+  },
+
+  //+-------------------------------------------------
+  // sortValue()
+  // Returns the field value to sort by
+  // -----
+  // Created on Thu Jan 29 2026
+  //+-------------------------------------------------
+  sortValue(app, sortBy) {
+    const sortMappings = {
+      'rand': () => Math.random(),
+      'name': () => this.cleanAppName(app.name) || '',
+      'score': () => app.score || 0,
+      'metascore': () => app.scores?.metascore || 0,
+      'oc': () => app.scores?.oc || 0,
+      'steamscore': () => app.scores?.steamscore || 0,
+      'steamdb': () => app.scores?.steamdb || 0,
+      'date.released': () => app.dates?.released || 0,
+      'playtime': () => app.playtime?.steam || 0,
+      'achievements': () => app._?.astats?.percentage || 0,
+      'hltb': () => app.hltb?.main || 0,
+      'date.lib': () => app.is?.lib || 0,
+    }
+
+    const getValue = sortMappings[sortBy]
+    return getValue ? getValue() : undefined
   },
 
   //+-------------------------------------------------

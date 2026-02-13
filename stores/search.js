@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th September 2024
- * Modified: 1st December 2025 - 05:35:47
+ * Modified: 6th February 2026 - 11:53:24
  */
 
 import searchService from '../services/searchService'
@@ -35,7 +35,7 @@ export const useSearchStore = defineStore('search', {
     latest: null,
 
     // config
-    // Base configuration template
+    // Configuration template
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     config: {
       init: false,
@@ -44,10 +44,9 @@ export const useSearchStore = defineStore('search', {
       getRouteFilters: false,
     },
 
-    // base
     // Base filters template
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    base: {
+    model: {
       box: '',
       string: '',
 
@@ -128,11 +127,11 @@ export const useSearchStore = defineStore('search', {
     //+-------------------------------------------------
     async prepare(config = {}) {
       let f = {}
-      const base = JSON.parse(JSON.stringify(this.base))
+      const baseFilters = JSON.parse(JSON.stringify(this.model))
 
       // Merge the given filters and the template
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      f = this.mergeBaseFilters(f, base || {})
+      f = this.mergeBaseFilters(f, baseFilters || {})
       f = this.mergeBaseFilters(f, config || {})
 
       // Route base params

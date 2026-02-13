@@ -36,7 +36,7 @@
                         {{ genre.name }}
                       </div>
                       <div class="col-auto text-secondary">
-                        <Icon size="12">CaretRightFilled</Icon>
+                        <Icon name="tabler:caret-right-filled" size="12" />
                       </div>
                     </div>
                   </NuxtLink>
@@ -56,7 +56,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 15th January 2024
- * Modified: 27th December 2025 - 18:13:25
+ * Modified: 28th January 2026 - 17:36:06
  **/
 
 export default {

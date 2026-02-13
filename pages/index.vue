@@ -1,8 +1,8 @@
 <template>
-  <section class="home-hero py-4">
-    <div class="container-xl">
+  <section class="home-hero py-8">
+    <div class="container-xl py-3">
       <div class="row align-items-center">
-        <div class="col-6 text-center px-4">
+        <div class="col-12 text-center px-4" style="position: relative; z-index: 20">
           <h1 class="hero-title">Backlog.rip</h1>
 
           <p class="hero-description">
@@ -14,8 +14,8 @@
             </span>
           </p>
 
-          <div class="my-2">
-            <div class="row justify-center my-5">
+          <div class="my-5">
+            <div class="row justify-center my-3">
               <div class="col-auto">&nbsp;</div>
               <div class="col-auto">
                 <!-- <v-btn
@@ -118,19 +118,110 @@
             </p>
           </div>
         </div>
-        <div class="col-6">
+        <div
+          class="col-12"
+          style="position: absolute; top: 0; right: 0; left: 0; pointer-events: none">
           <main>
             <div class="main-wcontent">
-              <div class="scene">
-                <div class="group">
-                  <div v-for="item in randPosters" :key="item" class="xcard">
-                    <div
-                      class="xcard__img"
-                      :style="`
-                        background-image: url(https://steamcdn-a.akamaihd.net/steam/apps/${item}/library_600x900.jpg);`"></div>
+              <ClientOnly>
+                <div
+                  class="p-0 position-relative"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position-x: center;
+                    -webkit-mask:
+                      linear-gradient(180deg, black 58%, rgba(0, 0, 0, 0) 95%),
+                      radial-gradient(
+                        15.77% 44.22% at 50% 104.95%,
+                        rgba(66, 66, 66, 0) 0%,
+                        #333333 100%
+                      ),
+                      radial-gradient(
+                        30.95% 86.8% at 30.69% 13.2%,
+                        rgba(66, 66, 66, 0.33) 0%,
+                        #333333 100%
+                      ),
+                      radial-gradient(
+                        51.31% 143.89% at 49.99% 24.75%,
+                        #000000 0%,
+                        #000000 52.6%,
+                        rgba(0, 0, 0, 0.18) 83.33%,
+                        rgba(0, 0, 0, 0) 95.31%
+                      ),
+                      radial-gradient(
+                        51.31% 143.89% at 49.99% 24.75%,
+                        #000000 0%,
+                        #000000 52.6%,
+                        rgba(0, 0, 0, 0.18) 83.33%,
+                        rgba(0, 0, 0, 0) 95.31%
+                      ),
+                      linear-gradient(180deg, #000000 90%, rgba(0, 0, 0, 0) 100%);
+                    mask:
+                      linear-gradient(180deg, black 58%, rgba(0, 0, 0, 0) 95%),
+                      radial-gradient(
+                        15.77% 44.22% at 50% 104.95%,
+                        rgba(66, 66, 66, 0) 0%,
+                        #333333 100%
+                      ),
+                      radial-gradient(
+                        30.95% 86.8% at 30.69% 13.2%,
+                        rgba(66, 66, 66, 0.33) 0%,
+                        #333333 100%
+                      ),
+                      radial-gradient(
+                        51.31% 143.89% at 49.99% 24.75%,
+                        #000000 0%,
+                        #000000 52.6%,
+                        rgba(0, 0, 0, 0.18) 83.33%,
+                        rgba(0, 0, 0, 0) 95.31%
+                      ),
+                      radial-gradient(
+                        51.31% 143.89% at 49.99% 24.75%,
+                        #000000 0%,
+                        #000000 52.6%,
+                        rgba(0, 0, 0, 0.18) 83.33%,
+                        rgba(0, 0, 0, 0) 95.31%
+                      ),
+                      linear-gradient(180deg, #000000 90%, rgba(0, 0, 0, 0) 100%);
+                    -webkit-mask-composite: source-in;
+                    mask-composite: source-in;
+                    transition:
+                      background-image 0.1s ease-out,
+                      filter 0.2s ease-out;
+                    filter: brightness(0.6) grayscale(0.9) opacity(0.1);
+                  ">
+                  <common-backgrquee
+                    :images="[
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/440/library_600x900.jpg',
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/252490/library_600x900.jpg',
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/271590/library_600x900.jpg',
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/304930/library_600x900.jpg',
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/359550/library_600x900.jpg',
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/library_600x900.jpg',
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/381210/library_600x900.jpg',
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/413150/library_600x900.jpg',
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/487430/library_600x900.jpg',
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/582010/library_600x900.jpg',
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/945360/library_600x900.jpg',
+                      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1085660/library_600x900.jpg',
+                    ]"
+                    :columns="6"
+                    :gap="10"
+                    :rotation="33"
+                    :speed="75"
+                    :scale="1.5"
+                    :image-height="190" />
+
+                  <div
+                    class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                    style="background: rgba(0, 0, 0, 0.4)">
+                    <h3 class="fw-bold">Widget</h3>
                   </div>
                 </div>
-              </div>
+              </ClientOnly>
             </div>
           </main>
         </div>
@@ -218,7 +309,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: 24th December 2025 - 18:30:58
+ * Modified: 23rd January 2026 - 16:52:41
  **/
 
 export default {
@@ -245,10 +336,6 @@ export default {
   computed: {
     ...mapStores(useDataStore, useRepositoryStore),
     ...mapState(useRepositoryStore, ['hot', 'genres', 'loaded']),
-
-    randPosters() {
-      return this.posters.sort(() => Math.random() - 0.5).slice(0, 8)
-    },
   },
 
   watch: {
@@ -259,14 +346,13 @@ export default {
 
   methods: {
     async init() {
-      if (!this.$app.ready) return
-
-      this.$wow()
-      this.dataStore.process(this.gameAwardsNominees, 'list:batch')
+      // if (!this.$app.ready) return
+      // this.$wow()
+      // this.dataStore.process(this.gameAwardsNominees, 'list:batch')
     },
   },
   mounted() {
-    this.init()
+    // this.init()
   },
 }
 </script>
@@ -275,14 +361,6 @@ export default {
 /* https://codepen.io/thebabydino/pen/abjpEbz */
 svg[height='0'] {
   position: fixed;
-}
-
-header.herod {
-  background: radial-gradient(circle, #191a22, rgb(46, 18, 94), #191a22);
-  /* background: url(https://images.unsplash.com/photo-1633596683562-4a47eb4983c5?w=1400) 50% /    cover; */
-
-  /* filter: url(#grainy); */
-  border-bottom: 2px solid #191a22;
 }
 
 section.home-hero {
@@ -295,66 +373,11 @@ section.home-hero:after {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: -1;
+  z-index: 10;
   display: block;
   width: 100%;
   height: 100%;
   background: linear-gradient(to top, #1d1630, transparent);
-}
-
-.frame {
-  padding: var(--page-padding);
-  position: relative;
-  text-transform: uppercase;
-  font-size: 12px;
-  display: grid;
-  z-index: 1000;
-  width: 100%;
-  height: 100%;
-  grid-row-gap: 1rem;
-  grid-column-gap: 2rem;
-  pointer-events: none;
-  justify-items: start;
-  grid-template-columns: auto auto;
-  grid-template-areas: 'title' 'archive' 'back' 'github' 'demos' 'sponsor' 'tags';
-}
-
-.frame #cdawrap {
-  justify-self: start;
-}
-
-.frame a {
-  pointer-events: auto;
-}
-
-.frame__title {
-  grid-area: title;
-  font-size: inherit;
-  margin: 0;
-}
-
-.frame__back {
-  grid-area: back;
-  justify-self: start;
-}
-
-.frame__archive {
-  grid-area: archive;
-  justify-self: start;
-}
-
-.frame__tags {
-  grid-area: tags;
-}
-
-.frame__github {
-  grid-area: github;
-}
-
-.frame__demos {
-  grid-area: demos;
-  display: flex;
-  gap: 1rem;
 }
 
 main .main-wcontent {
@@ -363,57 +386,5 @@ main .main-wcontent {
   align-items: center;
   height: 60vh;
   position: relative;
-}
-
-.scene {
-  opacity: 0;
-  perspective: 1000px;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  left: 0;
-  top: 0;
-}
-
-.xcard {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.xcard__img {
-  width: 5em;
-  border-radius: 5px;
-  aspect-ratio: 2/3;
-  background-position: center;
-  background-size: cover;
-}
-
-@media screen and (min-width: 53em) {
-  .frame {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    grid-template-columns: auto auto auto 1fr;
-    grid-template-rows: auto auto;
-    align-content: space-between;
-    grid-template-areas: 'title back archive github sponsor' 'tags tags tags demos demos';
-  }
-  .frame #cdawrap,
-  .frame__demos {
-    justify-self: end;
-  }
-
-  .xcard__img {
-    width: 6em;
-  }
 }
 </style>

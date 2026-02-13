@@ -22,44 +22,44 @@
 
     <NuxtLink to="/games" class="dropdown-item">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-        <Icon size="16">Cards</Icon>
+        <Icon name="tabler:cards" size="16" />
       </span>
       <span class="nav-link-title">All games</span>
     </NuxtLink>
 
     <NuxtLink to="/genres" class="dropdown-item">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-        <Icon size="16">Triangle</Icon>
+        <Icon name="tabler:triangle" size="16" />
       </span>
       <span class="nav-link-title">Genres</span>
     </NuxtLink>
 
-    <template v-if="$app.wip">
-      <div class="dropdown-divider"></div>
-
-      <span class="dropdown-header">
-        <span class="text-muted my-2">Community</span>
-      </span>
-
-      <NuxtLink to="/community" class="dropdown-item">
-        <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="16">Components</Icon>
-        </span>
-        <span class="nav-link-title">Community</span>
-      </NuxtLink>
-    </template>
-
-    <NuxtLink v-if="$app.dev" class="dropdown-item">
+    <NuxtLink to="/community/lists" class="dropdown-item">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-        <Icon size="16">Components</Icon>
+        <Icon name="tabler:mist" size="16" />
+      </span>
+      <span class="nav-link-title">Lists</span>
+    </NuxtLink>
+
+    <!-- <div class="dropdown-divider"></div>
+
+    <span class="dropdown-header">
+      <span class="text-muted my-2">Community</span>
+    </span>
+
+
+
+    <NuxtLink v-if="$app.dev" class="dropdown-item" style="opacity: 0.5">
+      <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
+        <Icon name="tabler:home" size="16">Components</Icon>
       </span>
       <span class="nav-link-title">Dashboard</span>
-    </NuxtLink>
+    </NuxtLink> -->
     <!--
 
           <NuxtLink to="/journal" class="dropdown-item">
             <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-              <Icon size="16">Notebook</Icon>
+              <Icon name="tabler:home" size="16">Notebook</Icon>
             </span>
             <span class="nav-link-title">Journal</span>
             <small class="ms-auto text-secondary">
@@ -84,14 +84,14 @@
 
     <client-only>
       <span class="dropdown-header">
-        <span class="text-muted my-2">Your games</span>
+        <span class="text-muted my-2">Your library</span>
       </span>
 
       <NuxtLink to="/library" class="dropdown-item control-hover">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="16">LayoutDashboard</Icon>
+          <Icon name="tabler:layout-dashboard" size="16" />
         </span>
-        <span class="nav-link-title">Library</span>
+        <span class="nav-link-title">Your games</span>
 
         <small class="ms-auto text-secondary hide-hover">
           {{ format.num($app.count.library) }}
@@ -102,14 +102,13 @@
           style="outline: none; transform: translateX(4px)"
           class="ms-auto me-1 text-secondary show-hover cursor-pointer"
           size="15"
-          @click.prevent="goTo('/account/preferences')">
-          Settings2
-        </Icon>
+          name="tabler:settings-2"
+          @click.prevent="goTo('/account/preferences')" />
       </NuxtLink>
 
       <NuxtLink to="/account/lists" class="dropdown-item control-hover">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="16">Mist</Icon>
+          <Icon name="tabler:mist" size="16" />
         </span>
 
         <span class="nav-link-title">Your lists</span>
@@ -123,15 +122,14 @@
           style="float: right; outline: none; transform: translateX(4px)"
           class="ms-auto me-1 text-secondary show-hover cursor-pointer"
           size="15"
-          @click.prevent="$mitt.emit('list:create')">
-          SquareRoundedPlus
-        </Icon>
+          name="tabler:square-rounded-plus"
+          @click.prevent="$mitt.emit('list:create')" />
       </NuxtLink>
 
       <NuxtLink v-if="$auth.menu.favorites" to="/library/favorites" class="dropdown-item">
         <div class="content d-flex align-items-center w-100">
           <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-            <Icon size="16">Heart</Icon>
+            <Icon name="tabler:heart" size="16" />
           </span>
           <span class="nav-link-title me-4">Favorites</span>
           <small v-if="$app.count.fav > 0" class="ms-auto text-secondary">
@@ -143,7 +141,7 @@
       <NuxtLink v-if="$auth.menu.pinned" to="/library/pinned" class="dropdown-item">
         <div class="content d-flex align-items-center w-100">
           <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-            <Icon size="16">Bookmark</Icon>
+            <Icon name="tabler:bookmark" size="16" />
           </span>
 
           <span class="nav-link-title me-4">Pinned</span>
@@ -183,7 +181,7 @@
 
       <NuxtLink to="/import" class="dropdown-item">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="16">Refresh</Icon>
+          <Icon name="tabler:refresh" size="16" />
         </span>
         <span class="nav-link-title">Library sync</span>
       </NuxtLink>
@@ -197,7 +195,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th March 2025
- * Modified: 19th November 2025 - 02:46:48
+ * Modified: 25th January 2026 - 08:04:25
  **/
 
 export default {

@@ -1,10 +1,9 @@
 /*
  * @file:    \utils\constants.js
  * @desc:    ...
- *           CONST.api.baseUrl
  * ----------------------------------------------
  * Created Date: 16th September 2024
- * Modified: Fri 28 March 2025 - 15:37:28
+ * Modified: 6th February 2026 - 11:53:45
  */
 
 export const CONST = {
@@ -13,7 +12,7 @@ export const CONST = {
 
   // API endpoints
   api: {
-    baseUrl: process.env.API_BASE_URL || 'https://api.example.com',
+    url: process.env.API_BASE_URL || 'https://api.example.com',
     version: 'v1',
   },
 
@@ -77,7 +76,7 @@ export const CONST = {
 // Example usage in a component:
 //
 // <script setup>
-// const apiBaseUrl = constants.api.baseUrl
+// const apiBaseUrl = constants.api.url
 // const appName = constants.app.name
 // const isMobileView = useMediaQuery(`(max-width: ${constants.ui.breakpoints.md}px)`)
 // </script>

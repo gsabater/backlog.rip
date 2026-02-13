@@ -8,7 +8,7 @@
  * |- db:ready ⇢ Dexie is ready to use and installed
  * -------------------------------------------
  * Created Date: 8th November 2023
- * Modified: 24th November 2025 - 05:07:55
+ * Modified: 7th January 2026 - 16:15:26
  */
 
 import Dexie from 'dexie'
@@ -23,26 +23,16 @@ import { importDB, exportDB, importInto, peakImportFile } from 'dexie-export-imp
 
 let db = new Dexie('backlog.rip')
 
-let ver = 12
+let ver = 13
 let sch = {
   account: 'uuid',
   config: '&key',
-  lists: '&uuid',
+  lists: '&uuid,id',
   games: '&uuid',
   buffer: '&uuid',
   states: '++id',
   journal: '++id,event,ref',
-
-  // Version 9
-  // account: 'uuid,steam',
-  // config: '&key,value',
-  // games: '&uuid,api_id,steam_id,name',
-  // states: '&id,order,name',
-  // journal: '++id,event,ref,created_at',
 }
-
-// db.version(9).stores({
-// })
 
 db.version(ver).stores(sch)
 db.open().catch(async (e) => {

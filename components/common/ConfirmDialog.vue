@@ -1,8 +1,8 @@
 <template>
   <v-dialog v-model="ui.show" width="auto" min-width="450px">
-    <v-card>
+    <v-card style="background: rgb(32, 34, 43); border: 2px solid rgb(61 54 67)">
       <template v-slot:title>
-        <Icon>Checkbox</Icon>
+        <Icon name="tabler:checkbox" />
         <span class="font-serif mx-2">
           {{ event.title || 'Confirm' }}
         </span>
@@ -11,20 +11,32 @@
       <v-card-text>
         {{ event.message || 'Are you sure that you want to do that?' }}
         <template v-if="event">
-          <div
-            v-if="event.item && event.item.name"
-            class="text-disabled text-muted d-block"
-            style="font-size: 13px">
-            This will be deleted
-            <br />
-            <strong>{{ event.item.name }}</strong>
+          <div v-if="event.item && event.item.name" class="d-block p-2">
+            <h4 style="font-weight: 200">{{ event.item.name }}</h4>
           </div>
         </template>
       </v-card-text>
-      <v-card-actions>
-        <v-btn variant="text" @click="ui.show = false">Cancel</v-btn>
-        <v-spacer></v-spacer>
-        <v-btn color="green-darken-1" variant="text" @click="confirm">Confirm</v-btn>
+      <v-card-actions style="padding: 12px; background: #00000015">
+        <v-btn
+          variant="text"
+          class="text-secondary flex-grow-1"
+          :disabled="ui.loading"
+          @click="ui.show = false">
+          Cancel
+        </v-btn>
+        <v-btn
+          :disabled="ui.loading"
+          variant="tonal"
+          @click="confirm"
+          color="rgb(135 140 195)"
+          class="flex-grow-1"
+          style="
+            filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+            outline: 1px solid #9e58581c;
+            outline-offset: -1px;
+          ">
+          Confirm
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -36,7 +48,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 15th October 2025 - 11:53:08
+ * Modified: 29th January 2026 - 17:15:17
  **/
 
 /*+-------------------------------------------------
@@ -44,9 +56,6 @@
     item,
     title: 'Delete list',
     message: 'Are you sure you want to delete this list?',
-    explanation: `List name ${item.name} `,
-    btn: 'Delete',
-    btnColor: 'red',
     onConfirm: () => $mitt.emit('list:delete', { item }),
   })
 //+------------------------------------------------- */

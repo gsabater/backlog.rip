@@ -5,7 +5,7 @@
         <div class="progress-bar progress-bar-indeterminate"></div>
       </div>
       <span class="input-icon-addon">
-        <Icon class="mx-2">CloudDown</Icon>
+        <Icon name="tabler:cloud-down" class="mx-2" />
       </span>
       <input type="text" value="Importing Steam library…" class="form-control" disabled />
       <!-- <span class="input-icon-addon">

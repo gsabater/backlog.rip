@@ -177,9 +177,13 @@
           🔸
 
           <span v-tippy="'This is your cloud user identifier'" class="text-muted cursor-help">
-            <Icon width="1.2" size="14" class="me-1" style="transform: translateY(-1px)">
-              CloudRain
-            </Icon>
+            <Icon
+              name="tabler:cloud-rain"
+              width="1.2"
+              size="14"
+              class="me-1"
+              style="transform: translateY(-1px)" />
+
             <strong>... {{ ($cloud?.sub || '').substr(-8) }}</strong>
           </span>
         </template>
@@ -194,7 +198,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 31st October 2025 - 12:26:23
+ * Modified: 24th January 2026 - 19:57:54
  **/
 
 export default {

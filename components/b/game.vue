@@ -26,9 +26,11 @@
               </small>
 
               <small v-if="visible.includes('score') && app.score" class="text-muted me-2">
-                <Icon size="12" width="1.5" style="transform: translateY(-1px); margin-right: 0px">
-                  Diamond
-                </Icon>
+                <Icon
+                  name="tabler:diamond"
+                  size="12"
+                  width="1.5"
+                  style="transform: translateY(-1px); margin-right: 0px" />
                 {{ app.score ?? 'Unscored' }}
               </small>
             </slot>
@@ -39,7 +41,7 @@
 
         <!-- <div class="col-auto text-secondary">
             <v-btn variant="tonal" icon="mdi-chevron-right" size="small">
-              <Icon>ChevronRight</Icon>
+              <Icon name="tabler:chevron-right" />
             </v-btn>
           </div> -->
       </div>
@@ -58,9 +60,11 @@
           <slot name="details-row">
             <div class="d-flex flex-wrap gap-3">
               <small v-if="app.score" class="text-muted" v-tippy="'Backlog.rip Score'">
-                <Icon size="12" width="1.5" style="transform: translateY(-1px); margin-right: 3px">
-                  Star
-                </Icon>
+                <Icon
+                  name="tabler:star"
+                  size="12"
+                  width="1.5"
+                  style="transform: translateY(-1px); margin-right: 3px" />
                 {{ app.score }}
               </small>
 
@@ -119,25 +123,35 @@
                   color="#fff"
                   style="opacity: 0.6; transform: translateY(-1px); margin-right: 3px" />
                 {{ Math.round(app.scores.steamdb) }}
-                <Icon v-if="app.scores.steamCount > 100000" class="ms-1" width="1" size="12">
-                  Sparkles
-                </Icon>
-                <Icon v-else-if="app.scores.steamCount > 10000" class="ms-1" width="1" size="12">
-                  Comet
-                </Icon>
+                <Icon
+                  name="tabler:sparkles"
+                  v-if="app.scores.steamCount > 100000"
+                  class="ms-1"
+                  width="1"
+                  size="12" />
+                <Icon
+                  name="tabler:comet"
+                  v-else-if="app.scores.steamCount > 10000"
+                  class="ms-1"
+                  width="1"
+                  size="12" />
               </small>
 
               <small v-if="app._.released" class="text-muted" v-tippy="'Release Date'">
-                <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
-                  Calendar
-                </Icon>
+                <Icon
+                  name="tabler:calendar"
+                  size="12"
+                  width="1.4"
+                  style="transform: translateY(-1px); margin-right: 3px" />
                 {{ app._.released }}
               </small>
 
               <small v-if="app.hltb?.main" class="text-muted" v-tippy="'HowLongToBeat: Main Story'">
-                <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
-                  SquareRoundedCheck
-                </Icon>
+                <Icon
+                  name="tabler:square-rounded-check"
+                  size="12"
+                  width="1.4"
+                  style="transform: translateY(-1px); margin-right: 3px" />
                 {{ dates.minToHours(app.hltb.main / 60) }}
               </small>
             </div>
@@ -210,12 +224,11 @@
 
           <small v-if="visible.includes('score') && app.score" class="text-muted me-2">
             <Icon
+              name="tabler:star"
               note="Diamond?"
               size="13"
               width="1.5"
-              style="transform: translateY(-1px); margin-right: 3px">
-              Star
-            </Icon>
+              style="transform: translateY(-1px); margin-right: 3px" />
             {{ app.score ?? 'Unscored' }}
           </small>
 
@@ -279,47 +292,53 @@
               v-tippy="'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'"
               class="ms-1"
               width="1"
-              size="12">
-              Sparkles
-            </Icon>
+              size="12"
+              name="tabler:sparkles" />
             <Icon
               v-else-if="app.scores.steamCount > 10000"
               v-tippy="'This game has ' + format.num(app.scores.steamCount) + ' ratings on Steam'"
               class="ms-1"
               width="1"
-              size="12">
-              Comet
-            </Icon>
+              size="12"
+              name="tabler:comet" />
 
             {{ app.scores.steamscoreAlt }}
           </small>
 
           <small v-if="visible.includes('playtime')" class="d-block text-muted">
-            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
-              ClockHour3
-            </Icon>
+            <Icon
+              name="tabler:clock-hour-3"
+              size="12"
+              width="1.4"
+              style="transform: translateY(-1px); margin-right: 3px" />
             <template v-if="app._.playtime == 0">Not played</template>
             <template v-else>Played {{ dates.minToHours(app._.playtime) }}</template>
           </small>
 
           <small v-if="visible.includes('released') && app._.released" class="d-block text-muted">
-            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
-              Calendar
-            </Icon>
+            <Icon
+              name="tabler:calendar"
+              size="12"
+              width="1.4"
+              style="transform: translateY(-1px); margin-right: 3px" />
             {{ app._.released }}
           </small>
 
           <small v-if="visible.includes('date.lib')" class="d-block text-muted">
-            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
-              Calendar
-            </Icon>
+            <Icon
+              name="tabler:calendar"
+              size="12"
+              width="1.4"
+              style="transform: translateY(-1px); margin-right: 3px" />
             {{ app._.owned_at }}
           </small>
 
           <small v-if="visible.includes('genres')" class="d-block text-muted">
-            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
-              Graph
-            </Icon>
+            <Icon
+              name="tabler:graph"
+              size="12"
+              width="1.4"
+              style="transform: translateY(-1px); margin-right: 3px" />
 
             <span style="font-size: 0.775rem">
               <template v-if="app.genres && app.genres.length">
@@ -331,9 +350,11 @@
           <small
             v-if="visible.includes('hltb') && app.hltb && app.hltb.main"
             class="d-block text-muted">
-            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
-              SquareRoundedCheck
-            </Icon>
+            <Icon
+              name="tabler:square-rounded-check"
+              size="12"
+              width="1.4"
+              style="transform: translateY(-1px); margin-right: 3px" />
             {{ dates.minToHours(app.hltb.main / 60) }}
           </small>
 
@@ -346,9 +367,11 @@
                   ' achievements are hidden or marked as bugged. Achievements count is adjusted accordingly'
                 : false
             ">
-            <Icon size="12" width="1.4" style="transform: translateY(-1px); margin-right: 3px">
-              Trophy
-            </Icon>
+            <Icon
+              name="tabler:trophy"
+              size="12"
+              width="1.4"
+              style="transform: translateY(-1px); margin-right: 3px" />
             {{ app._.astats.completed }} / {{ app._.astats.total }} ({{ app._.astats.percentage }}%)
             <small class="cursor-help" v-if="app._.astats.hidden > 0">˟</small>
           </div>
@@ -366,7 +389,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 27th November 2025 - 05:29:52
+ * Modified: 24th January 2026 - 19:57:12
  **/
 
 export default {

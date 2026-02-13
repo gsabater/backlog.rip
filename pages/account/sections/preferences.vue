@@ -107,7 +107,12 @@
                   class="form-check-input"
                   @change="setConfig('favorites')" />
                 <span class="form-check-label">
-                  <Icon size="14" width="1.5" style="transform: translateY(-2px)">Heart</Icon>
+                  <Icon
+                    name="tabler:heart"
+                    size="14"
+                    width="1.5"
+                    style="transform: translateY(-2px)" />
+
                   Favorites
                 </span>
 
@@ -120,12 +125,12 @@
 
                 <div class="form-check-description mt-2" style="vertical-align: top">
                   <Icon
+                    name="tabler:layers-selected"
                     size="14"
                     width="1.5"
                     class="tabler-icon tabler-icon-click me-1"
-                    style="vertical-align: top">
-                    LayersSelected
-                  </Icon>
+                    style="vertical-align: top" />
+
                   <div class="d-inline-block">
                     This enables a link in the sidebar and an option in the right click menu
                   </div>
@@ -139,7 +144,11 @@
                   class="form-check-input"
                   @change="setConfig('pinned')" />
                 <span class="form-check-label">
-                  <Icon size="14" width="1.5" style="transform: translateY(-2px)">Bookmark</Icon>
+                  <Icon
+                    name="tabler:bookmark"
+                    size="14"
+                    width="1.5"
+                    style="transform: translateY(-2px)" />
                   Pinned games
                 </span>
                 <span class="form-check-description ps-1">
@@ -150,12 +159,11 @@
                 </span>
                 <div class="form-check-description mt-2" style="vertical-align: top">
                   <Icon
+                    name="tabler:layers-selected"
                     size="14"
                     width="1.5"
                     class="tabler-icon tabler-icon-click me-1"
-                    style="vertical-align: top">
-                    LayersSelected
-                  </Icon>
+                    style="vertical-align: top" />
                   <div class="d-inline-block">
                     This enables a link in the sidebar and an option in the right click menu
                   </div>
@@ -175,23 +183,22 @@
 
                 <div class="form-check-description mt-2" style="vertical-align: top">
                   <Icon
+                    name="tabler:layers-selected"
                     size="14"
                     width="1.5"
                     class="tabler-icon tabler-icon-click me-1"
-                    style="vertical-align: top">
-                    LayersSelected
-                  </Icon>
+                    style="vertical-align: top" />
+
                   <div class="d-inline-block">This enables an option in the right click menu</div>
                 </div>
               </label>
               <div class="form-check-description ms-1" style="vertical-align: top">
                 <Icon
+                  name="tabler:click"
                   size="14"
                   width="1.5"
                   class="tabler-icon tabler-icon-click mt-1 me-2"
-                  style="vertical-align: top">
-                  Click
-                </Icon>
+                  style="vertical-align: top" />
                 <div class="d-inline-block">
                   To change the states shown in the sidebar menu
                   <br />
@@ -282,7 +289,7 @@
           class="form-check-input"
           @change="setConfig('debug')" />
         <span class="form-check-label form-label">
-          <Icon size="16" width="1.2" style="transform: translateY(-2px)">Prompt</Icon>
+          <Icon name="tabler:prompt" size="16" width="1.2" style="transform: translateY(-2px)" />
           Developer mode
         </span>
 
@@ -302,7 +309,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th July 2024
- * Modified: 3rd October 2025 - 07:00:33
+ * Modified: 25th January 2026 - 07:49:56
  **/
 
 export default {

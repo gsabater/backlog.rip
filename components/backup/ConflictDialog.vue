@@ -2,7 +2,7 @@
   <v-dialog v-model="ui.show" max-width="750">
     <v-card>
       <template #title>
-        <Icon class="me-2">CloudExclamation</Icon>
+        <Icon name="tabler:cloud-exclamation" class="me-2" />
         Cloud conflict
       </template>
 
@@ -74,7 +74,7 @@
                     v-tippy="hashText"
                     class="text-muted d-inline-block cursor-help"
                     :class="{ 'text-red': hasLibraryChanges }">
-                    <Icon size="18" class="ms-2">Signature</Icon>
+                    <Icon name="tabler:signature" size="18" class="ms-2" />
 
                     {{ local.library?.slice(-6) }}
                   </small>
@@ -85,7 +85,7 @@
                     v-tippy="hashText"
                     class="text-muted d-inline-block cursor-help"
                     :class="{ 'text-red': hasLibraryChanges }">
-                    <Icon size="18" class="ms-2">Signature</Icon>
+                    <Icon name="tabler:signature" size="18" class="ms-2" />
                     {{ latest?.sign_library?.slice(-6) }}
                   </small>
                 </td>
@@ -99,7 +99,7 @@
                     v-tippy="hashText"
                     class="text-muted d-inline-block cursor-help"
                     :class="{ 'text-red': hasStatesChanges }">
-                    <Icon size="18" class="ms-2">Signature</Icon>
+                    <Icon name="tabler:signature" size="18" class="ms-2" />
                     {{ local.states?.slice(-6) }}
                   </small>
                 </td>
@@ -109,7 +109,7 @@
                     v-tippy="hashText"
                     class="text-muted d-inline-block cursor-help"
                     :class="{ 'text-red': hasStatesChanges }">
-                    <Icon size="18" class="ms-2">Signature</Icon>
+                    <Icon name="tabler:signature" size="18" class="ms-2" />
                     {{ latest?.sign_states?.slice(-6) }}
                   </small>
                 </td>
@@ -123,7 +123,7 @@
                     v-tippy="hashText"
                     class="text-muted d-inline-block cursor-help"
                     :class="{ 'text-red': hasAccountChanges }">
-                    <Icon size="18">Signature</Icon>
+                    <Icon name="tabler:signature" size="18" />
                     {{ local.account?.slice(-6) }}
                   </small>
                   <small v-else class="text-muted d-inline-block">Never synced</small>
@@ -133,7 +133,7 @@
                     v-tippy="hashText"
                     class="text-muted d-inline-block cursor-help"
                     :class="{ 'text-red': hasAccountChanges }">
-                    <Icon size="18">Signature</Icon>
+                    <Icon name="tabler:signature" size="18" />
                     {{ latest?.sign_account?.slice(-6) }}
                   </small>
                 </td>
@@ -149,7 +149,7 @@
               it's recommended to reload the application.
             </div>
             <v-btn color="green-darken-2 mb-3" block variant="tonal" @click="ui.show = false">
-              <Icon size="16" width="1" class="mx-2">Checks</Icon>
+              <Icon name="tabler:checks" size="16" width="1" class="mx-2" />
               Accept changes
             </v-btn>
             <small class="text-muted d-block mb-2">
@@ -176,7 +176,7 @@
               block
               variant="tonal"
               @click="upload">
-              <Icon size="18" width="1" class="mx-2">WorldUpload</Icon>
+              <Icon name="tabler:world-upload" size="18" width="1" class="mx-2" />
               Upload local
             </v-btn>
           </div>
@@ -187,7 +187,7 @@
               block
               variant="tonal"
               @click="download">
-              <Icon size="18" width="1" class="mx-2">WorldDownload</Icon>
+              <Icon name="tabler:world-download" size="18" width="1" class="mx-2" />
               Download cloud Backup
             </v-btn>
           </div>
@@ -205,7 +205,7 @@ import { mapStores } from 'pinia'
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 23rd August 2024
- * Modified: 21st October 2025 - 06:08:56
+ * Modified: 24th January 2026 - 10:58:13
  **/
 
 export default {

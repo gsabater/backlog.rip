@@ -51,7 +51,7 @@
             <p class="text-muted" style="font-size: 0.75rem">
               <NuxtLink to="/changelog" class="link-secondary link-underline-opacity-0">
                 Version
-                <!-- <Icon size="16" width="1.8" style="transform: translateY(-1px)">Beta</Icon> -->
+                <!-- <Icon name="tabler:home" size="16" width="1.8" style="transform: translateY(-1px)">Beta</Icon> -->
                 {{ $app.v }}
               </NuxtLink>
 
@@ -89,7 +89,6 @@
                   height="16"
                   viewBox="0 -28.5 256 256"
                   version="1.1"
-                  style="transform: translateY(-1px)"
                   preserveAspectRatio="xMidYMid">
                   <g>
                     <path
@@ -105,7 +104,10 @@
                 href="https://www.patreon.com/c/BacklogRIP"
                 class="link-secondary link-underline-opacity-0 mx-2"
                 target="_blank">
-                <Icon size="16" style="transform: translateY(-1px)">BrandPatreonFilled</Icon>
+                <Icon
+                  name="tabler:brand-patreon-filled"
+                  size="16"
+                  style="transform: translateY(4px)" />
               </a>
 
               <a
@@ -113,7 +115,7 @@
                 href="https://backlog.featurebase.app"
                 class="link-secondary link-underline-opacity-0 mx-1"
                 target="_blank">
-                <Icon size="16" style="transform: translateY(-1px)">Map</Icon>
+                <Icon name="tabler:map" size="16" style="transform: translateY(4px)" />
               </a>
             </p>
           </div>
@@ -210,10 +212,10 @@
                     ]"
                     :columns="6"
                     :gap="10"
-                    :rotation="33"
+                    :rotation="20"
                     :speed="75"
-                    :scale="1.5"
-                    :image-height="190" />
+                    :scale="1.7"
+                    :image-height="200" />
 
                   <div
                     class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
@@ -270,7 +272,9 @@
             href="https://github.com/gsabater/backlog.rip"
             class="link-secondary link-underline-opacity-0"
             target="_blank">
-            <Icon size="14" class="me-0" style="transform: translateY(-1px)">BrandGithub</Icon>
+            <Icon name="tabler:home" size="14" class="me-0" style="transform: translateY(-1px)">
+              BrandGithub
+            </Icon>
             Source code on Github
           </a>
 
@@ -309,7 +313,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 6th March 2023
- * Modified: 23rd January 2026 - 16:52:41
+ * Modified: 27th January 2026 - 19:04:38
  **/
 
 export default {

@@ -25,7 +25,7 @@
           </div>
           <div class="col-auto d-none d-md-flex">
             <a href="javascript:void(0)" class="btn btn-primary">
-              <Icon>ArrowUp</Icon>
+              <Icon name="tabler:arrow-up" />
               Back to top
             </a>
           </div>

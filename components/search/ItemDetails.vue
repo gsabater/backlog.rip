@@ -15,7 +15,7 @@
       </div>
 
       <div class="content d-flex align-items-center w-100">
-        <!-- <Icon size="16" width="2" class="me-1" :icon="'Dice' + ui.dice"></Icon> -->
+        <!-- <Icon name="tabler:home" size="16" width="2" class="me-1" :icon="'Dice' + ui.dice"></Icon> -->
         <div class="pe-3">
           Default
           <div class="text-muted" style="font-size: 0.75rem">
@@ -125,7 +125,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th December 2024
- * Modified: Sun 02 March 2025 - 12:20:41
+ * Modified: 23rd January 2026 - 23:11:54
  **/
 
 export default {

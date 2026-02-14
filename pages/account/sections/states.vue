@@ -21,7 +21,17 @@
 
   <div class="row mb-3">
     <div class="col-6">
-      <v-btn variant="tonal" color="primary" @click="$refs.crud.create()">Create a new state</v-btn>
+      <v-btn
+        variant="tonal"
+        color="rgb(135 140 195)"
+        style="
+          filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+          outline: 1px solid #9e58581c;
+          outline-offset: -1px;
+        "
+        @click="$refs.crud.create()">
+        Create a new state
+      </v-btn>
     </div>
   </div>
 
@@ -30,9 +40,9 @@
       <div class="list-group-item px-3" style="padding-top: 0.8rem; padding-bottom: 0.8rem">
         <div class="row g-3 align-items-center">
           <div class="col-auto" style="align-self: baseline">
-            <span style="--tblr-status-color: #666">
-              <span class="status-dot"></span>
-            </span>
+            <span
+              class="status-dot"
+              style="background-color: transparent; border: 1px solid #8b8b8b"></span>
             <div class="v-list-item-subtitle">&nbsp;</div>
           </div>
           <div class="col">
@@ -48,15 +58,22 @@
           </div>
           <div class="col-auto text-secondary">
             <div class="d-flex">
-              <span
-                v-tippy="'Display in sidebar'"
-                class="btn-action cursor-pointer"
+              <v-btn
+                variant="text"
+                icon
+                size="x-small"
+                color="grey-lighten-1"
+                v-tippy="'Pin to the sidebar'"
                 @click="pinSidebar(-1)">
-                <Icon v-if="isPinned(-1)" class="icon" size="13" style="color: #575ac6">
-                  BookmarkFilled
-                </Icon>
-                <Icon v-else class="icon" size="13" style="color: #575ac6">Bookmark</Icon>
-              </span>
+                <Icon
+                  name="tabler:bookmark-filled"
+                  v-if="isPinned(-1)"
+                  class="icon"
+                  size="13"
+                  style="color: #575ac6" />
+
+                <Icon name="tabler:bookmark" v-else class="icon" size="13" style="color: #575ac6" />
+              </v-btn>
             </div>
           </div>
         </div>
@@ -93,22 +110,9 @@
             </div>
             <div class="col-auto text-secondary">
               <div class="d-flex">
-                <v-btn
-                  variant="text"
-                  icon
-                  size="x-small"
-                  color="grey-lighten-1"
-                  v-tippy="'Pin to the sidebar'"
-                  @click="pinSidebar(item.id)">
-                  <Icon v-if="isPinned(item.id)" class="icon" size="13" style="color: #575ac6">
-                    BookmarkFilled
-                  </Icon>
-                  <Icon v-else class="icon" size="13" style="color: #575ac6">Bookmark</Icon>
-                </v-btn>
-
                 <div>
                   <v-btn variant="text" icon size="x-small" color="grey-lighten-1">
-                    <Icon size="18" width="2">DotsVertical</Icon>
+                    <Icon name="tabler:dots-vertical" size="18" width="2" />
                   </v-btn>
                   <b-dropdown
                     singleton-group="state-actions"
@@ -133,20 +137,20 @@
 
                     <template v-if="i > 0">
                       <div class="dropdown-item" @click.stop="sort('up', item.id)">
-                        <Icon size="16" class="me-2 text-muted">ChevronUp</Icon>
+                        <Icon name="tabler:chevron-up" size="16" class="me-2 text-muted" />
                         Move upwards
                       </div>
                     </template>
 
                     <template v-if="i < states.length - 1">
                       <div class="dropdown-item" @click.stop="sort('down', item.id)">
-                        <Icon size="16" class="me-2 text-muted">ChevronDown</Icon>
+                        <Icon name="tabler:chevron-down" size="16" class="me-2 text-muted" />
                         Move downwards
                       </div>
                     </template>
 
                     <div class="dropdown-item" @click.stop="edit(item)">
-                      <Icon size="16" class="me-2 text-muted">Pencil</Icon>
+                      <Icon name="tabler:pencil" size="16" class="me-2 text-muted" />
                       Edit state
                     </div>
 
@@ -161,18 +165,49 @@
                             onConfirm: () => this.delete(item),
                           })
                         ">
-                        <Icon size="16" class="me-2 text-red">Trash</Icon>
+                        <Icon name="tabler:trash" size="16" class="me-2 text-red" />
                         Delete state
                       </div>
                     </template>
                     <template v-else>
                       <div class="dropdown-item text-muted cursor-not-allowed">
-                        <Icon size="16" class="me-2">Trash</Icon>
+                        <Icon name="tabler:trash" size="16" class="me-2" />
                         Cannot be deleted
                       </div>
                     </template>
                   </b-dropdown>
                 </div>
+                <v-btn
+                  variant="text"
+                  icon
+                  size="x-small"
+                  color="grey-lighten-1"
+                  v-tippy="'Pin to the sidebar'"
+                  @click="pinSidebar(item.id)">
+                  <Icon
+                    name="tabler:bookmark-filled"
+                    v-if="isPinned(item.id)"
+                    class="icon"
+                    size="13"
+                    style="color: #575ac6" />
+
+                  <Icon
+                    name="tabler:bookmark"
+                    v-else
+                    class="icon"
+                    size="13"
+                    style="color: #575ac6" />
+                </v-btn>
+
+                <v-btn
+                  variant="text"
+                  icon
+                  color="grey-lighten-1"
+                  size="x-small"
+                  v-tippy="'Browse games in ' + item.name"
+                  :to="'/library/' + item.slug">
+                  <Icon name="tabler:caret-right-filled" size="12" />
+                </v-btn>
               </div>
             </div>
           </div>
@@ -190,7 +225,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: 4th November 2025 - 10:11:47
+ * Modified: 14th February 2026 - 17:37:57
  **/
 
 export default {

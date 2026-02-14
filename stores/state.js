@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 14th December 2023
- * Modified: 24th November 2025 - 03:31:58
+ * Modified: 14th February 2026 - 17:32:12
  */
 
 let $db = null
@@ -474,7 +474,8 @@ export const useStateStore = defineStore('state', {
 
       const states = await $db.states.toArray()
 
-      this.states = states.sort((a, b) => a.order - b.order)
+      this.states = states.filter((state) => state.id > -1).sort((a, b) => a.order - b.order)
+
       this.keyed = states.reduce((obj, state, index) => {
         // if (state.key === true) delete state.key
         // state.key = state.key || `state_${state.id}`

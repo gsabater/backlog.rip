@@ -98,7 +98,7 @@
         <div class="row g-3">
           <div class="col-md-12 nope-col-lg-8">
             <div class="mb-3">
-              <div class="form-label pb-2">Special features</div>
+              <div class="form-label pb-2">Special groups</div>
 
               <label class="form-check form-switch cursor-pointer pb-2">
                 <input
@@ -309,7 +309,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 9th July 2024
- * Modified: 25th January 2026 - 07:49:56
+ * Modified: 14th February 2026 - 17:33:14
  **/
 
 export default {

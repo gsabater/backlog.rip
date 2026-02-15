@@ -25,13 +25,13 @@
               {{ list.author.username.substring(0, 2) }}
             </span> -->
 
-            <!-- @{{ list.author.username }} &middot; -->
-            {{ list.games.length }} games &middot;
+            {{ list.games.length }} games &nbsp;&middot;&nbsp;
             <small>
-              <span class="font-mono">{{ $moment(list.created_at).format('LL') }}</span>
+              <span class="font-mono">by {{ list.author.username }}</span>
             </small>
             <small class="font-mono show-hover-inline">
-              &nbsp;&middot; Updated
+              &nbsp;&middot;&nbsp;{{ $moment(list.created_at).format('LL') }}
+              &middot; Updated
               {{ dates.timeAgo(list.updated_at) }}
             </small>
           </div>
@@ -51,7 +51,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st January 2026
- * Modified: 6th February 2026 - 12:30:20
+ * Modified: 15th February 2026 - 11:02:30
  **/
 
 export default {

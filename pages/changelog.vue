@@ -89,9 +89,10 @@
                   href="https://www.patreon.com/c/BacklogRIP"
                   class="link-secondary link-underline-opacity-0 mx-1"
                   target="_blank">
-                  <Icon name="tabler:home" size="16" style="transform: translateY(-1px)">
-                    BrandPatreonFilled
-                  </Icon>
+                  <Icon
+                    name="tabler:brand-patreon-filled"
+                    size="16"
+                    style="transform: translateY(-1px)" />
                 </a>
               </span>
             </p>
@@ -156,9 +157,7 @@
                         icon
                         variant="text"
                         size="x-small">
-                        <Icon name="tabler:home" width="1.2" size="12" class="mx-1">
-                          CaretRightFilled
-                        </Icon>
+                        <Icon name="tabler:caret-right-filled" width="1.2" size="12" class="mx-1" />
                       </v-btn>
                     </div>
                   </div>
@@ -178,7 +177,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th January 2024
- * Modified: 23rd January 2026 - 23:11:58
+ * Modified: 7th February 2026 - 11:37:32
  **/
 
 const { data: changelog } = await useAsyncData('changelog', () => {

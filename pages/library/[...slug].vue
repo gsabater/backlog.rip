@@ -19,7 +19,7 @@
 
                 <NuxtLink to="/library" class="dropdown-item">
                   <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                    <Icon size="17" width="1.5" class="text-muted">LayoutDashboard</Icon>
+                    <Icon name="tabler:layout-dashboard" size="17" width="1.5" class="text-muted" />
                   </span>
                   <span class="nav-link-title">Your library</span>
                   <small class="ms-auto text-secondary me-1">
@@ -32,7 +32,7 @@
                   to="/library/favorites"
                   class="dropdown-item pe-2">
                   <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                    <Icon size="17" width="1.5" class="text-muted">Heart</Icon>
+                    <Icon name="tabler:heart" size="17" width="1.5" class="text-muted" />
                   </span>
                   <span class="nav-link-title">Favorites</span>
                 </NuxtLink>
@@ -55,13 +55,13 @@
 
                 <div v-if="unPinnedStates.length > 0" class="dropdown-item">
                   <div style="width: 30px">
-                    <Icon size="18" class="text-muted" width="1.5">Background</Icon>
+                    <Icon name="tabler:layout-dashboard" size="18" class="text-muted" width="1.5" />
                   </div>
 
                   <span>Other states</span>
 
                   <span class="text-muted ms-auto">
-                    <Icon size="14">CaretRightFilled</Icon>
+                    <Icon name="tabler:caret-right-filled" size="14" />
                   </span>
                   <b-dropdown placement="right-start" style="overflow: visible; min-width: 240px">
                     <NuxtLink
@@ -84,7 +84,7 @@
                       </div>
 
                       <!-- <div class="d-flex justify-center" style="width: 30px">
-                <Icon v-if="isFav(state.name)" style="color: red; fill: pink">Heart</Icon>
+                <Icon name="tabler:home" v-if="isFav(state.name)" style="color: red; fill: pink">Heart</Icon>
                 <span
                   v-else
                   class="badge"
@@ -111,7 +111,7 @@
                   to="/library/pinned"
                   class="dropdown-item pe-2">
                   <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                    <Icon size="17" width="1.5" class="text-muted">Bookmark</Icon>
+                    <Icon name="tabler:bookmark" size="17" width="1.5" class="text-muted" />
                   </span>
                   <span class="nav-link-title">Pinned games</span>
                 </NuxtLink>
@@ -121,7 +121,7 @@
                   to="/library/hidden"
                   class="dropdown-item pe-2">
                   <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-                    <Icon size="17" width="1.5" class="text-muted">Cancel</Icon>
+                    <Icon name="tabler:eye-off" size="17" width="1.5" class="text-muted" />
                   </span>
                   <span class="nav-link-title">Hidden games</span>
                 </NuxtLink>
@@ -163,7 +163,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th December 2023
- * Modified: 29th October 2025 - 05:28:48
+ * Modified: 15th February 2026 - 17:28:49
  **/
 
 export default {

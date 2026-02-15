@@ -97,13 +97,13 @@
         </a>
       </li>
 
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-link" href="https://backlog.featurebase.app/en/roadmap" target="_blank">
           <Icon name="tabler:map" size="16" class="me-2" />
           Roadmap
           <Icon name="tabler:external-link" width="1" size="13" class="ms-auto me-2" />
         </a>
-      </li>
+      </li> -->
 
       <!-- <li class="nav-item">
         <NuxtLink to="/changelog" class="nav-link">

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 24th March 2025
- * Modified: 11th November 2025 - 06:48:52
+ * Modified: 15th February 2026 - 08:13:39
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -17,6 +17,11 @@ let $user = null
 let client = {
   sub: null,
   jwt: null,
+  anon: {
+    head: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.',
+    body: 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtYXZ4am1ja252cnBkcGN6c3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU1OTcwNjEsImV4cCI6MjAyMTE3MzA2MX0.',
+    sign: 'W4ucizFl9U0A_oIcZBpILsPXoP5cXbBi6l8LFeIS7e4',
+  },
 
   channels: [],
   instance: null,
@@ -24,18 +29,13 @@ let client = {
   ready: false,
 }
 
-// Supabase anonymous credentials
-// Used to make unauthenticated requests to public tables
-//+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-const anon = {
-  url: 'https://qmavxjmcknvrpdpczswh.supabase.co',
-  head: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.',
-  body: 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtYXZ4am1ja252cnBkcGN6c3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU1OTcwNjEsImV4cCI6MjAyMTE3MzA2MX0.',
-  sign: 'W4ucizFl9U0A_oIcZBpILsPXoP5cXbBi6l8LFeIS7e4',
-}
-
 export default {
   client,
+  domain: 'https://qmavxjmcknvrpdpczswh.supabase.co',
+  headers: {
+    apikey: `${client.anon.head}${client.anon.body}${client.anon.sign}`,
+    Authorization: `Bearer ${client.anon.head}${client.anon.body}${client.anon.sign}`,
+  },
 
   //+-------------------------------------------------
   // getBackups()
@@ -271,6 +271,62 @@ export default {
   },
 
   //+-------------------------------------------------
+  // storeList()
+  // Stores a list
+  // -----
+  // Created on Thu Dec 25 2025
+  //+-------------------------------------------------
+  async storeList(list) {
+    let payload = {}
+
+    if (list.id) payload.id = list.id
+    payload.games = list.games
+
+    payload.name = list.name
+    payload.slug = list.slug
+    payload.description = list.description
+
+    payload.is_public = list.is_public
+    payload.updated_at = new Date().toISOString()
+
+    // Sample the games for preview
+    // payload.sample = list.games.slice(0, 10)
+    // payload.games = list.games.length
+
+    const { data, error, status } = await client.instance
+      .from('lists')
+      .upsert(payload, { onConflict: ['id'] })
+      .select()
+      .single()
+
+    if (error) {
+      $log('[Supabase] Error uploading Public List', error.message)
+      return
+    }
+
+    $log(`[ Supabase ] POST /lists ${status}`)
+    return data
+  },
+
+  //+-------------------------------------------------
+  // deleteList()
+  //
+  // -----
+  // Created on Thu Jan 29 2026
+  //+-------------------------------------------------
+  async deleteList(id) {
+    const { data, error } = await client.instance.from('lists').delete().eq('id', id)
+
+    if (error) {
+      $log('[Supabase] Error deleting Public List', error.message)
+      return
+    }
+
+    $log(`[ Supabase ] DELETE /lists (id: ${id})`)
+    return data
+  },
+
+  //+-------------------------------------------------
   // clearQueueAchievements()
   // Clears completed jobs
   // -----
@@ -292,24 +348,27 @@ export default {
     $user ??= useUserStore()
 
     // Check the auth state and user credentials
+    // If the user is not authenticated, initialize a simple anonymous client
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (!client.jwt) return
 
-    // Initialize the supabase client
+    // Otherwise, initialize the supabase client
+    // Using the current user's JWT for authentication
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    client.instance = createClient(anon.url, `${anon.head}${anon.body}${anon.sign}`, {
-      // auth: {
-      //   autoRefreshToken: false,
-      //   persistSession: false,
-      //   detectSessionInUrl: false,
-      // },
+    // client.instance.headers['Authorization'] = `Bearer ${client.jwt}`
+    // client.instance.rest.headers['Authorization'] = `Bearer ${client.jwt}`
 
-      global: {
-        headers: {
-          Authorization: `Bearer ${client.jwt}`,
+    client.instance = createClient(
+      this.domain,
+      `${client.anon.head}${client.anon.body}${client.anon.sign}`,
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${client.jwt}`,
+          },
         },
-      },
-    })
+      }
+    )
 
     // Kept for reference
     // Those are the events that can be listened for state changes
@@ -338,8 +397,6 @@ export default {
 
     $nuxt.$cloud.server.backups = 'online'
     $nuxt.$cloud.server.supabase = 'online'
-
-    // $nuxt.$cloud.supabase = client.instance
   },
 
   //+-------------------------------------------------

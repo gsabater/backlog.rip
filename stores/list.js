@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: 6th February 2026 - 11:54:17
+ * Modified: 15th February 2026 - 17:24:16
  */
 
 import supabase from '../modules/integrations/supabase'
@@ -22,16 +22,25 @@ export const useListStore = defineStore('list', {
     model: {
       games: [],
       author: {},
-      is_public: false,
 
       name: '',
+      slug: null,
       description: '',
+
+      type: 'list', // dynamic, challenge
       layout: 'ordered', // null
       sortBy: 'none',
       sortDir: 'desc',
-      type: 'list', // dynamic, challenge
+
+      is_public: false,
+
       created_at: null,
       updated_at: null,
+
+      _: {
+        action: null,
+        make_slug: false,
+      },
     },
 
     meta: {
@@ -86,13 +95,9 @@ export const useListStore = defineStore('list', {
     // Created on Tue Oct 08 2024
     //+-------------------------------------------------
     async create(payload) {
-      const data = { ...payload }
-      delete data.action
+      let data = await this.prepare(payload)
 
       data.uuid = $nuxt.$uuid()
-      data.slug = this.makeSlug(data)
-      data.games = this.prepareGames(data)
-
       data.created_at = dates.now()
       data.updated_at = dates.now()
 
@@ -111,18 +116,12 @@ export const useListStore = defineStore('list', {
     // -----
     // Created on Thu Oct 10 2024
     //+-------------------------------------------------
-    async update(data, options = {}) {
-      delete data.key
-      delete data.action
-
-      data.slug = this.makeSlug(data)
-      data.games = this.prepareGames(data)
-      if (options.covers) data.covers = this.findCovers(data)
+    async update(payload, options = {}) {
+      let data = await this.prepare(payload)
 
       data.updated_at = dates.now()
-      let item = JSON.parse(JSON.stringify(data))
 
-      await $db.lists.put(item)
+      await $db.lists.put(data)
       await this.storePublic(data)
       $log('[ listStore.update ]', data)
 
@@ -131,6 +130,26 @@ export const useListStore = defineStore('list', {
       // Update this list if is the active
       if (this.list.uuid == data.uuid) this.list = { ...this.list, ...data }
       return data
+    },
+
+    //+-------------------------------------------------
+    // prepare()
+    // prepares the list to be ingested by dexie and supabase
+    // -----
+    // Created on Fri Feb 13 2026
+    //+-------------------------------------------------
+    async prepare(payload) {
+      const data = { ...payload }
+
+      data.slug = this.makeSlug(data)
+      data.games = this.prepareGames(data)
+
+      delete data._
+      delete data.covers
+      delete data.author
+
+      const prepared = JSON.parse(JSON.stringify(data))
+      return prepared
     },
 
     //+-------------------------------------------------
@@ -240,17 +259,20 @@ export const useListStore = defineStore('list', {
     // Returns a slug for the current list
     // -----
     // Created on Fri Oct 11 2024
+    // Created on Fri Feb 13 2026 - Prevent slug change
     //+-------------------------------------------------
     makeSlug(data) {
-      let slug = format.stringToSlug(data.name)
-      let rand = Math.floor(Math.random() * 1000)
+      if (data.slug && !data._.make_slug) return data.slug
+
+      let text = data.slug || data.name
+      let slug = format.stringToSlug(text)
 
       let exists = Object.values(this.lists).find((list) => {
-        return list.slug === slug
+        return list.slug == slug && list.uuid !== data.uuid
       })
 
-      if (exists && exists.slug !== slug) {
-        slug = slug + '-' + rand
+      if (exists) {
+        slug = slug + '-' + Math.floor(Math.random() * 1000)
       }
 
       return slug
@@ -333,7 +355,7 @@ export const useListStore = defineStore('list', {
       // Assign the sorted lists to the store
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       this.lists = sorted.map((list) => {
-        list.key = list.uuid // list.key ||
+        // list.key = list.uuid // list.key ||
         list.games = list.games || []
         return list
       })

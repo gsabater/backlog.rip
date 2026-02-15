@@ -49,8 +49,25 @@
                 *+---------------------------------
                 *| Recently Created
                 *+--------------------------------- -->
+              <div class="col-8">
+                <h2 class="mb-0">Recently created</h2>
+                <p class="card-subtitle m-0">Fresh lists just created by the community.</p>
+              </div>
+
+              <div class="col-auto ms-auto" style="display: flex; align-items: flex-end">
+                <small class="text-muted me-1 d-inline-block" style="padding-bottom: 4px">
+                  Showing {{ displayedNewLists.length }} lists
+                </small>
+                <v-btn
+                  v-if="newLists.length > 8 && !showAllNew"
+                  size="small"
+                  variant="text"
+                  color="secondary"
+                  @click="showAllNew = true">
+                  Show more
+                </v-btn>
+              </div>
               <div class="col-12 mb-4">
-                <h2>Recently created</h2>
                 <div class="card mb-3">
                   <div v-if="!newLists.length" class="card-body">
                     <v-skeleton-loader
@@ -59,7 +76,7 @@
                       color="transparent" />
                   </div>
                   <div v-else class="list-group card-list-group">
-                    <template v-for="list in newLists" :key="list.uuid">
+                    <template v-for="list in displayedNewLists" :key="list.uuid">
                       <community-list-item :list="list"></community-list-item>
                     </template>
                   </div>
@@ -70,8 +87,24 @@
                 *+---------------------------------
                 *| Recently Updated
                 *+--------------------------------- -->
+              <div class="col-8">
+                <h2 class="mb-0">Updated lists</h2>
+                <p class="card-subtitle m-0">Changed</p>
+              </div>
+
+              <div class="col-auto ms-auto" style="display: flex; align-items: flex-end">
+                <small class="text-muted me-1 d-inline-block" style="padding-bottom: 4px">
+                  Showing {{ displayedUpdatedLists.length }} lists
+                </small>
+                <v-btn
+                  v-if="updatedLists.length > 8 && !showAllUpdated"
+                  size="small"
+                  variant="text"
+                  @click="showAllUpdated = true">
+                  Show more
+                </v-btn>
+              </div>
               <div class="col-12 mb-4">
-                <h2>Updated lists</h2>
                 <div class="card mb-3">
                   <div v-if="!updatedLists.length" class="card-body">
                     <v-skeleton-loader
@@ -80,7 +113,7 @@
                       color="transparent" />
                   </div>
                   <div v-else class="list-group card-list-group">
-                    <template v-for="list in updatedLists" :key="list.uuid">
+                    <template v-for="list in displayedUpdatedLists" :key="list.uuid">
                       <community-list-item :list="list"></community-list-item>
                     </template>
                   </div>
@@ -100,24 +133,35 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 26th December 2025
- * Modified: 28th January 2026 - 12:10:20
+ * Modified: 15th February 2026 - 17:23:18
  **/
 
 export default {
   data() {
-    return {}
+    return {
+      showAllNew: false,
+      showAllUpdated: false,
+    }
   },
 
   computed: {
     ...mapStores(useCommunityStore, useJournalStore),
     ...mapState(useCommunityStore, ['popularLists', 'newLists', 'updatedLists']),
-  },
 
-  // watch: {
-  //   '$app.ready': function () {
-  //     this.init()
-  //   },
-  // },
+    displayedNewLists() {
+      if (this.showAllNew) {
+        return this.newLists
+      }
+      return this.newLists.slice(0, 5)
+    },
+
+    displayedUpdatedLists() {
+      if (this.showAllUpdated) {
+        return this.updatedLists
+      }
+      return this.updatedLists.slice(0, 5)
+    },
+  },
 
   methods: {
     //+-------------------------------------------------

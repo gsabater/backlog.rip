@@ -14,6 +14,7 @@
     <div class="container-xl">
       <div class="row gx-lg-5 mx-auto">
         <div class="d-none d-lg-block col-lg-2">
+          <community-sidebar></community-sidebar>
           <div class="row g-2 align-items-center">
             <div class="col">
               <h3>Community</h3>
@@ -32,21 +33,21 @@
       <li>---</li> -->
             <li class="nav-item">
               <NuxtLink to="/account/me" class="nav-link">
-                <Icon class="me-2">Fingerprint</Icon>
+                <Icon name="tabler:fingerprint" class="me-2" />
                 Users
               </NuxtLink>
             </li>
 
             <li class="nav-item">
               <NuxtLink to="/account/preferences" class="nav-link">
-                <Icon class="me-2">Settings</Icon>
+                <Icon name="tabler:settings" class="me-2" />
                 Discord
               </NuxtLink>
             </li>
 
             <li class="nav-item">
               <NuxtLink to="/account/cloud" class="nav-link">
-                <Icon class="me-2">CloudRain</Icon>
+                <Icon name="tabler:home" class="me-2" />
                 Patrons
               </NuxtLink>
             </li>
@@ -67,28 +68,28 @@
           <ul class="nav nav-pills nav-vertical">
             <li class="nav-item">
               <NuxtLink to="/account/lists" class="nav-link">
-                <Icon class="me-2">Mist</Icon>
+                <Icon name="tabler:list" class="me-2" />
                 Lists
               </NuxtLink>
             </li>
 
             <li class="nav-item">
               <NuxtLink to="/account/states" class="nav-link">
-                <Icon class="me-2">Background</Icon>
+                <Icon name="tabler:home" class="me-2" />
                 States
               </NuxtLink>
             </li>
 
             <li class="nav-item">
               <NuxtLink to="/account/database" class="nav-link">
-                <Icon class="me-2">Database</Icon>
+                <Icon name="tabler:database" class="me-2" />
                 Database
               </NuxtLink>
             </li>
 
             <li v-if="$app.dev" class="nav-item">
               <NuxtLink to="/account/logs" class="nav-link">
-                <Icon class="me-2">Bug</Icon>
+                <Icon name="tabler:bug" class="me-2" />
                 Application logs
               </NuxtLink>
             </li>
@@ -373,7 +374,7 @@
                               {{ item.games || 0 }} games 🔸
                               {{ dates.timeAgo(item.created_at) }}
                               <!-- {{ $moment(item.created_at).format('LL') }} 🔸 -->
-                              <!-- <Icon size="16" width="1">Replace</Icon> -->
+                              <!-- <Icon name="tabler:home" size="16" width="1">Replace</Icon> -->
                             </small>
                           </div>
                         </div>
@@ -391,7 +392,7 @@
                               icon="mdi-chevron-right"
                               size="x-small"
                               color="grey-lighten-1">
-                              <Icon size="18" width="2">DotsVertical</Icon>
+                              <Icon name="tabler:dots-vertical" size="18" width="2" />
                             </v-btn>
                           </div>
                         </div>
@@ -437,7 +438,7 @@
                               {{ item.games || 0 }} games 🔸
                               {{ dates.timeAgo(item.created_at) }}
                               <!-- {{ $moment(item.created_at).format('LL') }} 🔸 -->
-                              <!-- <Icon size="16" width="1">Replace</Icon> -->
+                              <!-- <Icon name="tabler:home" size="16" width="1">Replace</Icon> -->
                             </small>
                           </div>
                         </div>
@@ -455,7 +456,9 @@
                               icon="mdi-chevron-right"
                               size="x-small"
                               color="grey-lighten-1">
-                              <Icon size="18" width="2">DotsVertical</Icon>
+                              <Icon name="tabler:dots-vertical" size="18" width="2">
+                                DotsVertical
+                              </Icon>
                             </v-btn>
                           </div>
                         </div>
@@ -501,7 +504,7 @@
                               {{ item.games || 0 }} games 🔸
                               {{ dates.timeAgo(item.updated) }}
                               <!-- {{ $moment(item.created_at).format('LL') }} 🔸 -->
-                              <!-- <Icon size="16" width="1">Replace</Icon> -->
+                              <!-- <Icon name="tabler:home" size="16" width="1">Replace</Icon> -->
                             </small>
                           </div>
                         </div>
@@ -519,7 +522,9 @@
                               icon="mdi-chevron-right"
                               size="x-small"
                               color="grey-lighten-1">
-                              <Icon size="18" width="2">DotsVertical</Icon>
+                              <Icon name="tabler:dots-vertical" size="18" width="2">
+                                DotsVertical
+                              </Icon>
                             </v-btn>
                           </div>
                         </div>
@@ -539,11 +544,7 @@
               <div class="card">
                 <div class="row row-0">
                   <div class="col-auto">
-                    <img
-                      class="rounded-start"
-                      alt="Shape of You"
-                      width="80"
-                      height="80" />
+                    <img class="rounded-start" alt="Shape of You" width="80" height="80" />
                   </div>
                   <div class="col">
                     <div class="card-body">
@@ -573,11 +574,7 @@
               <div class="card">
                 <div class="row row-0">
                   <div class="col-auto">
-                    <img
-                      class="rounded-start"
-                      alt="Langrennsfar"
-                      width="80"
-                      height="80" />
+                    <img class="rounded-start" alt="Langrennsfar" width="80" height="80" />
                   </div>
                   <div class="col">
                     <div class="card-body">
@@ -635,9 +632,7 @@
                   <div class="col">
                     <div class="card-body">
                       Different World (feat. CORSAK)
-                      <div class="text-secondary">
-                        Alan Walker, K-391, Sofia Carson, CORSAK
-                      </div>
+                      <div class="text-secondary">Alan Walker, K-391, Sofia Carson, CORSAK</div>
                     </div>
                   </div>
                 </div>
@@ -991,7 +986,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 18th December 2024
- * Modified: Tue 31 December 2024 - 13:33:05
+ * Modified: 17th February 2026 - 16:55:26
  **/
 
 export default {
@@ -1005,10 +1000,12 @@ export default {
     ...mapState(useGuildStore, ['community']),
 
     active() {
+      return []
       return this.community?.active?.slice(0, 7) || []
     },
 
     latest() {
+      return []
       return this.community?.latest?.slice(0, 7) || []
     },
   },

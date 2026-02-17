@@ -128,8 +128,8 @@
                     @click.stop="
                       $mitt.emit('ask:confirm', {
                         item,
-                        title: 'Delete list',
-                        message: 'Are you sure you want to delete this list?',
+                        title: 'Confirm deletion of list',
+                        message: 'You are about to permanently delete the selected list.',
                         onConfirm: () => $mitt.emit('list:delete', { item }),
                       })
                     ">

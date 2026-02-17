@@ -22,7 +22,7 @@
               <ul class="nav nav-pills nav-vertical">
                 <li class="nav-item" v-for="item in navigation" :key="item.path">
                   <span class="font-serif">
-                    <Icon class="me-3">Fingerprint</Icon>
+                    <Icon name="tabler:fingerprint" class="me-3" />
                     {{ item.title }} - {{ item.path }}
                   </span>
                   <ul class="nav nav-pills nav-vertical">
@@ -116,7 +116,7 @@
  * @desc:    Nuxt Content documentation page displaying user guides, changelog and developer docs
  * -------------------------------------------
  * Created Date: 26th October 2023
- * Modified: 27th June 2025 - 11:02:59
+ * Modified: 17th February 2026 - 16:55:50
  **/
 
 const route = useRoute()

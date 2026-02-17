@@ -4,10 +4,7 @@
       <div class="card-body">
         <div>
           <div class="d-flex mb-3">
-            <h1 class="m-0">
-              <!-- <Icon class="me-2" style="transform: translateY(-2px)">CloudNetwork</Icon> -->
-              Integrations
-            </h1>
+            <h1 class="m-0">Integrations</h1>
           </div>
         </div>
         <p>
@@ -23,11 +20,11 @@
       </div>
     </div>
 
-    <div class="row mb-3">
+    <!-- <div class="row mb-3">
       <div class="col-6">
         <v-btn to="/import" variant="tonal" color="primary">Sync your library now</v-btn>
       </div>
-    </div>
+    </div> -->
 
     <template v-for="account in accounts">
       <div class="card mb-3" style="outline: solid 1px #413231">
@@ -62,7 +59,7 @@
 
                 <v-btn v-else variant="text" size="small" color="blue-grey-lighten-3">
                   Connect account
-                  <Icon size="12" width="1.5" class="ms-2">ExternalLink</Icon>
+                  <Icon name="tabler:external-link" size="12" width="1.5" class="ms-2" />
                 </v-btn>
               </div>
             </div>
@@ -85,7 +82,6 @@
                 <div class="v-list-item-subtitle">
                   <small class="text-muted">
                     Linked {{ dates.timeAgo(linked[account].created_at) }}
-                    <!-- <Icon size="16" width="1" style="transform: translateY(-1px)">Cards</Icon>
                     {{ linked[account].games }} games -->
                   </small>
                 </div>
@@ -98,7 +94,12 @@
               style="padding-top: 0.4rem; padding-bottom: 0.8rem; background: #24232a">
               <div class="row g-2 align-items-center">
                 <div class="col-auto text-secondary">
-                  <Icon size="16" width="1.5" class="mx-3" style="color: #2fb344">Checks</Icon>
+                  <Icon
+                    name="tabler:checks"
+                    size="16"
+                    width="1.5"
+                    class="mx-3"
+                    style="color: #2fb344" />
                 </div>
                 <div class="col">
                   <span>{{ item.text }}</span>
@@ -130,7 +131,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: 27th November 2025 - 03:56:04
+ * Modified: 17th February 2026 - 16:58:59
  **/
 
 export default {

@@ -1,7 +1,7 @@
 <template>
   <div class="game-details__content" @click.stop="() => {}">
     <button type="button" class="game-details__close" @click="$emit('close')">
-      <Icon width="2">X</Icon>
+      <Icon name="tabler:x" width="2" />
     </button>
     <!-- <div
         style="
@@ -232,11 +232,11 @@
                       }"
                       class="status-dot status-dot-animated ms-1 me-2"></span>
 
-                    <Icon v-else size="13" class="me-2">CircleOff</Icon>
+                    <Icon name="tabler:circle-off" v-else size="13" class="me-2" />
 
                     <span>
                       {{ state.name || 'Without a state' }}
-                      <!-- <Icon size="12" class="ms-1" style="transform: translateX(3px)">
+                      <!-- <Icon name="tabler:home" size="12" class="ms-1" style="transform: translateX(3px)">
                         ChevronDown
                       </Icon> -->
                     </span>
@@ -247,9 +247,12 @@
               <div class="mb-2">
                 <div class="d-flex flex-column">
                   <div>
-                    <Icon size="16" width="1.2" class="me-1" style="transform: translateY(-1px)">
-                      ClockHour3
-                    </Icon>
+                    <Icon
+                      name="tabler:clock-hour-3"
+                      size="16"
+                      width="1.2"
+                      class="me-1"
+                      style="transform: translateY(-1px)" />
                     <template v-if="app._.playtime == 0">Not played</template>
                     <template v-else>Played {{ dates.minToHours(app._.playtime) }}</template>
                   </div>
@@ -261,15 +264,21 @@
               </div>
 
               <div v-if="app.is.lib" v-tippy="'Date added to your library'" class="mb-2">
-                <Icon size="16" width="1.2" class="me-1" style="transform: translateY(-1px)">
-                  CalendarWeek
-                </Icon>
+                <Icon
+                  name="tabler:calendar-week"
+                  size="16"
+                  width="1.2"
+                  class="me-1"
+                  style="transform: translateY(-1px)" />
                 <span>{{ app._.owned_at }}</span>
               </div>
               <div v-else class="mb-2">
-                <Icon size="16" width="1.2" class="me-1" style="transform: translateY(-1px)">
-                  Cards
-                </Icon>
+                <Icon
+                  name="tabler:cards"
+                  size="16"
+                  width="1.2"
+                  class="me-1"
+                  style="transform: translateY(-1px)" />
                 <span>Not in your library</span>
               </div>
             </div>
@@ -282,7 +291,7 @@
                 v-if="app._.created_at"
                 v-tippy="'The date when the game has been added to the website'"
                 class="mb-2">
-                <Icon size="16" width="1.2" class="me-1">Box</Icon>
+                <Icon name="tabler:box" size="16" width="1.2" class="me-1" />
                 Since {{ app._.created_at }}
                 <!-- {{ $moment(app.created_at).format('LL') }} -->
               </div>
@@ -291,13 +300,13 @@
                 v-if="app._.updated_at"
                 v-tippy="'The last update on metadata from data sources'"
                 class="mb-2">
-                <Icon size="16" width="1.2" class="me-1">RotateClockwise2</Icon>
+                <Icon name="tabler:rotate-clockwise-2" size="16" width="1.2" class="me-1" />
                 Updated {{ app._.updated_at }}
                 <!-- {{ $moment(app.created_at).format('LL') }} -->
               </div>
 
               <div class="mb-2">
-                <Icon size="16" width="1.2" class="me-1">Edit</Icon>
+                <Icon name="tabler:edit" size="16" width="1.2" class="me-1" />
                 Edit missing or wrong data on
                 <a
                   :href="
@@ -349,7 +358,11 @@
                   <strong class="text-muted">{{ app._.releasedYear }}</strong>
                   <div class="d-inline-block px-2 opacity-50">🔸</div>
                   <strong v-tippy="'Median score'" class="text-muted">
-                    <Icon size="12" width="1" style="transform: translateY(-2px)">StarFilled</Icon>
+                    <Icon
+                      name="tabler:star-filled"
+                      size="12"
+                      width="1"
+                      style="transform: translateY(-2px)" />
                     {{ app.score }}
                   </strong>
 
@@ -374,24 +387,26 @@
                         @click.stop="$refs.bstate.showManager($event)">
                         <span v-if="state.id" class="status-dot status-dot-animated me-2"></span>
                         {{ state.name || 'Assign a state' }}
-                        <Icon size="12" class="ms-1" style="transform: translateX(3px)">
-                          ChevronDown
-                        </Icon>
+                        <Icon
+                          name="tabler:chevron-down"
+                          size="12"
+                          class="ms-1"
+                          style="transform: translateX(3px)" />
                       </v-btn>
                     </template>
                   </b-state>
 
                   <v-btn variant="text" size="small" class="me-2" color="pink-darken-2">
-                    <Icon>{{ app.is.fav ? 'HeartFilled' : 'Heart' }}</Icon>
+                    <Icon :name="app.is.fav ? 'tabler:heart-filled' : 'tabler:heart'" />
                   </v-btn>
 
                   <!-- <v-btn class="me-2" variant="tonal" size="small" color="blue-grey">
                   Add to a list
-                  <Icon size="12" class="ms-2">ChevronDown</Icon>
+                  <Icon name="tabler:home" size="12" class="ms-2">ChevronDown</Icon>
                 </v-btn> -->
 
                   <!-- <v-btn variant="tonal" size="small" class="me-2" color="blue-grey">
-                  <Icon>Settings</Icon>
+                  <Icon name="tabler:settings" />
                 </v-btn> -->
                 </div>
               </div>
@@ -431,7 +446,7 @@
                       :href="'https://store.steampowered.com/app/' + app.id.steam"
                       target="_blank"
                       style="height: 36px; outline: rgb(108 122 145 / 40%) solid 1px">
-                      <!-- <Icon size="15" class="me-1">BrandSteam</Icon> -->
+                      <!-- <Icon name="tabler:home" size="15" class="me-1">BrandSteam</Icon> -->
                       <b-logo
                         name="steam"
                         size="14"
@@ -445,7 +460,7 @@
                       :href="'steam://run/' + app.id.steam"
                       slim
                       style="height: 36px; min-width: 0">
-                      <Icon size="14" width="1.5">BrowserShare</Icon>
+                      <Icon name="tabler:browser-share" size="14" width="1.5" />
                     </v-btn>
                   </v-btn-group>
 
@@ -456,7 +471,7 @@
                   :href="'https://store.steampowered.com/app/' + app.id.steam"
                   target="_blank"
                   style="outline: rgb(108 122 145 / 40%) solid 1px">
-                  <Icon size="15" class="me-2">BrandSteam</Icon>
+                  <Icon name="tabler:home" size="15" class="me-2">BrandSteam</Icon>
                   Steam store
                 </v-btn> -->
 
@@ -476,7 +491,7 @@
                     :href="'https://store.steampowered.com/app/' + app.id.steam"
                     class="btn btn-ghost-secondary btn-secondary btn-sm"
                     target="_blank">
-                    <Icon size="15" class="me-1">Download</Icon>
+                    <Icon name="tabler:download" size="15" class="me-1" />
                     Demo
                   </a>
 
@@ -486,7 +501,7 @@
                     variant="text"
                     :href="`https://www.xbox.com/games/store/${app.slug}/${app.id.xbox}`"
                     target="_blank">
-                    <Icon size="15" class="me-1">BrandXbox</Icon>
+                    <Icon name="tabler:brand-xbox" size="15" class="me-1" />
                     Xbox
                   </v-btn>
 
@@ -520,12 +535,11 @@
                       <div class="card-body">
                         <h3 class="m-0">
                           <Icon
+                            name="tabler:square-rounded-check"
                             size="15"
                             width="1.5"
                             style="transform: translateY(-1px)"
-                            class="me-1">
-                            SquareRoundedCheck
-                          </Icon>
+                            class="me-1" />
                           {{ dates.minToHours(app.hltb.main / 60) }}
                         </h3>
                         <small class="text-secondary">Main story</small>
@@ -538,12 +552,11 @@
                       <div class="card-body">
                         <h3 class="m-0">
                           <Icon
+                            name="tabler:discount-check"
                             size="15"
                             width="1.5"
                             style="transform: translateY(-1px)"
-                            class="me-1">
-                            DiscountCheck
-                          </Icon>
+                            class="me-1" />
                           {{ dates.minToHours(app.hltb.extras / 60) }}
                         </h3>
                         <small class="text-secondary">Main with extras</small>
@@ -581,11 +594,10 @@
                       }">
                       <Icon
                         v-if="hltbSource"
+                        name="tabler:click"
                         size="18"
                         width="2"
-                        style="transform: translateY(-2px)">
-                        Click
-                      </Icon>
+                        style="transform: translateY(-2px)" />
                       Game length data from
                       <strong>HowLongToBeat</strong>
                     </a>
@@ -597,22 +609,31 @@
                 <div v-if="app.hltb && app.hltb.main" class="my-2">
                   <h5>Time to beat</h5>
                   <small v-tippy="'Main game'" class="text-muted me-5">
-                    <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-                      SquareRoundedCheck
-                    </Icon>
+                    <Icon
+                      name="tabler:square-rounded-check"
+                      size="18"
+                      width="2"
+                      style="transform: translateY(-2px)"
+                      class="" />
 
                     {{ dates.minToHours(app.hltb.main / 60) }}
                   </small>
                   <small v-tippy="'Main game with extras'" class="text-muted me-5">
-                    <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-                      DiscountCheck
-                    </Icon>
+                    <Icon
+                      name="tabler:discount-check"
+                      size="18"
+                      width="2"
+                      style="transform: translateY(-2px)"
+                      class="" />
                     {{ dates.minToHours(app.hltb.extras / 60) }}
                   </small>
                   <small v-if="app.hltb.comp" v-tippy="'Completionist'" class="text-muted me-5">
-                    <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-                      Trophy
-                    </Icon>
+                    <Icon
+                      name="tabler:trophy"
+                      size="18"
+                      width="2"
+                      style="transform: translateY(-2px)"
+                      class="" />
                     {{ dates.minToHours(app.hltb.comp / 60) }}
                   </small>
 
@@ -622,9 +643,12 @@
                     :target="hltbSource ? '_blank' : null"
                     class="text-muted"
                     :class="{ disabled: !hltbSource }">
-                    <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-                      Click
-                    </Icon>
+                    <Icon
+                      name="tabler:click"
+                      size="18"
+                      width="2"
+                      style="transform: translateY(-2px)"
+                      class="" />
                     From HLTB
                   </a>
                 </div>
@@ -645,12 +669,11 @@
                       <div class="card-body">
                         <h3 class="m-0" style="letter-spacing: 0 !important">
                           <Icon
+                            name="tabler:star-filled"
                             size="13"
                             width="1.5"
                             style="transform: translateY(-1px)"
-                            class="me-1">
-                            StarFilled
-                          </Icon>
+                            class="me-1" />
                           {{ app.score }}
                         </h3>
                         <small class="text-secondary">Median score</small>
@@ -985,7 +1008,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 21st November 2024
- * Modified: 26th November 2025 - 10:40:20
+ * Modified: 23rd January 2026 - 23:11:43
  **/
 
 export default {

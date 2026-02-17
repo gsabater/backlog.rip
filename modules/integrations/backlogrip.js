@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 30th September 2025
- * Modified: 26th October 2025 - 03:35:39
+ * Modified: 17th February 2026 - 11:58:58
  */
 
 let $nuxt = null
@@ -81,7 +81,7 @@ export default {
 
     const xhr = await $nuxt.$axios.get(`repository/${repository}.json`)
 
-    if (xhr.status) {
+    if (xhr?.status) {
       $nuxt.$log(`[ backlogrip ] GET repo: {${repository}} (${xhr.data.length} items)`)
       return xhr.data
     }
@@ -121,5 +121,26 @@ export default {
     }
 
     return null
+  },
+
+  //+-------------------------------------------------
+  // getWorkerAdditions()
+  // Requests to the worker an object of additions
+  // This object has info about
+  // - Queue for today (split into coming soon and recent added)
+  // - Latest updates
+  // - Stats
+  // -----
+  // Created on Tue Dec 02 2025
+  //+-------------------------------------------------
+  async getWorkerAdditions() {
+    $nuxt ??= useNuxtApp()
+
+    try {
+      const xhr = await $nuxt.$axios.get(`https://api.backlog.rip/w/schedule`)
+      if (xhr.status) return xhr.data
+    } catch (error) {
+      $nuxt.$log.error('Could not get Backlog.rip worker schedule', error)
+    }
   },
 }

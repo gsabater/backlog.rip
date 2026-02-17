@@ -8,10 +8,19 @@
               <import-card :module="mod" :integration="integration(platform)">
                 <template #card:action>
                   <template v-if="libraryStore.isLinked(platform)">
-                    <NuxtLink :to="'/import/' + platform" class="btn btn-primary w-100 mb-2">
-                      <Icon class="me-3">ArrowsTransferDown</Icon>
-                      Synchronize your library
-                    </NuxtLink>
+                    <v-btn
+                      block
+                      :to="'/import/' + platform"
+                      variant="tonal"
+                      color="rgb(135 140 195)"
+                      style="
+                        filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+                        outline: 1px solid #9e58581c;
+                        outline-offset: -1px;
+                      ">
+                      <Icon name="tabler:arrows-transfer-down" class="me-3" />
+                      Import your library from {{ mod.manifest.source.name }}
+                    </v-btn>
                   </template>
                   <template v-else>
                     <div class="text-secondary mb-3">
@@ -51,7 +60,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 25th November 2024
- * Modified: 7th November 2025 - 10:41:41
+ * Modified: 17th February 2026 - 12:19:16
  **/
 
 export default {

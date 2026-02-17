@@ -12,7 +12,7 @@
           *| Navbar toggler to show sidebar
           *+--------------------------------- -->
         <button class="navbar-toggler" style="opacity: 0.8" @click="showMobileMenu">
-          <Icon size="25">LayoutSidebarInactive</Icon>
+          <Icon size="25" name="tabler:layout-sidebar-inactive" />
         </button>
 
         <!--
@@ -23,7 +23,7 @@
         <div class="d-block d-md-none" @click.stop="$mitt.emit('search:palette')">
           <div class="input-group input-group-flat input-palette">
             <span class="input-group-text">
-              <Icon size="16" class="me-1">Search</Icon>
+              <Icon size="16" class="me-1" name="tabler:search" />
             </span>
             <input type="text" class="form-control" autocomplete="off" placeholder="Search" />
           </div>
@@ -34,7 +34,9 @@
           *| Fullscreen toggler
           *+--------------------------------- -->
         <button class="navbar-toggler" style="opacity: 0.8" @click="$app.f.toggleFullscreen">
-          <Icon size="25" :icon="$app.ui.fullscreen ? 'WindowMinimize' : 'WindowMaximize'"></Icon>
+          <Icon
+            size="25"
+            :name="$app.ui.fullscreen ? 'tabler:window-minimize' : 'tabler:window-maximize'" />
         </button>
 
         <!--
@@ -63,7 +65,7 @@
           *+---------------------------------
           *| Main sidebar Nav menu
           *+--------------------------------- -->
-        <common-layout-sidebar-nav />
+        <common-sidebar />
       </div>
 
       <!--
@@ -116,9 +118,11 @@
                       </small>
                     </div>
                     <div class="ms-auto">
-                      <Icon size="16" width="2" class="text-muted icon-rotate">
-                        RotateClockwise2
-                      </Icon>
+                      <Icon
+                        size="16"
+                        width="2"
+                        class="text-muted icon-rotate"
+                        name="tabler:rotate-clockwise-2" />
                     </div>
                   </template>
                 </div>
@@ -224,7 +228,7 @@
                 <div class="dropdown-item" @click="$mitt.emit('dialog:about')">
                   About the project
                   <span class="ms-auto text-secondary">
-                    <Icon size="11">ProgressHelp</Icon>
+                    <Icon size="11" name="tabler:progress-help" />
                   </span>
                 </div>
               </b-dropdown>
@@ -235,7 +239,7 @@
           <div v-if="false" class="px-3 my-2" @click.stop="$mitt.emit('search:palette')">
             <div class="input-group input-group-flat input-palette cursor-pointer">
               <span class="input-group-text">
-                <Icon size="14" class="me-1">Search</Icon>
+                <Icon size="14" class="me-1" name="tabler:search" />
               </span>
               <input
                 type="text"
@@ -282,7 +286,7 @@
                 href="https://backlog.featurebase.app/en/roadmap"
                 target="_blank"
                 v-tippy="'Feedback board and roadmap on Featurebase'">
-                <Icon size="18" width="2" color="#fff">Map</Icon>
+                <Icon size="18" width="2" color="#fff" name="tabler:map" />
               </v-btn>
 
               <v-btn
@@ -312,25 +316,25 @@
                       </g>
                     </svg>
                     Discord
-                    <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
+                    <Icon width="1" size="11" class="ms-auto" name="tabler:external-link" />
                   </a>
 
                   <a
                     href="https://www.patreon.com/c/BacklogRIP"
                     class="dropdown-item"
                     target="_blank">
-                    <Icon size="16" class="me-2">BrandPatreon</Icon>
+                    <Icon size="16" class="me-2" name="tabler:brand-patreon" />
                     Patreon
-                    <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
+                    <Icon width="1" size="11" class="ms-auto" name="tabler:external-link" />
                   </a>
 
                   <a
                     href="https://backlog.featurebase.app/en/roadmap"
                     target="_blank"
                     class="dropdown-item">
-                    <Icon size="16" class="me-2">Map</Icon>
+                    <Icon size="16" class="me-2" name="tabler:map" />
                     Roadmap
-                    <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
+                    <Icon width="1" size="11" class="ms-auto" name="tabler:external-link" />
                   </a>
 
                   <a
@@ -345,23 +349,23 @@
                       style="opacity: 0.6"></b-logo>
                     <!-- <Icon size="18" class="me-2">BrandGithub</Icon> -->
                     Source code
-                    <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
+                    <Icon width="1" size="11" class="ms-auto" name="tabler:external-link" />
                   </a>
 
                   <div class="dropdown-divider"></div>
 
                   <NuxtLink to="/changelog" class="dropdown-item">
-                    <Icon size="16" class="me-2">Broadcast</Icon>
+                    <Icon size="16" class="me-2" name="tabler:broadcast" />
                     Changelog
                   </NuxtLink>
 
                   <NuxtLink to="/sitemap" class="dropdown-item">
-                    <Icon size="16" class="me-2">Steam</Icon>
+                    <Icon size="16" class="me-2" name="tabler:steam" />
                     Sitemap
                   </NuxtLink>
 
                   <NuxtLink to="/support" class="dropdown-item">
-                    <Icon size="16" class="me-2">ActivityHeartbeat</Icon>
+                    <Icon size="16" class="me-2" name="tabler:activity-heartbeat" />
                     <span class="fancy">Support the project</span>
                   </NuxtLink>
 
@@ -377,7 +381,7 @@
                     </span>
                   </span>
                 </b-dropdown>
-                <Icon size="18" style="transform: translateY(1px)">Terminal2</Icon>
+                <Icon size="18" style="transform: translateY(1px)" name="tabler:terminal-2" />
               </v-btn>
             </div>
           </div>
@@ -436,11 +440,11 @@
 
         <div class="d-flex">
           <button class="navbar-toggler" style="opacity: 0.8" @click="$mitt.emit('search:palette')">
-            <Icon size="25">ListSearch</Icon>
+            <Icon size="25" name="tabler:list-search" />
           </button>
 
           <button class="navbar-toggler" style="opacity: 0.8" @click="showMobileMenu">
-            <Icon size="25">LayoutSidebarRightInactive</Icon>
+            <Icon size="25" name="tabler:layout-sidebar-right-inactive" />
           </button>
         </div>
 
@@ -471,7 +475,7 @@
                         to="/games"
                         class="list-group-item list-group-item-action d-flex align-items-center">
                         <span class="nav-link-icon">
-                          <Icon>Cards</Icon>
+                          <Icon name="tabler:cards" />
                         </span>
                         <span class="nav-link-title">All games</span>
                       </NuxtLink>
@@ -480,7 +484,7 @@
                         to="/genres"
                         class="list-group-item list-group-item-action d-flex align-items-center">
                         <span class="nav-link-icon">
-                          <Icon>Triangles</Icon>
+                          <Icon name="tabler:triangles" />
                         </span>
                         <span class="nav-link-title">Genres</span>
                       </NuxtLink>
@@ -528,7 +532,7 @@
           <!-- <div class="px-3" @click.stop="$mitt.emit('search:palette')">
             <div class="input-group input-group-flat input-palette">
               <span class="input-group-text">
-                <Icon size="16" class="me-1">Search</Icon>
+                <Icon size="16" class="me-1" name="tabler:search" />
               </span>
               <input
                 type="text"
@@ -562,12 +566,12 @@
             <b-dropdown trigger="mouseenter focus click hover manual" placement="bottom">
               <span class="dropdown-header">Add games to your library</span>
               <div class="dropdown-item" @click.stop="$mitt.emit('game:add')">
-                <Icon size="16" class="me-2 text-muted">SquareRoundedPlus</Icon>
+                <Icon size="16" class="me-2 text-muted" name="tabler:square-rounded-plus" />
                 Manually
                 <small class="text-secondary ms-auto me-0">Insert</small>
               </div>
               <NuxtLink to="/import" class="dropdown-item">
-                <Icon size="16" class="me-2 text-muted">BrandSteam</Icon>
+                <Icon size="16" class="me-2 text-muted" name="tabler:brand-steam" />
                 Import your Steam account
               </NuxtLink>
             </b-dropdown>
@@ -586,14 +590,14 @@
               v-tippy="'Go back to dark'"
               class="nav-link cursor-pointer px-0 hide-theme-dark"
               @click="changeTheme('dark')">
-              <Icon>Moon</Icon>
+              <Icon name="tabler:moon" />
             </div>
 
             <div
               v-tippy="'Enable light mode'"
               class="nav-link cursor-pointer px-0 hide-theme-light"
               @click="changeTheme('light')">
-              <Icon>Sun</Icon>
+              <Icon name="tabler:sun" />
             </div>
           </div>
 
@@ -604,7 +608,7 @@
           -->
           <div v-if="$app.ui.showLogs && false" class="mx-3">
             <div v-tippy="'Enable light mode'" class="nav-link cursor-pointer px-0">
-              <Icon>FileCode</Icon>
+              <Icon name="tabler:file-code" />
             </div>
           </div>
 
@@ -632,13 +636,13 @@
                 <b-dropdown placement="bottom-end">
                   <NuxtLink to="/library" class="dropdown-item">
                     Library
-                    <small class="text-secondary ms-auto me-0">
+                    <small class="ms-auto badge bg-secondary-lt font-mono">
                       {{ format.num($app.count.library) }}
                     </small>
                   </NuxtLink>
                   <NuxtLink to="/account/lists" class="dropdown-item">
                     Lists
-                    <small class="text-secondary ms-auto me-0">
+                    <small class="ms-auto badge bg-secondary-lt font-mono">
                       {{ format.num($app.count.lists) }}
                     </small>
                   </NuxtLink>
@@ -774,6 +778,7 @@
     <game-random-dialog />
 
     <list-crud-dialog />
+    <list-warning-dialog />
     <backup-reload-dialog />
     <backup-restore-dialog />
     <!-- <backup-conflict-dialog /> -->
@@ -894,12 +899,12 @@
         Discord
       </a>
       <a href="https://github.com/gsabater/backlog.rip" class="dropdown-item" target="_blank">
-        <Icon size="18" class="me-2">BrandGithub</Icon>
+        <Icon size="18" class="me-2" name="tabler:brand-github" />
         Code on Github
       </a>
 
       <NuxtLink to="/changelog" class="dropdown-item">
-        <Icon size="18" class="me-2">Broadcast</Icon>
+        <Icon size="18" class="me-2" name="tabler:broadcast" />
         Changelog
       </NuxtLink>
       <span class="dropdown-header">
@@ -939,7 +944,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 19th November 2025 - 02:47:25
+ * Modified: 27th January 2026 - 19:05:59
  **/
 
 import synchronizationService from '../services/synchronizationService'

@@ -3,7 +3,7 @@
     <div class="card mb-3 intro-card">
       <div class="card-body">
         <h1 class="h4 mb-2 d-flex align-items-center">
-          <Icon class="me-2">FileCode</Icon>
+          <Icon name="tabler:file-code" class="me-2" />
           Application logs
         </h1>
         <p class="mb-0 text-secondary">
@@ -63,7 +63,7 @@
               </button>
             </div>
             <b-btn class="btn-sm btn-outline-secondary" @click="exportLogs">
-              <Icon class="me-1" size="14">Download</Icon>
+              <Icon name="tabler:download" class="me-1" size="14" />
               Export
             </b-btn>
           </div>
@@ -106,7 +106,13 @@
 </template>
 
 <script>
-import dates from '~/utils/dates'
+/**
+ * @file:    \pages\account\sections\logs.vue
+ * @desc:    ...
+ * ----------------------------------------------
+ * Created Date: 22nd January 2026
+ * Modified: 17th February 2026 - 12:14:37
+ **/
 
 export default {
   name: 'ApplicationLogs',
@@ -123,6 +129,12 @@ export default {
   },
 
   computed: {
+    //+-------------------------------------------------
+    // function()
+    //
+    // -----
+    // Created on Tue Feb 17 2026
+    //+-------------------------------------------------
     normalizedLogs() {
       const source = Array.isArray(this.logs) ? this.logs : []
 
@@ -231,16 +243,7 @@ export default {
     },
   },
 
-  mounted() {
-    this.loadLogs()
-  },
-
   methods: {
-    loadLogs() {
-      const rawLogs = this.$log?.getAll?.()
-      this.logs = Array.isArray(rawLogs) ? rawLogs : []
-    },
-
     formatDisplayTime(timestamp) {
       if (!timestamp) {
         return ''
@@ -378,6 +381,12 @@ export default {
       }
     },
 
+    //+-------------------------------------------------
+    // exportLogs()
+    // Generates a json file with all logs recorded
+    // -----
+    // Created on Tue Feb 17 2026
+    //+-------------------------------------------------
     exportLogs() {
       const payload = Array.isArray(this.logs) ? this.logs : []
       const json = JSON.stringify(payload, null, 2)
@@ -389,6 +398,21 @@ export default {
       anchor.click()
       URL.revokeObjectURL(url)
     },
+
+    //+-------------------------------------------------
+    // loadLogs()
+    // Gets all logs from the $log plugin
+    // -----
+    // Created on Tue Feb 17 2026
+    //+-------------------------------------------------
+    loadLogs() {
+      const raw = this.$log.getAll()
+      this.logs = Array.isArray(raw) ? raw : []
+    },
+  },
+
+  mounted() {
+    this.loadLogs()
   },
 }
 </script>

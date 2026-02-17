@@ -32,9 +32,10 @@
 
                       <div v-if="item.event == 'note'">
                         <div class="h4 mb-1">
-                          <span
-                            style="transform: translateY(-1px); display: inline-block">
-                            <Icon class="text-secondary mr-1" size="18">Note</Icon>
+                          <span style="transform: translateY(-1px); display: inline-block">
+                            <Icon name="tabler:home" class="text-secondary mr-1" size="18">
+                              Note
+                            </Icon>
                           </span>
                           {{ _eventTitle(item) }}
                         </div>
@@ -51,9 +52,10 @@
 
                       <div v-if="item.event == 'state'">
                         <div class="h4 mb-2">
-                          <span
-                            style="transform: translateY(-1px); display: inline-block">
-                            <Icon class="text-secondary mr-1" size="18">Background</Icon>
+                          <span style="transform: translateY(-1px); display: inline-block">
+                            <Icon name="tabler:home" class="text-secondary mr-1" size="18">
+                              Background
+                            </Icon>
                           </span>
 
                           {{ _eventTitle(item) }}
@@ -72,7 +74,7 @@
 
                       <div v-if="item.event == 'added'">
                         <div class="h4 mb-1">
-                          <Icon class="text-secondary" size="17">StepInto</Icon>
+                          <Icon name="tabler:home" class="text-secondary" size="17">StepInto</Icon>
                           {{ _eventTitle(item) }}
                         </div>
                         You have updated your library with
@@ -109,7 +111,7 @@
                         </li>
                       </ul> -->
                       <!-- <div class="pull-right">
-                        <Icon class="text-secondary" size="10">Trash</Icon>
+                        <Icon name="tabler:home" class="text-secondary" size="10">Trash</Icon>
                       </div> -->
                       <div>&nbsp;</div>
                     </li>
@@ -132,7 +134,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 4th December 2023
- * Modified: Wed 30 October 2024 - 17:42:02
+ * Modified: 23rd January 2026 - 23:12:18
  **/
 
 export default {
@@ -217,12 +219,7 @@ export default {
         }
 
         // Control duplicated
-        if (
-          entry.event == 'state' &&
-          prev &&
-          prev.event == entry.event &&
-          prev.ref == entry.ref
-        ) {
+        if (entry.event == 'state' && prev && prev.event == entry.event && prev.ref == entry.ref) {
           //take the previous item in the grouped[day] and update it
           const previous = grouped[day].pop()
           if (previous) {

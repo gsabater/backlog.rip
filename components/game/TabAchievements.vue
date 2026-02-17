@@ -8,7 +8,7 @@
         <small
           class="text-muted"
           v-tippy="'Achievements are synced with Steam once every 24 hours'">
-          <Icon class="text-muted me-1" size="14" width="1.4">Refresh</Icon>
+          <Icon name="tabler:refresh" class="text-muted me-1" size="14" width="1.4" />
 
           Synchronized
           {{ dates.timeAgo(app.dates.achievements) }}
@@ -27,12 +27,11 @@
           <div class="card-body">
             <h3 class="m-0">
               <Icon
+                name="tabler:square-rounded-check"
                 size="15"
                 width="1.5"
                 style="transform: translateY(-1px)"
-                class="me-1">
-                SquareRoundedCheck
-              </Icon>
+                class="me-1" />
               {{ astats.completed }} / {{ astats.total }}
               <small
                 class="cursor-help"
@@ -54,12 +53,11 @@
           <div class="card-body">
             <h3 class="m-0">
               <Icon
+                name="tabler:discount-check"
                 size="15"
                 width="1.5"
                 style="transform: translateY(-1px)"
-                class="me-1">
-                DiscountCheck
-              </Icon>
+                class="me-1" />
               {{ astats.percentage }}%
             </h3>
             <small class="text-secondary">Completion rate</small>
@@ -118,7 +116,7 @@
           icon
           variant="text"
           style="position: absolute; top: 17px; left: -32px; z-index: 9999">
-          <Icon size="24">ChevronLeft</Icon>
+          <Icon name="tabler:chevron-left" size="24" />
         </v-btn>
         <v-btn
           id="swiper-next"
@@ -127,7 +125,7 @@
           icon
           variant="text"
           style="position: absolute; top: 17px; right: -32px; z-index: 9999">
-          <Icon size="24">ChevronRight</Icon>
+          <Icon name="tabler:chevron-right" size="24" />
         </v-btn>
 
         <swiper
@@ -142,9 +140,7 @@
           npagination="{ type: 'fraction' }"
           :modules="$swiperModules"
           class="row-cards mb-4">
-          <swiper-slide
-            v-for="achievement in focusedAchievements"
-            :key="achievement.uuid">
+          <swiper-slide v-for="achievement in focusedAchievements" :key="achievement.uuid">
             <div class="card card-sm" style="max-height: 75px; aspect-ratio: unset">
               <div
                 class="card-body row"
@@ -193,12 +189,11 @@
           Resources
 
           <Icon
+            name="tabler:chevron-down"
             class="text-muted"
             size="14"
             width="2"
-            style="transform: translate(5px, 1px)">
-            ChevronDown
-          </Icon>
+            style="transform: translate(5px, 1px)" />
         </v-btn>
         <b-dropdown
           to="#resources"
@@ -217,7 +212,7 @@
               color="white"
               style="transform: translateY(1px); opacity: 0.6" />
             <span class="pe-2">Guides on Steam</span>
-            <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
+            <Icon name="tabler:external-link" width="1" size="11" class="ms-auto" />
           </a>
           <a
             class="dropdown-item"
@@ -230,7 +225,7 @@
               color="white"
               style="transform: translateY(1px); opacity: 0.6" />
             <span class="pe-2">Achievements on Steam</span>
-            <Icon width="1" size="11" class="ms-auto">ExternalLink</Icon>
+            <Icon name="tabler:external-link" width="1" size="11" class="ms-auto" />
           </a>
         </b-dropdown>
       </div>
@@ -294,7 +289,7 @@
                         justify-content: center;
                         color: white;
                       ">
-                      <Icon size="20" width="1.4">Trophy</Icon>
+                      <Icon name="tabler:trophy" size="20" width="1.4" />
                     </div>
                     <div
                       class="mx-2 pe-2"
@@ -308,9 +303,7 @@
                       ">
                       <small>Achievement {{ achievement.is.status }}</small>
                       <small style="font-weight: 500">
-                        {{
-                          dates.unixToDate(achievement.is.time || achievement.is.steam)
-                        }}
+                        {{ dates.unixToDate(achievement.is.time || achievement.is.steam) }}
                       </small>
                     </div>
                   </div>
@@ -344,7 +337,7 @@
                     icon="mdi-chevron-right"
                     size="x-small"
                     color="grey-darken-1">
-                    <Icon size="14" width="1.5">DotsVertical</Icon>
+                    <Icon name="tabler:dots-vertical" size="14" width="1.5" />
                   </v-btn>
                   <b-dropdown
                     trigger="mouseenter focus click hover manual"
@@ -364,7 +357,7 @@
                       v-if="achievement.is && achievement.is.time"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'clear')">
-                      <Icon size="16" class="me-2 text-muted">ArrowBack</Icon>
+                      <Icon name="tabler:arrow-back" size="16" class="me-2 text-muted" />
                       Clear state
                     </div>
 
@@ -373,7 +366,7 @@
                       v-if="!achievement.is || achievement.is.status !== 'focused'"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'focused')">
-                      <Icon size="16" class="me-2 text-muted">ChevronsUp</Icon>
+                      <Icon name="tabler:chevrons-up" size="16" class="me-2 text-muted" />
                       Prioritize
                     </div>
 
@@ -381,7 +374,7 @@
                       v-if="!achievement.is || achievement.is.status !== 'abandoned'"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'abandoned')">
-                      <Icon size="16" class="me-2 text-muted">X</Icon>
+                      <Icon name="tabler:x" size="16" class="me-2 text-muted" />
                       Abandon
                     </div>
 
@@ -389,7 +382,7 @@
                       v-if="!achievement.is || achievement.is.status !== 'bugged'"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'bugged')">
-                      <Icon size="16" class="me-2 text-muted">Bug</Icon>
+                      <Icon name="tabler:bug" size="16" class="me-2 text-muted" />
                       Mark as bugged
                     </div>
 
@@ -410,7 +403,7 @@
 
               <!-- <div class="col-auto text-secondary">
             <v-btn variant="tonal" icon="mdi-chevron-right" size="small">
-              <Icon>ChevronRight</Icon>
+              <Icon name="tabler:chevron-right" />
             </v-btn>
           </div> -->
             </div>
@@ -423,7 +416,7 @@
       <v-divider v-if="hiddenAchievements.length" class="" style="border-style: dashed">
         <v-btn size="small" variant="text" @click="ui.showHidden = !ui.showHidden">
           {{ hiddenAchievements.length }} achievements hidden
-          <Icon size="14" width="1.5" class="ms-1 text-muted">ChevronDown</Icon>
+          <Icon name="tabler:chevron-down" size="14" width="1.5" class="ms-1 text-muted" />
         </v-btn>
       </v-divider>
     </div>
@@ -479,7 +472,7 @@
                     icon="mdi-chevron-right"
                     size="x-small"
                     color="grey-darken-1">
-                    <Icon size="14" width="1.5">DotsVertical</Icon>
+                    <Icon name="tabler:dots-vertical" size="14" width="1.5" />
                   </v-btn>
                   <b-dropdown
                     trigger="mouseenter focus click hover manual"
@@ -498,7 +491,7 @@
                       v-if="achievement.is && achievement.is.time"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'clear')">
-                      <Icon size="16" class="me-2 text-muted">ArrowBack</Icon>
+                      <Icon name="tabler:arrow-back" size="16" class="me-2 text-muted" />
                       Clear state
                     </div>
 
@@ -507,7 +500,7 @@
                     <div
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'focused')">
-                      <Icon size="16" class="me-2 text-muted">ChevronsUp</Icon>
+                      <Icon name="tabler:chevrons-up" size="16" class="me-2 text-muted" />
                       Prioritize
                     </div>
 
@@ -515,7 +508,7 @@
                       v-if="!achievement.is || achievement.is.status !== 'abandoned'"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'abandoned')">
-                      <Icon size="16" class="me-2 text-muted">X</Icon>
+                      <Icon name="tabler:x" size="16" class="me-2 text-muted" />
                       Abandon
                     </div>
 
@@ -523,7 +516,7 @@
                       v-if="!achievement.is || achievement.is.status !== 'bugged'"
                       class="dropdown-item"
                       @click.stop="setAchAs(achievement.steam_key, 'bugged')">
-                      <Icon size="16" class="me-2 text-muted">Bug</Icon>
+                      <Icon name="tabler:bug" size="16" class="me-2 text-muted" />
                       Mark as bugged
                     </div>
                   </b-dropdown>
@@ -532,7 +525,7 @@
 
               <!-- <div class="col-auto text-secondary">
             <v-btn variant="tonal" icon="mdi-chevron-right" size="small">
-              <Icon>ChevronRight</Icon>
+              <Icon name="tabler:chevron-right" />
             </v-btn>
           </div> -->
             </div>
@@ -549,7 +542,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 3rd March 2025
- * Modified: Thu 13 March 2025 - 17:21:05
+ * Modified: 23rd January 2026 - 23:11:46
  **/
 
 export default {

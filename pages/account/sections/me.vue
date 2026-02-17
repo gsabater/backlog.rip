@@ -94,15 +94,14 @@
             </small>
           </div>
         </div> -->
-        <div v-if="$app.wip && $cloud.sub" class="mb-3">
+        <div v-if="$cloud.backup && $cloud.backup.sub" class="mb-3">
           <div class="form-check-description ms-1" style="vertical-align: top">
             <Icon
+              name="tabler:click"
               size="14"
               width="1.5"
               class="tabler-icon tabler-icon-click mt-1 me-2"
-              style="vertical-align: top">
-              Click
-            </Icon>
+              style="vertical-align: top" />
             <div class="d-inline-block">
               To change your appearance on the site community pages
               <br />
@@ -170,24 +169,28 @@
         </label> -->
       </div>
     </div>
-    <div class="card-footer">
+    <div class="card-footer d-flex justify-content-between align-items-center">
       <small>
         Registered {{ $moment($auth.user.created_at).format('LL') }}
-        <template v-if="$cloud.sub">
-          🔸
-
-          <span v-tippy="'This is your cloud user identifier'" class="text-muted cursor-help">
-            <Icon
-              name="tabler:cloud-rain"
-              width="1.2"
-              size="14"
-              class="me-1"
-              style="transform: translateY(-1px)" />
-
-            <strong>... {{ ($cloud?.sub || '').substr(-8) }}</strong>
+        <template v-if="$cloud.backup && $cloud.backup.sub">
+          &nbsp;&middot;&nbsp;
+          <span v-tippy="'This is your user unique identifier'" class="text-muted cursor-help">
+            <em>{{ ($cloud.backup?.sub || '').substr(-22) }}</em>
           </span>
         </template>
       </small>
+
+      <v-btn
+        v-if="$auth.is.logged"
+        v-tippy="'Request a new session token from the server'"
+        variant="tonal"
+        size="small"
+        @click="$auth.generateJWT()"
+        class="text-secondary"
+        style="position: absolute; right: 11px">
+        <Icon name="tabler:refresh" size="16" class="me-1" />
+        Refresh session
+      </v-btn>
     </div>
   </div>
 </template>
@@ -198,7 +201,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 24th January 2026 - 19:57:54
+ * Modified: 17th February 2026 - 12:08:10
  **/
 
 export default {

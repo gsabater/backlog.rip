@@ -4,8 +4,8 @@
     :src="src"
     loading="lazy"
     crossorigin="anonymous"
-    @error="showAnother"
-    @load="emitLoaded" />
+    @error="handleError"
+    @load="$emit('loaded', src)" />
 </template>
 
 <script>
@@ -19,8 +19,35 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: 24th December 2025 - 18:38:47
+ * Modified: 7th February 2026 - 12:46:13
  **/
+
+// TODO: Move this constant to constants.js
+const SOURCES = {
+  steam: {
+    logo: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/logo.png',
+    capsule:
+      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/%ID%/capsule_616x353.jpg',
+    heroCapsule:
+      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/%ID%/hero_capsule.jpg',
+    cover: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/library_600x900.jpg',
+    banner: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/header.jpg',
+    header:
+      'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/%ID%/header_292x136.jpg',
+    icon: 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/%ID%/%ICON%.jpg',
+    gen: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/page_bg_generated_v6b.jpg',
+    background: 'https://cdn.akamai.steamstatic.com/steam/apps/%ID%/page.bg.jpg',
+    library: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/library_hero.jpg',
+  },
+  igdb: {
+    logo: 'https://images.igdb.com/igdb/image/upload/t_logo_med/%ID%.png',
+    cover: 'https://images.igdb.com/igdb/image/upload/t_cover_big/%ID%.jpg',
+    screenshot: 'https://images.igdb.com/igdb/image/upload/t_screenshot_med/%ID%.jpg',
+    artwork: 'https://images.igdb.com/igdb/image/upload/t_2xlarge/%ID%.jpg',
+  },
+}
+
+const FALLBACK = '/img/illustrations/wU08XKouRlOjqQsczsNQiw.webp'
 
 export default {
   name: 'GameAsset',
@@ -50,165 +77,101 @@ export default {
 
   data() {
     return {
-      is: null, // steam, igdb, etc
-      ready: false,
-      showing: 0,
-
-      resources: {
-        steam: {
-          logo: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/logo.png',
-          cover: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/library_600x900.jpg',
-          banner: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/header.jpg',
-          header:
-            'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/%ID%/header_292x136.jpg',
-          icon: 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/%ID%/%ICON%.jpg',
-          gen: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/page_bg_generated_v6b.jpg',
-          background: 'https://cdn.akamai.steamstatic.com/steam/apps/%ID%/page.bg.jpg',
-          library: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/library_hero.jpg',
-        },
-
-        // prettier-ignore
-        igdb: {
-          logo: 'https://images.igdb.com/igdb/image/upload/t_logo_med/%ID%.png',
-          cover: 'https://images.igdb.com/igdb/image/upload/t_cover_big/%ID%.jpg',
-          screenshot: 'https://images.igdb.com/igdb/image/upload/t_screenshot_med/%ID%.jpg',
-          artwork: 'https://images.igdb.com/igdb/image/upload/t_2xlarge/%ID%.jpg',
-        },
-      },
+      currentIndex: 0,
     }
   },
 
   computed: {
-    assets() {
+    availableAssets() {
       const assets = []
-      const fallback = []
 
-      this.priority.forEach((source) => {
-        if (source == 'steam' && !this.app.id?.steam) return
+      for (const source of this.priority) {
+        const urls = this.getAssetUrls(source, this.asset)
+        if (urls) assets.push(...urls)
 
-        const resource = this.resources[source]
+        if (this.fallback) {
+          const fallbackUrls = this.getAssetUrls(source, this.fallback)
+          if (fallbackUrls) assets.push(...fallbackUrls)
+        }
+      }
 
-        if (!resource) return
-        if (source == 'igdb' && !this.app.cover) return
-
-        const asset = resource[this.asset]
-        const fallb = resource[this.fallback]
-
-        if (asset) assets.push(asset)
-        if (fallb) fallback.push(fallb)
-      })
-
-      // if (this.asset == 'cover' && this.priority.includes('steam')) {
-      //   assets.push(this.resources.steam.banner)
-      // }
-
-      // if (this.asset == 'background' && this.priority.includes('steam')) {
-      //   assets.push(this.resources.steam.library)
-      //   assets.push(this.resources.steam.gen)
-      // }
-
-      return assets.concat(fallback)
+      return assets
     },
 
     src() {
-      return this.assetUrl(this.showing)
+      if (this.currentIndex >= this.availableAssets.length) {
+        return FALLBACK
+      }
+
+      const url = this.availableAssets[this.currentIndex]
+      return url ? `${url}?t=${this.$app.t}` : FALLBACK
     },
   },
 
   watch: {
-    app: {
-      handler() {
-        this.showing = 0
-      },
+    app() {
+      this.currentIndex = 0
     },
   },
 
   methods: {
-    fadeOut() {
-      this.$el.classList.add('animate__animated animate__fadeOut animate__faster')
+    getAssetUrls(source, assetType) {
+      if (source === 'steam') {
+        if (!this.app.id?.steam) return null
+
+        const template = SOURCES.steam[assetType]
+        if (!template) return null
+
+        const url = template.replace('%ID%', this.app.id.steam)
+
+        // Apply special styling for certain asset types
+        if (assetType === 'cover' && template.includes('header.')) {
+          this.applyStyling('banner', url)
+        }
+
+        return [url]
+      }
+
+      if (source === 'igdb') {
+        if (!this.app.cover?.igdb) return null
+
+        const template = SOURCES.igdb[assetType]
+        if (!template) return null
+
+        const url = template.replace('%ID%', this.app.cover.igdb)
+
+        if (assetType === 'cover') {
+          this.applyStyling('igdb')
+        }
+
+        return [url]
+      }
+
+      return null
     },
 
-    //+-------------------------------------------------
-    // showAnother()
-    // Tries to show another asset or fails
-    // -----
-    // Updated on Thu Nov 14 2024 - Emit failed
-    //+-------------------------------------------------
-    showAnother() {
-      // console.warn('show another', this.app.uuid, this.assets)
-      if (this.showing == -1) {
+    applyStyling(type, url) {
+      this.$nextTick(() => {
+        if (!this.$el) return
+        const container = this.$el.closest('div')
+        if (!container) return
+
+        if (type === 'banner') {
+          container.classList.add('is-banner')
+          container.style.backgroundImage = `url(${url})`
+        } else if (type === 'igdb') {
+          this.$el.style.backgroundSize = 'cover'
+          container.classList.remove('is-banner')
+        }
+      })
+    },
+
+    handleError() {
+      if (this.currentIndex < this.availableAssets.length - 1) {
+        this.currentIndex++
+      } else {
         this.$emit('failed')
-        return
       }
-
-      if (this.assets && this.showing < this.assets.length - 1) this.showing++
-      else this.showing = -1
-    },
-
-    //+-------------------------------------------------
-    // assetUrl()
-    // From an array of assets (computed), returns the URL
-    // Tries multiple urls and updates on error.
-    // If the url is detected to be a banner, adapt the parent
-    // -----
-    // Created on Tue Feb 06 2024
-    // Updated on Tue Nov 05 2024 - Added timestamp and null values
-    //+-------------------------------------------------
-    assetUrl(index) {
-      const cover = this.app?.cover
-      const assets = this.assets[index]
-      // console.warn('assetUrl', index, this.app.uuid, this.asset, this.is, assets, cover)
-
-      if (!assets || index == -1) {
-        this.adaptForIGDB()
-        return '/img/illustrations/wU08XKouRlOjqQsczsNQiw.webp'
-      }
-
-      let theUrl = null
-
-      if (assets.includes('igdb/')) this.is = 'igdb'
-      else if (assets.includes('steam/')) this.is = 'steam'
-
-      if (this.is == 'steam') theUrl = assets.replace('%ID%', this.app.id.steam)
-      else if (this.is == 'igdb') theUrl = assets.replace('%ID%', cover.igdb)
-
-      if (this.asset == 'cover' && assets.includes('header.')) {
-        this.adaptForBanner(theUrl)
-      }
-
-      if (this.asset == 'cover' && this.is == 'igdb') {
-        this.adaptForIGDB(theUrl)
-      }
-
-      return theUrl + '?t=' + this.$app.t
-    },
-
-    //+-------------------------------------------------
-    // adaptForBanner()
-    // Adapts the parent container for a banner
-    // -----
-    // Created on Tue Feb 06 2024
-    //+-------------------------------------------------
-    adaptForBanner(url) {
-      if (!this.$el) return
-      const container = this.$el.closest('div')
-      if (!container) return
-
-      container.classList.add('is-banner')
-      container.style.backgroundImage = `url(${url})`
-    },
-
-    adaptForIGDB() {
-      if (!this.$el) return
-      const container = this.$el.closest('div')
-      if (!container) return
-
-      this.$el.style.backgroundSize = 'cover'
-      container.classList.remove('is-banner')
-    },
-
-    emitLoaded() {
-      this.$emit('loaded', this.src)
     },
   },
 }

@@ -122,7 +122,7 @@
             align-items: center;
           "
           @click="load($prev)">
-          <Icon size="18" width="2">ChevronLeft</Icon>
+          <Icon name="tabler:chevron-left" size="18" width="2" />
           <h4
             class="m-0"
             style="  font-weight: 500;
@@ -164,12 +164,12 @@
             *+--------------------------------- -->
             <div v-if="app.is && app.is.lib">
               <div class="status small my-2" style="border-radius: 4px">
-                <Icon size="14">ClockHour3</Icon>
+                <Icon name="tabler:clock-hour-3" size="14" />
                 <span style="font-size: 0.775rem">
                   <template v-if="app._.playtime == 0">Not played</template>
                   <template v-else>
                     Played
-                    <!-- <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon> -->
+                    <!-- <Icon name="tabler:home" class="mx-1" style="color: #666">ArrowRightRhombus</Icon> -->
                     {{ dates.minToHours(app._.playtime, 'Not played') }}
                     {{ dates.timeAgo(app.playtime.steam_last * 1000) }}
                   </template>
@@ -181,7 +181,7 @@
             v-tippy="'Filter by game state'"
             :class="'btn py-2 ps-3 pe-2'"
             style="transform: scale(0.9) translateX(-5px)">
-            <Icon size="19" class="text-muted me-1">Background</Icon>
+            <Icon name="tabler:home" size="19" class="text-muted me-1">Background</Icon>
             <div class="pe-2 me-2 border-end">State</div>
             <BState :state="3" :label="true" :pulse="false"></BState>
           </button> -->
@@ -208,7 +208,7 @@
                 v-if="app.released_at"
                 v-tippy="dates.timeAgo(app.released_at)"
                 style="font-size: 13px">
-                <Icon>Calendar</Icon>
+                <Icon name="tabler:calendar" />
                 First released on {{ app._.released_at }}
               </li>
             </ul>
@@ -223,7 +223,7 @@
             <h5>Scores</h5>
             <div class="d-flex align-items-center">
               <div v-tippy="'Median score'" class="d-flex align-items-center text-muted small me-4">
-                <Icon size="16" width="1.8" class="me-1">Universe</Icon>
+                <Icon name="tabler:universe" size="16" width="1.8" class="me-1" />
 
                 {{ app.score }}
               </div>
@@ -232,7 +232,7 @@
                 v-if="app.scores.igdb"
                 v-tippy="'Aggregate reviews from multiple sources'"
                 class="d-flex align-items-center text-muted small me-3">
-                <Icon size="16" width="1.8" class="me-1">Stack2</Icon>
+                <Icon name="tabler:stack-2" size="16" width="1.8" class="me-1" />
                 {{ app.scores.igdb }}%
                 <!-- <br />
               <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
@@ -247,7 +247,7 @@
                 v-if="app.scores.steamscoreAlt"
                 v-tippy="'Reviews on Steam'"
                 class="d-flex align-items-center text-muted small me-3">
-                <Icon size="16" width="1.8" class="me-1">DiscountCheck</Icon>
+                <Icon name="tabler:discount-check" size="16" width="1.8" class="me-1" />
                 {{ app.scores.steamscore }}% · {{ app.scores.steamscoreAlt }}
                 <!-- <br />
               <span>{{ app.scores.steamscore }}% of {{ app.scores.steamCount }}</span> -->
@@ -333,20 +333,31 @@
           <div v-if="app.hltb && app.hltb.main" class="my-2">
             <h5>Time to beat</h5>
             <small v-tippy="'Main game'" class="text-muted me-5">
-              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-                SquareRoundedCheck
-              </Icon>
+              <Icon
+                name="tabler:square-rounded-check"
+                size="18"
+                width="2"
+                style="transform: translateY(-2px)"
+                class="" />
 
               {{ dates.minToHours(app.hltb.main / 60) }}
             </small>
             <small v-tippy="'Main game with extras'" class="text-muted me-5">
-              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-                DiscountCheck
-              </Icon>
+              <Icon
+                name="tabler:discount-check"
+                size="18"
+                width="2"
+                style="transform: translateY(-2px)"
+                class="" />
               {{ dates.minToHours(app.hltb.extras / 60) }}
             </small>
             <small v-if="app.hltb.comp" v-tippy="'Completionist'" class="text-muted me-5">
-              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">Trophy</Icon>
+              <Icon
+                name="tabler:trophy"
+                size="18"
+                width="2"
+                style="transform: translateY(-2px)"
+                class="" />
               {{ dates.minToHours(app.hltb.comp / 60) }}
             </small>
 
@@ -356,7 +367,12 @@
               :target="hltbSource ? '_blank' : null"
               class="text-muted"
               :class="{ disabled: !hltbSource }">
-              <Icon size="18" width="2" style="transform: translateY(-2px)" class="">Click</Icon>
+              <Icon
+                name="tabler:click"
+                size="18"
+                width="2"
+                style="transform: translateY(-2px)"
+                class="" />
               From HLTB
             </a>
           </div>
@@ -377,12 +393,12 @@
               :href="'https://store.steampowered.com/app/' + app.id.steam"
               class="btn btn-ghost-secondary btn-secondary btn-sm"
               target="_blank">
-              <Icon size="15" class="me-2">BrandSteam</Icon>
+              <Icon name="tabler:home" size="15" class="me-2">BrandSteam</Icon>
               Steam page
             </a> -->
 
               <v-btn variant="tonal" size="small" class="me-2" color="blue-grey">
-                <Icon size="15" class="me-2">BrandSteam</Icon>
+                <Icon name="tabler:brand-steam" size="15" class="me-2" />
                 Steam page
               </v-btn>
               <div v-if="app.id.steam" class="btn-group btn-group-sm" role="group">
@@ -392,7 +408,7 @@
                   class="btn btn-ghost-secondary btn-secondary tonal btn-sm pe-2"
                   style="border: 0"
                   target="_blank">
-                  <Icon size="15" class="me-2">BrandSteam</Icon>
+                  <Icon name="tabler:brand-steam" size="15" class="me-2" />
                   Steam page
                 </a>
                 <a
@@ -412,7 +428,7 @@
                 :href="'https://store.steampowered.com/app/' + app.id.steam"
                 class="btn btn-ghost-secondary btn-secondary btn-sm"
                 target="_blank">
-                <Icon size="15" class="me-1">Download</Icon>
+                <Icon name="tabler:download" size="15" class="me-1" />
                 Demo
               </a>
 
@@ -422,7 +438,7 @@
                 :href="`https://www.xbox.com/games/store/${app.slug}/${app.id.xbox}`"
                 class="btn btn-ghost-secondary btn-secondary btn-sm"
                 target="_blank">
-                <Icon size="15" class="me-1">BrandXbox</Icon>
+                <Icon name="tabler:brand-xbox" size="15" class="me-1" />
                 Xbox store
               </a>
 
@@ -431,7 +447,7 @@
               :href="'https://store.steampowered.com/app/' + app.id.xbox"
               class="btn btn-ghost-secondary btn-secondary btn-sm"
               target="_blank">
-              <Icon size="15" class="me-2">BrandXbox</Icon>
+              <Icon name="tabler:home" size="15" class="me-2">BrandXbox</Icon>
               Xbox store
             </a> -->
               <!-- <a v-tippy="'Open on Steam'" href="#" class="btn btn-icon btn-sm">
@@ -444,11 +460,10 @@
             <small v-if="app.is.lib" class="text-muted" :title="app.is.lib">
               <Icon
                 v-tippy="'In Backlog.rip since ' + $moment(app.created_at).format('LL')"
+                name="tabler:calendar"
                 size="16"
                 style="transform: translateY(-2px)"
-                class="me-1">
-                Calendar
-              </Icon>
+                class="me-1" />
               In your library since {{ app.is.lib }} -
 
               {{ $moment(app.is.lib).format('LL') }}
@@ -507,7 +522,7 @@
             }">
             Next
           </h4>
-          <Icon size="18" width="2">ChevronRight</Icon>
+          <Icon name="tabler:chevron-right" size="18" width="2" />
         </div>
       </div>
     </div>
@@ -630,7 +645,7 @@
  * @desc:    ... https://davidwalsh.name/detect-sticky
  * -------------------------------------------
  * Created Date: 1st December 2023
- * Modified: 15th October 2025 - 06:06:20
+ * Modified: 23rd January 2026 - 23:11:42
  **/
 
 export default {

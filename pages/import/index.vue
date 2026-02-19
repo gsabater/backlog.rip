@@ -19,7 +19,8 @@
                         outline-offset: -1px;
                       ">
                       <Icon name="tabler:arrows-transfer-down" class="me-3" />
-                      Import your library from {{ mod.manifest.source.name }}
+                      Import your library
+                      <!-- from {{ mod.manifest.source.name }} -->
                     </v-btn>
                   </template>
                   <template v-else>
@@ -60,7 +61,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 25th November 2024
- * Modified: 17th February 2026 - 12:19:16
+ * Modified: 19th February 2026 - 17:16:22
  **/
 
 export default {

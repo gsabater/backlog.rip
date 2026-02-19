@@ -24,14 +24,14 @@
                   href="https://github.com/gsabater/backlog.rip"
                   target="_blank"
                   class="btn btn-primary ms-auto">
-                  <Icon class="me-2">BrandGithub</Icon>
+                  <Icon name="tabler:brand-github" class="me-2" />
                   Report on Github
                 </a>
                 <a
                   href="https://discord.gg/F2sPE5B"
                   target="_blank"
                   class="btn btn-primary ms-auto">
-                  <Icon class="me-2">BrandDiscord</Icon>
+                  <Icon name="tabler:brand-discord" class="me-2" />
                   Report on Discord
                 </a>
               </div>
@@ -55,7 +55,7 @@
                 </div>
                 <div>
                   <a class="btn btn-github" href="https://api.backlog.rip/auth/steam">
-                    <Icon class="me-2">BrandSteam</Icon>
+                    <Icon name="tabler:brand-steam" class="me-2" />
                     Sign in with Steam
                   </a>
                 </div>
@@ -88,7 +88,7 @@
                     class="btn btn-ghost"
                     href="https://steamcommunity.com/my/edit/settings"
                     target="_blank">
-                    <Icon class="me-2">BrandSteam</Icon>
+                    <Icon name="tabler:brand-steam" class="me-2" />
                     Steam privacy settings
                   </a>
                 </div>
@@ -168,10 +168,20 @@
             <import-card :module="module" :integration="integration">
               <template #card:action>
                 <div>
-                  <div class="btn btn-primary w-100" @click="scanAndPrepare">
-                    <Icon class="me-2">ArrowsTransferDown</Icon>
-                    Start synchronization
-                  </div>
+                  <v-btn
+                    block
+                    variant="tonal"
+                    color="rgb(135 140 195)"
+                    style="
+                      filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+                      outline: 1px solid #9e58581c;
+                      outline-offset: -1px;
+                    "
+                    @click="scanAndPrepare">
+                    <Icon name="tabler:arrows-transfer-down" class="me-2" />
+
+                    Scan library
+                  </v-btn>
 
                   <!-- <small v-if="$auth.user.steam_updated_at" class="text-muted">
                     Last update, {{ dates.timeAgo($auth.user.steam_updated_at) }}
@@ -197,7 +207,6 @@
           <div v-if="ui.step == 'review'" class="col-lg-9 mx-auto mt-2">
             <div class="card">
               <div class="card-body">
-                <h2>Your library is ready! 🎉</h2>
                 <div class="row">
                   <div class="col">
                     <div class="card mb-2">
@@ -206,7 +215,7 @@
                           <div class="subheader">New games found</div>
                         </div>
                         <div class="h2 mb-1 d-flex align-items-center">
-                          <Icon class="mr-2 text-muted mt-1">CircleDashedPlus</Icon>
+                          <Icon name="tabler:circle-dashed-plus" class="mr-2 text-muted mt-1" />
                           <!-- {{ data.appsToReview.length }} new -->
                           {{ format.num(newGames) }}
                           <small class="subheader mx-2 pt-2">new games</small>
@@ -222,10 +231,10 @@
                     <div class="card mb-3">
                       <div class="card-body">
                         <div class="d-flex align-items-center">
-                          <div class="subheader">Updated existing</div>
+                          <div class="subheader">Updating games</div>
                         </div>
                         <div class="h2 mb-1 d-flex align-items-center">
-                          <Icon class="mr-2 text-muted mt-1">Refresh</Icon>
+                          <Icon name="tabler:refresh" class="mr-2 text-muted mt-1" />
                           {{ format.num(enabled.length) }}
                           <small class="subheader mx-2 pt-2">updates</small>
                           <br />
@@ -252,7 +261,7 @@
                           <ul class="list-unstyled space-y">
                             <li class="row g-2">
                               <span class="col-auto">
-                                <Icon class="me-1 text-success">Check</Icon>
+                                <Icon name="tabler:check" class="me-1 text-success" />
                               </span>
                               <span class="col">
                                 <strong class="d-block">Backlog status on your library</strong>
@@ -263,7 +272,7 @@
                             </li>
                             <li class="row g-2">
                               <span class="col-auto">
-                                <Icon class="me-1 text-success">Check</Icon>
+                                <Icon name="tabler:check" class="me-1 text-success" />
                               </span>
                               <span class="col">
                                 <strong class="d-block">
@@ -276,7 +285,7 @@
                             </li>
                             <!-- <li class="row g-2">
                               <span class="col-auto">
-                                <Icon class="me-1 text-success">Check</Icon>
+                                <Icon name="tabler:home" class="me-1 text-success">Check</Icon>
                               </span>
                               <span class="col">
                                 <strong class="d-block">Personalize</strong>
@@ -316,16 +325,20 @@
               </div>
 
               <div class="card-footer">
-                <div class="w-100">
-                  <div class="row">
-                    <div class="col">
-                      <div class="btn w-100" @click="((ui.step = 'review:plus'), toggleAll())">
-                        Review your data
-                      </div>
-                    </div>
-                    <div class="col">
-                      <div class="btn btn-success w-100" @click="store">Update everything</div>
-                    </div>
+                <div class="row">
+                  <div class="col">
+                    <v-btn
+                      block
+                      variant="tonal"
+                      color="secondary"
+                      @click="((ui.step = 'review:plus'), toggleAll())">
+                      Review your data
+                    </v-btn>
+                  </div>
+                  <div class="col">
+                    <v-btn block variant="tonal" color="success" @click="store">
+                      Update everything
+                    </v-btn>
                   </div>
                 </div>
               </div>
@@ -351,7 +364,7 @@
                     </div> -->
                     <div class="d-flex align-items-baseline">
                       <div class="h2 mb-0 me-2 d-flex align-items-center">
-                        <Icon class="mr-2 text-muted mt-1">Cards</Icon>
+                        <Icon name="tabler:cards" class="mr-2 text-muted mt-1" />
 
                         {{ format.num(Object.keys(data.library).length) }} games
                       </div>
@@ -366,7 +379,7 @@
                       <div class="subheader">New games found</div>
                     </div>
                     <div class="h2 mb-1 d-flex align-items-center">
-                      <Icon class="mr-2 text-muted mt-1">NewSection</Icon>
+                      <Icon name="tabler:new-section" class="mr-2 text-muted mt-1" />
 
                       <!-- {{ data.appsToReview.length }} new -->
                       {{ format.num(newGames) }}
@@ -385,7 +398,7 @@
                     class="card-body d-flex align-items-center"
                     style="flex-direction: column">
                     <div class="h2 m-0">
-                      <Icon class="text-muted" style="transform: translateY(-1px)">
+                      <Icon name="tabler:home" class="text-muted" style="transform: translateY(-1px)">
                         SquareRoundedPlus
                       </Icon>
                       {{ appsToImport.length }}
@@ -402,7 +415,7 @@
                       <div class="subheader">Synchronizing</div>
                     </div>
                     <div class="h2 mb-1 d-flex align-items-center">
-                      <Icon class="mr-2 text-muted mt-1">Refresh</Icon>
+                      <Icon name="tabler:refresh" class="mr-2 text-muted mt-1" />
                       {{ format.num(enabled.length) }}
                       <small class="subheader mx-2 pt-2">selected</small>
                     </div>
@@ -411,7 +424,7 @@
                     class="card-body d-flex align-items-center"
                     style="flex-direction: column">
                     <div class="h2 m-0">
-                      <Icon class="text-muted" style="transform: translateY(-1px)">
+                      <Icon name="tabler:home" class="text-muted" style="transform: translateY(-1px)">
                         Refresh
                       </Icon>
                        {{ data.appsToUpdate.length }}
@@ -431,7 +444,7 @@
                           <div class="subheader">importing</div>
                         </div>
                         <div class="h2 mb-1 d-flex align-items-center">
-                          <Icon class="mr-2 text-muted mt-1">StepInto</Icon>
+                          <Icon name="tabler:step-into" class="mr-2 text-muted mt-1" />
                           <!-- {{ appsToImport.length }} -->
                         </div>
                       </div>
@@ -440,7 +453,7 @@
                           <div class="subheader">updating</div>
                         </div>
                         <div class="h2 mb-1 d-flex align-items-center">
-                          <Icon class="mr-2 text-muted mt-1">Refresh</Icon>
+                          <Icon name="tabler:refresh" class="mr-2 text-muted mt-1" />
                           <!-- {{ data.appsToUpdate.length }} -->
                           wip
                         </div>
@@ -450,7 +463,7 @@
                           <div class="subheader">Ignoring</div>
                         </div>
                         <div class="h2 mb-1 d-flex align-items-center">
-                          <Icon class="mr-2 text-muted mt-1">SquareRotatedOff</Icon>
+                          <Icon name="tabler:home" class="mr-2 text-muted mt-1">SquareRotatedOff</Icon>
                           {{ appsToIgnore.length }}
                         </div>
                       </div> -->
@@ -462,7 +475,11 @@
 
             <div class="row mb-3 align-items-center">
               <div class="col-8">
-                <b-input v-model="table.filters.search" placeholder="Filter..." clearable></b-input>
+                <v-text-field
+                  v-model="table.filters.search"
+                  placeholder="Filter..."
+                  density="comfortable"
+                  clearable />
               </div>
               <div class="d-none col-5">
                 <!-- <button class="btn dropdown-toggle">
@@ -560,11 +577,10 @@
                           v-tippy="'This game will be added to your library'"
                           class="text-green me-2">
                           <Icon
+                            name="tabler:circle-dashed-plus"
                             size="12"
                             width="1.5"
-                            style="transform: translateY(-1px); margin-right: 0px">
-                            CircleDashedPlus
-                          </Icon>
+                            style="transform: translateY(-1px); margin-right: 0px" />
                           New
                         </small>
 
@@ -584,11 +600,10 @@
                           v-tippy="'Updating your playtime'"
                           class="text-muted">
                           <Icon
+                            name="tabler:clock-hour-3"
                             size="12"
                             width="1.5"
-                            style="transform: translateY(-1px); margin-right: 0px">
-                            ClockHour3
-                          </Icon>
+                            style="transform: translateY(-1px); margin-right: 0px" />
                           {{ dates.minToHours(app.sync.playtime?.to, 'Not played') }}
                         </small>
 
@@ -600,11 +615,10 @@
                             v-tippy="'Logging your last session'"
                             class="text-muted">
                             <Icon
+                              name="tabler:calendar"
                               size="12"
                               width="1.5"
-                              style="transform: translateY(-1px); margin-right: 0px">
-                              Calendar
-                            </Icon>
+                              style="transform: translateY(-1px); margin-right: 0px" />
                             Last played
                             {{ dates.timeAgo(app.sync.last_played?.to * 1000) }}
                           </small>
@@ -683,13 +697,13 @@
                     color: #00fdcf;
                   " />
 
-                <h2>Completed 🎉</h2>
+                <h2>Completed</h2>
                 <div class="mb-4">Your games have been updated</div>
               </div>
               <div class="card-footer">
                 <div class="w-100">
                   <NuxtLink to="/library" class="btn btn-primary w-100">
-                    <Icon class="me-2">Apps</Icon>
+                    <Icon name="tabler:apps" class="me-2" />
                     View your library
                   </NuxtLink>
                 </div>
@@ -727,6 +741,10 @@
               </div>
 
               <div class="card-body">
+                <pre>
+                  {{ ui.step }}
+                  {{ steps }}
+                </pre>
                 <ul class="steps steps-vertical">
                   <li
                     v-for="(step, key) in steps"
@@ -754,6 +772,7 @@
                 class="card-body p-3">
                 <b-btn
                   block
+                  variant="tonal"
                   :color="ui.step.indexOf('review') == -1 ? 'secondary' : 'success'"
                   :disabled="ui.step.indexOf('review') == -1 || enabled.length == 0"
                   @click="store">
@@ -784,7 +803,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: 7th November 2025 - 10:03:53
+ * Modified: 19th February 2026 - 17:23:51
  **/
 
 export default {
@@ -899,7 +918,7 @@ export default {
         },
 
         complete: {
-          action: 'Library updated 🎉',
+          action: 'Library updated ',
           desc: 'Import process completed',
         },
       }

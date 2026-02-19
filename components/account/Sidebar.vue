@@ -39,7 +39,7 @@
           to="/account/integrations"
           class="nav-link"
           :style="$route.path.includes('integrations') ? 'color: white; ' : ''">
-          <Icon name="tabler:cloud-network" size="14" class="me-2" />
+          <Icon name="tabler:transfer" size="14" class="me-2" />
           Integrations
         </NuxtLink>
       </li>

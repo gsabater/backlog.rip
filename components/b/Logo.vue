@@ -88,7 +88,7 @@ c4.612,0,8.351,3.738,8.351,8.35s-3.739,8.35-8.351,8.35C54.241,41.767,50.502,38.0
     xmlns:xlink="http://www.w3.org/1999/xlink"
     x="0px"
     y="0px"
-    height="15"
+    :height="size"
     viewBox="0 0 355.666 89.333"
     enable-background="new 0 0 355.666 89.333"
     xml:space="preserve"
@@ -210,7 +210,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 7th January 2025
- * Modified: 4th November 2025 - 01:05:29
+ * Modified: 19th February 2026 - 12:34:50
  **/
 
 export default {

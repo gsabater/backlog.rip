@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 31st December 2024
- * Modified: 17th October 2025 - 02:01:23
+ * Modified: 19th February 2026 - 17:37:20
  */
 
 let $log = null
@@ -170,6 +170,8 @@ export default {
   // Updated on Tue Dec 17 2024 - Added owned_at
   //+-------------------------------------------------
   normalize_(game) {
+    $nuxt ??= useNuxtApp()
+
     return {
       score: this._score(game),
       detail: this._detail(game),

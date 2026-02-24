@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: 7th November 2025 - 10:53:37
+ * Modified: 20th February 2026 - 11:00:10
  */
 
 import importerService from '../services/importerService'
@@ -126,7 +126,7 @@ async function sync(options = {}) {
   _sync.x.log = options.log ?? log
   _sync.x.source = options.platform ?? null
 
-  log('💠 Importer(1): sync')
+  $nuxt.$log('💠 Importer(1): sync')
 
   let _detect = await detect()
   if (_detect == false) return false

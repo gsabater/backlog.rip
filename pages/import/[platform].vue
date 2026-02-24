@@ -204,7 +204,7 @@
             *| Small review window
             *| Shows overview of imported data
             *+--------------------------------- -->
-          <div v-if="ui.step == 'review'" class="col-lg-9 mx-auto mt-2">
+          <div v-if="ui.step == 'review' && !ui.loading" class="col-lg-9 mx-auto mt-2">
             <div class="card">
               <div class="card-body">
                 <div class="row">
@@ -412,12 +412,12 @@
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex align-items-center">
-                      <div class="subheader">Synchronizing</div>
+                      <div class="subheader">Updating</div>
                     </div>
                     <div class="h2 mb-1 d-flex align-items-center">
                       <Icon name="tabler:refresh" class="mr-2 text-muted mt-1" />
                       {{ format.num(enabled.length) }}
-                      <small class="subheader mx-2 pt-2">selected</small>
+                      <small class="subheader mx-2 pt-2">games</small>
                     </div>
                   </div>
                   <!-- <div
@@ -703,7 +703,7 @@
               <div class="card-footer">
                 <div class="w-100">
                   <NuxtLink to="/library" class="btn btn-primary w-100">
-                    <Icon name="tabler:apps" class="me-2" />
+                    <Icon name="tabler:cards" class="me-2" />
                     View your library
                   </NuxtLink>
                 </div>
@@ -741,10 +741,6 @@
               </div>
 
               <div class="card-body">
-                <pre>
-                  {{ ui.step }}
-                  {{ steps }}
-                </pre>
                 <ul class="steps steps-vertical">
                   <li
                     v-for="(step, key) in steps"
@@ -781,8 +777,8 @@
                 <!-- v-if="ui.step == 'complete'" <b-btn v-else block color="success">View library</b-btn> -->
               </div>
               <div class="card-footer small text-muted">
-                This module is open source. If you want to know more about the code or review your
-                privacy and security, you can
+                This integration is open source. If you want to know more about the code or review
+                your privacy and security, you can
                 <a
                   href="https://github.com/gsabater/backlog.rip/blob/master/modules/importers"
                   target="_blank">
@@ -803,7 +799,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 27th November 2022
- * Modified: 19th February 2026 - 17:23:51
+ * Modified: 24th February 2026 - 12:54:46
  **/
 
 export default {
@@ -978,22 +974,23 @@ export default {
     loopToReview() {
       if (this.data.games.length === 0) return []
 
-      // let loop = []
       const items = []
-
-      // let source = this.tabs[this.ui.tab].object
-
-      // if (source.indexOf('data.') == -1) {
-      //   loop = this[source]
-      // } else {
-      //   source = source.replace('data.', '')
-      //   loop = this.data[source]
-      // }
+      const search = this.table.filters.search?.toLowerCase() || ''
+      return this.data.changes
+        .filter((el) => {
+          if (!search) return true
+          return el.name.toLowerCase().includes(search)
+        })
+        .slice(0, this.table.perPage)
+        .map((el, i) => ({
+          ...el,
+          index: i,
+        }))
 
       this.data.changes.forEach((el, i) => {
         if (items.length > this.table.perPage) return false
-
         if (
+          // this.table.filters?.length &&
           this.table.filters.search !== '' &&
           el.name.toLowerCase().indexOf(this.table.filters.search.toLowerCase()) === -1
         )
@@ -1008,76 +1005,13 @@ export default {
       return items
     },
 
-    //+-------------------------------------------------
-    // newGames()
-    //
-    // -----
-    // Created on Fri Nov 29 2024
-    //+-------------------------------------------------
     newGames() {
       return this.data.changes.filter((item) => !item.uuid).length
     },
 
-    //+-------------------------------------------------
-    // enabled()
-    // -----
-    // Created on Mon Dec 02 2024
-    //+-------------------------------------------------
     enabled() {
       return this.data.changes.filter((item) => item.enabled == true)
     },
-
-    //+-------------------------------------------------
-    // appsToImport()
-    // Array of apps that will be imported
-    // Only apps with will_import === true
-    // basic object with uuid, store_id and name
-    // -----
-    // Created on Thu Dec 14 2023
-    //+-------------------------------------------------
-    // appsToImport() {
-    //   const items = []
-    //   console.warn('wip')
-    //   return items
-
-    //   this.data.appsToReview
-    //     .filter((el) => el.will_import === true)
-    //     .forEach((el) => {
-    //       items.push({
-    //         data: el,
-    //         will_import: true,
-    //         [this.platform + '_id']: el.appid,
-    //       })
-    //     })
-
-    //   return items
-    // },
-
-    // //+-------------------------------------------------
-    // // appsToIgnore()
-    // // -----
-    // // Created on Thu Dec 14 2023
-    // //+-------------------------------------------------
-    // appsToIgnore() {
-    //   const items = []
-    //   console.warn('wip')
-    //   return items
-
-    //   this.data.appsToReview
-    //     .filter((el) => el.will_ignore === true)
-    //     .forEach((el) => {
-    //       items.push({
-    //         name: el.name,
-    //         [this.platform + '_id']: el.appid,
-    //         // is: {
-    //         //   owned: true,
-    //         //   ignored: true,
-    //         // },
-    //       })
-    //     })
-
-    //   return items
-    // },
   },
 
   watch: {
@@ -1097,31 +1031,31 @@ export default {
     // -----
     // Created on Fri Dec 02 2022
     //+-------------------------------------------------
-    _log(message, type = 'info', data) {
-      const now = new Date().getTime()
-      log(`${message}`)
+    // _log(message, type = 'info', data) {
+    //   const now = new Date().getTime()
+    //   log(`${message}`)
 
-      this.logs.unshift({
-        type,
-        time: now,
-        message,
-        data,
-      })
+    //   this.logs.unshift({
+    //     type,
+    //     time: now,
+    //     message,
+    //     data,
+    //   })
 
-      if (type == 'error') {
-        if (this.ui.knownErrors.includes(data)) {
-          this.ui.error = data
-        }
-        // else {
-        //   this.ui.error = message
-        //   this.ui.showlogs = true
-        // }
+    //   if (type == 'error') {
+    //     if (this.ui.knownErrors.includes(data)) {
+    //       this.ui.error = data
+    //     }
+    //     // else {
+    //     //   this.ui.error = message
+    //     //   this.ui.showlogs = true
+    //     // }
 
-        if (this.ui.error) {
-          this.ui.showlogs = false
-        }
-      }
-    },
+    //     if (this.ui.error) {
+    //       this.ui.showlogs = false
+    //     }
+    //   }
+    // },
 
     //+-------------------------------------------------
     // toggleAll()
@@ -1203,7 +1137,7 @@ export default {
       log('✨ importer', 'scanAndPrepare()')
 
       this.ui.loading = true
-      this.ui.step = 'games'
+      this.ui.step = 'review'
 
       const data = await this.$importer.scan()
 
@@ -1239,7 +1173,7 @@ export default {
     // Created on Fri Jan 26 2024
     //+-------------------------------------------------
     async detectAndConnect() {
-      log('✨ importer', 'detectAndConnect()')
+      this.$log('✨ importer', 'detectAndConnect()')
 
       const connection = await this.$importer.sync({
         log: this.$log,
@@ -1248,7 +1182,7 @@ export default {
       })
 
       if (!connection) {
-        this._log(
+        this.$log(
           'The importer could not be started. Try reloading the page and start again.' +
             'If the problem persists, please report it.',
           'error'
@@ -1264,7 +1198,7 @@ export default {
         return
       }
 
-      this._log('🆒 Waiting to the user to start the scan')
+      this.$log('🆒 Waiting to the user to start the scan')
       this.process.ready = true
     },
 
@@ -1277,7 +1211,7 @@ export default {
       if (!this.$app.ready) return
 
       console.clear()
-      this._log('✨ Initializing the importer')
+      this.$log('✨ Initializing the importer')
       this.detectAndConnect()
     },
   },

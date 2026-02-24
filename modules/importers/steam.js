@@ -3,7 +3,7 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 19th February 2026 - 16:09:22
+ * Modified: 20th February 2026 - 11:01:29
  */
 
 import axios from 'axios'
@@ -291,21 +291,6 @@ export default {
 
     return achievements
   },
-
-  // //+-------------------------------------------------
-  // // getSteamBacklog()
-  // //
-  // // -----
-  // // Created on Mon Feb 12 2024
-  // //+-------------------------------------------------
-  // async getSteamBacklog() {
-  //   let url = 'https://api.backlog.rip/fetch/steam-backlog'
-  //   let xhr = await $axios.get(url + '?steamid=' + $account.steam)
-
-  //   if (xhr.data.status == 'success') {
-  //     return xhr.data?.fetch || {}
-  //   }
-  // },
 
   // //+-------------------------------------------------
   // // onScan()

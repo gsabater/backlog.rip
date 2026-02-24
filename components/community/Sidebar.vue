@@ -55,7 +55,7 @@
 
     <div class="row g-2 align-items-center mt-4">
       <div class="col">
-        <h3>Connect</h3>
+        <h4>Connect</h4>
       </div>
     </div>
 
@@ -81,7 +81,7 @@
         </a>
       </li>
 
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a href="https://www.patreon.com/c/BacklogRIP" class="nav-link" target="_blank">
           <Icon size="16" class="me-2" name="tabler:brand-patreon" />
           Patreon
@@ -95,7 +95,7 @@
           Github
           <Icon name="tabler:external-link" width="1" size="13" class="ms-auto me-2" />
         </a>
-      </li>
+      </li> -->
 
       <!-- <li class="nav-item">
         <a class="nav-link" href="https://backlog.featurebase.app/en/roadmap" target="_blank">

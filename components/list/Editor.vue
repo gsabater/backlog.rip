@@ -9,7 +9,7 @@
         clearable
         density="comfortable">
         <template #prepend-inner>
-          <Icon size="16" class="text-secondary mx-1" style="min-width: 1em">Search</Icon>
+          <Icon name="tabler:search" size="16" class="text-secondary mx-1" style="min-width: 1em" />
         </template>
       </v-text-field>
     </div>
@@ -50,7 +50,7 @@
                   icon
                   size="x-small"
                   @click="removeFromList(item)">
-                  <Icon>TrashX</Icon>
+                  <Icon name="tabler:trash-x" />
                 </v-btn>
                 <template v-else-if="hasAPIUUID(item)">
                   <v-btn
@@ -60,7 +60,7 @@
                     size="x-small"
                     color="grey-lighten-1"
                     @click="addToList(item, 'top')">
-                    <Icon size="16">ChevronsUp</Icon>
+                    <Icon name="tabler:chevrons-up" size="16" />
                   </v-btn>
 
                   <v-btn
@@ -70,7 +70,7 @@
                     size="x-small"
                     color="grey-lighten-1"
                     @click="addToList(item, 'bottom')">
-                    <Icon size="16">ChevronsDown</Icon>
+                    <Icon name="tabler:chevrons-down" size="16" />
                   </v-btn>
                 </template>
               </div>
@@ -143,7 +143,7 @@
                     size="x-small"
                     color="grey-lighten-1"
                     style="transform: translateX(-4px)">
-                    <Icon size="16" width="1">GripVertical</Icon>
+                    <Icon name="tabler:grip-vertical" size="16" width="1" />
                   </v-btn>
                 </template>
 
@@ -169,7 +169,7 @@
                       size="x-small"
                       color="grey-lighten-1"
                       @click="removeFromList(element)">
-                      <Icon size="18">TrashX</Icon>
+                      <Icon name="tabler:trash-x" size="18" />
                     </v-btn>
                   </div>
                 </template>
@@ -196,7 +196,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: 28th November 2025 - 01:34:42
+ * Modified: 23rd January 2026 - 23:11:47
  **/
 
 import draggable from 'vuedraggable'

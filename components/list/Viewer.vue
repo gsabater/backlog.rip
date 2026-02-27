@@ -1,30 +1,4 @@
 <template>
-  <!-- <div class="page-header d-print-none m-0">
-    <div class="container-xl">
-      <div class="row g-2 align-items-center">
-        <div class="col">
-          <ol class="breadcrumb breadcrumb-arrows" aria-label="breadcrumbs">
-            <li class="breadcrumb-item">
-              <a href="#">Lists</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">
-              <a href="#">List</a>
-            </li>
-          </ol>
-
-          <h2 class="page-title">All games</h2>
-        </div>
-        <div class="col-auto ms-auto">
-          <div class="text-secondary mt-1 text-right small" style="text-align: right">
-            About ~{{ format.num($app.count.api) }} games
-            <br />
-            <span class="text-muted" style="zoom: 0.8">(0.19 seconds)</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
   <div class="page-body mt-3">
     <div class="container-xl">
       <search-interface
@@ -44,13 +18,28 @@
         <template #empty>
           <div
             class="empty"
-            style="border: 1px dashed #cccccc73; border-radius: 4px; height: auto; padding: 4rem">
-            <p class="empty-title mb-3 font-serif" style="font-weight: 300">This list is empty</p>
-            <p class="empty-subtitle text-secondary">
-              There is nothing here. To start, try adding some games to it.
-              <br />
-              You can add most games, even if it's not in your library.
-            </p>
+            style="border: 1px dashed #cccccc73; border-radius: 4px; height: auto; padding: 2rem">
+            <div class="empty-subtitle text-secondary">
+              <h3 class="empty-title mb-2 font-serif" style="font-weight: 300">
+                This list is empty
+              </h3>
+              <p class="mb-3">
+                There is nothing here. To start, try adding some games to it.
+                <br />
+                You can add most games, even if it's not in your library.
+              </p>
+              <v-btn
+                variant="tonal"
+                color="rgb(135 140 195)"
+                style="
+                  filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+                  outline: 1px solid #9e58581c;
+                  outline-offset: -1px;
+                "
+                @click="$emit('showEditor')">
+                Add games to the list
+              </v-btn>
+            </div>
           </div>
         </template>
       </search-interface>
@@ -64,13 +53,14 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: 27th November 2025 - 05:33:14
+ * Modified: 27th February 2026 - 13:57:48
  **/
 
 export default {
   name: 'ListViewer',
 
   data: () => ({}),
+  emits: ['showEditor'],
 
   computed: {
     ...mapStores(useListStore, useDataStore),

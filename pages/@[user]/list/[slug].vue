@@ -1,323 +1,112 @@
 <template>
-  <!-- Page header -->
-  <div class="page-header d-print-none">
-    <div class="container-xl">
-      <div class="row g-2 align-items-center">
-        <div class="col">
-          <h2 class="page-title">Tabler License</h2>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Page body -->
   <div class="page-body">
     <div class="container-xl">
-      <div class="row row-cards">
-        <div class="col-lg-8">
-          <div class="card card-lg">
-            <div class="card-body">
-              <div class="markdown">
-                <p>
-                  This is a legal agreement between you, the Purchaser, and Tabler.
-                  Purchasing or downloading of any Tabler product (Tabler Free, Tabler
-                  PRO, Tabler Email), constitutes your acceptance of the terms of this
-                  license,
-                  <a href="https://tabler.io/terms-of-service.html">
-                    Tabler terms of service
-                  </a>
-                  and
-                  <a href="https://tabler.io/privacy-policy.html">
-                    Tabler private policy
-                  </a>
-                  .
-                </p>
-                <p>
-                  A license grants you a non-exclusive and non-transferable right to use
-                  and incorporate the item in your personal or commercial projects.
-                </p>
-                <h3 id="tabler-free-license">Tabler Free License</h3>
-                <p>Tabler Free is available under MIT License</p>
-                <p>Copyright 2024 Tabler</p>
-                <p>
-                  Permission is hereby granted, free of charge, to any person obtaining a
-                  copy of this software and associated documentation files (the
-                  “Software”), to deal in the Software without restriction, including
-                  without limitation the rights to use, copy, modify, merge, publish,
-                  distribute, sublicense, and/or sell copies of the Software, and to
-                  permit persons to whom the Software is furnished to do so, subject to
-                  the following conditions:
-                </p>
-                <p>
-                  The above copyright notice and this permission notice shall be included
-                  in all copies or substantial portions of the Software.
-                </p>
-                <p>
-                  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS
-                  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-                  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-                  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-                  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-                  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-                  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-                </p>
-                <h3 id="tabler-pro-and-tabler-email-license">
-                  Tabler PRO and Tabler Email License
-                </h3>
-                <p>
-                  After Purchasing you are granted the use products under the conditions
-                  featured belowed.
-                </p>
-                <p>Rights</p>
-                <ol>
-                  <li>
-                    You have rights to use our resources for any or all of your personal
-                    and commercial projects.
-                  </li>
-                  <li>You may modify the resources according to your requirements.</li>
-                  <li>
-                    You are not required to attribute or link to Tabler in any of your
-                    projects.
-                  </li>
-                </ol>
-                <p>Restrictions</p>
-                <ol>
-                  <li>
-                    You do not have the rights to redistribute, resell, lease, license,
-                    sub-license or offer the file downloaded to any third party.
-                  </li>
-                  <li>
-                    For any resalable web applications or software programs, you cannot
-                    include our graphic resources as an additional attachment.
-                  </li>
-                  <li>
-                    You cannot redistribute any of the software, or products created with
-                    Tabler paid products.
-                  </li>
-                  <li>You cannot add our source code to any open source repository.</li>
-                  <li>
-                    The source code may not be placed on any website in a complete or
-                    archived downloadable format.
-                  </li>
-                </ol>
-              </div>
-            </div>
+      <div v-if="ui.loading == false && list.not_found" class="col-md-8 mx-auto my-5 py-5">
+        <div
+          class="empty"
+          style="border: 1px dashed #cccccc73; border-radius: 4px; height: auto; padding: 2rem">
+          <div class="empty-subtitle text-secondary">
+            <h2 class="empty-title mb-2 font-serif" style="font-weight: 300">List not found</h2>
+            <p class="mb-4">
+              The list you are looking for does not exist. It may have been removed or the URL is
+              incorrect.
+              <br />
+              Please check the URL
+              <strong>https://backlog.rip{{ $route.path }}</strong>
+              and try again.
+            </p>
+            <p class="mb-4">
+              If you believe this is an error, tell us about it on
+              <a href="https://discord.gg/F2sPE5B" target="_blank" rel="noopener noreferrer">
+                Discord
+              </a>
+            </p>
+            <v-btn
+              variant="tonal"
+              color="rgb(135 140 195)"
+              style="
+                filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+                outline: 1px solid #9e58581c;
+                outline-offset: -1px;
+              "
+              @click="$mitt.emit('list:create')">
+              You can create a new list
+            </v-btn>
           </div>
         </div>
-        <div class="col-lg-4">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex align-items-center mb-3">
-                <div class="me-3">
-                  <!-- Download SVG icon from http://tabler-icons.io/i/scale -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon icon-md">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M7 20l10 0"></path>
-                    <path d="M6 6l6 -1l6 1"></path>
-                    <path d="M12 3l0 17"></path>
-                    <path d="M9 12l-3 -6l-3 6a3 3 0 0 0 6 0"></path>
-                    <path d="M21 12l-3 -6l-3 6a3 3 0 0 0 6 0"></path>
-                  </svg>
-                </div>
-                <div>
-                  <small class="text-secondary">
-                    tabler/tabler is licensed under the
-                  </small>
-                  <h3 class="lh-1">MIT License</h3>
-                </div>
-              </div>
-              <div class="text-secondary mb-3">
-                A short and simple permissive license with conditions only requiring
-                preservation of copyright and license notices. Licensed works,
-                modifications, and larger works may be distributed under different terms
-                and without source code.
-              </div>
+      </div>
 
-              <h2 class="mb-2">Account</h2>
-              <p class="card-subtitle">Preferences and profile details</p>
-              <!-- <div class="row align-items-center">
-        <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url(./static/avatars/000m.jpg)"></span>
+      <div v-if="list && list.id" class="row row-cards">
+        <div class="col-lg-9">
+          <list-viewer v-if="list && list.games.length" />
         </div>
-        <div class="col-auto"><a href="#" class="btn">
-            Change avatar
-          </a></div>
-        <div class="col-auto"><a href="#" class="btn btn-ghost-danger">
-            Delete avatar
-          </a></div>
-      </div> -->
+        <div class="col-lg-3">
+          <div style="position: sticky; top: 20px">
+            <list-cover :list="list" class="my-3" />
 
-              <!-- <h3 class="card-title mt-4">Your profile</h3> -->
-              <div class="row g-3">
-                <div class="col-md-12 nope-col-lg-8">
-                  <div class="form-label">Your username</div>
-                  <!-- <h4 class="card-title mb-2">Username2</h4> -->
-                  <v-text-field
-                    v-model="$auth.me.username"
-                    density="comfortable"
-                    persistent-hint
-                    hint="This is only you display name"
-                    @change="update('account', 'username')" />
+            <!-- <div class="text-center">
+              <h2 class="mb-1">{{ list.name }}</h2>
+            </div> -->
+            <div class="card">
+              <div class="card-body">
+                <h2 class="lh-1">{{ list.name }}</h2>
+
+                <div class="text-secondary mb-2" v-if="list.description">
+                  {{ list.description }}
                 </div>
               </div>
 
-              <h4>Permissions</h4>
-              <ul class="list-unstyled space-y-1">
-                <li>
-                  <!-- Download SVG icon from http://tabler-icons.io/i/check -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon text-green">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M5 12l5 5l10 -10"></path>
-                  </svg>
-                  Commercial use
-                </li>
-                <li>
-                  <!-- Download SVG icon from http://tabler-icons.io/i/check -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon text-green">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M5 12l5 5l10 -10"></path>
-                  </svg>
-                  Modification
-                </li>
-                <li>
-                  <!-- Download SVG icon from http://tabler-icons.io/i/check -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon text-green">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M5 12l5 5l10 -10"></path>
-                  </svg>
-                  Distribution
-                </li>
-                <li>
-                  <!-- Download SVG icon from http://tabler-icons.io/i/check -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon text-green">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M5 12l5 5l10 -10"></path>
-                  </svg>
-                  Private use
-                </li>
-              </ul>
-              <h4>Limitations</h4>
-              <ul class="list-unstyled space-y-1">
-                <li>
-                  <!-- Download SVG icon from http://tabler-icons.io/i/x -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon text-red">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M18 6l-12 12"></path>
-                    <path d="M6 6l12 12"></path>
-                  </svg>
-                  Liability
-                </li>
-                <li>
-                  <!-- Download SVG icon from http://tabler-icons.io/i/x -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon text-red">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M18 6l-12 12"></path>
-                    <path d="M6 6l12 12"></path>
-                  </svg>
-                  Warranty
-                </li>
-              </ul>
-              <h4>Conditions</h4>
-              <ul class="list-unstyled space-y-1">
-                <li>
-                  <!-- Download SVG icon from http://tabler-icons.io/i/info-circle -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon text-blue">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
-                    <path d="M12 9h.01"></path>
-                    <path d="M11 12h1v4h1"></path>
-                  </svg>
-                  License and copyright notice
-                </li>
-              </ul>
-            </div>
-            <div class="card-footer">
-              This is not legal advice.
-              <a href="#" target="_blank">Learn more about repository licenses.</a>
+              <div
+                class="card-footer small"
+                style="display: flex; flex-direction: column; line-height: 23px">
+                <span v-if="list.author">
+                  <Icon name="tabler:user" class="me-1" style="transform: translateY(1px)" />
+                  By @{{ list.author.username }}
+                </span>
+
+                <span>
+                  <Icon
+                    name="tabler:calendar-week"
+                    class="me-1"
+                    style="transform: translateY(1px)" />
+                  Created
+                  {{ $moment(list.created_at).format('MMMM, YYYY') }}
+                </span>
+
+                <span>
+                  <Icon
+                    name="tabler:rotate-clockwise-2"
+                    class="me-1"
+                    style="transform: translateY(1px)" />
+                  Last updated
+                  {{ $moment(list.updated_at).format('LL') }}
+                </span>
+              </div>
+              <div v-if="isMyList" class="card-footer p-2">
+                <v-btn
+                  class="my-2"
+                  block
+                  variant="tonal"
+                  color="rgb(135 140 195)"
+                  @click="goToList(list, true)">
+                  Edit games
+                </v-btn>
+                <v-btn
+                  class="my-2"
+                  block
+                  variant="tonal"
+                  color="rgb(135 140 195)"
+                  @click.stop="$refs.crud.edit(list)">
+                  List details
+                </v-btn>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <list-crud-dialog ref="crud" @stored="$forceUpdate()" @deleted="$forceUpdate()" />
 </template>
 
 <script>
@@ -326,25 +115,79 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th September 2024
- * Modified: Mon 30 September 2024 - 16:20:57
+ * Modified: 27th February 2026 - 13:56:13
  **/
 
 export default {
   data() {
-    return {}
+    return {
+      ui: {
+        loading: true,
+      },
+    }
   },
 
   computed: {
-    ...mapStores(useDataStore, useStateStore),
+    ...mapStores(useDataStore, useStateStore, useListStore),
     ...mapState(useStateStore, ['states', 'pinnedStates', 'unPinnedStates']),
+    ...mapState(useListStore, ['list']),
 
-    source() {
-      let slug = this.$route.params?.slug[0] || null
-      if (['pinned', 'hidden', 'favorites'].includes(slug)) return slug
+    //+-------------------------------------------------
+    // isMyList()
+    // Check if the list is owned by the current user
+    // -----
+    // Created on Fri Feb 06 2026
+    //+-------------------------------------------------
+    isMyList() {
+      let listID = this.list.id
+      let listUUID = this.list.uuid
+      if (!listID && !listUUID) return false
 
-      let state = this.states.find((state) => state.slug == slug)
-      return state ? state.name : 'Library'
+      return this.listStore.lists.some((list) => {
+        return list.id === listID || list.uuid === listUUID
+      })
     },
+  },
+
+  watch: {
+    '$app.ready': function () {
+      this.init()
+    },
+  },
+
+  methods: {
+    //+-------------------------------------------------
+    // goToList()
+    // -----
+    // Created on Fri Oct 11 2024
+    //+-------------------------------------------------
+    goToList(item, edit = false) {
+      const slug = item.slug || item.uuid
+      navigateTo('/my/list/' + slug + (edit ? '/edit' : ''))
+    },
+
+    //+-------------------------------------------------
+    // getList()
+    // Calls for the list data
+    // -----
+    // Created on Tue Jan 20 2026
+    //+-------------------------------------------------
+    async getList() {
+      const { user, slug } = this.$route.params
+      await this.listStore.loadPublic(user, slug)
+
+      this.ui.loading = false
+    },
+
+    init() {
+      if (!this.$app.ready) return
+      this.listStore.reset()
+      this.getList()
+    },
+  },
+
+  mounted() {
+    this.init()
   },
 }
 </script>

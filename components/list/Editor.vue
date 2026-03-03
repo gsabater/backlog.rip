@@ -1,83 +1,87 @@
 <template>
-  <div class="col ps-5">
-    <div class="mb-3">
-      <h5>Add games</h5>
+  <div class="col">
+    <div style="position: sticky; top: 20px">
+      <div class="mb-3">
+        <v-text-field
+          v-model="f.string"
+          placeholder="Search by name..."
+          clearable
+          density="comfortable">
+          <template #prepend-inner>
+            <Icon
+              name="tabler:search"
+              size="16"
+              class="text-secondary mx-1"
+              style="min-width: 1em" />
+          </template>
+        </v-text-field>
+      </div>
 
-      <v-text-field
-        v-model="f.string"
-        placeholder="Search by name..."
-        clearable
-        density="comfortable">
-        <template #prepend-inner>
-          <Icon name="tabler:search" size="16" class="text-secondary mx-1" style="min-width: 1em" />
-        </template>
-      </v-text-field>
-    </div>
-
-    <!--
+      <!--
       *+---------------------------------
       *| Recommendations and results
       *| Display items to add to the list
       *+--------------------------------- -->
-    <div class="list-group card-list-group games-group games--list">
-      <template v-for="(item, i) in _allGames" :key="item.uuid || Math.random()">
-        <div class="card" style="border-radius: 1px; margin-bottom: 0.2rem">
-          <b-game
-            type="list"
-            :uuid="item"
-            :action="null"
-            :showListDetails="false"
-            class="px-3"
-            style="padding-top: 0.65rem; padding-bottom: 0.65rem"
-            :class="{
-              'disabled opacity-25 cursor-not-allowed': !hasAPIUUID(item),
-              'opacity-50': listHasApp(item),
-            }">
-            <template v-if="listHasApp(item)" #details>
-              <small>Already in the list</small>
-            </template>
+      <div class="list-group card-list-group games-group games--list">
+        <template v-for="(item, i) in _allGames" :key="item.uuid || Math.random()">
+          <div class="card" style="border-radius: 1px; margin-bottom: 0.2rem">
+            <b-game
+              type="list"
+              :uuid="item"
+              :action="null"
+              :showListDetails="false"
+              class="px-3"
+              style="padding-top: 0.65rem; padding-bottom: 0.65rem"
+              :class="{
+                'disabled opacity-25 cursor-not-allowed': !hasAPIUUID(item),
+                'opacity-50': listHasApp(item),
+              }">
+              <template v-if="listHasApp(item)" #details>
+                <small>Already in the list</small>
+              </template>
 
-            <template v-if="!hasAPIUUID(item)" #details>
-              <small>Cannot be added to the list</small>
-            </template>
+              <template v-if="!hasAPIUUID(item)" #details>
+                <small>Cannot be added to the list</small>
+              </template>
 
-            <template #actions>
-              <div class="col-auto">
-                <v-btn
-                  v-if="listHasApp(item)"
-                  v-tippy="'Remove from the list'"
-                  variant="text"
-                  icon
-                  size="x-small"
-                  @click="removeFromList(item)">
-                  <Icon name="tabler:trash-x" />
-                </v-btn>
-                <template v-else-if="hasAPIUUID(item)">
+              <template #actions>
+                <div class="col-auto">
                   <v-btn
-                    v-tippy="'Add to the top of the list'"
+                    v-if="listHasApp(item)"
+                    v-tippy="'Remove from the list'"
                     variant="text"
-                    icon="mdi-chevron-right"
+                    icon
                     size="x-small"
-                    color="grey-lighten-1"
-                    @click="addToList(item, 'top')">
-                    <Icon name="tabler:chevrons-up" size="16" />
+                    @click="removeFromList(item)">
+                    <Icon name="tabler:trash-x" />
                   </v-btn>
+                  <template v-else-if="hasAPIUUID(item)">
+                    <v-btn
+                      v-tippy="'Add to the top of the list'"
+                      variant="text"
+                      icon="mdi-chevron-right"
+                      size="x-small"
+                      color="grey-lighten-1"
+                      @click="addToList(item, 'top')">
+                      <Icon name="tabler:chevrons-up" size="16" />
+                    </v-btn>
 
-                  <v-btn
-                    v-tippy="'Add to the bottom of the list'"
-                    variant="text"
-                    icon="mdi-chevron-right"
-                    size="x-small"
-                    color="grey-lighten-1"
-                    @click="addToList(item, 'bottom')">
-                    <Icon name="tabler:chevrons-down" size="16" />
-                  </v-btn>
-                </template>
-              </div>
-            </template>
-          </b-game>
-        </div>
-      </template>
+                    <v-btn
+                      v-tippy="'Add to the bottom of the list'"
+                      variant="text"
+                      icon="mdi-chevron-right"
+                      size="x-small"
+                      color="grey-lighten-1"
+                      @click="addToList(item, 'bottom')">
+                      <Icon name="tabler:chevrons-down" size="16" />
+                    </v-btn>
+                  </template>
+                </div>
+              </template>
+            </b-game>
+          </div>
+        </template>
+      </div>
     </div>
   </div>
 
@@ -86,11 +90,7 @@
     *| Right side
     *| Contains list items
     *+--------------------------------- -->
-  <div class="col-6 ps-5">
-    <div class="col-12">
-      <h5>&nbsp;</h5>
-    </div>
-
+  <div class="col-6">
     <template v-if="list.games.length">
       <div class="card mb-3">
         <draggable
@@ -196,7 +196,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th October 2024
- * Modified: 23rd January 2026 - 23:11:47
+ * Modified: 28th February 2026 - 16:57:01
  **/
 
 import draggable from 'vuedraggable'

@@ -28,7 +28,7 @@
 
         <div class="col-lg-3">
           <div style="position: sticky; top: 20px">
-            <list-cover :list="list" class="my-3" />
+            <list-cover :list="list" :class="mode == 'editor' ? 'mb-3' : 'my-3'" />
 
             <!-- <div class="text-center">
               <h2 class="mb-1">{{ list.name }}</h2>
@@ -114,7 +114,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th September 2024
- * Modified: 27th February 2026 - 13:56:59
+ * Modified: 28th February 2026 - 16:57:46
  **/
 
 export default {

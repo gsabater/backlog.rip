@@ -83,17 +83,6 @@
                     </g>
                   </svg>
                 </a>
-
-                <a
-                  v-tippy="'Support on Patreon'"
-                  href="https://www.patreon.com/c/BacklogRIP"
-                  class="link-secondary link-underline-opacity-0 mx-1"
-                  target="_blank">
-                  <Icon
-                    name="tabler:brand-patreon-filled"
-                    size="16"
-                    style="transform: translateY(-1px)" />
-                </a>
               </span>
             </p>
           </div>
@@ -177,7 +166,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 5th January 2024
- * Modified: 7th February 2026 - 11:37:32
+ * Modified: 27th February 2026 - 17:41:29
  **/
 
 const { data: changelog } = await useAsyncData('changelog', () => {

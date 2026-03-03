@@ -162,6 +162,15 @@
                 ">
                 <!-- <span class="dropdown-header">Header</span> -->
                 <div class="dropdown-item disabled">
+                  Supabase
+                  <span
+                    class="status-dot status-dot-animated ms-auto"
+                    :style="{
+                      backgroundColor: serverStatusColor('backups'),
+                    }"></span>
+                </div>
+
+                <div class="dropdown-item disabled">
                   API status
                   <span
                     class="status-dot status-dot-animated ms-auto"
@@ -179,14 +188,6 @@
                     }"></span>
                 </div>
 
-                <div class="dropdown-item disabled">
-                  Backups server
-                  <span
-                    class="status-dot status-dot-animated ms-auto"
-                    :style="{
-                      backgroundColor: serverStatusColor('backups'),
-                    }"></span>
-                </div>
                 <div class="dropdown-divider"></div>
 
                 <div
@@ -300,6 +301,35 @@
               </v-btn>
               <v-btn class="mx-2" icon size="small" variant="text">
                 <b-dropdown placement="top-start" style="overflow: hidden; letter-spacing: initial">
+                  <span class="dropdown-header" style="text-transform: none">
+                    <span class="text-muted my-4">
+                      Version
+                      {{ $app.v }}
+                    </span>
+                  </span>
+
+                  <NuxtLink to="/changelog" class="dropdown-item">
+                    <Icon size="16" class="me-2" name="tabler:broadcast" />
+                    Changelog
+                  </NuxtLink>
+
+                  <NuxtLink to="/sitemap" class="dropdown-item">
+                    <Icon size="16" class="me-2" name="tabler:steam" />
+                    Sitemap
+                  </NuxtLink>
+
+                  <NuxtLink to="/support" class="dropdown-item">
+                    <Icon size="16" class="me-2" name="tabler:activity-heartbeat" />
+                    <span class="fancy">Support the project</span>
+                  </NuxtLink>
+
+                  <!-- <NuxtLink v-if="$app.wip" to="/docs" class="dropdown-item">
+                    <Icon size="16" class="me-2">Album</Icon>
+                    Docs
+                  </NuxtLink> -->
+
+                  <div class="dropdown-divider"></div>
+
                   <a class="dropdown-item" href="https://discord.gg/F2sPE5B" target="_blank">
                     <svg
                       class="me-2"
@@ -351,35 +381,6 @@
                     Source code
                     <Icon width="1" size="11" class="ms-auto" name="tabler:external-link" />
                   </a>
-
-                  <div class="dropdown-divider"></div>
-
-                  <NuxtLink to="/changelog" class="dropdown-item">
-                    <Icon size="16" class="me-2" name="tabler:broadcast" />
-                    Changelog
-                  </NuxtLink>
-
-                  <NuxtLink to="/sitemap" class="dropdown-item">
-                    <Icon size="16" class="me-2" name="tabler:steam" />
-                    Sitemap
-                  </NuxtLink>
-
-                  <NuxtLink to="/support" class="dropdown-item">
-                    <Icon size="16" class="me-2" name="tabler:activity-heartbeat" />
-                    <span class="fancy">Support the project</span>
-                  </NuxtLink>
-
-                  <!-- <NuxtLink v-if="$app.wip" to="/docs" class="dropdown-item">
-                    <Icon size="16" class="me-2">Album</Icon>
-                    Docs
-                  </NuxtLink> -->
-
-                  <span class="dropdown-header" style="text-transform: none">
-                    <span class="text-muted my-4">
-                      Version
-                      {{ $app.v }}
-                    </span>
-                  </span>
                 </b-dropdown>
                 <Icon size="18" style="transform: translateY(1px)" name="tabler:terminal-2" />
               </v-btn>
@@ -944,7 +945,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 27th January 2026 - 19:05:59
+ * Modified: 28th February 2026 - 16:48:15
  **/
 
 import synchronizationService from '../services/synchronizationService'

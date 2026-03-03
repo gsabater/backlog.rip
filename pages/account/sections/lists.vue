@@ -4,7 +4,7 @@
       <div>
         <div class="d-flex mb-3">
           <h1 class="m-0">
-            <Icon class="me-2" style="transform: translateY(-2px)">Mist</Icon>
+            <Icon name="tabler:mist" class="me-2" style="transform: translateY(-2px)" />
             Your lists
           </h1>
         </div>
@@ -15,14 +15,13 @@
         and add games to multiple lists for complete flexibility.
       </p>
       <p>
-        <strong>What's the difference between lists and states?</strong>
-        States track progress and power recommendations. Lists let you organize however you want. A
-        game has one state but can be in unlimited lists.
+        The difference between lists and states is that states track individual game progress and
+        power recommendations. Lists let you organize as many games as you want into custom groups.
+        A single game has one state but can be in unlimited lists.
       </p>
       <p>
-        <strong>Keep your lists private or share them with the community.</strong>
-        Lists stay on your device by default, with public sharing on the way. Organize by genre,
-        mood, or any category you choose.
+        Keep your lists private or share them with the community. Lists stay on your device by
+        default, and it only syncs to the cloud if you make it public.
       </p>
     </div>
   </div>
@@ -41,22 +40,13 @@
         Create a new list
       </v-btn>
     </div>
-    <!-- <div class="col-auto ms-auto">
-      <v-btn variant="tonal" color="secondary" style="min-width: 40px" class="me-2">
-        <Icon>Trash</Icon>
-      </v-btn>
-
-      <v-btn variant="tonal" color="secondary" style="min-width: 40px">
-        <Icon>Badge</Icon>
-      </v-btn>
-    </div> -->
   </div>
 
   <div class="card mb-3">
     <div class="list-group card-list-group">
       <template v-for="item in lists" :key="item.uuid">
         <div
-          class="list-group-item px-3 cursor-pointer text-decoration-none"
+          class="list-group-item px-3 cursor-pointer text-decoration-none control-hover"
           style="padding-top: 0.8rem; padding-bottom: 0.8rem"
           @click="goToList(item)">
           <div class="row g-3 align-items-center">
@@ -66,17 +56,25 @@
             </v-btn>
           </div> -->
             <div class="col">
-              <div>
-                <Icon size="12" class="text-muted me-2">Mist</Icon>
+              <div class="mb-1">
+                <Icon name="tabler:mist" v-if="item.is_public" size="12" class="text-muted me-2" />
+                <Icon name="tabler:lock" v-if="!item.is_public" size="12" class="text-muted me-2" />
+
+                <span v-if="!item.is_public" class="text-secondary small me-2">(Private)</span>
                 <span class="font-serif">{{ item.name }}</span>
               </div>
-              <div class="v-list-item-subtitle">
-                <small class="text-muted">
-                  Public 🔸 {{ item.games.length }} games 🔸
-                  {{ $moment(item.created_at).format('LL') }} 🔸
-                  <Icon size="16" width="1">Replace</Icon>
-                  {{ dates.timeAgo(item.updated_at) }}
-                </small>
+              <div class="v-list-item-subtitle ms-1">
+                <div class="small text-muted">
+                  {{ item.games.length }} games &middot;
+                  <small>
+                    Created
+                    <span class="font-mono">{{ $moment(item.created_at).format('LL') }}</span>
+                  </small>
+                  <small class="font-mono show-hover-inline">
+                    &middot; Updated
+                    {{ dates.timeAgo(item.updated_at) }}
+                  </small>
+                </div>
               </div>
             </div>
 
@@ -89,7 +87,7 @@
             <div class="col-auto text-secondary" @click.stop.prevent="() => {}">
               <div style="position: relative">
                 <v-btn variant="text" icon size="x-small" color="grey-lighten-1">
-                  <Icon size="18" width="2">DotsVertical</Icon>
+                  <Icon name="tabler:dots-vertical" size="18" width="2" />
                 </v-btn>
                 <b-dropdown
                   trigger="mouseenter focus click"
@@ -109,36 +107,38 @@
                   </div>
 
                   <div class="dropdown-item" @click.stop="$mitt.emit('list:edit', { item })">
-                    <Icon size="16" class="me-2 text-muted">Pencil</Icon>
-                    Edit list
+                    <Icon name="tabler:pencil" size="16" class="me-2 text-muted" />
+                    List details
                   </div>
 
                   <div class="dropdown-item" @click.stop="goToList(item, 'edit')">
-                    <Icon size="16" class="me-2 text-muted">Replace</Icon>
-                    Modify games
+                    <Icon name="tabler:replace" size="16" class="me-2 text-muted" />
+                    Manage games
                   </div>
+
+                  <!--
+                  TODO: Missing implementation
+                  <div class="dropdown-item" @click.stop="$mitt.emit('list:edit', { item })">
+                    <Icon name="tabler:home" size="16" class="me-2 text-muted">Pencil</Icon>
+                    Duplicate list
+                  </div> -->
+
                   <div
                     class="dropdown-item text-red"
                     @click.stop="
                       $mitt.emit('ask:confirm', {
                         item,
-                        title: 'Delete list',
-                        message: 'Are you sure you want to delete this list?',
+                        title: 'Confirm deletion of list',
+                        message: 'You are about to permanently delete the selected list.',
                         onConfirm: () => $mitt.emit('list:delete', { item }),
                       })
                     ">
-                    <Icon size="16" class="me-2 text-red">Trash</Icon>
+                    <Icon name="tabler:trash" size="16" class="me-2 text-red" />
                     Delete
                   </div>
                 </b-dropdown>
               </div>
             </div>
-
-            <!-- <div class="col-auto text-secondary">
-            <v-btn variant="tonal" icon="mdi-chevron-right" size="small">
-              <Icon>ChevronRight</Icon>
-            </v-btn>
-          </div> -->
           </div>
         </div>
       </template>
@@ -175,7 +175,7 @@
       target="_blank">
       <template v-slot:prepend>
         <div class="p-2">
-          <Icon size="18" width="1.5" class="text-muted">Flask</Icon>
+          <Icon name="tabler:home" size="18" width="1.5" class="text-muted">Flask</Icon>
         </div>
       </template>
       <template v-slot:title>
@@ -214,7 +214,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: 24th December 2025 - 18:38:02
+ * Modified: 24th January 2026 - 19:48:19
  **/
 
 export default {

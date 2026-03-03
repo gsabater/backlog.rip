@@ -47,8 +47,9 @@
     // IGDB has 3/4 aspect ratio (not for all games)
     // EGS has 3/4 aspect ratio
     // 27/40 is a good compromise
-    aspect-ratio: 27/40;
+    // aspect-ratio: 27/40;
     // aspect-ratio: 3/1;
+    aspect-ratio: 2 / 3;
     overflow: hidden;
 
     display: flex;

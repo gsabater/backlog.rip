@@ -4,7 +4,7 @@
  * between the local client data and the cloud servers: Backups and workers
  * ----------------------------------------------
  * Created Date: 19th March 2025
- * Modified: 18th November 2025 - 12:24:30
+ * Modified: 27th December 2025 - 17:40:45
  */
 
 import dataService from './dataService'
@@ -15,8 +15,8 @@ let $mitt = null
 let $nuxt = null
 let $user = null
 let $libs = null
-let $guild = null
 let $backup = null
+let $community = null
 
 export default {
   //+-------------------------------------------------
@@ -27,7 +27,7 @@ export default {
   // 1. Library syncronization (Steam lib)
   // 2. Library update (API)
   // 3. Achievements sync (workers)
-  // 4. Guild (after steam sync)
+  // 4. Community ping (after steam sync)
   // 5. Backup upload
   // -----
   // Created on Wed Mar 19 2025
@@ -61,10 +61,10 @@ export default {
       // console.warn('3/6 Sync achievements (workers)')
       // await this.syncAchievements()
 
-      // 4. Guild ping
+      // 4. Community ping
       // Update public profile in the community
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // await this.pingCommunity()
+      // await this.communityPing()
 
       // 5. Backup upload
       // Upload a new backup to the cloud
@@ -151,15 +151,16 @@ export default {
   },
 
   //+-------------------------------------------------
-  // pingCommunity()
-  //
+  // communityPing()
+  // Sends a signal to the community service to update
+  // the user's profile and activity
   // -----
   // Created on Thu Oct 09 2025
   //+-------------------------------------------------
-  async pingCommunity() {
+  async communityPing() {
     $log('↻ Sync 4/6 ⇢ Community...')
     $nuxt.$cloud.process = 'community:ping'
-    $guild.ping()
+    $community.ping()
 
     return
   },
@@ -295,8 +296,8 @@ export default {
     $mitt = $nuxt.$mitt
 
     $user ??= useUserStore()
-    $guild ??= useGuildStore()
     $backup ??= useBackupStore()
+    $community ??= useCommunityStore()
 
     // At this point, we should already have all cloud providers
     // - Online API at api.backlog.rip

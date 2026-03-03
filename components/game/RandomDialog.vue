@@ -61,7 +61,7 @@
                 align-items: center;
               "
               @click="load($prev)">
-              <Icon size="18" width="2">ChevronLeft</Icon>
+              <Icon name="tabler:chevron-left" size="18" width="2" />
               <h4
                 class="m-0"
                 style="  font-weight: 500;
@@ -104,9 +104,7 @@
 
                   <!-- <template v-if="app.score">
                     <strong v-tippy="'Median score'" class="text-muted">
-                      <Icon size="12" width="1" style="transform: translateY(-2px)">
-                        StarFilled
-                      </Icon>
+                      <Icon name="tabler:star-filled" size="12" width="1" style="transform: translateY(-2px)" />
                       {{ app.score }}
                     </strong>
                     <div class="d-inline-block px-2 opacity-50">🔸</div>
@@ -137,24 +135,26 @@
                         @click.stop="$refs.bstate.showManager($event)">
                         <span v-if="state.id" class="status-dot status-dot-animated me-2"></span>
                         {{ state.name || 'Assign a state' }}
-                        <Icon size="12" class="ms-1" style="transform: translateX(3px)">
-                          ChevronDown
-                        </Icon>
+                        <Icon
+                          name="tabler:chevron-down"
+                          size="12"
+                          class="ms-1"
+                          style="transform: translateX(3px)" />
                       </v-btn>
                     </template>
                   </b-state>
 
                   <v-btn variant="text" size="small" class="me-2" color="pink-darken-2">
-                    <Icon>{{ app.is.fav ? 'HeartFilled' : 'Heart' }}</Icon>
+                    <Icon :name="app.is.fav ? 'tabler:heart-filled' : 'tabler:heart'" />
                   </v-btn>
 
                   <!-- <v-btn class="me-2" variant="tonal" size="small" color="blue-grey">
                   Add to a list
-                  <Icon size="12" class="ms-2">ChevronDown</Icon>
+                  <Icon name="tabler:chevron-down" size="12" class="ms-2" />
                 </v-btn> -->
 
                   <!-- <v-btn variant="tonal" size="small" class="me-2" color="blue-grey">
-                  <Icon>Settings</Icon>
+                  <Icon name="tabler:settings" />
                 </v-btn> -->
                 </div>
               </div>
@@ -163,7 +163,7 @@
             v-tippy="'Filter by game state'"
             :class="'btn py-2 ps-3 pe-2'"
             style="transform: scale(0.9) translateX(-5px)">
-            <Icon size="19" class="text-muted me-1">Background</Icon>
+            <Icon name="tabler:background" size="19" class="text-muted me-1" />
             <div class="pe-2 me-2 border-end">State</div>
             <BState :state="3" :label="true" :pulse="false"></BState>
           </button> -->
@@ -203,9 +203,12 @@
                     'The median is the middle value in a set of scores when arranged in order. It avoids being skewed by extreme values, making it a fairer representation of the central tendency compared to the average.'
                   "
                   class="d-flex align-items-center text-muted small me-4">
-                  <Icon size="14" width="1.2" class="me-2" style="transform: translateY(1px)">
-                    Star
-                  </Icon>
+                  <Icon
+                    name="tabler:star"
+                    size="14"
+                    width="1.2"
+                    class="me-2"
+                    style="transform: translateY(1px)" />
 
                   {{ app.score }}
                 </div>
@@ -319,16 +322,22 @@
             <div v-if="app.hltb && app.hltb.main" class="my-2">
               <h5>Time to beat</h5>
               <small v-tippy="'Main game'" class="text-muted me-3">
-                <Icon size="15" width="1.5" style="transform: translateY(-1px)" class="me-1">
-                  SquareRoundedCheck
-                </Icon>
+                <Icon
+                  name="tabler:square-rounded-check"
+                  size="15"
+                  width="1.5"
+                  style="transform: translateY(-1px)"
+                  class="me-1" />
 
                 {{ dates.minToHours(app.hltb.main / 60) }}
               </small>
               <small v-tippy="'Main game with extras'" class="text-muted me-3">
-                <Icon size="15" width="1.5" style="transform: translateY(-1px)" class="me-1">
-                  DiscountCheck
-                </Icon>
+                <Icon
+                  name="tabler:discount-check"
+                  size="15"
+                  width="1.5"
+                  style="transform: translateY(-1px)"
+                  class="me-1" />
                 {{ dates.minToHours(app.hltb.extras / 60) }}
               </small>
               <small v-if="app.hltb.comp" v-tippy="'Completionist'" class="text-muted me-3">
@@ -348,9 +357,7 @@
                 :target="hltbSource ? '_blank' : null"
                 class="text-muted"
                 :class="{ disabled: !hltbSource }">
-                <Icon size="18" width="2" style="transform: translateY(-2px)" class="">
-                  Click
-                </Icon>
+                <Icon name="tabler:click" size="18" width="2" style="transform: translateY(-2px)" class="" />
                 From HLTB
               </a> -->
             </div>
@@ -364,7 +371,7 @@
                     class="btn btn-ghost-secondary btn-secondary tonal btn-sm pe-2"
                     style="border: 0"
                     target="_blank">
-                    <Icon size="15" class="me-2">BrandSteam</Icon>
+                    <Icon name="tabler:brand-steam" size="15" class="me-2" />
                     Steam page
                   </a>
                   <a
@@ -386,7 +393,7 @@
                   :href="'https://store.steampowered.com/app/' + app.id.steam"
                   target="_blank"
                   style="outline: rgb(108 122 145 / 40%) solid 1px">
-                  <Icon size="15" class="me-2">BrandSteam</Icon>
+                  <Icon name="tabler:brand-steam" size="15" class="me-2" />
                   Steam store
                 </v-btn>
 
@@ -397,7 +404,7 @@
                   variant="text"
                   size="small"
                   target="_blank">
-                  <Icon size="15" class="me-1">Download</Icon>
+                  <Icon name="tabler:download" size="15" class="me-1" />
 
                   Demo
                 </v-btn>
@@ -409,7 +416,7 @@
                   size="small"
                   :href="`https://www.xbox.com/games/store/${app.slug}/${app.id.xbox}`"
                   target="_blank">
-                  <Icon size="15" class="me-1">BrandXbox</Icon>
+                  <Icon name="tabler:brand-xbox" size="15" class="me-1" />
                   Xbox
                 </v-btn>
 
@@ -418,11 +425,11 @@
               :href="'https://store.steampowered.com/app/' + app.id.xbox"
               class="btn btn-ghost-secondary btn-secondary btn-sm"
               target="_blank">
-              <Icon size="15" class="me-2">BrandXbox</Icon>
+              <Icon name="tabler:brand-xbox" size="15" class="me-2" />
               Xbox store
             </a> -->
                 <!-- <a v-tippy="'Open on Steam'" href="#" class="btn btn-icon btn-sm">
-            <Icon>GitMerge</Icon>
+            <Icon name="tabler:git-merge" />
           </a> -->
               </div>
             </div>
@@ -437,7 +444,7 @@
                   variant="tonal"
                   style="outline: rgb(108 122 145 / 40%) solid 1px"
                   @click="loadARandomGame">
-                  <Icon size="15" class="me-2">Refresh</Icon>
+                  <Icon name="tabler:refresh" size="15" class="me-2" />
                   Show another
                 </v-btn>
               </div>
@@ -459,9 +466,11 @@
                         class="status-dot status-dot-animated me-2"
                         style="box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.4)"></span>
                       {{ state.name || 'Assign a state' }}
-                      <Icon size="12" class="ms-1" style="transform: translateX(3px)">
-                        ChevronDown
-                      </Icon>
+                      <Icon
+                        name="tabler:chevron-down"
+                        size="12"
+                        class="ms-1"
+                        style="transform: translateX(3px)" />
                     </v-btn>
                   </template>
                 </b-state>
@@ -501,10 +510,11 @@
               letter-spacing: normal;
               letter-spacing: 2px !important;
               text-transform: uppercase;
+              text-transform: uppercase;
             }">
                 Next
               </h4>
-              <Icon size="18" width="2">ChevronRight</Icon>
+              <Icon name="tabler:chevron-right" size="18" width="2" />
             </div> -->
           </div>
         </div>
@@ -513,16 +523,18 @@
 
     <div class="card" style="border-radius: 4px; margin-top: 5px">
       <v-list-item
-        append-icon="mdi-chevron-right"
         lines="two"
         density="comfortable"
         class="text-decoration-none"
         link
         href="https://discord.gg/F2sPE5B"
         target="_blank">
+        <template #append>
+          <Icon name="mdi:chevron-right" />
+        </template>
         <!-- <template v-slot:prepend>
         <div class="p-2">
-          <Icon size="18" width="1.5" class="text-muted">Flask</Icon>
+          <Icon name="tabler:flask" size="18" width="1.5" class="text-muted" />
         </div>
       </template> -->
         <template #title>
@@ -552,7 +564,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 2nd January 2025
- * Modified: 14th October 2025 - 05:38:55
+ * Modified: 23rd January 2026 - 23:11:45
  **/
 
 export default {

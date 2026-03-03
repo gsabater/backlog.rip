@@ -4,10 +4,7 @@
       <div class="card-body">
         <div>
           <div class="d-flex mb-3">
-            <h1 class="m-0">
-              <!-- <Icon class="me-2" style="transform: translateY(-2px)">CloudNetwork</Icon> -->
-              Integrations
-            </h1>
+            <h1 class="m-0">Integrations</h1>
           </div>
         </div>
         <p>
@@ -23,101 +20,162 @@
       </div>
     </div>
 
-    <div class="row mb-3">
-      <div class="col-6">
-        <v-btn to="/import" variant="tonal" color="primary">Sync your library now</v-btn>
-      </div>
-    </div>
-
     <template v-for="account in accounts">
-      <div class="card mb-3" style="outline: solid 1px #413231">
+      <div class="card mb-3">
         <div class="list-group card-list-group">
+          <!--
+            *+---------------------------------
+            *| Main integration row
+            *| has logo, platform name, description, and connect button
+            *+--------------------------------- -->
           <div
-            v-if="linked[account]"
-            class="list-group-item px-3 text-decoration-none"
+            class="list-group-item px-3 text-decoration-none control-hover"
             style="padding-top: 0.8rem; padding-bottom: 0.8rem">
             <div class="row g-3 align-items-center">
               <div class="col-auto">
-                <img
-                  :src="linked[account].manifest.source.logo"
-                  style="max-width: 40px; max-height: 40px" />
-              </div>
-
-              <div v-if="linked[account]" class="col">
-                <span class="font-serif">{{ linked[account].manifest.source.name }}</span>
-                <div class="v-list-item-subtitle">
-                  <small>{{ text[account].description }}</small>
+                <div style="display: flex; align-items: center; gap: 8px">
+                  <div
+                    style="
+                      width: 48px;
+                      height: 48px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      background: #2d2c33;
+                      border-radius: 3px;
+                      box-shadow: 0 0 0 1px #3d3c43;
+                    ">
+                    <img
+                      v-if="modules[account]"
+                      :src="modules[account].manifest.source.logo"
+                      style="max-width: 36px; max-height: 36px" />
+                  </div>
+                  <template v-if="libraryStore.isLinked(account)">
+                    <Icon name="tabler:arrows-right-left" size="18" class="text-secondary" />
+                    <span
+                      v-if="linked[account].avatar"
+                      class="avatar"
+                      :style="{
+                        backgroundImage: `url(${linked[account].avatar})`,
+                        width: '40px',
+                        height: '40px',
+                      }"></span>
+                  </template>
                 </div>
-              </div>
-
-              <div class="col-auto">
-                <v-btn
-                  v-if="libraryStore.isLinked(account)"
-                  variant="text"
-                  size="small"
-                  color="green-darken-2">
-                  <span class="status-dot status-dot-animated status-green me-2"></span>
-                  {{ linked[account].username }}
-                </v-btn>
-
-                <v-btn v-else variant="text" size="small" color="blue-grey-lighten-3">
-                  Connect account
-                  <Icon size="12" width="1.5" class="ms-2">ExternalLink</Icon>
-                </v-btn>
-              </div>
-            </div>
-          </div>
-          <div class="list-group-item px-3 text-decoration-none" style="background: #24232a">
-            <div class="row g-3 align-items-center">
-              <div class="col-auto text-secondary">
-                <span
-                  v-if="linked[account].avatar"
-                  class="avatar"
-                  :style="{
-                    backgroundImage: `url(${linked[account].avatar})`,
-                  }"></span>
               </div>
               <div class="col">
-                <div>
-                  <span class="status-dot status-dot-animated status-green me-2"></span>
-                  <span class="font-serif">{{ linked[account].username }}</span>
+                <div class="mb-0 font-serif">
+                  {{ modules[account].manifest.source.name }}
                 </div>
                 <div class="v-list-item-subtitle">
-                  <small class="text-muted">
-                    Linked {{ dates.timeAgo(linked[account].created_at) }}
-                    <!-- <Icon size="16" width="1" style="transform: translateY(-1px)">Cards</Icon>
-                    {{ linked[account].games }} games -->
-                  </small>
+                  <div class="small text-secondary">
+                    {{ text[account].description }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-auto ms-auto text-secondary text-right" style="min-width: 200px">
+                <div class="d-flex align-items-center" style="justify-content: flex-end">
+                  <div class="small text-success font-mono" v-if="libraryStore.isLinked(account)">
+                    <span class="status-dot status-dot-animated status-green"></span>
+                    Connected
+                  </div>
+                  <template v-else>
+                    <template v-if="account === 'steam' || account === 'steamBacklog'">
+                      <common-login-button style="width: 200px"></common-login-button>
+                    </template>
+                  </template>
                 </div>
               </div>
             </div>
           </div>
-          <template v-for="item in text[account].features">
-            <div
-              class="list-group-item px-3 text-decoration-none"
-              style="padding-top: 0.4rem; padding-bottom: 0.8rem; background: #24232a">
-              <div class="row g-2 align-items-center">
-                <div class="col-auto text-secondary">
-                  <Icon size="16" width="1.5" class="mx-3" style="color: #2fb344">Checks</Icon>
-                </div>
-                <div class="col">
-                  <span>{{ item.text }}</span>
 
-                  <div class="v-list-item-subtitle">
-                    <small>
-                      {{ item.more }}
-                    </small>
+          <!--
+            *+---------------------------------
+            *| Connected information
+            *| With account ID and sync button
+            *+--------------------------------- -->
+          <div
+            v-if="libraryStore.isLinked(account)"
+            class="list-group-item px-3 text-decoration-none control-hover"
+            style="padding-top: 0.6rem; padding-bottom: 0.6rem; nopebackground: rgb(36, 35, 42)">
+            <div class="row g-3 align-items-center">
+              <div class="col-auto text-center ms-2 me-1 text-muted">
+                <Icon name="tabler:chevron-right" size="16" />
+              </div>
+              <div class="col">
+                <div class="mb-0 font-serif small">
+                  {{ linked[account].username }}
+                </div>
+                <div class="v-list-item-subtitle">
+                  <div class="small label font-mono text-secondary">
+                    SteamID
+                    <kbd>
+                      {{ linked[account].account }}
+                    </kbd>
+                    <!-- {{ linked[account].games }} games &middot; Last synchronized
+                    {{ linked[account].created_at }} -->
+                  </div>
+                </div>
+              </div>
+              <div class="col-auto">
+                <v-btn
+                  variant="tonal"
+                  size="small"
+                  color="secondary"
+                  :to="`/import/${account}`"
+                  @click="unlinkAccount(account)">
+                  Sync now
+                  <Icon
+                    name="tabler:arrows-transfer-down"
+                    size="12"
+                    class="ms-1"
+                    style="transform: translateY(1px)" />
+                </v-btn>
+              </div>
+            </div>
+          </div>
+
+          <!--
+            *+---------------------------------
+            *| Syncronization details (only if connected)
+            *+--------------------------------- -->
+          <div
+            v-if="libraryStore.isLinked(account)"
+            class="list-group-item px-3 text-decoration-none control-hover"
+            style="padding-top: 0.6rem; padding-bottom: 0.6rem; nopebackground: rgb(36, 35, 42)">
+            <div class="row g-3 align-items-center">
+              <div class="col-auto text-center ms-2 me-1 text-muted">
+                <Icon name="tabler:chevron-right" size="16" />
+              </div>
+              <div class="col">
+                <div class="mb-0 font-serif small">{{ linked[account].games }} games</div>
+                <div class="v-list-item-subtitle">
+                  <div class="small label text-secondary">
+                    Last synchronized
+                    {{ dates.timeAgo(linked[account].updated_at) }}
                   </div>
                 </div>
               </div>
             </div>
-          </template>
+          </div>
         </div>
-        <div v-if="$app.wip && libraryStore.isLinked(account)" class="card-footer">
-          <small v-if="linked[account].updated_at" class="text-muted">
-            Last updated {{ $moment(linked[account].updated_at).format('LL') }}
-          </small>
-          <small v-else class="text-muted">Not yet synchronized</small>
+        <div
+          v-if="libraryStore.isLinked(account)"
+          class="card-footer d-flex justify-content-between align-items-center"
+          style="padding-top: 0.5rem; padding-bottom: 0.5rem">
+          <em class="small text-muted">
+            Linked {{ $moment(linked[account].created_at).format('LLL') }}
+          </em>
+          <div class="col-auto">
+            <v-btn
+              variant="text"
+              size="small"
+              color="red"
+              style="opacity: 0.8"
+              @click="unlinkAccount(account)">
+              Unlink account
+            </v-btn>
+          </div>
         </div>
       </div>
     </template>
@@ -130,7 +188,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 3rd January 2024
- * Modified: 27th November 2025 - 03:56:04
+ * Modified: 19th February 2026 - 17:26:50
  **/
 
 export default {
@@ -179,8 +237,24 @@ export default {
     linked() {
       return this.libraryStore?.linked ?? {}
     },
+
+    modules() {
+      return this.libraryStore?.module ?? null
+    },
   },
 
-  methods: {},
+  methods: {
+    linkAccount(account) {
+      // TODO: Implement link account logic
+      console.log('Linking account:', account)
+      this.$notify.info(`Linking ${account} account...`)
+    },
+
+    unlinkAccount(account) {
+      // TODO: Implement unlink account logic
+      console.log('Unlinking account:', account)
+      this.$notify.warning(`Unlink ${account} account - not implemented yet`)
+    },
+  },
 }
 </script>

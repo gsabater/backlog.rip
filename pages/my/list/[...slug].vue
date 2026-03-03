@@ -18,63 +18,94 @@
         </div>
       </div>
       <div v-if="ui.ready" class="row row-cards">
-        <div class="col-lg-2" style="width: 20%">
-          <div class="p-2 pt-4">
-            <list-cover :games="list.games" class="mb-3" />
-          </div>
-
-          <div class="text-center">
-            <h2 class="mb-1">{{ list.name }}</h2>
-            <p>
-              Local only 🔸 {{ $moment(list.created_at).format('YYYY') }} 🔸
-              {{ list.games.length }} games
-              <!-- 🔸 By @gsabater -->
-            </p>
-
-            <small v-if="list.description" class="d-block text-muted my-3">
-              {{ list.description }}
-            </small>
-          </div>
-
-          <div v-if="mode == 'viewer'" class="d-flex justify-content-center mb-4">
-            <v-btn
-              class="me-2"
-              variant="tonal"
-              color="rgb(110 116 180)"
-              @click.stop="$refs.crud.edit(list)">
-              List details
-            </v-btn>
-
-            <v-btn variant="tonal" color="rgb(110 116 180)" @click="mode = 'editor'">
-              Edit games
-            </v-btn>
-          </div>
-
-          <div v-else class="d-flex justify-content-center mb-4">
-            <v-btn class="me-2" color="secondary" variant="text" @click="backToList">
-              <Icon size="16" width="1" class="me-1">ArrowLeft</Icon>
-              Cancel
-            </v-btn>
-
-            <v-btn color="primary" variant="tonal" @click="$refs.editor.submit()">Save list</v-btn>
-          </div>
+        <div class="col-lg-9" v-if="mode == 'viewer'">
+          <list-viewer v-if="mode == 'viewer'" @showEditor="mode = 'editor'" />
         </div>
-        <template v-if="mode == 'viewer'">
-          <div class="col"></div>
-          <div class="col-lg-9">
-            <list-viewer v-if="mode == 'viewer'" />
-
-            <list-crud-dialog ref="crud" @stored="$forceUpdate()" @deleted="$forceUpdate()" />
-          </div>
-        </template>
 
         <template v-if="mode == 'editor'">
           <list-editor v-if="mode == 'editor'" ref="editor" @stored="mode = 'viewer'" />
         </template>
+
+        <div class="col-lg-3">
+          <div style="position: sticky; top: 20px">
+            <list-cover :list="list" :class="mode == 'editor' ? 'mb-3' : 'my-3'" />
+
+            <!-- <div class="text-center">
+              <h2 class="mb-1">{{ list.name }}</h2>
+            </div> -->
+            <div class="card">
+              <div class="card-body">
+                <h2 class="lh-1">{{ list.name }}</h2>
+
+                <div class="text-secondary mb-2" v-if="list.description">
+                  {{ list.description }}
+                </div>
+              </div>
+
+              <div
+                class="card-footer small"
+                style="display: flex; flex-direction: column; line-height: 23px">
+                <span>
+                  <Icon
+                    name="tabler:calendar-week"
+                    class="me-1"
+                    style="transform: translateY(1px)" />
+                  Created
+                  {{ $moment(list.created_at).format('MMMM, YYYY') }}
+                </span>
+
+                <span>
+                  <Icon
+                    name="tabler:rotate-clockwise-2"
+                    class="me-1"
+                    style="transform: translateY(1px)" />
+                  Last updated
+                  {{ $moment(list.updated_at).format('LL') }}
+                </span>
+              </div>
+
+              <div class="card-footer p-2">
+                <template v-if="mode == 'viewer'">
+                  <v-btn
+                    class="my-2"
+                    block
+                    variant="tonal"
+                    color="rgb(135 140 195)"
+                    @click="mode = 'editor'">
+                    Edit games
+                  </v-btn>
+                  <v-btn
+                    class="my-2"
+                    block
+                    variant="tonal"
+                    color="rgb(135 140 195)"
+                    @click.stop="$refs.crud.edit(list)">
+                    List details
+                  </v-btn>
+                </template>
+                <template v-if="mode == 'editor'">
+                  <v-btn
+                    block
+                    variant="tonal"
+                    color="green-darken-2"
+                    @click="$refs.editor.submit()"
+                    class="mb-2">
+                    Save changes
+                  </v-btn>
+                  <v-btn block color="secondary" variant="text" @click="backToList">
+                    Cancel edits
+                  </v-btn>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <!-- </ClientOnly> -->
+
+  <list-crud-dialog ref="crud" @stored="$forceUpdate()" @deleted="$forceUpdate()" />
 </template>
 
 <script>
@@ -83,21 +114,11 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th September 2024
- * Modified: 27th November 2025 - 05:31:32
+ * Modified: 28th February 2026 - 16:57:46
  **/
 
 export default {
   name: 'MyList',
-
-  // async setup() {
-  //   // Preload data during SSR using useAsyncData
-  //   const { data, error } = await useAsyncData(
-  //     'userData',
-  //     () => $fetch('https://jsonplaceholder.typicode.com/users/1') // Example API to fetch user data
-  //   )
-
-  //   return { data, error }
-  // },
 
   data() {
     return {
@@ -111,8 +132,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useDataStore, useStateStore, useListStore),
-    ...mapState(useStateStore, ['states']),
+    ...mapStores(useDataStore, useListStore),
     ...mapState(useListStore, ['list']),
   },
 

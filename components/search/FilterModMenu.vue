@@ -6,9 +6,12 @@
       :class="{ active: option == mod }"
       @click="setMod(option)">
       <div class="d-flex justify-center" style="width: 30px">
-        <Icon v-if="option == mod" size="16" width="2" class="me-1 text-green">
-          Checks
-        </Icon>
+        <Icon
+          name="tabler:checks"
+          v-if="option == mod"
+          size="16"
+          width="2"
+          class="me-1 text-green" />
       </div>
       <div>
         {{ filterMods[option].label }} {{ filterMods[option].short }}...
@@ -26,7 +29,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: Tue 03 June 2025 - 17:03:31
+ * Modified: 23rd January 2026 - 23:11:50
  **/
 
 import filterService from '../../services/filterService'

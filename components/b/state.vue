@@ -7,12 +7,9 @@
       style="border-radius: 4px"
       :style="{ '--tblr-status-color': st.color }"
       @click.stop.prevent="showManager($event)">
-      <span
-        v-if="from"
-        :style="{ color: oldst.color + ' !important' }"
-        style="font-size: 0.775rem">
+      <span v-if="from" :style="{ color: oldst.color + ' !important' }" style="font-size: 0.775rem">
         {{ oldst.name || 'Not in your backlog' }}
-        <Icon class="mx-1" style="color: #666">ArrowRightRhombus</Icon>
+        <Icon name="tabler:arrow-right-rhombus" class="mx-1" style="color: #666" />
       </span>
 
       <Icon
@@ -23,16 +20,14 @@
           fill: #1f4112d9 !important;
           filter: drop-shadow(rgba(0, 0, 0, 0.41) 1px 1px 6px);
           stroke: #0b651c;
-        ">
-        BookmarkFilled
-      </Icon>
+        "
+        name="tabler:bookmark-filled" />
       <Icon
         v-if="fav"
         size="17"
         width="1.5"
-        style="color: red; fill: #ff000094; filter: drop-shadow(1px 1px 6px #00000069)">
-        Heart
-      </Icon>
+        style="color: red; fill: #ff000094; filter: drop-shadow(1px 1px 6px #00000069)"
+        name="tabler:heart" />
 
       <span class="status-dot" :class="{ 'status-dot-animated': pulse && state }"></span>
       <template v-if="label">
@@ -52,7 +47,7 @@
  * <BState :state="state"></BState>
  * -------------------------------------------
  * Created Date: 26th December 2023
- * Modified: Thu 24 April 2025 - 17:55:27
+ * Modified: 24th January 2026 - 10:57:39
  **/
 
 export default {

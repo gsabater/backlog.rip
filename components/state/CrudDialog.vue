@@ -2,8 +2,8 @@
   <v-dialog v-model="ui.show" max-width="725">
     <v-card :loading="ui.loading">
       <template #title>
-        <Icon>Background</Icon>
-        <span class="font-serif mx-2">States</span>
+        <Icon name="tabler:background" />
+        <div class="font-serif mx-2">States</div>
       </template>
 
       <v-form ref="form" v-model="ui.isValid">
@@ -104,14 +104,14 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th June 2024
- * Modified: 29th October 2025 - 11:59:54
+ * Modified: 6th February 2026 - 11:51:25
  **/
 
 export default {
   data: () => ({
     name: 'StatesCrudDialog',
     item: {},
-    base: {
+    model: {
       color: null,
       name: 'My state',
       description: '',
@@ -149,7 +149,7 @@ export default {
         .toString(16)
         .padStart(6, '0')
 
-      this.item = { ...this.base, order: nextOrder, color: '#' + randomColor }
+      this.item = { ...this.model, order: nextOrder, color: '#' + randomColor }
       this.item.action = 'create'
 
       this.ui.show = true

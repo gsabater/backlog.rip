@@ -10,18 +10,16 @@
         </p>
         <div class="empty-action">
           <b-btn to="/import" color="primary" size="sm" class="me-3">
-            <!-- <Icon>StepInto</Icon> -->
+            <!-- <Icon name="tabler:step-into" /> -->
             Import your library
           </b-btn>
 
           <b-btn to="/import" color="primary" size="sm" class="me-3">
-            <!-- <Icon>StepInto</Icon> -->
+            <!-- <Icon name="tabler:step-into" /> -->
             Add a game manually
           </b-btn>
 
-          <b-btn to="/games" variant="ghost" size="sm" color="secondary">
-            Browse all games
-          </b-btn>
+          <b-btn to="/games" variant="ghost" size="sm" color="secondary">Browse all games</b-btn>
         </div>
       </template>
 

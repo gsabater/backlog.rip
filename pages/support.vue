@@ -43,15 +43,14 @@
             <p class="lead my-5 mb-3">
               <!-- <strong>Backlog.rip is free to use and always will be.</strong>
               <br /> -->
-              Built and maintained by a solo developer, I rely on community support to
-              keep creating and maintaining a clean, independent platform for tracking
-              video games. My desire is to build a robust platform without ads, trackers,
-              or clutter.
+              Built and maintained by a solo developer, I rely on community support to keep creating
+              and maintaining a clean, independent platform for tracking video games. My desire is
+              to build a robust platform without ads, trackers, or clutter.
             </p>
 
             <p class="lead mb-4">
-              If you like it, consider supporting on Patreon or ko-fi to help keep it
-              running and improving.
+              If you like it, consider supporting on Patreon or ko-fi to help keep it running and
+              improving.
 
               <!-- Backlog.rip is free, but we rely on community support to innovate
             and continue creating an independent gaming library manager. That's why we
@@ -78,9 +77,11 @@
                   color="rgb(110 116 180)"
                   href="https://patreon.com/backlogrip"
                   target="_blank">
-                  <Icon size="16" class="me-2" style="transform: translateY(-1px)">
-                    BrandPatreonFilled
-                  </Icon>
+                  <Icon
+                    name="tabler:brand-patreon-filled"
+                    size="16"
+                    class="me-2"
+                    style="transform: translateY(-1px)" />
                   Become a Supporter on Patreon
                 </v-btn>
 
@@ -102,9 +103,7 @@
         *+--------------------------------- -->
       <div id="pricing" class="row row-cards justify-content-center mb-5">
         <div class="col-12 text-center mb-4">
-          <h2 class="display-6 fw-bold" style="text-shadow: 2px 2px 0px #000">
-            Choose your Level
-          </h2>
+          <h2 class="display-6 fw-bold" style="text-shadow: 2px 2px 0px #000">Choose your Level</h2>
           <p class="text-muted">
             Every contribution helps keep the servers running and development active
           </p>
@@ -116,18 +115,10 @@
               align-tabs="center"
               variant="pills"
               class="mx-auto">
-              <v-tab
-                value="monthly"
-                class="mx-2"
-                variant="tonal"
-                style="border-radius: 3px">
+              <v-tab value="monthly" class="mx-2" variant="tonal" style="border-radius: 3px">
                 Monthly Support
               </v-tab>
-              <v-tab
-                value="onetime"
-                class="mx-2"
-                variant="tonal"
-                style="border-radius: 3px">
+              <v-tab value="onetime" class="mx-2" variant="tonal" style="border-radius: 3px">
                 One-time Donation
               </v-tab>
             </v-tabs>
@@ -139,68 +130,66 @@
           <v-window-item value="monthly">
             <div class="row justify-content-center">
               <div class="col-sm-6 col-lg-4">
-                <div
-                  class="card pricing-card p-3 h-100 border-primary"
-                  style="border: 1px solid">
+                <div class="card pricing-card p-3 h-100 border-primary" style="border: 1px solid">
                   <div class="card-body">
                     <h2 class="display-6 mb-3" style="text-shadow: 2px 2px 0px #000">
                       Free forever
                     </h2>
                     <p class="text-secondary">
-                      The website is free to use and always will be. You can manage your
-                      library, track your games, and sync across devices without any
-                      payment.
+                      The website is free to use and always will be. You can manage your library,
+                      track your games, and sync across devices without any payment.
                     </p>
                     <ul class="list-unstyled lh-lg">
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Unlimited games in your library
                       </li>
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Progress tracking
                         <span class="text-muted px-2">status, hours ...</span>
                       </li>
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Advanced search and filtering
                       </li>
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Custom states and lists
                       </li>
 
                       <li class="mt-3"><strong>Integrations</strong></li>
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Synchronize with Steam
                       </li>
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         <span class="line-through">Steam Achievements</span>
                         <span class="text-muted px-2">under maintenance</span>
                       </li>
 
                       <li class="mt-3"><strong>Cloud usage</strong></li>
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Cloud backups and multi-device sync
                       </li>
 
                       <!-- <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:home" class="text-success me-2" size="14" width="2">Check</Icon>
                         Statistics and insights (charts, playtime, genres, etc.)
                       </li>
                       -->
 
                       <li class="mt-3"><strong>My philosophy</strong></li>
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         No ads, trackers or cookies
                       </li>
 
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
+
                         Open source and privacy-focused
                       </li>
                     </ul>
@@ -214,40 +203,37 @@
                   <div class="card-body">
                     <h2
                       class="display-6 fancy mb-3"
-                      style="
-                        filter: drop-shadow(2px 2px 0px #000);
-                        transform: translateY(-8px);
-                      ">
+                      style="filter: drop-shadow(2px 2px 0px #000); transform: translateY(-8px)">
                       Monthly Supporter
                     </h2>
                     <p class="text-secondary">
-                      Become a recurring supporter and help ensure Backlog.rip continues
-                      to evolve. Your monthly contribution provides sustainable support.
+                      Become a recurring supporter and help ensure Backlog.rip continues to evolve.
+                      Your monthly contribution provides sustainable support.
                     </p>
                     <p class="text-secondary">
-                      The Supporter plan helps cover server costs and fund continued
-                      development while keeping the service free for everyone.
+                      The Supporter plan helps cover server costs and fund continued development
+                      while keeping the service free for everyone.
                     </p>
 
                     <ul class="list-unstyled lh-lg">
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Everything in Free
                       </li>
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Access to a supporter Discord channel
                       </li>
 
                       <li class="mt-3"><strong>More cloud usage</strong></li>
 
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Backup retention increased to a year
                       </li>
 
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Unlimited achievements synchronization
                       </li>
                     </ul>
@@ -258,9 +244,7 @@
                         class="btn btn-primary w-100">
                         Become a Supporter
                       </a>
-                      <p class="small text-muted p-0 m-0 mt-2">
-                        Cancel anytime • No commitments
-                      </p>
+                      <p class="small text-muted p-0 m-0 mt-2">Cancel anytime • No commitments</p>
                     </div>
                   </div>
                 </div>
@@ -278,38 +262,36 @@
                   <div class="card-body">
                     <h2
                       class="display-6 mb-3"
-                      style="
-                        filter: drop-shadow(2px 2px 0px #000);
-                        transform: translateY(-8px);
-                      ">
+                      style="filter: drop-shadow(2px 2px 0px #000); transform: translateY(-8px)">
                       One-time
                       <span class="fancy">Donation</span>
                     </h2>
                     <p class="text-secondary">
-                      Prefer to contribute just once? Your one-time donation helps with
-                      immediate costs and lets you support the project on your terms.
+                      Prefer to contribute just once? Your one-time donation helps with immediate
+                      costs and lets you support the project on your terms.
                     </p>
                     <p class="text-secondary">
-                      Every donation, no matter how small, helps keep Backlog.rip running
-                      and shows that you value what we're creating.
+                      Every donation, no matter how small, helps keep Backlog.rip running and shows
+                      that you value what we're creating.
                     </p>
 
                     <ul class="list-unstyled lh-lg">
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Support independent development
                       </li>
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
                         Special thank-you mention
                       </li>
                       <li class="d-flex align-items-center">
-                        <Icon class="text-success me-2" size="14" width="2">Check</Icon>
+                        <Icon name="tabler:check" class="text-success me-2" size="14" width="2" />
+
                         Warm fuzzy feeling
                       </li>
                       <li class="mt-3"><strong>Note</strong></li>
                       <li class="d-flex align-items-center text-muted">
-                        <Icon class="text-muted me-2" size="14" width="2">Warning</Icon>
+                        <Icon name="tabler:warning" class="text-muted me-2" size="14" width="2" />
                         Supporter benefits require recurring support
                       </li>
                     </ul>
@@ -347,10 +329,7 @@
           <div class="col-lg-8">
             <div class="card p-2">
               <div class="row gy-3">
-                <div
-                  v-for="supporter in supporters"
-                  :key="supporter.id"
-                  class="col-6 px-3">
+                <div v-for="supporter in supporters" :key="supporter.id" class="col-6 px-3">
                   <div
                     class="card row d-flex flex-row align-items-center p-2"
                     :class="{ 'border-primary': supporter.level === 'Patron' }">
@@ -358,19 +337,17 @@
                       <v-btn variant="text" icon size="small">
                         <Icon
                           v-if="supporter.level === 'Patron'"
+                          name="tabler:badge-filled"
                           size="14"
                           width="1"
-                          style="color: goldenrod">
-                          BadgeFilled
-                        </Icon>
+                          style="color: goldenrod" />
 
                         <Icon
                           v-if="supporter.level === 'Donation'"
+                          name="tabler:badges"
                           size="16"
                           width="1"
-                          style="color: #00fdcf">
-                          Badges
-                        </Icon>
+                          style="color: #00fdcf" />
                       </v-btn>
                     </div>
                     <div class="col-auto">
@@ -403,9 +380,7 @@
                             <template v-if="supporter.level === 'Donation'">
                               <span
                                 v-if="
-                                  $nuxt
-                                    .$dayjs()
-                                    .diff($nuxt.$dayjs(supporter.date), 'year') < 1
+                                  $nuxt.$dayjs().diff($nuxt.$dayjs(supporter.date), 'year') < 1
                                 ">
                                 {{ $nuxt.$dayjs(supporter.date).fromNow() }}
                               </span>
@@ -461,9 +436,7 @@
               <v-expansion-panel-title>
                 <template v-slot:default="{ expanded }">
                   <div class="d-flex align-items-center">
-                    <v-icon
-                      class="me-3"
-                      :class="expanded ? 'text-primary' : 'text-muted'">
+                    <v-icon class="me-3" :class="expanded ? 'text-primary' : 'text-muted'">
                       {{ faq.icon }}
                     </v-icon>
                     <span>{{ faq.question }}</span>
@@ -498,7 +471,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 18th June 2025
- * Modified: 2nd October 2025 - 10:02:02
+ * Modified: 25th January 2026 - 07:55:31
  **/
 
 export default {
@@ -538,13 +511,12 @@ export default {
         },
         {
           question: 'Can I cancel my support anytime?',
-          answer:
-            'Absolutely! You can cancel recurring support at any time. No contracts or fees.',
+          answer: 'You can cancel recurring support at any time. No contracts or fees.',
           icon: 'mdi-cancel',
         },
         {
           question: 'Can I support without a subscription?',
-          answer: 'Yes! You can make a one-time donation via ko-fi.',
+          answer: 'You can make a one-time donation via ko-fi.',
           icon: 'mdi-heart-outline',
         },
         {

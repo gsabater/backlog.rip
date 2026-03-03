@@ -16,7 +16,7 @@
         border: 1px dashed #cccccc5c;
         font-size: 0.75rem;
       "
-      onclick="this.style.display='none'">
+      onclick="this.style.display = 'none'">
 --
 {{ stats }}
 </pre
@@ -58,7 +58,9 @@
           *| Message when there are no results
           *+--------------------------------- -->
         <slot name="empty" v-if="$app.ready && stats.results == 0 && !loading">
-          <div class="empty p-0" style="border: 1px dashed #cccccc73; border-radius: 4px">
+          <div
+            class="empty"
+            style="border: 1px dashed #cccccc73; border-radius: 4px; height: auto; padding: 2rem">
             <template v-if="isLibrary && stats.apps == 0">
               <p class="empty-title mb-3 font-serif" style="font-weight: 300">
                 Your library is empty
@@ -70,8 +72,8 @@
               </p>
               <div class="empty-action">
                 <b-btn to="/import" class="me-3">
-                  <!-- <Icon>StepInto</Icon> -->
-                  Import your library
+                  <!-- <Icon name="tabler:step-into" /> -->
+                  Import your games
                 </b-btn>
 
                 <!-- <b-btn class="me-3" @click.stop="$mitt.emit('game:add')">
@@ -84,12 +86,15 @@
 
             <div v-if="stats.apps > 0 && stats.results == 0" class="row w-100">
               <div class="col-6" style="display: flex; flex-direction: column; align-items: center">
-                <img src="/img/transhumans/reflecting.png" max-width="80%" />
-                <!-- <b-game
-                :data="{ uuid: 'placeholder' }"
-                tracking
-                disabled
-                style="max-width: 250px"></b-game> -->
+                <img
+                  src="/img/transhumans/reflecting.png"
+                  class="img-fluid"
+                  style="
+                    max-height: 330px;
+                    object-fit: cover;
+                    filter: drop-shadow(1px 1px 0px currentcolor);
+                    color: #00fdcf;
+                  " />
               </div>
               <div
                 class="col-4"
@@ -99,13 +104,14 @@
                   align-items: center;
                   justify-content: center;
                 ">
-                <p class="empty-title mb-3 font-serif" style="font-weight: 300">
+                <h3 class="empty-title mb-3 font-serif" style="font-weight: 300">
                   Nothing found
                   <template v-if="f.string && f.string.length">
+                    by
                     <strong>"{{ f.string }}"</strong>
                   </template>
                   <template v-else>with your filters</template>
-                </p>
+                </h3>
                 <p class="empty-subtitle text-secondary">
                   We haven't found any games for the current search
                   <template v-if="isLibrary">
@@ -128,19 +134,41 @@
                 </p>
 
                 <div v-if="isLibrary" class="empty-action mt-3">
-                  <b-btn to="/import" class="me-3">
-                    <!-- <Icon>StepInto</Icon> -->
+                  <v-btn
+                    variant="tonal"
+                    color="rgb(135 140 195)"
+                    style="
+                      filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+                      outline: 1px solid #9e58581c;
+                      outline-offset: -1px;
+                    "
+                    to="/import">
                     Import your library
-                  </b-btn>
+                  </v-btn>
 
-                  <b-btn @click="$refs.filters.changeSource('all')">Search in all games</b-btn>
+                  <!--
+                  TODO: Click not working
+                  <v-btn
+                    variant="tonal"
+                    color="rgb(135 140 195)"
+                    style="
+                      filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+                      outline: 1px solid #9e58581c;
+                      outline-offset: -1px;
+                    "
+                    @click="$refs.filters.changeSource('all')">
+                    Search in all games
+                  </v-btn>
+                  -->
                 </div>
 
+                <!--
+                TODO: Click not working to add a custom game
                 <template v-if="f.string && f.string.length">
                   <div
                     class="hr-text font-serif w-100"
                     style="margin-top: 2.5rem !important; margin-bottom: 2.5rem !important">
-                    ◈ Or you can ◈
+                    Or you can
                   </div>
                   <p class="empty-title mb-2 font-serif" style="font-weight: 300">
                     Create your own game
@@ -149,12 +177,19 @@
                     You can just create a game for yourself.
                   </p>
                   <div class="empty-action mt-2">
-                    <b-btn @click="createCustomGame">
-                      <!-- <Icon>StepInto</Icon> -->
+                    <v-btn
+                      variant="tonal"
+                      color="rgb(135 140 195)"
+                      style="
+                        filter: drop-shadow(0 0 1rem rgba(174, 62, 201, 0.2));
+                        outline: 1px solid #9e58581c;
+                        outline-offset: -1px;
+                      "
+                      @click="createCustomGame">
                       Add a game "{{ f.string }}" to your library
-                    </b-btn>
+                    </v-btn>
                   </div>
-                </template>
+                </template> -->
               </div>
             </div>
           </div>
@@ -172,7 +207,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 26th November 2025 - 09:41:50
+ * Modified: 14th February 2026 - 10:57:09
  **/
 
 export default {

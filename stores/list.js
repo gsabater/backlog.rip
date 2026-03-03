@@ -3,8 +3,11 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: 27th November 2025 - 01:39:28
+ * Modified: 15th February 2026 - 17:24:16
  */
+
+import supabase from '../modules/integrations/supabase'
+import supabaseService from '../services/supabaseService'
 
 let $db = null
 let $log = null
@@ -16,17 +19,28 @@ export const useListStore = defineStore('list', {
     list: { games: [] },
     lists: [],
 
-    base: {
+    model: {
       games: [],
+      author: {},
 
       name: '',
+      slug: null,
       description: '',
-      visibility: 'public', // public, occult, private
-      layout: 'ordered', // null
+
       type: 'list', // dynamic, challenge
-      author: null,
+      layout: 'ordered', // null
+      sortBy: 'none',
+      sortDir: 'desc',
+
+      is_public: false,
+
       created_at: null,
       updated_at: null,
+
+      _: {
+        action: null,
+        make_slug: false,
+      },
     },
 
     meta: {
@@ -36,6 +50,16 @@ export const useListStore = defineStore('list', {
   }),
 
   actions: {
+    //+-------------------------------------------------
+    // reset()
+    // Resets the state
+    // -----
+    // Created on Fri Feb 06 2026
+    //+-------------------------------------------------
+    reset() {
+      this.list = { ...this.model }
+    },
+
     //+-------------------------------------------------
     // use()
     // Assigns a deep copy of a list to this.list
@@ -57,7 +81,7 @@ export const useListStore = defineStore('list', {
       }
 
       this.list = {
-        ...this.base,
+        ...this.model,
         ...JSON.parse(JSON.stringify(list)),
       }
 
@@ -70,15 +94,15 @@ export const useListStore = defineStore('list', {
     // -----
     // Created on Tue Oct 08 2024
     //+-------------------------------------------------
-    async create(data) {
-      delete data.action
+    async create(payload) {
+      let data = await this.prepare(payload)
 
-      data.uuid = `local:${$nuxt.$uuid()}`
-      data.slug = this.makeSlug(data)
+      data.uuid = $nuxt.$uuid()
       data.created_at = dates.now()
       data.updated_at = dates.now()
 
       await $db.lists.put(data)
+      await this.storePublic(data)
       $log('[ listStore.create ]', data)
 
       await this.load(true)
@@ -92,39 +116,40 @@ export const useListStore = defineStore('list', {
     // -----
     // Created on Thu Oct 10 2024
     //+-------------------------------------------------
-    async update(data, options = {}) {
-      delete data.key
-      delete data.action
-
-      data.slug = this.makeSlug(data)
-      data.games = this.prepareGames(data)
-      if (options.covers) data.covers = this.findCovers(data)
+    async update(payload, options = {}) {
+      let data = await this.prepare(payload)
 
       data.updated_at = dates.now()
-      let item = JSON.parse(JSON.stringify(data))
 
-      await $db.lists.put(item)
-      // await this.updateAPI(item)
+      await $db.lists.put(data)
+      await this.storePublic(data)
+      $log('[ listStore.update ]', data)
 
       await this.load(true)
 
-      // Update this list if is the current one
+      // Update this list if is the active
       if (this.list.uuid == data.uuid) this.list = { ...this.list, ...data }
-
-      $log('[ listStore.update ]', data)
+      return data
     },
 
     //+-------------------------------------------------
-    // updateAPI()
-    // Sends the list to the API
+    // prepare()
+    // prepares the list to be ingested by dexie and supabase
     // -----
-    // Created on Thu Oct 24 2024
+    // Created on Fri Feb 13 2026
     //+-------------------------------------------------
-    async updateAPI(data) {
-      let body = { ...data }
-      const xhr = await $nuxt.$axios.post('lists/update', body)
+    async prepare(payload) {
+      const data = { ...payload }
 
-      debugger
+      data.slug = this.makeSlug(data)
+      data.games = this.prepareGames(data)
+
+      delete data._
+      delete data.covers
+      delete data.author
+
+      const prepared = JSON.parse(JSON.stringify(data))
+      return prepared
     },
 
     //+-------------------------------------------------
@@ -133,8 +158,9 @@ export const useListStore = defineStore('list', {
     // -----
     // Created on Wed Nov 06 2024
     //+-------------------------------------------------
-    async delete(id) {
-      await $db.lists.delete(id)
+    async delete(list) {
+      await this.deletePublic(list)
+      await $db.lists.delete(list.uuid)
       await this.load(true)
 
       return true
@@ -222,15 +248,6 @@ export const useListStore = defineStore('list', {
         list = this.lists.find((item) => item.uuid == list.uuid)
       }
 
-      // console.warn(
-      //   list.name,
-      //   app.name,
-      //   app.uuid,
-      //   app.id?.api,
-      //   list.games.some((item) => item.uuid == app.uuid || item.uuid == app.id?.api),
-      //   list.games
-      // )
-
       return list.games.some((item) => item.uuid == app.uuid || item.uuid == app.id?.api)
 
       // find is slower than some, but is useful for when we need the item back
@@ -242,17 +259,20 @@ export const useListStore = defineStore('list', {
     // Returns a slug for the current list
     // -----
     // Created on Fri Oct 11 2024
+    // Created on Fri Feb 13 2026 - Prevent slug change
     //+-------------------------------------------------
     makeSlug(data) {
-      let slug = format.stringToSlug(data.name)
-      let rand = Math.floor(Math.random() * 1000)
+      if (data.slug && !data._.make_slug) return data.slug
+
+      let text = data.slug || data.name
+      let slug = format.stringToSlug(text)
 
       let exists = Object.values(this.lists).find((list) => {
-        return list.slug === slug
+        return list.slug == slug && list.uuid !== data.uuid
       })
 
-      if (exists && exists.slug !== slug) {
-        slug = slug + '-' + rand
+      if (exists) {
+        slug = slug + '-' + Math.floor(Math.random() * 1000)
       }
 
       return slug
@@ -335,7 +355,7 @@ export const useListStore = defineStore('list', {
       // Assign the sorted lists to the store
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       this.lists = sorted.map((list) => {
-        list.key = list.uuid // list.key ||
+        // list.key = list.uuid // list.key ||
         list.games = list.games || []
         return list
       })
@@ -347,6 +367,58 @@ export const useListStore = defineStore('list', {
 
       $log(`[ Lists ] Loaded ${lists.length} lists`)
       console.debug(lists[Math.floor(Math.random() * lists.length)])
+    },
+
+    //+-------------------------------------------------
+    // loadPublic()
+    // Loads a public list from Supabase
+    // -----
+    // Created on Tue Jan 20 2026
+    //+-------------------------------------------------
+    async loadPublic(user, slug) {
+      let xhr = await supabaseService.getList(user, slug)
+      if (xhr == null) xhr = { games: [], not_found: true }
+
+      this.list = this.list = {
+        ...this.model,
+        ...xhr,
+      }
+
+      $data.process(xhr.games, 'list:populate')
+    },
+
+    //+-------------------------------------------------
+    // storePublic()
+    // Sends the list to Supabase.
+    // To avoid having too many lists, only public lists with games are sent.
+    // -----
+    // Created on Mon Jan 05 2026
+    //+-------------------------------------------------
+    async storePublic(list) {
+      if (!list?.id && !list.is_public) return
+      if (!list?.id && list.games.length === 0) return
+
+      let response = await supabase.storeList(list)
+
+      // The new list has been created in supabase
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (!list?.id && response?.id) {
+        list.id = response.id
+        await $db.lists.put(list)
+      }
+
+      return list
+    },
+
+    //+-------------------------------------------------
+    // deletePublic()
+    //
+    // -----
+    // Created on Thu Jan 29 2026
+    //+-------------------------------------------------
+    async deletePublic(list) {
+      if (!list?.id) return
+      await supabase.deleteList(list.id)
     },
 
     //+-------------------------------------------------

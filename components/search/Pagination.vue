@@ -43,7 +43,7 @@
         size="small"
         color="blue-grey-lighten-1"
         @click="$refs.settings.show()">
-        <Icon width="1.2" size="16" class="mx-1">Settings2</Icon>
+        <Icon name="tabler:settings-2" width="1.2" size="16" class="mx-1" />
       </v-btn>
     </div>
 
@@ -74,7 +74,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 12th June 2025
- * Modified: 1st October 2025 - 03:40:20
+ * Modified: 23rd January 2026 - 23:11:55
  **/
 
 export default {

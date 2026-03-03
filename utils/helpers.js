@@ -3,10 +3,15 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th January 2025
- * Modified: Tue 28 January 2025 - 17:01:34
+ * Modified: 22nd January 2026 - 18:13:21
  */
 
 export default {
+  capitalize(str) {
+    if (!str || typeof str !== 'string') return ''
+    return str.charAt(0).toUpperCase() + str.slice(1)
+  },
+
   //+-------------------------------------------------
   // sortedStringify()
   // Sorts the keys of an object and returns the string

@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 20th June 2024
- * Modified: 2nd October 2025 - 06:50:18
+ * Modified: 24th January 2026 - 19:55:56
  **/
 
 //+-------------------------------------------------
@@ -22,7 +22,7 @@
   // filter: blur(0.2px) opacity(0.9); -- no funciona
   // background: rgba(0, 0, 0, 0.65) !important;
   background-color: rgba(0, 0, 0, 0.95) !important;
-  backdrop-filter: blur(15px) !important;
+  // backdrop-filter: blur(15px) !important;
 }
 
 //+-------------------------------------------------
@@ -76,6 +76,13 @@
           var(--tblr-box-shadow-input),
           0 0 0 0.25rem rgba(var(--tblr-primary-rgb), 0.25);
       }
+    }
+
+    & .v-text-field__prefix {
+      padding-bottom: 0.45rem;
+      padding-top: 0.45rem;
+      font-size: 0.875rem;
+      min-height: unset;
     }
 
     & .v-field__input {

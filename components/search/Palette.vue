@@ -8,7 +8,7 @@
         @click="ui.tab = null">
         {{ ui.tab }}
 
-        <Icon size="16" class="ms-2">X</Icon>
+        <Icon name="tabler:x" size="16" class="ms-2" />
       </div>
       <!-- <Command.Input placeholder="Type a command or search..." @update:value="search" /> -->
       <input
@@ -35,7 +35,11 @@
             :key="'goTo' + i"
             :shortcut="item.shortcut"
             @select="handleSelectItem(item)">
-            <Icon>{{ item.icon || 'ArrowRight' }}</Icon>
+            <Icon
+              :name="
+                'tabler:' +
+                (item.icon || 'arrow-right').replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
+              " />
             {{ item.label }}
           </Command.Item>
         </Command.Group>
@@ -47,30 +51,30 @@
             :data-value="item.text"
             :shortcut="item.shortcut"
             @select="handleSelectItem(item)">
-            <Icon>{{ item.icon || 'ArrowRight' }}</Icon>
+            <Icon
+              :name="
+                'tabler:' +
+                (item.icon || 'arrow-right').replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
+              " />
             {{ item.label }}
           </Command.Item>
         </Command.Group>
 
         <Command.Group
-          v-if="
-            _genres.length && (ui.tab == 'genres' || (!ui.tab && searchString.length > 0))
-          "
+          v-if="_genres.length && (ui.tab == 'genres' || (!ui.tab && searchString.length > 0))"
           heading="Genres">
           <Command.Item
             v-for="item in _genres"
             :key="'genre' + item.id"
             @select="handleSelectItem({ goto: '/games/' + item.slug })">
-            <Icon>Triangle</Icon>
+            <Icon name="tabler:triangle" />
             View games in
             <strong>{{ item.name }}</strong>
           </Command.Item>
         </Command.Group>
 
         <Command.Group
-          v-if="
-            _games.length && (ui.tab == 'games' || (!ui.tab && searchString.length > 0))
-          "
+          v-if="_games.length && (ui.tab == 'games' || (!ui.tab && searchString.length > 0))"
           :heading="ui.tab == 'games' ? '' : 'Games'">
           <Command.Item
             v-for="(item, i) in _games"
@@ -210,7 +214,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th March 2024
- * Modified: Tue 25 February 2025 - 19:13:13
+ * Modified: 23rd January 2026 - 23:11:55
  **/
 
 export default {

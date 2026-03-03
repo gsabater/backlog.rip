@@ -7,14 +7,13 @@
         </div>
       </div>
       <p>
-        Your database is where all your games, states, and other information is stored.
-        You can export your database to a file, or import a database file to replace your
-        current one.
+        Your database is where all your games, states, and other information is stored. You can
+        export your database to a file, or import a database file to replace your current one.
       </p>
       <p>
-        You can also reset any database to its default state. This will delete all your
-        games and states, and replace them with the default ones. This can help resolving
-        any issues you may be having.
+        You can also reset any database to its default state. This will delete all your games and
+        states, and replace them with the default ones. This can help resolving any issues you may
+        be having.
       </p>
     </div>
   </div>
@@ -44,13 +43,11 @@
                 <a href="#" class="text-reset d-block" style="text-transform: capitalize">
                   {{ table.name }}
                 </a>
-                <div class="d-block text-secondary text-truncate mt-n1">
-                  {{ table.count }} rows
-                </div>
+                <div class="d-block text-secondary text-truncate mt-n1">{{ table.count }} rows</div>
               </div>
               <div class="col-auto">
                 <b-btn class="btn-sm btn-outline-warning">
-                  <Icon size="16" class="mr-1">Restore</Icon>
+                  <Icon name="tabler:restore" size="16" class="mr-1" />
                   Reset data
                 </b-btn>
               </div>
@@ -64,13 +61,11 @@
         {{ log }}
       </pre> -->
 
-      <div
-        class="mb-3"
-        style="border: 2px solid purple; padding: 10px; border-radius: 4px">
+      <div class="mb-3" style="border: 2px solid purple; padding: 10px; border-radius: 4px">
         <h3>Export</h3>
         <p>
-          You can export all your data into a single file to use it on another device, or
-          to keep it as a backup.
+          You can export all your data into a single file to use it on another device, or to keep it
+          as a backup.
         </p>
         <b-btn block @click="exportAndDownload">Export all your data</b-btn>
       </div>
@@ -78,8 +73,8 @@
       <div style="border: 2px solid purple; padding: 10px; border-radius: 4px">
         <h3>Import</h3>
         <p>
-          Import a save file to replace your current database. This will delete all your
-          games and states, and replace them with the ones in the file.
+          Import a save file to replace your current database. This will delete all your games and
+          states, and replace them with the ones in the file.
         </p>
         <b-btn block @click="openFileDialog">Import file</b-btn>
         <div class="d-none" @click="openFileDialog">
@@ -97,7 +92,7 @@
  * @desc:    https://dexie.org/docs/ExportImport/dexie-export-import
  * -------------------------------------------
  * Created Date: 18th January 2024
- * Modified: Thu Mar 14 2024
+ * Modified: 17th February 2026 - 11:59:45
  **/
 
 export default {
@@ -158,9 +153,7 @@ export default {
     },
 
     download(blob, filename) {
-      const url = window.URL.createObjectURL(
-        new Blob([blob], { type: 'application/json' })
-      )
+      const url = window.URL.createObjectURL(new Blob([blob], { type: 'application/json' }))
       const link = document.createElement('a')
       link.href = url
       link.setAttribute('download', filename)

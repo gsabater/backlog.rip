@@ -94,15 +94,14 @@
             </small>
           </div>
         </div> -->
-        <div v-if="$app.wip && $cloud.sub" class="mb-3">
+        <div v-if="$cloud.backup && $cloud.backup.sub" class="mb-3">
           <div class="form-check-description ms-1" style="vertical-align: top">
             <Icon
+              name="tabler:click"
               size="14"
               width="1.5"
               class="tabler-icon tabler-icon-click mt-1 me-2"
-              style="vertical-align: top">
-              Click
-            </Icon>
+              style="vertical-align: top" />
             <div class="d-inline-block">
               To change your appearance on the site community pages
               <br />
@@ -174,13 +173,9 @@
       <small>
         Registered {{ $moment($auth.user.created_at).format('LL') }}
         <template v-if="$cloud.backup && $cloud.backup.sub">
-          🔸
-
+          &nbsp;&middot;&nbsp;
           <span v-tippy="'This is your user unique identifier'" class="text-muted cursor-help">
-            <Icon width="1.2" size="14" class="me-1" style="transform: translateY(-1px)">
-              CloudRain
-            </Icon>
-            <em>... {{ ($cloud.backup?.sub || '').substr(-22) }}</em>
+            <em>{{ ($cloud.backup?.sub || '').substr(-22) }}</em>
           </span>
         </template>
       </small>
@@ -188,12 +183,12 @@
       <v-btn
         v-if="$auth.is.logged"
         v-tippy="'Request a new session token from the server'"
-        variant="text"
+        variant="tonal"
         size="small"
         @click="$auth.generateJWT()"
         class="text-secondary"
         style="position: absolute; right: 11px">
-        <Icon size="16" class="me-1">Refresh</Icon>
+        <Icon name="tabler:refresh" size="16" class="me-1" />
         Refresh session
       </v-btn>
     </div>
@@ -206,7 +201,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 18th January 2026 - 08:40:27
+ * Modified: 3rd March 2026 - 15:12:42
  **/
 
 export default {

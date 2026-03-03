@@ -2,7 +2,7 @@
   <v-dialog v-model="ui.show" max-width="550">
     <v-card v-if="$auth.config.pagination">
       <template v-slot:title>
-        <Icon>Settings2</Icon>
+        <Icon name="tabler:settings-2" />
         <span class="font-serif mx-2">Pagination Settings</span>
       </template>
 
@@ -45,9 +45,7 @@
           </div>
         </v-card-text>
 
-        <v-card-actions
-          v-if="!ui.loading"
-          style="padding: 16px 24px; background: #00000015">
+        <v-card-actions v-if="!ui.loading" style="padding: 16px 24px; background: #00000015">
           <v-btn
             block
             :disabled="ui.loading"
@@ -69,7 +67,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th June 2025
- * Modified: Tue Jun 17 2025
+ * Modified: 24th January 2026 - 10:53:49
  **/
 
 export default {

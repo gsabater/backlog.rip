@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 9th November 2024
- * Modified: 7th November 2025 - 10:39:30
+ * Modified: 6th February 2026 - 11:51:42
  */
 
 import steam from '~/modules/importers/steam'
@@ -24,7 +24,7 @@ export const useLibraryStore = defineStore('library', {
 
     integrations: ['steam', 'steamBacklog'],
 
-    base: {
+    model: {
       data: {},
       games: 0,
       avatar: null,
@@ -111,7 +111,7 @@ export const useLibraryStore = defineStore('library', {
 
       // prettier-ignore
       let item = this.module[source].linkAccount(
-        { ...this.base}, value
+        { ...this.model}, value
       )
 
       item.uuid = 'lib:' + source

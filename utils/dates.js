@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: 11th October 2025 - 12:13:05
+ * Modified: 23rd January 2026 - 16:54:38
  */
 
 let $nuxt = null
@@ -172,7 +172,7 @@ export default {
   //+-------------------------------------------------
   microTime(ms) {
     if (ms > 1000) return format.round(ms / 1000, 2) + 's'
-    return format.round(ms, 2) + 'ms'
+    return format.round(ms, 0) + 'ms'
   },
 
   //+-------------------------------------------------

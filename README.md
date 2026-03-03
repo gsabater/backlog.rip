@@ -1,70 +1,27 @@
 # Backlog.rip
+Backlog.rip is a free and open-source gaming library manager. It works in the cloud, allowing you to organize and manage your game collection.
 
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fgsabater%2Fbacklog.rip?ref=badge_shield)
-![Discord](https://img.shields.io/discord/297380113673355264?logo=discord&logoColor=%23ffffff&label=Discord&cacheSeconds=6000)
+Links:
+[Website](https://backlog.rip) | [GitHub](https://github.com/gsabater/backlog.rip) | [Discord](https://discord.com/invite/F2sPE5B) | [Patreon](https://www.patreon.com/c/BacklogRIP) | [Feedback board](https://backlog.featurebase.app/en/roadmap)
+
+[![Discord](https://img.shields.io/discord/297380113673355264?logo=discord&logoColor=%23ffffff&label=Discord&cacheSeconds=6000)](https://discord.com/invite/F2sPE5B)
 [![MadeWithVueJs.com shield](https://madewithvuejs.com/storage/repo-shields/5535-shield.svg)](https://madewithvuejs.com/p/backlogrip/shield-link)
-![Static Badge](https://img.shields.io/badge/patreon-backlog.rip-ffffff?logo=patreon&logoColor=%23ffffff&label=Patreon&link=https%3A%2F%2Fpatreon.com)
+[![Static Badge](https://img.shields.io/badge/patreon-backlog.rip-ffffff?logo=patreon&logoColor=%23ffffff&label=Patreon&link=https%3A%2F%2Fpatreon.com)](https://www.patreon.com/c/BacklogRIP)
 
-![GitHub Repo stars](https://img.shields.io/github/stars/gsabater/backlog.rip?style=social)
-![GitHub contributors](https://img.shields.io/github/contributors/gsabater/backlog.rip?style=social)
-![GitHub last commit](https://img.shields.io/github/last-commit/gsabater/backlog.rip?style=social)
-![GitHub issues](https://img.shields.io/github/issues/gsabater/backlog.rip?style=social)
+## Features
 
-
-🚀 **Backlog.rip** is a **free and open-source library manager** for all your games. It works **in the cloud** without any launchers, allowing you to **organize and manage your game collection effortlessly**.
-
-🔗 **Website**: [backlog.rip](https://backlog.rip)
-
-## ✨ Features
-
-- **Local First**: Works entirely in the browser. All data is stored locally using IndexedDB (via Dexie.js).
-- **Cross-Platform**: Manage games from any platform (PC, Console, etc.).
-- **Import Capabilities**: Easily import your library from sources like Steam.
-- **Organization**: Categorize, tag, and track your backlog.
+- **Organization**: Categorize, tag, and create lists.
 - **Progress Tracking**: Mark games as completed, in progress, or on hold.
-- **Modern UI**: Built with Vuetify and Tabler for a sleek, responsive experience.
+- **Local First**: Works entirely in the browser. All data is stored locally using IndexedDB.
+- **Cross-Platform**: Manage games from any platform using IGDB database.
+- **Import libraries**: Integrations to import your library from sources like Steam.
 
-## 🛠 Tech Stack
-
-| Technology | Description |
-| :--- | :--- |
-| **[Nuxt.js](https://nuxt.com/)** | The Hybrid Vue Framework (SSR & Static) |
-| **[Vue.js](https://vuejs.org/)** | The Progressive JavaScript Framework |
-| **[Vuetify](https://vuetifyjs.com/)** | Material Design Component Framework |
-| **[Dexie.js](https://dexie.org/)** | Wrapper for IndexedDB |
-| **[Pinia](https://pinia.vuejs.org/)** | Intuitive, type-safe, light and flexible Store for Vue |
-| **[Tabler](https://tabler.io/)** | UI Kit and Icons |
-| **[VueUse](https://vueuse.org/)** | Collection of Essential Vue Composition Utilities |
-| **[Supabase](https://supabase.com/)** | Open Source Firebase Alternative (Auth/DB) |
-| **[RxJS](https://rxjs.dev/)** | Reactive Extensions for JavaScript |
-
-## 📂 Project Structure
-
-```bash
-.
-├── assets/          # Static assets (images, styles)
-├── components/      # Vue components
-├── content/         # Markdown content (if using Nuxt Content)
-├── layouts/         # App layouts
-├── middleware/      # Route middleware
-├── modules/         # Nuxt modules
-├── pages/           # Application routes/pages
-├── plugins/         # Vue/Nuxt plugins
-├── public/          # Public static files
-├── services/        # Service logic
-├── stores/          # Pinia state stores
-├── utils/           # Utility functions
-└── nuxt.config.ts   # Nuxt configuration
-```
-
-## 🚀 Getting Started
-
+# Information for developers
+## Local development
 ### Prerequisites
 
-- Node.js v22.11
+- Node.js v22.22
 - npm
-
-### Installation
 
 1. Clone the repository:
    ```bash
@@ -77,38 +34,30 @@
    npm install
    ```
 
-### Development
+3. Start the development server on `http://localhost:1337`:
+   ```bash
+   npm run dev
+   ```
 
-Start the development server on `http://localhost:1337`:
+# About the project
 
-```bash
-npm run dev
-```
+This project is being solo developed by me, Gaspar Sabater as a side project. I started it in 2016 and rebooted the project again in 2023. Over the years, I have open sourced the application and changed the data governance. I have received some contributions from the community (financially, and code contributions).
 
-### Build
+You can read more about the development log at Discord in [this link](https://discord.com/channels/297380113673355264/1473675104461520977)
 
-Build the application for production:
+### Project health
 
-```bash
-npm run build
-```
+![Alt](https://repobeats.axiom.co/api/embed/8ad80c908f2c331683b4aa34bb542501b3332bb5.svg "Repobeats analytics image")
 
-## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+## Support
 
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+If you find Backlog.rip useful, consider adding a star to the repository or support the project:
 
-## 📄 License
+## License
 
-*License not yet decided*
+*License not yet decided.* For the time being, the project is published on Github for transparency and collaboration, but you cannot use the code without permission or distribute it. If you want to use the code, please contact us.
 
-## 💖 Support
+## AI Disclaimer
 
-If you find Backlog.rip useful, consider starring ⭐ the repo or supporting the project:
-
-- [Patreon](https://patreon.com)
+*While this project has been in development since 2016, it has recently been assisted by AI, while maintaining strictly human vibes.*

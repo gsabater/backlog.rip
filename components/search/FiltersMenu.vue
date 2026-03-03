@@ -31,13 +31,7 @@
       </div> -->
 
       <!-- <div v-if="suggestions.length" class="dropdown-divider"></div> -->
-      <div
-        style="
-          padding: 3px;
-          overflow-y: auto;
-          max-height: 250px;
-          overscroll-behavior: contain;
-        ">
+      <div style="padding: 3px; overflow-y: auto; max-height: 250px; overscroll-behavior: contain">
         <template v-for="(option, i) in suggestions" :key="option.path + i">
           <div
             class="dropdown-item control-hover"
@@ -45,10 +39,7 @@
             @click="writePathOnClick(option)">
             <div>
               {{ option.path }}{{ suggestedValue }}
-              <div
-                v-if="!option.base"
-                class="text-muted show-hover"
-                style="font-size: 0.75rem">
+              <div v-if="!option.base" class="text-muted show-hover" style="font-size: 0.75rem">
                 {{ filterMods[option.mod]?.desc }}
               </div>
             </div>
@@ -73,7 +64,7 @@
       </div>
 
       <div v-if="suggestions.length" class="dropdown-item disabled text-muted">
-        <Icon class="me-2" size="14">ArrowDown</Icon>
+        <Icon name="tabler:arrow-down" class="me-2" size="14" />
         <span class="me-4">Move with your arrows</span>
       </div>
     </template>
@@ -93,11 +84,10 @@
           <div class="d-flex justify-center" style="width: 30px">
             <Icon
               v-if="filterConf[option.filter].icon"
+              :name="`tabler:${filterConf[option.filter].icon}`"
               size="16"
               width="1.5"
-              class="text-muted">
-              {{ filterConf[option.filter].icon }}
-            </Icon>
+              class="text-muted" />
 
             <b-logo
               v-if="filterConf[option.filter].logo"
@@ -110,16 +100,17 @@
             {{ filterConf[option.filter].label }}
 
             <small v-if="filterConf[option.filter].advanced" class="text-muted">
-              <Icon size="14" style="transform: translateY(-1px)">Sparkles</Icon>
+              <Icon name="tabler:sparkles" size="14" style="transform: translateY(-1px)" />
             </small>
           </div>
           <tippy
             v-if="filterConf[option.filter].desc"
             class="text-muted ms-auto cursor-help ps-4"
             :content="filterConf[option.filter].desc">
-            <Icon width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-              HelpSmall
-            </Icon>
+            <Icon
+              name="tabler:help-small"
+              width="2"
+              style="background: rgb(0 0 0 / 20%); border-radius: 50%" />
           </tippy>
         </label>
       </template>
@@ -128,7 +119,7 @@
         v-if="!ui.showAdvanced"
         class="dropdown-item small text-muted"
         @click="ui.showAdvanced = true">
-        <Icon size="14" class="me-2">Sparkles</Icon>
+        <Icon name="tabler:sparkles" size="14" class="me-2" />
         Show advanced filters
       </div>
     </template>
@@ -148,7 +139,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: 30th June 2025 - 05:46:42
+ * Modified: 20th February 2026 - 12:04:44
  **/
 
 import filterService from '../../services/filterService'

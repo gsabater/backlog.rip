@@ -22,13 +22,11 @@
                       <div class="col">
                         {{ link.name }}
                         <div class="v-list-item-subtitle">
-                          <small class="text-muted">
-                            https://backlog.rip{{ link.path }}
-                          </small>
+                          <small class="text-muted">https://backlog.rip{{ link.path }}</small>
                         </div>
                       </div>
                       <div class="col-auto text-secondary">
-                        <Icon size="12">CaretRightFilled</Icon>
+                        <Icon name="tabler:caret-right-filled" size="12" />
                       </div>
                     </div>
                   </a>
@@ -43,9 +41,7 @@
                 <li v-for="genre in genres" :key="genre.id" class="game-item mb-2">
                   <a :href="genre.path" class="sitemap-link">
                     {{ genre.name }}
-                    <small class="d-block text-muted">
-                      https://backlog.rip{{ genre.path }}
-                    </small>
+                    <small class="d-block text-muted">https://backlog.rip{{ genre.path }}</small>
                   </a>
                 </li>
               </ul>
@@ -58,9 +54,7 @@
                 <li v-for="game in firstGames" :key="game.url" class="game-item mb-2">
                   <a :href="game.url" class="sitemap-link">
                     {{ game.name }}
-                    <small class="d-block text-muted">
-                      https://backlog.rip{{ game.url }}
-                    </small>
+                    <small class="d-block text-muted">https://backlog.rip{{ game.url }}</small>
                   </a>
                 </li>
               </ul>
@@ -74,9 +68,7 @@
               <div v-for="game in remainingGames" :key="game.url" class="game-item">
                 <a :href="game.url" class="sitemap-link">
                   {{ game.name }}
-                  <small class="d-block text-muted">
-                    https://backlog.rip{{ game.url }}
-                  </small>
+                  <small class="d-block text-muted">https://backlog.rip{{ game.url }}</small>
                 </a>
               </div>
             </div>
@@ -124,9 +116,7 @@ onMounted(() => {
   if (data.value?.games) {
     games.value = markRaw(
       data.value.games
-        .filter(
-          (game) => game.url && game.url !== '/game/' && game.url !== '/game' && game.name
-        )
+        .filter((game) => game.url && game.url !== '/game/' && game.url !== '/game' && game.name)
         // .slice(0, 100)
         .map((game) => ({
           url: game.url,

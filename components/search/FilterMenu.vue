@@ -8,10 +8,7 @@
       *+---------------------------------
       *| Mod selector
       *+--------------------------------- -->
-    <div
-      v-if="!headless && !ui.showMods"
-      class="dropdown-item active"
-      @click="ui.showMods = true">
+    <div v-if="!headless && !ui.showMods" class="dropdown-item active" @click="ui.showMods = true">
       <div>
         {{ currentConf.label }} {{ filterMods[item.mod].short }}...
         <small class="d-block text-muted">
@@ -19,7 +16,7 @@
         </small>
       </div>
       <div class="ms-auto">
-        <Icon>ChevronDown</Icon>
+        <Icon name="tabler:chevron-down" />
       </div>
     </div>
 
@@ -33,9 +30,12 @@
         }"
         @click="selectMod(mod)">
         <div class="d-flex justify-center" style="width: 30px">
-          <Icon v-if="item.mod == mod" size="16" width="2" class="me-1 text-green">
-            Checks
-          </Icon>
+          <Icon
+            name="tabler:checks"
+            v-if="item.mod == mod"
+            size="16"
+            width="2"
+            class="me-1 text-green" />
         </div>
         <div>
           {{ currentConf.label }} {{ filterMods[mod].short }}...
@@ -75,9 +75,7 @@
             <span class="text-h2 font-weight-light">
               {{ item.value || '0' }}
             </span>
-            <div
-              class="font-weight-light text-muted d-inline-block ps-1"
-              style="font-size: 1.9rem">
+            <div class="font-weight-light text-muted d-inline-block ps-1" style="font-size: 1.9rem">
               {{ currentConf.menuAppend }}
             </div>
           </v-col>
@@ -147,12 +145,7 @@
       *+--------------------------------- -->
       <template v-else-if="current && current.type == 'array'">
         <div
-          style="
-            padding: 3px;
-            overflow-y: auto;
-            max-height: 250px;
-            overscroll-behavior: contain;
-          "
+          style="padding: 3px; overflow-y: auto; max-height: 250px; overscroll-behavior: contain"
           nostyle="`max-height: ${ui.maxHeight}px;`">
           <div
             v-for="(param, key) in options"
@@ -162,10 +155,7 @@
               selected: isSelected(param),
             }"
             @click.stop="select(param)">
-            <div
-              nv-if="option.multiple !== false"
-              class="selection"
-              style="margin-right: 0.55rem">
+            <div nv-if="option.multiple !== false" class="selection" style="margin-right: 0.55rem">
               <small v-if="headless" style="color: white">
                 {{ param[currentConf.opValue] }}
               </small>
@@ -191,11 +181,11 @@
                               </Icon> -->
                 <!-- v-else -->
 
-                <!-- <Icon style="color: var(--tblr-primary)">SquareCheck</Icon>
-                            <Icon style="color: #666">Square</Icon> -->
+                <!-- <Icon name="tabler:home" style="color: var(--tblr-primary)">SquareCheck</Icon>
+                            <Icon name="tabler:home" style="color: #666">Square</Icon> -->
 
                 <template v-if="param.id == -1">
-                  <Icon size="12" class="me-1">CircleOff</Icon>
+                  <Icon name="tabler:circle-off" size="12" class="me-1" />
                 </template>
 
                 <span
@@ -228,7 +218,10 @@
               </template>
 
               <template v-else>
-                <Icon class="me-2" size="16">{{ param.icon ?? currentConf.icon }}</Icon>
+                <Icon
+                  :name="'tabler:' + (param.icon || currentConf.icon || 'home').toLowerCase()"
+                  class="me-2"
+                  size="16" />
                 <span class="me-4">
                   {{ param[currentConf.opLabel] }}
                 </span>
@@ -278,7 +271,7 @@
         </div>
 
         <div class="dropdown-item small" @click="$emit('reset')">
-          <Icon class="me-2" size="16">ArrowLeft</Icon>
+          <Icon name="tabler:arrow-left" class="me-2" size="16" />
           <span class="me-4">Go back</span>
         </div>
       </template>
@@ -292,7 +285,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: 24th July 2025 - 03:45:27
+ * Modified: 24th January 2026 - 19:20:22
  **/
 
 import filterService from '../../services/filterService'

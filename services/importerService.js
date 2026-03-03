@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 22nd January 2024
- * Modified: 7th November 2025 - 10:48:00
+ * Modified: 20th February 2026 - 10:59:10
  */
 
 import axios from 'axios'
@@ -43,7 +43,7 @@ export default {
   // Updated on Wed Nov 27 2024 - Simplified using $library
   //+-------------------------------------------------
   detect(x = {}) {
-    log('💠 Importer(2): detect')
+    x.log('💠 Importer(2): detect')
     $nuxt ??= useNuxtApp()
     $data ??= useDataStore()
     $game ??= useGameStore()
@@ -125,7 +125,7 @@ export default {
   // Updated on Tue Mar 26 2024
   //+-------------------------------------------------
   connect(x = {}) {
-    log('💠 Importer(3): connect')
+    x.log('💠 Importer(3): connect')
 
     try {
       // Connect: Create a new axios instance

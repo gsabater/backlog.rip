@@ -37,7 +37,7 @@
             :style="`background-image: url('${integration?.avatar || ''}')`"></span>
         </div>
         <div>
-          <small class="text-secondary">Your profile on {{ module?.manifest.source.name }}</small>
+          <small class="text-secondary">Your account on {{ module?.manifest.source.name }}</small>
           <h3 class="card-title lh-2 mb-1">{{ integration?.username }}</h3>
         </div>
 
@@ -47,7 +47,7 @@
         {{ module?.manifest.description }}
       </div>
     </div>
-    <div class="card-body" style="padding: 1.9rem">
+    <div class="card-footer">
       <slot name="card:action"></slot>
     </div>
     <slot name="card:footer">
@@ -92,7 +92,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 4th December 2024
- * Modified: 7th November 2025 - 10:42:08
+ * Modified: 19th February 2026 - 17:17:01
  **/
 
 export default {

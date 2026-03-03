@@ -5,17 +5,18 @@
  * Files:
  * |- /components/list
  * |- /components/list/crudDialog
- * |- /pages/my/list
+ * |- /pages/my/list/[slug]
+ * |- /pages/@user/list/[slug]
  * |- /pages/account/sections/lists
  * |- /stores/list
  *
  * Events:
- * |- list:create ⇢ Call to show crud dialog
- * |- list:edit ⇢ Call to show crud dialog with an item as payload
- * |- list:delete ⇢ Call to show delete dialog with an item
+ * |- list:create   ⇢ Event to show crud dialog
+ * |- list:edit     ⇢ Event to show crud dialog with an item as payload
+ * |- list:delete   ⇢ Confirmation that an item must be deleted
  * -------------------------------------------
  * Created Date: 30th September 2025
- * Modified: 24th November 2025 - 04:36:16
+ * Modified: 29th January 2026 - 17:17:08
  */
 
 // Nuxt Plugin

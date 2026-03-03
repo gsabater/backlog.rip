@@ -17,7 +17,7 @@
   <v-dialog v-model="ui.dialog" persistent min-width="450px" max-width="650">
     <v-card>
       <template #title>
-        <Icon class="me-2">Mist</Icon>
+        <Icon name="tabler:mist" class="me-2" />
         <span class="font-serif mx-2">
           {{ event.title || 'Information' }}
         </span>
@@ -27,9 +27,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="green-darken-1" variant="text" @click="ui.dialog = false">
-          Accept
-        </v-btn>
+        <v-btn color="green-darken-1" variant="text" @click="ui.dialog = false">Accept</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -41,7 +39,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 8th November 2024
- * Modified: 29th September 2025 - 04:51:29
+ * Modified: 27th January 2026 - 18:56:37
  **/
 
 /*+-------------------------------------------------
@@ -100,11 +98,7 @@ export default {
         this.ui.show = true
 
         if (window.history.replaceState) {
-          window.history.replaceState(
-            'Clean URL',
-            'Clean',
-            window.location.href.split('?')[0]
-          )
+          window.history.replaceState('Clean URL', 'Clean', window.location.href.split('?')[0])
         }
       }
     },

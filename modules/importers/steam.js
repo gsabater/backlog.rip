@@ -3,7 +3,7 @@
  * @desc:    Utility helper to make requests to and return a list of games
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 7th October 2025 - 03:51:27
+ * Modified: 20th February 2026 - 11:01:29
  */
 
 import axios from 'axios'
@@ -26,7 +26,7 @@ export default {
     author: 'Gaspar S.',
     updated_at: '2025-03-20',
     description:
-      'Synchronize all your games and playtime for every game on Steam, including free games.',
+      'Synchronize your owned games and playtime for your Steam library, including free games.',
     url: 'https://github.com/gsabater/backlog.rip/blob/master/modules/importers/steam.js',
 
     source: {
@@ -291,21 +291,6 @@ export default {
 
     return achievements
   },
-
-  // //+-------------------------------------------------
-  // // getSteamBacklog()
-  // //
-  // // -----
-  // // Created on Mon Feb 12 2024
-  // //+-------------------------------------------------
-  // async getSteamBacklog() {
-  //   let url = 'https://api.backlog.rip/fetch/steam-backlog'
-  //   let xhr = await $axios.get(url + '?steamid=' + $account.steam)
-
-  //   if (xhr.data.status == 'success') {
-  //     return xhr.data?.fetch || {}
-  //   }
-  // },
 
   // //+-------------------------------------------------
   // // onScan()

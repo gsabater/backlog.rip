@@ -8,7 +8,7 @@
   </template> -->
     <component :is="componentIs" class="dropdown-item" @click="changeSource('all')">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-        <Icon size="16" width="1.5" class="text-muted">Cards</Icon>
+        <Icon name="tabler:layout-dashboard" size="16" width="1.5" class="text-muted" />
       </span>
       <span class="nav-link-title">All games</span>
       <small class="ms-auto text-secondary me-1">
@@ -22,7 +22,7 @@
       class="dropdown-item"
       @click="changeSource('library')">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-        <Icon size="16" width="1.5" class="text-muted">LayoutDashboard</Icon>
+        <Icon name="tabler:cards" size="16" width="1.5" class="text-muted" />
       </span>
       <span class="nav-link-title">Your library</span>
       <small class="ms-auto text-secondary me-1">
@@ -37,13 +37,13 @@
 
       <div class="dropdown-item">
         <div style="width: 30px">
-          <Icon size="18" class="text-muted" width="1.5">Background</Icon>
+          <Icon name="tabler:background" size="18" class="text-muted" width="1.5" />
         </div>
 
         <span>States</span>
 
         <span class="text-muted ms-auto">
-          <Icon size="14">CaretRightFilled</Icon>
+          <Icon name="tabler:caret-right-filled" size="14" />
         </span>
 
         <b-dropdown placement="right-start" style="min-width: 240px">
@@ -80,7 +80,7 @@
         class="dropdown-item"
         @click="changeSource('library:favorites')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="16" width="1.5" class="text-muted">Heart</Icon>
+          <Icon name="tabler:heart" size="16" width="1.5" class="text-muted" />
         </span>
         <span class="nav-link-title">Favorites</span>
         <small class="ms-auto text-secondary me-1">
@@ -95,7 +95,7 @@
         class="dropdown-item"
         @click="changeSource('library:pinned')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="16" width="1.5" class="text-muted">Bookmark</Icon>
+          <Icon name="tabler:bookmark" size="16" width="1.5" class="text-muted" />
         </span>
         <span class="nav-link-title">Pinned games</span>
         <small class="ms-auto text-secondary me-1">
@@ -110,7 +110,7 @@
         class="dropdown-item"
         @click="changeSource('library:hidden')">
         <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-          <Icon size="16" width="1.5" class="text-muted">Cancel</Icon>
+          <Icon name="tabler:cancel" size="16" width="1.5" class="text-muted" />
         </span>
         <span class="nav-link-title">Hidden games</span>
         <small class="ms-auto text-secondary me-1">
@@ -121,7 +121,7 @@
 
     <div v-else class="dropdown-item small text-muted" @click="ui.expanded = true">
       Show more of your library
-      <Icon size="16" class="ms-auto">ChevronDown</Icon>
+      <Icon name="tabler:chevron-down" size="16" class="ms-auto" />
     </div>
   </div>
 </template>
@@ -132,7 +132,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 8th January 2025
- * Modified: 15th October 2025 - 02:16:04
+ * Modified: 14th February 2026 - 11:02:53
  **/
 
 export default {
@@ -236,7 +236,5 @@ export default {
       this.$mitt.emit('search:run')
     },
   },
-
-  mounted() {},
 }
 </script>

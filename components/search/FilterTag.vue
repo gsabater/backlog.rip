@@ -15,12 +15,11 @@
       <template v-if="!isKeyboard">
         <Icon
           v-if="currentConf.icon"
+          :name="`tabler:${currentConf.icon}`"
           size="12"
           width="1.3"
           class="text-muted"
-          style="transform: translateY(-1px); margin-right: 2px">
-          {{ currentConf.icon }}
-        </Icon>
+          style="transform: translateY(-1px); margin-right: 2px" />
 
         <b-logo
           v-if="currentConf.logo"
@@ -108,7 +107,7 @@
       </b-tippy-sheety>
     </div>
     <div class="tag-section tag-action filter-clear px-1" @click="clear">
-      <Icon size="15" width="2">X</Icon>
+      <Icon name="tabler:x" size="15" width="2" />
     </div>
   </div>
 </template>
@@ -119,7 +118,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th March 2025
- * Modified: 15th October 2025 - 02:15:56
+ * Modified: 28th January 2026 - 17:34:33
  **/
 
 import filterService from '../../services/filterService'

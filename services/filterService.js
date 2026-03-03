@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 28th March 2025
- * Modified: 1st December 2025 - 03:49:50
+ * Modified: 24th February 2026 - 12:59:34
  */
 
 let $nuxt = null
@@ -60,7 +60,7 @@ export default {
       api: true,
 
       label: 'Score',
-      icon: 'Star',
+      icon: 'star',
       desc: 'Filter results by their median score. To filter by Steam, Metacritic or Opencritic score, use their respective filters',
     },
 
@@ -104,7 +104,7 @@ export default {
       label: 'State',
       plural: 'states',
 
-      icon: 'Background',
+      icon: 'background',
       desc: 'Filter games by their state',
 
       data: 'states',
@@ -117,13 +117,13 @@ export default {
       api: true,
 
       label: 'Time to beat (HLTB)',
-      icon: 'Clock',
+      icon: 'clock',
       desc: 'How long to beat is a metric that measures how much time is needed to complete a game. Data provided from howlongtobeat.com',
     },
 
     playtime: {
       label: 'My playtime',
-      icon: 'Clock',
+      icon: 'clock',
       desc: 'Filter games by their playtime',
     },
 
@@ -132,7 +132,7 @@ export default {
       label: 'Genre',
       plural: 'genres',
 
-      icon: 'Graph',
+      icon: 'graph',
       desc: 'Filter games by their genre',
 
       data: 'genres',
@@ -146,7 +146,7 @@ export default {
       label: 'Language',
       plural: 'languages',
 
-      icon: 'Language',
+      icon: 'language',
       desc: 'Filter games by their language',
 
       data: 'languages',
@@ -159,7 +159,7 @@ export default {
       api: true,
       label: 'Release date',
 
-      icon: 'Calendar',
+      icon: 'calendar',
       desc: 'Filter games by their release date',
     },
 
@@ -168,14 +168,14 @@ export default {
 
       label: 'Library date',
       plural: '',
-      icon: 'Calendar',
+      icon: 'calendar',
       desc: 'Filter games by when they were added to your library',
     },
 
     achievements: {
       advanced: true,
       label: 'Achievements',
-      icon: 'Trophy',
+      icon: 'trophy',
       desc: 'Filter games by their achievements completion',
 
       menuAppend: '%',

@@ -4,7 +4,7 @@
  * of data with the Supabase service.
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: 25th December 2025 - 20:04:20
+ * Modified: 5th March 2026 - 15:37:45
  */
 
 import supabase from '../modules/integrations/supabase'
@@ -17,9 +17,24 @@ let $moment = null
 let $nuxt = null
 let $data = null
 let $user = null
+let $list = null
 let $guild = null
-let client = null
 
+//+-------------------------------------------------
+// Entry points
+//+-------------------------------------------------
+// ⇢ connect
+//   › $cloud.connectCloudServices()
+//
+// ⇢ syncFromCloud
+//   › synchronizationService.syncBackup()
+//
+// ⇢ backupToCloud
+//   › $queue.run()
+//   › synchronizationService.backup()
+//
+// ⇢ syncLists
+//   › synchronizationService.syncLists()
 //+-------------------------------------------------
 // Cloud states
 //+-------------------------------------------------
@@ -78,13 +93,6 @@ export const useBackupStore = defineStore('backup', {
     },
   }),
 
-  //+-------------------------------------------------
-  // Entry points
-  //+-------------------------------------------------
-  // - connect
-  // - syncFromCloud
-  // - backupToCloud
-  //+-------------------------------------------------
   actions: {
     //+-------------------------------------------------
     // sync()
@@ -486,6 +494,51 @@ export const useBackupStore = defineStore('backup', {
 
           $log(`[Backups] New hash: ${this.latest.hash} ⇢ ${this.backup.hash}, due ${timeAgo}h`)
         }
+      }
+    },
+
+    //+-------------------------------------------------
+    // syncLists()
+    // Synchronizes cloud lists with the local ones
+    // -----
+    // Created on Wed Mar 04 2026
+    //+-------------------------------------------------
+    async syncLists() {
+      let deviceLists = $list.lists
+      let cloudLists = await supabase.getLists()
+
+      if (!cloudLists?.length) {
+        $log('[Backups] No cloud lists found')
+        return
+      }
+
+      let updates = []
+
+      for (const cloudList of cloudLists) {
+        const dbList = deviceLists.find((l) => l.id === cloudList.id)
+
+        // ⇢ Create missing lists
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (!dbList) {
+          await $list.create(cloudList, { timestamps: false, cloud: false })
+          updates.push({ id: cloudList.id, name: cloudList.name, action: 'created' })
+          continue
+        }
+
+        // ⇢ Update if cloud is newer
+        // This comparison should work because timestamps are in Zulu time
+        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (new Date(dbList.updated_at) < new Date(cloudList.updated_at)) {
+          await $list.update(cloudList, { timestamps: false, cloud: false })
+          updates.push({ id: cloudList.id, name: cloudList.name, action: 'updated' })
+        }
+      }
+
+      if (updates.length) {
+        await $list.load()
+        $log('[Backups] Synchronized lists with the cloud', updates)
+      } else {
+        $log('[Backups] Lists are up to date')
       }
     },
 
@@ -892,73 +945,6 @@ export const useBackupStore = defineStore('backup', {
       $mitt.emit('data:ready')
     },
 
-    // //+-------------------------------------------------
-    // // makeSignature()
-    // // Signs a json object and returns a signature
-    // // -----
-    // // Created on Fri Aug 30 2024
-    // //+-------------------------------------------------
-    // async makeSignature(json) {
-    //   debugger
-    //   let string = JSON.stringify(json)
-
-    //   const encoder = new TextEncoder()
-    //   const data = encoder.encode(string)
-
-    //   // Hash using SHA-256
-    //   const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-    //   const hashArray = Array.from(new Uint8Array(hashBuffer))
-    //   const hashHex = hashArray.map((bytes) => bytes.toString(16).padStart(2, '0')).join('')
-
-    //   return {
-    //     hash: `${hashHex}`,
-    //     time: `${dates.stamp()}`,
-    //     full: `${dates.stamp()}.${hashHex}`,
-    //   }
-    // },
-
-    // //+-------------------------------------------------
-    // // makeHash()
-    // // Generates a hash and increments the version
-    // // -----
-    // // Created on Fri Sep 06 2024
-    // //+-------------------------------------------------
-    // makeHash(create = false) {
-    //   debugger
-    //   let old = this.backup.hash
-    //   let version = old && old.includes('.') ? old.split('.')[0] : 0
-    //   if (create) version = 0
-
-    //   let versioned = parseInt(version) + 1
-    //   let newHash = Math.random().toString(36).substring(2, 8)
-
-    //   $log(`↪ Making a new backup: ${old} -> ${versioned}.${newHash}`)
-    //   return `${versioned}.${newHash}`
-    // },
-
-    //+-------------------------------------------------
-    // update()
-    // Resets the source signature
-    // And calls for a synchronization
-    // -----
-    // Created on Tue Aug 20 2024
-    //+-------------------------------------------------
-    // async update(source) {
-    //   debugger
-    //   if (!this.local[source]) return
-    //   if ($nuxt.$auth.config.cloud == false) return
-
-    //   debugger
-    //   log(`⚡⌛ queue to Sync ~ ${source}`, this.local[source])
-    //   if (this.local[source]) this.local[source] = '0.update'
-    //   return
-
-    //   if (this.status == 'syncing') return
-    //   this.status = 'syncing'
-    //   await delay(1000)
-    //   this.sync()
-    // },
-
     //+-------------------------------------------------
     // connect()
     // Initializes stores, checks online status and credentials
@@ -974,10 +960,9 @@ export const useBackupStore = defineStore('backup', {
       $log = $nuxt.$log
       $moment = $nuxt.$moment
 
-      client = $nuxt.$cloud.supabase
-
       $data ??= useDataStore()
       $user ??= useUserStore()
+      $list ??= useListStore()
       $guild ??= useGuildStore()
 
       if ($nuxt.$app.offline) {
@@ -1077,7 +1062,7 @@ export const useBackupStore = defineStore('backup', {
     // Created on Wed Aug 14 2024
     //+-------------------------------------------------
     is() {
-      return this.status // == 'sync:done' ? 'ok' : this.status
+      return this.status
     },
   },
 })

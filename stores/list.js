@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: 5th March 2026 - 11:16:11
+ * Modified: 5th March 2026 - 16:15:57
  */
 
 import listService from '../services/listService'
@@ -97,21 +97,29 @@ export const useListStore = defineStore('list', {
     // -----
     // Created on Tue Oct 08 2024
     //+-------------------------------------------------
-    async create(payload, options = { timestamps: true }) {
+    async create(payload, options = { timestamps: true, cloud: true }) {
       let data = await this.prepare(payload)
-
       data.uuid = $nuxt.$uuid()
 
+      // ⇢ Update timestamps
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (options.timestamps) {
         data.created_at = dates.now()
         data.updated_at = dates.now()
       }
 
       await $db.lists.put(data)
-      await this.storePublic(data)
-      $log('[ listStore.create ]', data)
 
+      // ⇢ Store in supabase
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (options.cloud) {
+        await this.storePublic(data)
+      }
+
+      $log('[ listStore.create ]', data)
+      // NOTE: Load should be a hook in $queue or $list
       await this.load(true)
+
       return data
     },
 
@@ -122,17 +130,25 @@ export const useListStore = defineStore('list', {
     // -----
     // Created on Thu Oct 10 2024
     //+-------------------------------------------------
-    async update(payload, options = { timestamps: true }) {
+    async update(payload, options = { timestamps: true, cloud: true }) {
       let data = await this.prepare(payload)
 
+      // ⇢ Update timestamps
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (options.timestamps) {
         data.updated_at = dates.now()
       }
 
       await $db.lists.put(data)
-      await this.storePublic(data)
-      $log('[ listStore.update ]', data)
 
+      // ⇢ Store in supabase
+      //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (options.cloud) {
+        await this.storePublic(data)
+      }
+
+      $log('[ listStore.update ]', data)
+      // NOTE: Load should be a hook in $queue or $list
       await this.load(true)
 
       // Update this list if is the active
@@ -151,6 +167,9 @@ export const useListStore = defineStore('list', {
 
       data.slug = this.makeSlug(data)
       data.games = listService.prepareGames(data)
+
+      data.created_at ??= dates.now()
+      data.updated_at ??= dates.now()
 
       delete data._
       delete data.covers
@@ -372,7 +391,7 @@ export const useListStore = defineStore('list', {
     // Created on Mon Jan 05 2026
     //+-------------------------------------------------
     async storePublic(list) {
-      if (!list?.id && !list.is_public) return
+      // if (!list?.id && !list.is_public) return
       if (!list?.id && list.games.length === 0) return
 
       let response = await supabase.storeList(list)

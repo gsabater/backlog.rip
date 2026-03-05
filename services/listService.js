@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 1st January 2026
- * Modified: 5th March 2026 - 08:47:32
+ * Modified: 5th March 2026 - 13:48:52
  */
 
 let $data = null
@@ -20,7 +20,8 @@ export default {
     $data ??= useDataStore()
     let subset = []
 
-    list.games.forEach((app) => {
+    let games = list?.games || []
+    games.forEach((app) => {
       let data = $data.get(app.uuid)
 
       if (!data || data.error) return

@@ -9,8 +9,6 @@
     <ul class="nav nav-pills nav-vertical">
       <!--
 
-      <li>Account history</li>
-
       <li>Give Feedback</li>
 
       <li>---</li> -->
@@ -53,13 +51,6 @@
           Community
         </NuxtLink>
       </li>
-
-      <!-- <li class="nav-item">
-      <NuxtLink to="/account/history" class="nav-link">
-        <Icon name="tabler:clock" size="14" class="me-2" />
-        history
-      </NuxtLink>
-    </li> -->
     </ul>
 
     <div class="row g-2 align-items-center mt-4">

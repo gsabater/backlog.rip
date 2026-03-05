@@ -21,14 +21,13 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 4th November 2025 - 01:39:09
+ * Modified: 5th March 2026 - 17:57:21
  **/
 
 import me from './sections/me'
 import logs from './sections/logs'
 import lists from './sections/lists'
 import states from './sections/states'
-import history from './sections/history'
 import backups from './sections/backups'
 import database from './sections/database'
 import community from './sections/community.vue'
@@ -42,7 +41,6 @@ export default {
     logs,
     lists,
     states,
-    history,
     backups,
     database,
     community,

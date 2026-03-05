@@ -3,10 +3,45 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 1st January 2026
- * Modified: 15th February 2026 - 17:24:37
+ * Modified: 5th March 2026 - 13:48:52
  */
 
+let $data = null
+
 export default {
+  //+-------------------------------------------------
+  // prepareGames(list)
+  // Prepares and subset of the list, containing the
+  // Minimum data needed to display the list for the first time
+  // -----
+  // Created on Fri Oct 18 2024
+  //+-------------------------------------------------
+  prepareGames(list) {
+    $data ??= useDataStore()
+    let subset = []
+
+    let games = list?.games || []
+    games.forEach((app) => {
+      let data = $data.get(app.uuid)
+
+      if (!data || data.error) return
+      // if (!data?.id?.api) return
+      if (data.uuid.includes('local:')) return
+
+      let item = {
+        name: data.name,
+        uuid: data.uuid,
+        cover: data.cover || undefined,
+        // steam_id: data.steam_id || undefined,
+        steam_id: data.steam_id || data.id?.steam,
+      }
+
+      subset.push(item)
+    })
+
+    return subset
+  },
+
   //+-------------------------------------------------
   // getCovers()
   // Return a list of cover URLs for a list

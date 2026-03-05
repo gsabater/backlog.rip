@@ -47,8 +47,17 @@
                 style="display: flex; flex-direction: column; line-height: 23px">
                 <span>
                   <Icon
+                    :name="list.is_public ? 'tabler:mist' : 'tabler:lock'"
+                    class="text-muted me-1"
+                    style="transform: translateY(1px)" />
+
+                  {{ list.is_public ? 'Public' : 'Private' }} list
+                </span>
+
+                <span>
+                  <Icon
                     name="tabler:calendar-week"
-                    class="me-1"
+                    class="text-muted me-1"
                     style="transform: translateY(1px)" />
                   Created
                   {{ $moment(list.created_at).format('MMMM, YYYY') }}
@@ -57,7 +66,7 @@
                 <span>
                   <Icon
                     name="tabler:rotate-clockwise-2"
-                    class="me-1"
+                    class="text-muted me-1"
                     style="transform: translateY(1px)" />
                   Last updated
                   {{ $moment(list.updated_at).format('LL') }}
@@ -114,7 +123,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 30th September 2024
- * Modified: 28th February 2026 - 16:57:46
+ * Modified: 5th March 2026 - 15:46:30
  **/
 
 export default {

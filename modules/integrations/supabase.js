@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 24th March 2025
- * Modified: 3rd March 2026 - 15:12:12
+ * Modified: 5th March 2026 - 19:10:51
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -35,6 +35,28 @@ export default {
   headers: {
     apikey: `${client.anon.head}${client.anon.body}${client.anon.sign}`,
     Authorization: `Bearer ${client.anon.head}${client.anon.body}${client.anon.sign}`,
+  },
+
+  //+-------------------------------------------------
+  // getLists()
+  // Returns all the lists for the current user
+  // Note: .eq('user_id', client.sub) is implicit in the JWT
+  // -----
+  // Created on Wed Mar 04 2026
+  //+-------------------------------------------------
+  async getLists() {
+    const { data, error } = await client.instance
+      .from('lists')
+      .select('*')
+      .eq('user_id', client.sub)
+
+    if (error) {
+      $log('[Supabase] Error retrieving lists', error.message)
+      return
+    }
+
+    $log(`[ Supabase ] GET /lists (${data.length} items)`)
+    return data
   },
 
   //+-------------------------------------------------
@@ -278,17 +300,16 @@ export default {
   // Created on Thu Dec 25 2025
   //+-------------------------------------------------
   async storeList(list) {
-    let payload = {}
-
-    if (list.id) payload.id = list.id
-    payload.games = list.games
-
-    payload.name = list.name
-    payload.slug = list.slug
-    payload.description = list.description
-
-    payload.is_public = list.is_public
-    payload.updated_at = new Date().toISOString()
+    const payload = {
+      ...(list.id && { id: list.id }),
+      games: list.games,
+      name: list.name,
+      slug: list.slug,
+      description: list.description,
+      is_public: list.is_public,
+      created_at: list.created_at,
+      updated_at: list.updated_at,
+    }
 
     // Sample the games for preview
     // payload.sample = list.games.slice(0, 10)
@@ -301,7 +322,9 @@ export default {
       .single()
 
     if (error) {
-      $log('[Supabase] Error uploading Public List', error.message)
+      console.error(`Failed to store the list online`)
+      $log.error('[Supabase] Error uploading Public List', error.message)
+
       return
     }
 

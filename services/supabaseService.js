@@ -3,7 +3,7 @@
  * @desc:    Only makes postgrest calls to the public tables
  * -------------------------------------------
  * Created Date: 24th October 2025
- * Modified: 15th February 2026 - 17:25:21
+ * Modified: 5th March 2026 - 15:54:25
  */
 
 import supabase from '../modules/integrations/supabase'
@@ -34,8 +34,10 @@ export default {
         $nuxt.$log.error(error.toJSON())
       })
 
-    $nuxt.$log(`[ SupabaseService ] GET /lists(new) (${xhr.data.length} items)`)
-    return xhr.data
+    const data = xhr.data.map((list) => ({ ...list, games: list.games ?? [] }))
+    $nuxt.$log(`[ SupabaseService ] GET /lists(new) (${data.length} items)`)
+
+    return data
   },
 
   //+-------------------------------------------------
@@ -61,8 +63,10 @@ export default {
         $nuxt.$log.error(error.toJSON())
       })
 
-    $nuxt.$log(`[ SupabaseService ] GET /lists(updated) (${xhr.data.length} items)`)
-    return xhr.data
+    const data = xhr.data.map((list) => ({ ...list, games: list.games ?? [] }))
+    $nuxt.$log(`[ SupabaseService ] GET /lists(updated) (${data.length} items)`)
+
+    return data
   },
 
   //+-------------------------------------------------
@@ -92,7 +96,9 @@ export default {
       return null
     }
 
-    $nuxt.$log(`[ SupabaseService ] GET /lists/${slug} (single)`)
-    return xhr.data[0]
+    const data = { ...xhr.data[0], games: xhr.data[0].games ?? [] }
+    $nuxt.$log(`[ SupabaseService ] GET /lists/${slug} (single)`, data)
+
+    return data
   },
 }

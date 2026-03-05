@@ -165,7 +165,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 1st December 2025 - 05:52:41
+ * Modified: 3rd March 2026 - 17:10:43
  **/
 
 import { useThrottleFn } from '@vueuse/core'
@@ -380,7 +380,7 @@ export default {
       // Reset the search hashed cache
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       this.$mitt.on('data:added', () => {
-        console.warn('heeeyyyy....')
+        console.warn('[Deleteme] Data has been added...')
         this.search('data:added')
       })
     },

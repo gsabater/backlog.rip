@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 13th March 2023
- * Modified: 14th October 2025 - 04:05:54
+ * Modified: 4th March 2026 - 17:38:19
  */
 
 import mitt from 'mitt'
@@ -18,7 +18,7 @@ export default defineNuxtPlugin(() => {
   emitter.on('*', (e, payload) => {
     if (e == 'game:manager') return
 
-    console.debug(`🔸 "${e}"`, payload ?? null)
+    console.debug(`△ "${e}"`, payload ?? null)
   })
 
   return {

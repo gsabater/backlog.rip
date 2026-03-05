@@ -94,6 +94,12 @@
                       <small class="text-secondary" v-if="$app.ready">
                         Booted in {{ dates.microTime($app.ready) }}
                       </small>
+
+                      <small v-if="$cloud.status == 'error'" class="text-error d-block py-1">
+                        Something went wrong when syncing with the cloud.
+
+                        <nuxtLink to="/account/logs">View logs</nuxtLink>
+                      </small>
                     </div>
 
                     <div class="ms-auto">
@@ -137,18 +143,6 @@
                 </div>
               </div>
 
-              <div
-                v-if="$cloud.status == 'error'"
-                class="card-body p-2"
-                style="
-                  background-color: transparent;
-                  border: 1px solid #ff000085;
-                  border-radius: 3px;
-                ">
-                <small class="text-error">
-                  Something went wrong when syncing with the cloud. Please report it on Discord.
-                </small>
-              </div>
               <b-dropdown
                 trigger="mouseenter focus"
                 placement="top"
@@ -945,7 +939,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 28th February 2026 - 16:48:15
+ * Modified: 4th March 2026 - 11:06:24
  **/
 
 import synchronizationService from '../services/synchronizationService'

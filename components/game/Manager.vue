@@ -162,90 +162,66 @@
 
               <span>Create a new list</span>
             </div>
-            <div class="dropdown-divider"></div>
+            <div class="dropdown-divider">
+              <v-progress-linear
+                v-if="lmeta.working"
+                color="deep-purple accent-4"
+                indeterminate
+                height="3"
+                style="margin-top: -3px; position: absolute; top: unset; left: 0" />
+            </div>
             <div
-              v-for="(list, i) in lists"
-              :key="'list-' + i"
-              class="dropdown-item control-hover"
-              @click="modifyList(list, app)">
-              <!-- <div
-                v-if="app.state"
-                class="selection"
-                style="margin-right: 0.55rem; transform: translateY(-1px)">
-                <!-- <input
-                  type="checkbox"
-                  class="form-check-input"
-                  style="transform: scale(0.8)" /> - ->
-                <Icon name="tabler:home" v-if="app.state == state.id" style="color: var(--tblr-primary)">
-                  SquareCheck
-                </Icon>
-                <Icon name="tabler:home" v-else style="color: #666">Square</Icon>
+              style="
+                padding: 3px;
+                overflow-y: auto;
+                max-height: 250px;
+                overscroll-behavior: contain;
+              ">
+              <div
+                v-for="(list, i) in lists"
+                :key="'list-' + i"
+                class="dropdown-item control-hover"
+                :class="{ disabled: lmeta.working }"
+                @click="modifyList(list, app)">
+                <!-- <div class="d-flex" style="width: 30px">
+
+                <Icon name="tabler:mist" size="17" width="1.5" class="text-muted" />
               </div> -->
 
-              <div class="d-flex" style="width: 30px">
-                <Icon name="tabler:mist" size="17" width="1.5" class="text-muted" />
-              </div>
+                <div
+                  class="me-1"
+                  style="
+                    overflow-wrap: break-word;
 
-              <div class="me-1">
-                {{ list.name }}
-              </div>
-
-              <template v-if="listHasApp(list, app)">
-                <small class="text-muted ms-auto hide-hover text-end" style="min-width: 40px">
-                  <Icon name="tabler:check" size="12" width="1" />
-                  Added
-                </small>
-                <small class="text-muted ms-auto show-hover text-end" style="min-width: 40px">
-                  Remove
-                </small>
-              </template>
-
-              <template v-else>
-                <small class="text-muted ms-auto hide-hover text-end" style="min-width: 40px">
-                  {{ list.games?.length || 0 }}
-                </small>
-                <small class="text-muted ms-auto show-hover text-end" style="min-width: 40px">
-                  Add
-                </small>
-              </template>
-
-              <!-- <tippy
-                class="text-muted ms-auto cursor-help ps-4"
-                :content="state.description">
-                <Icon name="tabler:home" width="2" style="background: rgb(0 0 0 / 20%); border-radius: 50%">
-                  HelpSmall
-                </Icon>
-              </tippy> -->
-              <!-- <div
-                class="content d-flex align-items-center w-100 px-1"
-                :class="{ 'control-hover': app.state }">
-                <div>
-                  <span
-                    class="status-dot me-2"
-                    :style="{ 'background-color': state.color || '' }"
-                    :class="{ 'status-dot-animated': app.state == state.id }"></span>
-
-                  <span class="me-4" nope:class="{ 'hide-hover': app.state == state.id }">
-                    {{ state.name }}
-                  </span>
-                  <small
-                    class="d-block text-muted pe-4 me-4"
-                    style="margin-left: -2px"
-                    v-if="app.state == state.id">
-                    <Icon name="tabler:home" size="12" width="1" style="margin-right: 2px; margin-top: -1px">
-                      ToggleLeft
-                    </Icon>
-                    Click again to reset
-                  </small>
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 210px;
+                  ">
+                  {{ list.name }}
                 </div>
 
-                <tippy
-                  v-if="state.description"
-                  class="text-muted ms-auto ms-1 cursor-help"
-                  :content="state.description">
-                  <span class="form-help">?</span>
-                </tippy>
-              </div> -->
+                <template v-if="listHasApp(list, app)">
+                  <small class="text-muted ms-auto hide-hover text-end" style="min-width: 40px">
+                    <Icon name="tabler:check" size="12" width="1" />
+                    Added
+                  </small>
+                  <small class="text-muted ms-auto show-hover text-end" style="min-width: 40px">
+                    Remove
+                  </small>
+                </template>
+
+                <template v-else>
+                  <small
+                    class="ms-auto text-secondary hide-hover font-mono text-end"
+                    style="min-width: 40px">
+                    {{ list.games?.length || 0 }}
+                  </small>
+                  <small class="text-muted ms-auto show-hover text-end" style="min-width: 40px">
+                    Add
+                  </small>
+                </template>
+              </div>
             </div>
           </b-dropdown>
         </div>
@@ -490,7 +466,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 29th November 2023
- * Modified: 25th January 2026 - 08:05:13
+ * Modified: 5th March 2026 - 11:03:39
  **/
 
 export default {
@@ -512,7 +488,10 @@ export default {
   computed: {
     ...mapStores(useDataStore, useStateStore, useGameStore, useListStore),
     ...mapState(useStateStore, ['states']),
-    ...mapState(useListStore, ['lists']),
+    ...mapState(useListStore, {
+      lists: 'lists',
+      lmeta: 'meta',
+    }),
 
     currState() {
       return this.states.find((state) => state.id == this.app.state)

@@ -3,8 +3,10 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th September 2024
- * Modified: 15th February 2026 - 17:24:16
+ * Modified: 5th March 2026 - 11:16:11
  */
+
+import listService from '../services/listService'
 
 import supabase from '../modules/integrations/supabase'
 import supabaseService from '../services/supabaseService'
@@ -46,6 +48,7 @@ export const useListStore = defineStore('list', {
     meta: {
       loaded: false,
       loading: false,
+      working: false,
     },
   }),
 
@@ -68,7 +71,7 @@ export const useListStore = defineStore('list', {
     // Created on Fri Oct 25 2024
     // Updated on Wed Nov 27 2025 - Use deep copy instead of reference
     //+-------------------------------------------------
-    use(ref, populate = true) {
+    async use(ref, populate = true) {
       if (this.lists.length == 0) return
 
       let list = this.lists.find((item) => {
@@ -94,12 +97,15 @@ export const useListStore = defineStore('list', {
     // -----
     // Created on Tue Oct 08 2024
     //+-------------------------------------------------
-    async create(payload) {
+    async create(payload, options = { timestamps: true }) {
       let data = await this.prepare(payload)
 
       data.uuid = $nuxt.$uuid()
-      data.created_at = dates.now()
-      data.updated_at = dates.now()
+
+      if (options.timestamps) {
+        data.created_at = dates.now()
+        data.updated_at = dates.now()
+      }
 
       await $db.lists.put(data)
       await this.storePublic(data)
@@ -116,10 +122,12 @@ export const useListStore = defineStore('list', {
     // -----
     // Created on Thu Oct 10 2024
     //+-------------------------------------------------
-    async update(payload, options = {}) {
+    async update(payload, options = { timestamps: true }) {
       let data = await this.prepare(payload)
 
-      data.updated_at = dates.now()
+      if (options.timestamps) {
+        data.updated_at = dates.now()
+      }
 
       await $db.lists.put(data)
       await this.storePublic(data)
@@ -142,7 +150,7 @@ export const useListStore = defineStore('list', {
       const data = { ...payload }
 
       data.slug = this.makeSlug(data)
-      data.games = this.prepareGames(data)
+      data.games = listService.prepareGames(data)
 
       delete data._
       delete data.covers
@@ -216,20 +224,20 @@ export const useListStore = defineStore('list', {
     // > and updates
     // -----
     // Created on Thu Oct 24 2024
+    // Created on Thu Mar 05 2026 - Added loading indicators
     //+-------------------------------------------------
     async modify(uuid, app) {
-      if (this.list.uuid !== uuid) this.use(uuid)
+      this.meta.working = true
+
+      if (this.list.uuid !== uuid) await this.use(uuid)
       let isIncluded = this.hasApp(this.list, app)
 
       if (!isIncluded) this.addToList(this.list, app)
       else this.removeFromList(this.list, app)
 
-      await this.update(
-        { ...this.list },
-        {
-          covers: true,
-        }
-      )
+      await this.update({ ...this.list })
+
+      this.meta.working = false
     },
 
     //+-------------------------------------------------
@@ -262,7 +270,7 @@ export const useListStore = defineStore('list', {
     // Created on Fri Feb 13 2026 - Prevent slug change
     //+-------------------------------------------------
     makeSlug(data) {
-      if (data.slug && !data._.make_slug) return data.slug
+      if (data.slug && !data._?.make_slug) return data.slug
 
       let text = data.slug || data.name
       let slug = format.stringToSlug(text)
@@ -278,60 +286,29 @@ export const useListStore = defineStore('list', {
       return slug
     },
 
-    //+-------------------------------------------------
-    // prepareGames(list)
-    // Prepares and subset of the list, containing the
-    // Minimum data needed to display the list for the first time
-    // -----
-    // Created on Fri Oct 18 2024
-    //+-------------------------------------------------
-    prepareGames(list) {
-      let subset = []
+    // //+-------------------------------------------------
+    // // findCovers()
+    // // Tries to make an array of covers for the list
+    // // This is less accurate than the covers in the editor, because
+    // // We can't load the covers beforehand, but we can try to make URLs
+    // // -----
+    // // Created on Fri Oct 25 2024
+    // //+-------------------------------------------------
+    // findCovers(list) {
+    //   let srcList = []
+    //   let asset = {
+    //     steam: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/library_600x900.jpg',
+    //   }
 
-      list.games.forEach((app) => {
-        let data = $data.get(app.uuid)
+    //   list.games.forEach((app) => {
+    //     if (app.steam_id) {
+    //       let image = asset.steam.replace('%ID%', app.steam_id)
+    //       srcList.push(image)
+    //     }
+    //   })
 
-        if (!data || data.error) return
-        // if (!data?.id?.api) return
-        if (data.uuid.includes('local:')) return
-
-        let item = {
-          name: data.name,
-          uuid: data.uuid,
-          cover: data.cover || undefined,
-          // steam_id: data.steam_id || undefined,
-          steam_id: data.steam_id || data.id?.steam,
-        }
-
-        subset.push(item)
-      })
-
-      return subset
-    },
-
-    //+-------------------------------------------------
-    // findCovers()
-    // Tries to make an array of covers for the list
-    // This is less accurate than the covers in the editor, because
-    // We can't load the covers beforehand, but we can try to make URLs
-    // -----
-    // Created on Fri Oct 25 2024
-    //+-------------------------------------------------
-    findCovers(list) {
-      let srcList = []
-      let asset = {
-        steam: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/library_600x900.jpg',
-      }
-
-      list.games.forEach((app) => {
-        if (app.steam_id) {
-          let image = asset.steam.replace('%ID%', app.steam_id)
-          srcList.push(image)
-        }
-      })
-
-      return srcList.splice(0, 15)
-    },
+    //   return srcList.splice(0, 15)
+    // },
 
     //+-------------------------------------------------
     // load()

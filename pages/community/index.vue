@@ -986,7 +986,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 18th December 2024
- * Modified: 17th February 2026 - 16:55:26
+ * Modified: 6th March 2026 - 13:00:26
  **/
 
 export default {
@@ -997,7 +997,7 @@ export default {
   },
 
   computed: {
-    ...mapState(useGuildStore, ['community']),
+    ...mapState(useCommunityStore, ['community']),
 
     active() {
       return []

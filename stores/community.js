@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th December 2025
- * Modified: 28th January 2026 - 11:56:03
+ * Modified: 6th March 2026 - 12:57:05
  */
 
 import supabaseService from '../services/supabaseService'
@@ -144,6 +144,9 @@ export const useCommunityStore = defineStore('community', {
     //+-------------------------------------------------
     async init() {
       $nuxt ??= useNuxtApp()
+      $log = $nuxt.$log
+
+      $user ??= useUserStore()
     },
   },
 })

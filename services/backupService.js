@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 24th October 2025
- * Modified: 29th October 2025 - 05:31:04
+ * Modified: 6th March 2026 - 12:56:09
  */
 
 export default {
@@ -97,6 +97,19 @@ export default {
     }
 
     return clean
+  },
+
+  //+-------------------------------------------------
+  // prepareListUpdates()
+  // Prepares the list data for backup by updating it with the latest cloud data
+  // -----
+  // Created on Fri Mar 06 2026
+  //+-------------------------------------------------
+  prepareListUpdates(list, cloud) {
+    const fields = ['name', 'slug', 'description', 'games', 'is_public', 'updated_at']
+    fields.forEach((key) => (list[key] = cloud[key]))
+
+    return list
   },
 
   //+-------------------------------------------------

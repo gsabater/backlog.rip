@@ -2,7 +2,7 @@
  * @file:    \eslint.config.mjs
  * ----------------------------------------------
  * Created Date: 11th November 2023
- * Modified: 24th December 2025 - 18:29:39
+ * Modified: 6th March 2026 - 13:02:00
  */
 
 /**
@@ -62,7 +62,6 @@ export default createConfigForNuxt({
         // useGameStore: true,
         // useStateStore: true,
         // useBackupStore: true,
-        // useGuildStore: true,
         // useJournalStore: true,
         // useLibraryStore: true,
         // useRepositoryStore: true,

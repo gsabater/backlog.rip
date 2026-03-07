@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 1st January 2026
- * Modified: 5th March 2026 - 13:48:52
+ * Modified: 6th March 2026 - 11:52:14
  */
 
 let $data = null
@@ -15,29 +15,27 @@ export default {
   // Minimum data needed to display the list for the first time
   // -----
   // Created on Fri Oct 18 2024
+  // Created on Fri Mar 06 2026 - Improved the data population
   //+-------------------------------------------------
   prepareGames(list) {
     $data ??= useDataStore()
-    let subset = []
+    const subset = []
 
-    let games = list?.games || []
-    games.forEach((app) => {
-      let data = $data.get(app.uuid)
+    for (const app of list?.games || []) {
+      if (app.uuid.includes('local:')) continue
 
-      if (!data || data.error) return
-      // if (!data?.id?.api) return
-      if (data.uuid.includes('local:')) return
+      const stored = $data.get(app.uuid)
+      const src = stored?.error ? app : { ...app, ...stored }
 
-      let item = {
-        name: data.name,
-        uuid: data.uuid,
-        cover: data.cover || undefined,
-        // steam_id: data.steam_id || undefined,
-        steam_id: data.steam_id || data.id?.steam,
-      }
+      if (src.uuid?.includes('local:')) continue
 
-      subset.push(item)
-    })
+      subset.push({
+        uuid: src.uuid,
+        name: src.name,
+        cover: src.cover || undefined,
+        steam_id: src.steam_id || src.id?.steam,
+      })
+    }
 
     return subset
   },

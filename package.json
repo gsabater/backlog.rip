@@ -19,8 +19,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "3.3.4",
     "@eslint/js": "9.39.3",
-    "@iconify-json/tabler": "1.2.28",
-    "@nuxt/devtools": "3.1.1",
+    "@iconify-json/tabler": "^1.2.29",
+    "@nuxt/devtools": "^3.2.2",
     "@nuxt/eslint": "1.15.2",
     "@nuxt/eslint-config": "1.15.2",
     "@nuxt/icon": "1.15.0",

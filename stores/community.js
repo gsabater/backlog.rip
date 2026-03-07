@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 27th December 2025
- * Modified: 28th January 2026 - 11:56:03
+ * Modified: 6th March 2026 - 13:01:13
  */
 
 import supabaseService from '../services/supabaseService'
@@ -99,7 +99,7 @@ export const useCommunityStore = defineStore('community', {
       if (profile.data.disabled) return
       const xhr = await $nuxt.$axios.post(`/ping`, profile.data)
       if (xhr?.status === 200 && xhr?.data) {
-        $log(`[Guild] checked in`)
+        $log(`[ Community ] checked in`)
         if (xhr.data?.user?.slug) $user.me.slug = xhr.data.user.slug
         if (xhr.data?.user?.username) $user.me.username = xhr.data.user.username
         // if (xhr.data.user.avatar) $user.avatar = xhr.data.user.avatar
@@ -144,6 +144,9 @@ export const useCommunityStore = defineStore('community', {
     //+-------------------------------------------------
     async init() {
       $nuxt ??= useNuxtApp()
+      $log = $nuxt.$log
+
+      $user ??= useUserStore()
     },
   },
 })

@@ -4,7 +4,7 @@
  * between the local client data and the cloud servers: Backups and workers
  * ----------------------------------------------
  * Created Date: 19th March 2025
- * Modified: 4th March 2026 - 17:29:50
+ * Modified: 6th March 2026 - 12:56:30
  */
 
 import dataService from './dataService'
@@ -24,12 +24,12 @@ export default {
   // Orchestrates the synchronization of cloud services
   //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // 1. Cloud backup download (if needed)
-  // 1. Library syncronization (Steam lib)
-  // 2. Library update (API)
-  // 3. Achievements sync (workers)
-  // 4. sync lists
-  // 5. Community ping (after steam sync)
-  // 6. Backup upload
+  // 2. Library syncronization (Steam lib)
+  // 3. Library metadata update (API)
+  // 4. Sync lists
+  // 5. Achievements sync (workers)
+  // 6. Community ping (after steam sync)
+  // 7. Backup upload
   // -----
   // Created on Wed Mar 19 2025
   // Updated on Wed Oct 08 2025
@@ -40,6 +40,7 @@ export default {
       // 1. Backup download
       // Check backups in the cloud and restore
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      $log('↻ Sync 1/7 ⇋ Check cloud backups')
       await this.syncBackup()
 
       // 2. Library synchronization
@@ -50,7 +51,7 @@ export default {
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       // await this.syncLibrary()
 
-      // 3. Library update
+      // 3. Library metadata update
       // Updates the library metadata from the API
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       // await this.updateLibrary()
@@ -63,15 +64,17 @@ export default {
       // console.warn('4/6 Sync achievements (workers)')
       // await this.syncAchievements()
 
-      // 5. Sync lists
+      // 4. Sync lists
       // Synchronize (CRUD) user lists
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      $log('↻ Sync 4/7 ⇋ Synchronize lists...')
       await this.syncLists()
 
       // 6. Community ping
       // Update public profile in the community
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // await this.communityPing()
+      $log('↻ Sync 6/7 ⇋ Community...')
+      await this.communityPing()
 
       // 7. Backup upload
       // Upload a new backup to the cloud
@@ -116,8 +119,6 @@ export default {
   // Created on Wed Oct 08 2025
   //+-------------------------------------------------
   async syncBackup() {
-    $log('Sync 1/6 ⇋ Cloud backups')
-
     // Stop when Supabase is not ready
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if ($nuxt.$cloud?.server?.supabase !== 'online') {
@@ -166,7 +167,6 @@ export default {
   // Created on Tue Mar 03 2026
   //+-------------------------------------------------
   async syncLists() {
-    $log('Sync 5/7 ⇋ Lists...')
     await $backup.syncLists()
   },
 
@@ -178,7 +178,6 @@ export default {
   // Created on Thu Oct 09 2025
   //+-------------------------------------------------
   async communityPing() {
-    $log('↻ Sync 5/6 ⇢ Community...')
     $nuxt.$cloud.process = 'community:ping'
     $community.ping()
 

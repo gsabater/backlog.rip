@@ -4,7 +4,7 @@
  * of data with the Supabase service.
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: 5th March 2026 - 15:37:45
+ * Modified: 6th March 2026 - 12:53:56
  */
 
 import supabase from '../modules/integrations/supabase'
@@ -18,7 +18,6 @@ let $nuxt = null
 let $data = null
 let $user = null
 let $list = null
-let $guild = null
 
 //+-------------------------------------------------
 // Entry points
@@ -528,8 +527,12 @@ export const useBackupStore = defineStore('backup', {
         // ⇢ Update if cloud is newer
         // This comparison should work because timestamps are in Zulu time
         //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (new Date(dbList.updated_at) < new Date(cloudList.updated_at)) {
-          await $list.update(cloudList, { timestamps: false, cloud: false })
+        if (
+          new Date(dbList.updated_at) < new Date(cloudList.updated_at) ||
+          dbList.games.length !== cloudList.games.length
+        ) {
+          const updated = backupService.prepareListUpdates(dbList, cloudList)
+          await $list.update(updated, { timestamps: false, cloud: false })
           updates.push({ id: cloudList.id, name: cloudList.name, action: 'updated' })
         }
       }
@@ -963,7 +966,6 @@ export const useBackupStore = defineStore('backup', {
       $data ??= useDataStore()
       $user ??= useUserStore()
       $list ??= useListStore()
-      $guild ??= useGuildStore()
 
       if ($nuxt.$app.offline) {
         $log('[Backups] Disabled in offline mode')

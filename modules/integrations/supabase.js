@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 24th March 2025
- * Modified: 5th March 2026 - 19:10:51
+ * Modified: 29th March 2026 - 11:20:31
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -273,12 +273,14 @@ export default {
 
   //+-------------------------------------------------
   // storeBackup()
-  //
+  // Creates a backup entry in supabase
   // -----
   // Created on Tue Oct 28 2025
   //+-------------------------------------------------
   async storeBackup(backup) {
     delete backup.id // Remove id to avoid conflicts
+
+    backup.user_id = client.sub
     backup.updated_at = dates.timestamp()
 
     const { data, error, status } = await client.instance

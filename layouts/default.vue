@@ -206,7 +206,10 @@
                   <div class="d-flex w-100" style="display: flex">
                     <small class="text-muted">Latest backup</small>
                     <small class="text-muted ms-auto">
-                      {{ dates.timeAgo(control?.local?.updated_at) }}
+                      <template v-if="control?.cloud?.latest">
+                        {{ dates.timeAgo(control.cloud.latest.updated_at) }}
+                      </template>
+                      <template v-else>Never</template>
                     </small>
                   </div>
 
@@ -939,7 +942,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 21st March 2023
- * Modified: 4th March 2026 - 11:06:24
+ * Modified: 29th March 2026 - 08:58:18
  **/
 
 import synchronizationService from '../services/synchronizationService'

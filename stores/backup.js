@@ -4,7 +4,7 @@
  * of data with the Supabase service.
  * ----------------------------------------------
  * Created Date: 30th July 2024
- * Modified: 6th March 2026 - 12:53:56
+ * Modified: 29th March 2026 - 11:35:43
  */
 
 import supabase from '../modules/integrations/supabase'
@@ -214,7 +214,7 @@ export const useBackupStore = defineStore('backup', {
       // ⇢ Hashes match
       // Verify data integrity to download or upload
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (this.latest.hash == local.hash) {
+      if (local.hash && this.latest.hash === local.hash) {
         $log('[Backups] Cloud and local backups match')
         console.debug(`↪ Client ${local.hash} ⇢ Cloud ${this.latest.hash}`)
         return
@@ -270,12 +270,13 @@ export const useBackupStore = defineStore('backup', {
       if (this.backups.length == 0) {
         $log('[Backups] No backups in the cloud, creating a new one...')
         await this.prepareBackup('new')
+        return
       }
 
       // ⇢ Hashes match
       // Verify data integrity to download or upload
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (this.latest.hash !== this.local.hash) {
+      if (this.latest && this.latest.hash !== this.local.hash) {
         $log('[Backups] Cloud and local backups differ')
         console.debug(`↪ Client ${this.local.hash} ⇢ Cloud ${this.latest.hash}`)
 
@@ -463,9 +464,9 @@ export const useBackupStore = defineStore('backup', {
       // ⇢ Make a new backup
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if (type == 'new') {
-        this.backup.hash = backupService.makeHash()
+        this.backup.hash = backupService.makeHash('0.new')
         this.backup.created_at = dates.timestamp()
-        $log(`↪ Making a new backup: ${this.latest.hash} -> ${this.backup.hash}`)
+        $log(`↪ Making a new backup: ${this.latest?.hash || 'none'} -> ${this.backup.hash}`)
       }
 
       // ⇢ Take the latest backup in cloud
@@ -718,17 +719,16 @@ export const useBackupStore = defineStore('backup', {
     // Synchronizes the local account with the cloud
     // -----
     // Created on Mon Aug 19 2024
+    // Updated on Sun Mar 29 2026 -- If no action is specified, upload by default
     //+-------------------------------------------------
     async doSync(dimension) {
       if (this.action[dimension] == 'ok') return
 
-      if (this.action[dimension].includes('up')) {
-        await this[this.dimensions[dimension]['up']]()
-      }
-
-      if (this.action[dimension].includes('down')) {
+      if (this.action[dimension]?.includes('down')) {
         await this[this.dimensions[dimension]['down']]()
       }
+
+      await this[this.dimensions[dimension]['up']]()
     },
 
     //+-------------------------------------------------
@@ -828,12 +828,7 @@ export const useBackupStore = defineStore('backup', {
 
       let dimensions = Object.keys(this.dimensions)
       for (let dimension of dimensions) {
-        // ⇢ Check if changes are needed
-        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (this.action[dimension] == 'ok') continue
-
-        // ...
-        //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         await this.doSync(dimension)
       }
     },
@@ -1034,6 +1029,8 @@ export const useBackupStore = defineStore('backup', {
       }
 
       data.cloud = {
+        amount: this.backups?.length || 0,
+        latest: this.latest || null,
         version: version,
         hash: hash,
         updated_at: this.backup?.updated_at,

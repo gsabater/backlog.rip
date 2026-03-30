@@ -203,7 +203,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 16th November 2023
- * Modified: 5th March 2026 - 19:02:36
+ * Modified: 5th March 2026 - 19:10:56
  **/
 
 export default {
@@ -227,12 +227,6 @@ export default {
       // if (store == 'config') this.$auth.setConfig(field)
       // else this.$auth.updateAccount(field)
     },
-
-    async init() {},
-  },
-
-  mounted() {
-    this.init()
   },
 }
 </script>

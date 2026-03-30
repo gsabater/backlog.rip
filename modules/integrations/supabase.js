@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 24th March 2025
- * Modified: 5th March 2026 - 16:12:53
+ * Modified: 29th March 2026 - 11:20:31
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -73,9 +73,10 @@ export default {
       .order('id', { ascending: false })
 
     if (error) {
-      // this.status = 'error'
+      this.status = 'error'
       $log('[Supabase] Error retrieving cloud backups', error.message)
-      // if (error.message == 'JWT expired') $nuxt.$auth.generateJWT()
+      if (error?.message == 'JWT expired') $nuxt.$auth.generateJWT()
+      if (error?.message?.text == 'JWT expired') $nuxt.$auth.generateJWT()
       return
     }
 
@@ -272,12 +273,14 @@ export default {
 
   //+-------------------------------------------------
   // storeBackup()
-  //
+  // Creates a backup entry in supabase
   // -----
   // Created on Tue Oct 28 2025
   //+-------------------------------------------------
   async storeBackup(backup) {
     delete backup.id // Remove id to avoid conflicts
+
+    backup.user_id = client.sub
     backup.updated_at = dates.timestamp()
 
     const { data, error, status } = await client.instance

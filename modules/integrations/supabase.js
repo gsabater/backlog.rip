@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 24th March 2025
- * Modified: 29th March 2026 - 11:20:31
+ * Modified: 30th March 2026 - 10:13:18
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -282,6 +282,7 @@ export default {
 
     backup.user_id = client.sub
     backup.updated_at = dates.timestamp()
+    backup.created_at ??= dates.timestamp()
 
     const { data, error, status } = await client.instance
       .from('cloud')

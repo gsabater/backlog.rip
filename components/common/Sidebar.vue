@@ -16,10 +16,6 @@
       <span class="text-muted my-2">Explore</span>
     </span>
 
-    <!-- <div class="dropdown-item disabled text-white">
-            <h6 class="m-0">Explore</h6>
-          </div> -->
-
     <NuxtLink to="/games" class="dropdown-item">
       <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
         <Icon
@@ -49,20 +45,6 @@
       <span class="nav-link-title">Lists</span>
     </NuxtLink>
 
-    <!-- <div class="dropdown-divider"></div>
-
-    <span class="dropdown-header">
-      <span class="text-muted my-2">Community</span>
-    </span>
-
-
-
-    <NuxtLink v-if="$app.dev" class="dropdown-item" style="opacity: 0.5">
-      <span class="d-none nav-link-icon d-md-none d-lg-inline-block">
-        <Icon name="tabler:home" size="14" class="text-muted" style="transform: translateY(1px)">Components</Icon>
-      </span>
-      <span class="nav-link-title">Dashboard</span>
-    </NuxtLink> -->
     <!--
 
           <NuxtLink to="/journal" class="dropdown-item">
@@ -74,19 +56,6 @@
               {{ $moment().format('DD/MM') }}
             </small>
           </NuxtLink> -->
-
-    <!-- <div class="dropdown-divider"></div>
-          <span class="dropdown-header control-hover" style="pointer-events: all">
-            <Icon
-              style="float: right; outline: none; transform: translateX(4px)"
-              class="ms-auto text-secondary font-mono show-hover cursor-pointer"
-              size="14" class="text-muted" style="transform: translateY(1px)"
-              v-tippy="'Create a new list'"
-              @click.prevent="$mitt.emit('list:create')">
-              SquareRoundedPlus
-            </Icon>
-            <span class="text-muted my-2">Your Lists</span>
-          </span> -->
 
     <div class="dropdown-divider"></div>
 

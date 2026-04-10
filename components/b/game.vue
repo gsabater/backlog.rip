@@ -554,14 +554,14 @@ export default {
       }
       this.animationFrame = requestAnimationFrame(() => {
         const el = this.$refs.card
-        const width = el.offsetWidth
-        const XRel = e.pageX - el.offsetLeft
-        const YRel = e.pageY - el.offsetTop
+        const rect = el.getBoundingClientRect()
+        const XRel = e.clientX - rect.left
+        const YRel = e.clientY - rect.top
 
         const strength = typeof this.tracking == 'number' ? this.tracking : 4
 
-        const YAngle = -(0.5 - XRel / width) * strength
-        const XAngle = (0.5 - YRel / width) * strength
+        const YAngle = -(0.5 - XRel / rect.width) * strength
+        const XAngle = (0.5 - YRel / rect.height) * strength
 
         this.setProp(el, '--dy', `${YAngle}deg`)
         this.setProp(el, '--dx', `${XAngle}deg`)

@@ -108,14 +108,14 @@
           class="nav-link"
           :style="$route.path.includes('database') ? 'color: white; ' : ''">
           <Icon name="tabler:database" size="14" class="me-2" />
-          Database
+          Local Datadabse
         </NuxtLink>
       </li>
     </ul>
 
     <div class="row g-2 align-items-center mt-4">
       <div class="col">
-        <h3>The site</h3>
+        <h3>Application</h3>
       </div>
     </div>
 

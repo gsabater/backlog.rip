@@ -3,7 +3,7 @@
  * @desc:    Handle operations related to data with their index
  * -------------------------------------------
  * Created Date: 14th November 2023
- * Modified: 22nd January 2026 - 12:51:40
+ * Modified: 1st April 2026 - 13:50:21
  */
 
 import gameService from '../services/gameService'
@@ -104,18 +104,11 @@ export const useDataStore = defineStore('data', {
     //+-------------------------------------------------
     async process(apps, from, emit = true) {
       const items = Array.isArray(apps) ? apps : [apps]
-      const events = new Set()
-
-      // console.warn(
-      //   '[DEV] Process',
-      //   from,
-      //   items.length,
-      //   items[Math.floor(Math.random() * items.length)]
-      // )
+      const callbacks = new Set()
 
       for (const item of items) {
         if (!item?.uuid || item === true || (Array.isArray(item) && item.length === 0)) {
-          console.error('🔥', item, from)
+          console.error('The received item is invalid', item, from)
           continue
         }
 
@@ -125,11 +118,12 @@ export const useDataStore = defineStore('data', {
           $app.wip &&
           // if (item.name == 'DOOM') {
           // if (from == 'add:new') {
-          (item.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48' ||
-            item.uuid == '94327609-250d-4f98-93b3-cd380eb19a9b' ||
-            item.uuid == '4434fa13-4f18-44ec-ad80-db412ba28a96')
+          // (item.uuid == '5c1c9b5a-1c02-4a56-85df-f0cf97929a48' ||
+          //   item.uuid == '94327609-250d-4f98-93b3-cd380eb19a9b' ||
+          //   item.uuid == '4434fa13-4f18-44ec-ad80-db412ba28a96')) ||
+          item.schema
         ) {
-          // console.warn('✨ ' + item.name, item, from)
+          console.warn(`ADD ${item.name} from ${from} `, item)
           // debugger
         }
 
@@ -137,6 +131,12 @@ export const useDataStore = defineStore('data', {
         // if (from !== 'library' && from !== 'api' && from !== 'updated') debugger
         // if (item.uuid == '338c704c-260e-44a6-b063-d541ef351fa8') debugger
         // if (item.id?.steam == 250900) debugger
+
+        if (!from?.includes) {
+          console.warn(item, from)
+          $log(`[ dataStore.process ] Error when processing item`, item, from)
+          return
+        }
 
         // Find the index in data
         let indexed = this.isIndexed(item)
@@ -151,12 +151,6 @@ export const useDataStore = defineStore('data', {
           continue
         }
 
-        if (!from?.includes) {
-          console.warn(item, from)
-          $log(`[ dataStore.process ] Error when processing item`, item, from)
-          return
-        }
-
         // Handle api items
         // Those apps come from the api
         // and are usually added to data
@@ -167,7 +161,7 @@ export const useDataStore = defineStore('data', {
 
           if (from.includes('list:')) {
             if (!indexed) this.toData(item)
-            events.add('data:added')
+            callbacks.add('data:added')
             continue
           }
 
@@ -204,12 +198,12 @@ export const useDataStore = defineStore('data', {
             }
           }
 
-          // Add not indexed API games to the pool
+          // Add not indexed API games to memory
           // console.warn('⇢ app to data from API', item.uuid, item.name)
           //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           if (!indexed) {
             this.toData(item)
-            events.add('data:added')
+            callbacks.add('data:added')
             continue
           }
         }
@@ -233,8 +227,8 @@ export const useDataStore = defineStore('data', {
           $queue.add(item.uuid)
           this.toData(item)
 
-          // if (from?.includes('update:')) events.add('game:updated')
-          // if (from?.includes('update:state')) events.add('game:updated')
+          // if (from?.includes('update:')) callbacks.add('game:updated')
+          // if (from?.includes('update:state')) callbacks.add('game:updated')
           continue
         }
 
@@ -264,7 +258,7 @@ export const useDataStore = defineStore('data', {
 
       // $mitt: A game has been added to data
       //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if (events.has('data:added')) {
+      if (callbacks.has('data:added')) {
         $nuxt.$mitt.emit('data:added', {
           from,
           first: items[0],

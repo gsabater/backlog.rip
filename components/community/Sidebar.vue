@@ -36,20 +36,18 @@
 
     <div class="row g-2 align-items-center mt-4">
       <div class="col">
-        <h3>Platform</h3>
+        <h3>The project</h3>
       </div>
     </div>
 
     <ul class="nav nav-pills nav-vertical">
       <li class="nav-item">
         <NuxtLink
-          o="/platform/database"
+to="/platform/status"
           class="nav-link"
-          :style="
-            $route.path.includes('additions') ? 'color: white; npadding-bottom: 0.25rem;' : ''
-          ">
+          :style="$route.path.includes('status') ? 'color: white;' : ''">
           <Icon name="tabler:database" size="14" class="me-2" />
-          Database
+          Status
         </NuxtLink>
       </li>
     </ul>

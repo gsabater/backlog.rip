@@ -23,10 +23,10 @@ export default {
   async loadFromAPI(app) {
     // Check if the game actually needs to be loaded
     //+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (app.uuid.includes('local:') && !app.id.api) return
-    if (app._.detail.includes('full') && !app._.detail.includes(':outdated')) return
+    if (app.uuid.includes('local:') && !app.id?.api) return
+    if (app._?.detail?.includes('full') && !app._?.detail?.includes(':outdated')) return
 
-    const uuid = app.id.api || app.uuid
+    const uuid = app.id?.api || app.uuid
     if (!uuid || uuid.includes('local:')) return
 
     // Load and return

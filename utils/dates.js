@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 10th November 2023
- * Modified: 23rd January 2026 - 16:54:38
+ * Modified: 3rd June 2026 - 17:40:23
  */
 
 let $nuxt = null
@@ -11,6 +11,19 @@ let $nuxt = null
 export default {
   stamp() {
     return Math.floor(Date.now() / 1000)
+  },
+
+  //+-------------------------------------------------
+  // toStamp()
+  // Normalizes a unix timestamp (seconds)
+  // or ISO date string to unix seconds
+  // -----
+  // Created on Wed Jun 03 2026
+  //+-------------------------------------------------
+  toStamp(value) {
+    if (!value) return 0
+    if (typeof value === 'number') return value
+    return Math.floor(Date.parse(value) / 1000)
   },
 
   //+-------------------------------------------------

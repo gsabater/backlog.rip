@@ -3,7 +3,7 @@
  * @desc:    ...
  * ----------------------------------------------
  * Created Date: 29th January 2025
- * Modified: 29th October 2025 - 03:48:34
+ * Modified: 2nd August 2026 - 17:58:00
  */
 
 import backlogrip from '../modules/integrations/backlogrip.js'
@@ -30,7 +30,7 @@ export default {
 
     // $cloud.api = status
     $cloud.server.api = 'online'
-    $app.count.api = status?.games?.total || 0
+    $app.count.api = status?.db?.games || 0
   },
 
   //+-------------------------------------------------

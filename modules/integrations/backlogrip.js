@@ -3,7 +3,7 @@
  * @desc:    ...
  * -------------------------------------------
  * Created Date: 30th September 2025
- * Modified: 17th February 2026 - 11:58:58
+ * Modified: 2nd August 2026 - 18:23:59
  */
 
 let $nuxt = null
@@ -34,22 +34,22 @@ export default {
 
     return
 
-    try {
-      const xhr = await $nuxt.$axios.get(`get/status.json`)
-      if (xhr.status) {
-        $nuxt.$app.api = xhr.data
-        $nuxt.$app.count.api = xhr.data?.games?.total || 0
+    // try {
+    //   const xhr = await $nuxt.$axios.get(`get/status.json`)
+    //   if (xhr.status) {
+    //     $nuxt.$app.api = xhr.data
+    //     $nuxt.$app.count.api = xhr.data?.games?.total || 0
 
-        $nuxt.$cloud.api = xhr.data || {}
-        $nuxt.$cloud.status.api = 'online'
-      }
-    } catch (error) {
-      log('Could not establish connection with the API, working on offline mode', error)
+    //     $nuxt.$cloud.api = xhr.data || {}
+    //     $nuxt.$cloud.status.api = 'online'
+    //   }
+    // } catch (error) {
+    //   log('Could not establish connection with the API, working on offline mode', error)
 
-      $nuxt.$app.api = {}
-      $nuxt.$app.offline = true
-      $nuxt.$app.count.api = 0
-    }
+    //   $nuxt.$app.api = {}
+    //   $nuxt.$app.offline = true
+    //   $nuxt.$app.count.api = 0
+    // }
   },
 
   //+-------------------------------------------------
@@ -124,23 +124,19 @@ export default {
   },
 
   //+-------------------------------------------------
-  // getWorkerAdditions()
-  // Requests to the worker an object of additions
-  // This object has info about
-  // - Queue for today (split into coming soon and recent added)
-  // - Latest updates
-  // - Stats
+  // getStats()
+  //
   // -----
-  // Created on Tue Dec 02 2025
+  // Created on Sat Apr 11 2026
   //+-------------------------------------------------
-  async getWorkerAdditions() {
+  async getStats() {
     $nuxt ??= useNuxtApp()
 
     try {
-      const xhr = await $nuxt.$axios.get(`https://api.backlog.rip/w/schedule`)
+      const xhr = await $nuxt.$axios.get(`https://api.backlog.rip/stats/overview`)
       if (xhr.status) return xhr.data
     } catch (error) {
-      $nuxt.$log.error('Could not get Backlog.rip worker schedule', error)
+      $nuxt.$log.error('Could not get Backlog.rip stats', error)
     }
   },
 }

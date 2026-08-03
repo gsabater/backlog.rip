@@ -980,7 +980,7 @@ H289.066z M288.207,32.142h0.814c0.527,0,0.838-0.331,0.838-0.747c0-0.42-0.223-0.6
                     style="height: 25px; filter: brightness(0.4); margin: 0 -5px" />
                 </a>
               </template>
-              <template v-if="app.scores.metascore">
+              <template v-if="app.scores?.metascore">
                 🔸
                 <a href="https://www.metacritic.com" target="_blank">
                   <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 176 40">
@@ -1041,11 +1041,13 @@ export default {
     }),
 
     app() {
-      const data = {
+      return {
+        id: {},
+        is: {},
+        _: {},
         ...this.gameStore.app,
         ...this.game,
       }
-      return data
     },
 
     //+-------------------------------------------------

@@ -19,17 +19,21 @@
  * <game-asset :app="app" asset="banner" :priority="['steam', 'igdb']"></game-asset>
  * -------------------------------------------
  * Created Date: 12th January 2024
- * Modified: 7th February 2026 - 12:46:13
+ * Modified: 10th April 2026 - 13:13:27
  **/
 
 // TODO: Move this constant to constants.js
 const SOURCES = {
   steam: {
     logo: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/logo.png',
+    capsuleSM: 'https://cdn.cloudflare.steamstatic.com/steam/apps/%ID%/capsule_sm_120.jpg',
+
     capsule:
       'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/%ID%/capsule_616x353.jpg',
+
     heroCapsule:
       'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/%ID%/hero_capsule.jpg',
+
     cover: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/library_600x900.jpg',
     banner: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/header.jpg',
     header:
@@ -39,6 +43,7 @@ const SOURCES = {
     background: 'https://cdn.akamai.steamstatic.com/steam/apps/%ID%/page.bg.jpg',
     library: 'https://steamcdn-a.akamaihd.net/steam/apps/%ID%/library_hero.jpg',
   },
+
   igdb: {
     logo: 'https://images.igdb.com/igdb/image/upload/t_logo_med/%ID%.png',
     cover: 'https://images.igdb.com/igdb/image/upload/t_cover_big/%ID%.jpg',
@@ -117,12 +122,13 @@ export default {
   methods: {
     getAssetUrls(source, assetType) {
       if (source === 'steam') {
-        if (!this.app.id?.steam) return null
+        const steamId = this.app.id?.steam ?? this.app.steam_id
+        if (!steamId) return null
 
         const template = SOURCES.steam[assetType]
         if (!template) return null
 
-        const url = template.replace('%ID%', this.app.id.steam)
+        const url = template.replace('%ID%', steamId)
 
         // Apply special styling for certain asset types
         if (assetType === 'cover' && template.includes('header.')) {
@@ -135,7 +141,7 @@ export default {
       if (source === 'igdb') {
         if (!this.app.cover?.igdb) return null
 
-        const template = SOURCES.igdb[assetType]
+        const template = SOURCES.igdb[assetType] ?? SOURCES.igdb['cover']
         if (!template) return null
 
         const url = template.replace('%ID%', this.app.cover.igdb)
